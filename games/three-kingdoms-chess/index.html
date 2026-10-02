@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>三國戰棋 · 歷史全紀元 (增益防護·貫日穿透版 v1.3.0)</title>
+  <style>
+    :root {
+      --bg: #0f0f17;
+      --card-bg: #1a1a27;
+      --panel: #232334;
+      --border: #3b3b55;
+      --text: #e6e6f0;
+      --dim: #8e8ea6;
+      --gold: #f5c542;
+      --c-green: #2ecc71;
+      --c-blue: #3498db;
+      --c-purple: #9b59b6;
+      --c-red: #e74c3c;
+    }
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex; justify-content: center; align-items: center;
+      user-select: none;
+    }
+    #game-stage {
+      width: 1100px; height: 720px;
+      flex-shrink: 0;
+      transform-origin: center center;
+      display: flex; flex-direction: column;
+      box-sizing: border-box;
+      padding: 10px 16px;
+      position: relative;
+    }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      height: 44px; border-bottom: 1px solid var(--border);
+      margin-bottom: 8px; padding-bottom: 4px;
+    }
+    .header-left { display: flex; align-items: center; gap: 8px; }
+    h1 { margin: 0; font-size: 19px; color: var(--gold); letter-spacing: 1.2px; }
+    .version-tag {
+      font-size: 11px; font-weight: bold; color: var(--gold);
+      background: #252210; border: 1px solid var(--gold);
+      padding: 2px 7px; border-radius: 10px; letter-spacing: 0.5px;
+    }
+    .nav-bar { display: flex; gap: 8px; align-items: center; }
+    .badge {
+      background: #252210; color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 4px 12px; border-radius: 16px; font-weight: bold; font-size: 13px;
+    }
+    button {
+      padding: 6px 12px; border-radius: 6px; font-weight: bold;
+      cursor: pointer; font-size: 12.5px; transition: all 0.15s;
+      border: 1px solid var(--border); background: var(--panel); color: #fff;
+    }
+    button:hover:not(:disabled) { filter: brightness(1.2); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-active { background: #34495e; border-color: var(--c-blue); }
+    .btn-main { background: #2980b9; border: none; }
+    .btn-act { background: #27ae60; border: none; }
+    .btn-skill { background: #8e44ad; border: none; width: 100%; text-align: left; padding: 7px 10px; margin: 4px 0; }
+
+    .tier-green { color: var(--c-green) !important; }
+    .tier-blue { color: var(--c-blue) !important; }
+    .tier-purple { color: var(--c-purple) !important; }
+    .tier-red { color: var(--c-red) !important; }
+    .bg-green { border-color: var(--c-green); }
+    .bg-blue { border-color: var(--c-blue); }
+    .bg-purple { border-color: var(--c-purple); }
+    .bg-red { border-color: var(--c-red); box-shadow: 0 0 10px rgba(231,76,60,0.3); }
+
+    .view-container { flex: 1; display: none; height: calc(100% - 54px); }
+
+    #battle-view { display: flex; gap: 14px; }
+    .battle-left {
+      width: 540px; background: var(--card-bg);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px; display: flex; flex-direction: column; align-items: center;
+    }
+    .grid-box {
+      display: grid; grid-template-columns: repeat(6, 80px); grid-template-rows: repeat(6, 80px);
+      gap: 5px; background: #0b0b10; padding: 6px; border-radius: 8px;
+    }
+    .cell {
+      width: 80px; height: 80px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; font-size: 11px;
+      cursor: pointer; border-radius: 6px; position: relative;
+    }
+    .plains { background: #2f4523; color: #fff; }
+    .forest { background: #183318; color: #a3e098; }
+    .mountain { background: #3d342a; color: #d7ccc8; }
+    .fort { background: #4a2c20; color: #ffcc80; border: 1px dashed var(--gold); }
+    
+    .cell-unit {
+      border: 2px solid; position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .unit-p { background: #1b4d24 !important; border-color: var(--c-green); box-shadow: 0 0 6px rgba(46,204,113,0.5); }
+    .unit-e { background: #631717 !important; border-color: var(--c-red); box-shadow: 0 0 6px rgba(231,76,60,0.5); }
+    .unit-e-boss { border-color: var(--gold) !important; box-shadow: 0 0 10px var(--gold) !important; }
+    .cell-selected { outline: 3px solid var(--gold); z-index: 2; }
+    .cell-moved { border-style: dashed !important; box-shadow: 0 0 10px var(--gold) !important; }
+    .cell-acted { opacity: 0.55; filter: grayscale(70%); }
+    .unit-shielded { box-shadow: inset 0 0 8px #3498db, 0 0 8px #3498db !important; }
+
+    .battle-right { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .panel-box {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 12px; box-sizing: border-box;
+    }
+    .panel-title {
+      font-size: 13px; font-weight: bold; color: var(--gold);
+      border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px;
+    }
+    .portrait-stage { display: flex; gap: 12px; align-items: center; }
+    .svg-avatar {
+      width: 95px; height: 110px; background: #0c0c14;
+      border: 2px solid var(--border); border-radius: 6px; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .svg-avatar svg { width: 100%; height: 100%; }
+
+    .scroll-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; overflow-y: auto; flex: 1; padding: 4px;
+    }
+    .card {
+      background: #171724; border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px; display: flex; flex-direction: column;
+      align-items: center; text-align: center; position: relative;
+    }
+    .card-thumb { width: 70px; height: 82px; margin-bottom: 6px; border-radius: 4px; overflow: hidden; background: #0c0c12; }
+    .card-thumb svg { width: 100%; height: 100%; }
+
+    .modal {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: none;
+      justify-content: center; align-items: center; z-index: 100;
+    }
+    .modal-box {
+      background: var(--card-bg); border: 2px solid var(--gold);
+      border-radius: 10px; padding: 24px; width: 480px; text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-stage">
+  <header>
+    <div class="header-left">
+      <h1>三國戰棋 · 歷史全紀元</h1>
+      <span class="version-tag">v1.3.0 貫日增益版</span>
+    </div>
+    <div class="nav-bar">
+      <div class="badge" id="gold-hud">💰 500</div>
+      <button class="btn-active" id="btn-tab-battle" onclick="switchTab('battle')">⚔ 戰役沙盤</button>
+      <button id="btn-tab-deploy" onclick="switchTab('deploy')">🚩 軍團備戰 (<span id="deploy-hud">3</span>/6)</button>
+      <button id="btn-tab-tavern" onclick="switchTab('tavern')">🍶 英雄酒館</button>
+      <button id="btn-tab-forge" onclick="switchTab('forge')">🔨 洛陽鐵匠鋪</button>
+    </div>
+  </header>
+
+  <div class="view-container" id="battle-view" style="display: flex;">
+    <div class="battle-left">
+      <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:6px;">
+        <span style="font-weight:bold; color:var(--gold);" id="ch-title">載入中...</span>
+        <span style="color:#ffd54f; font-weight:bold;" id="turn-txt">回合 1 (玩家行動)</span>
+      </div>
+      <div class="grid-box" id="grid"></div>
+      <div style="font-size:11px; color:var(--dim); margin-top:6px;">
+        特性：弓兵盲區(1格不可射，射程2~3格) | 太史慈【貫日連珠】沿直線穿透兩名敵軍。
+      </div>
+    </div>
+
+    <div class="battle-right">
+      <div class="panel-box">
+        <div class="panel-title">📜 戰役演義傳記</div>
+        <div id="story-txt" style="font-size:12px; line-height:1.45; min-height:42px; color:#f0f0f5;"></div>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-title">🛡 武將持武立繪與屬性</div>
+        <div class="portrait-stage">
+          <div class="svg-avatar" id="cur-avatar"></div>
+          <div id="cur-info" style="font-size:12px; line-height:1.35; flex:1;"></div>
+        </div>
+        <div id="cur-skills" style="margin-top:6px;"></div>
+      </div>
+
+      <div class="panel-box" style="flex:1; display:flex; flex-direction:column;">
+        <div class="panel-title">⚔ 即時軍情日誌</div>
+        <div id="battle-log" style="flex:1; overflow-y:auto; font-family:monospace; font-size:11px; color:#a5d6a7;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-container" id="deploy-view">
+    <div class="panel-box" style="width:100%; height:100%; display:flex; flex-direction:column;">
+      <div class="panel-title" style="display:flex; justify-content:space-between;">
+        <span>🚩 戰前陣容點將錄 (當前出征: <span id="deploy-count" style="color:var(--gold);">0</span> / 6)</span>
+        <span style="font-size:12px; color:var(--dim);">主角必定上陣</span>
+      </div>
+      <div class="scroll-grid" id="deploy-list"></div>
+    </div>
+  </div>
+
+  <div class="view-container" id="tavern-view">
+    <div class="panel-box" style="width:100%; height:100%; display:flex; flex-direction:column;">
+      <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>🍶 英雄酒館 (百將名冊 | 紅將 1% 極稀有 | 滿 5 碎片升星)</span>
+        <button onclick="refreshTavern(true)">🎲 40 銅錢 刷新名冊</button>
+      </div>
+      <div class="scroll-grid" id="tavern-list"></div>
+    </div>
+  </div>
+
+  <div class="view-container" id="forge-view">
+    <div class="panel-box" style="width:100%; height:100%; display:flex; flex-direction:column;">
+      <div class="panel-title">🔨 鐵匠鋪兵刃坊 (購買裝備全軍共享加成)</div>
+      <div class="scroll-grid" id="forge-list"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="win-modal">
+    <div class="modal-box">
+      <h2 style="color:var(--gold); margin:0 0 10px 0;">🏆 戰役大捷！</h2>
+      <p id="win-desc" style="font-size:13px; line-height:1.6; text-align:left; background:#12121b; padding:10px; border-radius:6px;"></p>
+      <div id="win-reward" style="margin:12px 0; font-size:16px; color:#ffd54f; font-weight:bold;"></div>
+      <button class="btn-act" style="font-size:15px; padding:8px 24px;" onclick="nextChapter()">進軍下一戰役</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function fitWindow() {
+  const stage = document.getElementById('game-stage');
+  const scale = Math.min((window.innerWidth - 10) / 1100, (window.innerHeight - 10) / 720);
+  stage.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', fitWindow);
+window.addEventListener('load', fitWindow);
+
+function getWeaponSvg(wKey) {
+  switch(wKey) {
+    case 'blade':
+      return `<path d="M 68 20 Q 85 0 95 15 Q 82 25 72 35 Z" fill="#27ae60" stroke="#f1c40f" stroke-width="1.5"/><line x1="68" y1="20" x2="52" y2="75" stroke="#795548" stroke-width="3.5"/>`;
+    case 'spear':
+      return `<path d="M 68 15 Q 75 8 70 2 Q 62 10 65 18 Z" fill="#bdc3c7"/><line x1="66" y1="15" x2="50" y2="80" stroke="#5d4037" stroke-width="3"/>`;
+    case 'halberd':
+      return `<path d="M 68 10 L 76 10 L 72 0 Z" fill="#c0392b"/><path d="M 62 16 Q 72 16 72 26 Q 82 26 82 16" fill="none" stroke="#f39c12" stroke-width="2"/><line x1="72" y1="10" x2="52" y2="80" stroke="#2c3e50" stroke-width="3"/>`;
+    case 'fan':
+      return `<path d="M 65 45 Q 85 25 75 15 Q 60 25 65 45 Z" fill="#ecf0f1" stroke="#bdc3c7"/><line x1="65" y1="45" x2="55" y2="65" stroke="#8d6e63" stroke-width="2.5"/>`;
+    case 'bow':
+      return `<path d="M 68 20 Q 85 45 68 70" fill="none" stroke="#d35400" stroke-width="3"/><line x1="68" y1="20" x2="68" y2="70" stroke="#fff" stroke-dasharray="2,2"/>`;
+    default:
+      return `<line x1="68" y1="35" x2="88" y2="15" stroke="#f1c40f" stroke-width="3"/><line x1="65" y1="38" x2="72" y2="45" stroke="#e74c3c" stroke-width="4"/>`;
+  }
+}
+
+function renderUnitSvg(fColor, aColor, hColor, wKey, isBeard) {
+  return `
+  <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+    ${getWeaponSvg(wKey)}
+    <circle cx="45" cy="40" r="22" fill="${fColor}"/>
+    <circle cx="37" cy="38" r="2.5" fill="#111"/><circle cx="53" cy="38" r="2.5" fill="#111"/>
+    <path d="M 23 32 Q 45 12 67 32 L 62 14 L 45 6 L 28 14 Z" fill="${hColor}"/>
+    ${isBeard ? `<path d="M 33 46 Q 45 80 45 90 Q 45 80 57 46 Z" fill="#1a1a1a"/>` : `<path d="M 41 49 Q 45 53 49 49" stroke="#333" stroke-width="1.5" fill="none"/>`}
+    <path d="M 12 120 L 24 64 L 68 64 L 78 120 Z" fill="${aColor}"/>
+    <circle cx="58" cy="62" r="5" fill="${fColor}"/>
+  </svg>`;
+}
+
+const TIER_PRICES = { green: 100, blue: 220, purple: 450, red: 1000 };
+const HERO_NAMES = [
+  // 紅階 (無雙神將 - 共 8 人)
+  { n: "關羽", t: "red", c: "Spearman", w: "blade", h: "#1b5e20", a: "#2e7d32", f: "#c0392b", b: true, s: "青龍怒斬", skType: "dmg" },
+  { n: "張飛", t: "red", c: "Shieldman", w: "spear", h: "#212121", a: "#37474f", f: "#a07855", b: true, s: "當陽怒吼", skType: "def" },
+  { n: "呂布", t: "red", c: "Spearman", w: "halberd", h: "#f1c40f", a: "#2c3e50", f: "#ffe0bd", b: false, s: "無雙亂舞", skType: "dmg" },
+  { n: "趙雲", t: "red", c: "Spearman", w: "spear", h: "#bdc3c7", a: "#2980b9", f: "#ffe0bd", b: false, s: "七探盤蛇", skType: "buff" },
+  { n: "諸葛亮", t: "red", c: "Archer", w: "fan", h: "#27ae60", a: "#ecf0f1", f: "#fed0a2", b: true, s: "八陣禦敵", skType: "buff" },
+  { n: "曹操", t: "red", c: "Swordsman", w: "sword", h: "#8e44ad", a: "#2c3e50", f: "#fed0a2", b: true, s: "霸者號令", skType: "buff" },
+  { n: "周瑜", t: "red", c: "Archer", w: "sword", h: "#d35400", a: "#c0392b", f: "#ffe0bd", b: false, s: "赤壁烽火", skType: "dmg" },
+  { n: "司馬懿", t: "red", c: "Archer", w: "fan", h: "#2c3e50", a: "#4a148c", f: "#fed0a2", b: true, s: "鷹視狼顧", skType: "def" },
+
+  // 紫階 (軍團柱石 - 共 22 人)
+  { n: "劉備", t: "purple", c: "Swordsman", w: "sword", h: "#27ae60", a: "#2ecc71", f: "#fed0a2", b: false, s: "仁德號召", skType: "buff" },
+  { n: "貂蟬", t: "purple", c: "Archer", w: "sword", h: "#f48fb1", a: "#ce93d8", f: "#fff0f5", b: false, s: "閉月傾城", skType: "dmg" },
+  { n: "馬超", t: "purple", c: "Spearman", w: "spear", h: "#ecf0f1", a: "#7f8c8d", f: "#ffe0bd", b: false, s: "鐵騎突穿", skType: "dmg" },
+  { n: "黃忠", t: "purple", c: "Archer", w: "bow", h: "#f39c12", a: "#d35400", f: "#fed0a2", b: true, s: "百步穿楊", skType: "dmg" },
+  { n: "魏延", t: "purple", c: "Swordsman", w: "blade", h: "#c0392b", a: "#34495e", f: "#c58356", b: true, s: "狂骨嗜血", skType: "buff" },
+  { n: "夏侯惇", t: "purple", c: "Spearman", w: "spear", h: "#2c3e50", a: "#34495e", f: "#fed0a2", b: true, s: "剛烈拔矢", skType: "def" },
+  { n: "夏侯淵", t: "purple", c: "Archer", w: "bow", h: "#34495e", a: "#d35400", f: "#fed0a2", b: true, s: "神速奔射", skType: "dmg" },
+  { n: "張遼", t: "purple", c: "Swordsman", w: "blade", h: "#2980b9", a: "#34495e", f: "#ffe0bd", b: true, s: "逍遙震懾", skType: "buff" },
+  { n: "孫策", t: "purple", c: "Spearman", w: "spear", h: "#d35400", a: "#e67e22", f: "#ffe0bd", b: false, s: "小霸王擊", skType: "dmg" },
+  { n: "太史慈", t: "purple", c: "Archer", w: "bow", h: "#e67e22", a: "#34495e", f: "#ffe0bd", b: true, s: "貫日連珠", skType: "pierce" },
+  { n: "甘寧", t: "purple", c: "Swordsman", w: "blade", h: "#c0392b", a: "#d35400", f: "#ffe0bd", b: false, s: "百騎劫營", skType: "dmg" },
+  { n: "徐晃", t: "purple", c: "Shieldman", w: "halberd", h: "#7f8c8d", a: "#2c3e50", f: "#fed0a2", b: true, s: "長驅壁壘", skType: "def" },
+  { n: "龐統", t: "purple", c: "Archer", w: "fan", h: "#795548", a: "#4e342e", f: "#8d6e63", b: true, s: "連環鐵鎖", skType: "dmg" },
+  { n: "荀彧", t: "purple", c: "Archer", w: "fan", h: "#34495e", a: "#2980b9", f: "#fed0a2", b: false, s: "王佐之才", skType: "buff" },
+  { n: "賈詡", t: "purple", c: "Archer", w: "fan", h: "#2c3e50", a: "#8e44ad", f: "#fed0a2", b: true, s: "亂武深謀", skType: "dmg" },
+  { n: "郭嘉", t: "purple", c: "Archer", w: "fan", h: "#2980b9", a: "#34495e", f: "#ffe0bd", b: false, s: "遺計定遼", skType: "buff" },
+  { n: "呂蒙", t: "purple", c: "Swordsman", w: "blade", h: "#d35400", a: "#2c3e50", f: "#fed0a2", b: true, s: "白衣奇渡", skType: "dmg" },
+  { n: "陸遜", t: "purple", c: "Archer", w: "sword", h: "#e67e22", a: "#ecf0f1", f: "#fff0f5", b: false, s: "火燒連營", skType: "dmg" },
+  { n: "文鴦", t: "purple", c: "Spearman", w: "spear", h: "#bdc3c7", a: "#2980b9", f: "#ffe0bd", b: false, s: "單騎退敵", skType: "dmg" },
+  { n: "鄧艾", t: "purple", c: "Swordsman", w: "sword", h: "#7f8c8d", a: "#27ae60", f: "#fed0a2", b: true, s: "奇度陰平", skType: "buff" },
+  { n: "鍾會", t: "purple", c: "Archer", w: "sword", h: "#8e44ad", a: "#2c3e50", f: "#ffe0bd", b: false, s: "兵行險招", skType: "dmg" },
+  { n: "羊祜", t: "purple", c: "Shieldman", w: "sword", h: "#34495e", a: "#bdc3c7", f: "#fed0a2", b: true, s: "德懷遠方", skType: "def" },
+
+  // 藍階 (良臣宿將 - 共 35 人)
+  { n: "許褚", t: "blue", c: "Shieldman", w: "blade", h: "#d35400", a: "#5d4037", f: "#fed0a2", b: false, s: "虎癡怒撲", skType: "def" },
+  { n: "典韋", t: "blue", c: "Shieldman", w: "halberd", h: "#2c3e50", a: "#3e2723", f: "#8d6e63", b: true, s: "惡來鐵衛", skType: "def" },
+  { n: "張郃", t: "blue", c: "Spearman", w: "spear", h: "#8e44ad", a: "#34495e", f: "#ffe0bd", b: false, s: "巧變穿陣", skType: "dmg" },
+  { n: "姜維", t: "blue", c: "Spearman", w: "spear", h: "#27ae60", a: "#2c3e50", f: "#ffe0bd", b: false, s: "幼麟破敵", skType: "buff" },
+  { n: "魯肅", t: "blue", c: "Archer", w: "fan", h: "#27ae60", a: "#795548", f: "#fed0a2", b: true, s: "榻上定策", skType: "buff" },
+  { n: "曹仁", t: "blue", c: "Shieldman", w: "spear", h: "#34495e", a: "#2c3e50", f: "#fed0a2", b: true, s: "固若金湯", skType: "def" },
+  { n: "曹洪", t: "blue", c: "Shieldman", w: "blade", h: "#5d4037", a: "#34495e", f: "#fed0a2", b: true, s: "捨命護衛", skType: "def" },
+  { n: "顏良", t: "blue", c: "Swordsman", w: "blade", h: "#c0392b", a: "#2c3e50", f: "#c58356", b: true, s: "三軍先鋒", skType: "dmg" },
+  { n: "文醜", t: "blue", c: "Spearman", w: "spear", h: "#795548", a: "#2c3e50", f: "#a07855", b: true, s: "河北雙煞", skType: "dmg" },
+  { n: "簡雍", t: "blue", c: "Archer", w: "sword", h: "#34495e", a: "#3498db", f: "#fed0a2", b: false, s: "說客緩兵", skType: "buff" },
+  { n: "華雄", t: "blue", c: "Swordsman", w: "blade", h: "#5d4037", a: "#424242", f: "#c58356", b: true, s: "驍將橫斬", skType: "dmg" },
+  { n: "高順", t: "blue", c: "Shieldman", w: "spear", h: "#34495e", a: "#212121", f: "#fed0a2", b: false, s: "陷陣突擊", skType: "def" },
+  { n: "李嚴", t: "blue", c: "Spearman", w: "spear", h: "#27ae60", a: "#34495e", f: "#fed0a2", b: false, s: "腹心之將", skType: "dmg" },
+  { n: "馬良", t: "blue", c: "Archer", w: "fan", h: "#2ecc71", a: "#ecf0f1", f: "#fff0f5", b: false, s: "白眉定謀", skType: "buff" },
+  { n: "法正", t: "blue", c: "Archer", w: "fan", h: "#34495e", a: "#8e44ad", f: "#8d6e63", b: true, s: "奇謀雪恨", skType: "buff" },
+  { n: "程昱", t: "blue", c: "Archer", w: "fan", h: "#2c3e50", a: "#795548", f: "#fed0a2", b: true, s: "十面埋伏", skType: "dmg" },
+  { n: "荀攸", t: "blue", c: "Archer", w: "fan", h: "#34495e", a: "#2980b9", f: "#fed0a2", b: true, s: "算無遺策", skType: "buff" },
+  { n: "徐庶", t: "blue", c: "Swordsman", w: "sword", h: "#27ae60", a: "#34495e", f: "#fed0a2", b: false, s: "回馬薦葛", skType: "buff" },
+  { n: "孟獲", t: "blue", c: "Shieldman", w: "blade", h: "#795548", a: "#4e342e", f: "#a07855", b: true, s: "蠻王重盔", skType: "def" },
+  { n: "祝融", t: "blue", c: "Archer", w: "blade", h: "#d35400", a: "#c0392b", f: "#ffe0bd", b: false, s: "飛刀百發", skType: "dmg" },
+  { n: "周泰", t: "blue", c: "Shieldman", w: "blade", h: "#37474f", a: "#212121", f: "#c58356", b: false, s: "浴血衛主", skType: "def" },
+  { n: "丁奉", t: "blue", c: "Swordsman", w: "blade", h: "#34495e", a: "#27ae60", f: "#fed0a2", b: true, s: "雪夜短兵", skType: "dmg" },
+  { n: "徐盛", t: "blue", c: "Shieldman", w: "spear", h: "#d35400", a: "#34495e", f: "#fed0a2", b: true, s: "疑城鐵壁", skType: "def" },
+  { n: "黃蓋", t: "blue", c: "Shieldman", w: "blade", h: "#795548", a: "#c0392b", f: "#fed0a2", b: true, s: "苦肉死志", skType: "def" },
+  { n: "程普", t: "blue", c: "Spearman", w: "spear", h: "#5d4037", a: "#34495e", f: "#fed0a2", b: true, s: "三朝虎臣", skType: "dmg" },
+  { n: "韓當", t: "blue", c: "Archer", w: "bow", h: "#e67e22", a: "#34495e", f: "#fed0a2", b: true, s: "踏浪勁射", skType: "dmg" },
+  { n: "陸抗", t: "blue", c: "Shieldman", w: "sword", h: "#27ae60", a: "#bdc3c7", f: "#ffe0bd", b: false, s: "西陵要塞", skType: "def" },
+  { n: "羅憲", t: "blue", c: "Shieldman", w: "spear", h: "#7f8c8d", a: "#2c3e50", f: "#fed0a2", b: true, s: "永安死守", skType: "def" },
+  { n: "王濬", t: "blue", c: "Spearman", w: "spear", h: "#34495e", a: "#2980b9", f: "#fed0a2", b: true, s: "樓船破浪", skType: "dmg" },
+  { n: "杜預", t: "blue", c: "Swordsman", w: "sword", h: "#2c3e50", a: "#8e44ad", f: "#fed0a2", b: true, s: "勢如破竹", skType: "buff" },
+  { n: "郝昭", t: "blue", c: "Shieldman", w: "spear", h: "#37474f", a: "#212121", f: "#fed0a2", b: true, s: "陳倉絕壁", skType: "def" },
+  { n: "郭淮", t: "blue", c: "Spearman", w: "spear", h: "#34495e", a: "#7f8c8d", f: "#fed0a2", b: true, s: "鐵籠屯防", skType: "def" },
+  { n: "陳泰", t: "blue", c: "Shieldman", w: "sword", h: "#7f8c8d", a: "#34495e", f: "#fed0a2", b: false, s: "解圍洮水", skType: "buff" },
+  { n: "張任", t: "blue", c: "Archer", w: "bow", h: "#5d4037", a: "#2c3e50", f: "#c58356", b: true, s: "落鳳伏殺", skType: "dmg" },
+  { n: "嚴顏", t: "blue", c: "Archer", w: "bow", h: "#7f8c8d", a: "#34495e", f: "#fed0a2", b: true, s: "剛烈引弓", skType: "dmg" },
+
+  // 綠階 (在野健兒與軍營骨幹 - 共 35 人)
+  { n: "周倉", t: "green", c: "Swordsman", w: "blade", h: "#5d4037", a: "#4e342e", f: "#8d6e63", b: true, s: "健步劈", skType: "dmg" },
+  { n: "廖化", t: "green", c: "Shieldman", w: "spear", h: "#78909c", a: "#455a64", f: "#f5cba7", b: false, s: "鐵壁防守", skType: "def" },
+  { n: "關平", t: "green", c: "Spearman", w: "blade", h: "#1b5e20", a: "#2e7d32", f: "#fed0a2", b: false, s: "忠義奮戰", skType: "dmg" },
+  { n: "關興", t: "green", c: "Blade", w: "blade", h: "#1b5e20", a: "#2e7d32", f: "#ffe0bd", b: false, s: "虎父虎子", skType: "dmg" },
+  { n: "張苞", t: "green", c: "Spearman", w: "spear", h: "#212121", a: "#37474f", f: "#a07855", b: false, s: "猛將破圍", skType: "dmg" },
+  { n: "于禁", t: "green", c: "Shieldman", w: "spear", h: "#34495e", a: "#2c3e50", f: "#fed0a2", b: true, s: "嚴整軍紀", skType: "def" },
+  { n: "李典", t: "green", c: "Archer", w: "bow", h: "#5c6bc0", a: "#3949ab", f: "#fed0a2", b: false, s: "長策壓制", skType: "dmg" },
+  { n: "樂進", t: "green", c: "Swordsman", w: "sword", h: "#c2185b", a: "#880e4f", f: "#fed0a2", b: false, s: "先登破壁", skType: "dmg" },
+  { n: "孫尚香", t: "green", c: "Archer", w: "bow", h: "#e91e63", a: "#c2185b", f: "#ffe0bd", b: false, s: "梟姬迅矢", skType: "dmg" },
+  { n: "馬岱", t: "green", c: "Spearman", w: "spear", h: "#7f8c8d", a: "#27ae60", f: "#ffe0bd", b: false, s: "伏兵策馬", skType: "dmg" },
+  { n: "張寶", t: "green", c: "Archer", w: "sword", h: "#f39c12", a: "#d35400", f: "#dfb180", b: true, s: "妖術黑風", skType: "dmg" },
+  { n: "張梁", t: "green", c: "Swordsman", w: "blade", h: "#f39c12", a: "#34495e", f: "#dfb180", b: true, s: "黃天幻惑", skType: "dmg" },
+  { n: "紀靈", t: "green", c: "Spearman", w: "blade", h: "#f1c40f", a: "#34495e", f: "#c58356", b: true, s: "三尖兩刃", skType: "dmg" },
+  { n: "陳宮", t: "green", c: "Archer", w: "fan", h: "#34495e", a: "#5d4037", f: "#fed0a2", b: true, s: "智計牽制", skType: "buff" },
+  { n: "糜芳", t: "green", c: "Shieldman", w: "sword", h: "#78909c", a: "#37474f", f: "#fed0a2", b: false, s: "怯退架盾", skType: "def" },
+  { n: "潘璋", t: "green", c: "Swordsman", w: "blade", h: "#37474f", a: "#1b5e20", f: "#c58356", b: true, s: "伏擊暗斬", skType: "dmg" },
+  { n: "馬忠", t: "green", c: "Archer", w: "bow", h: "#34495e", a: "#1b5e20", f: "#a07855", b: false, s: "暗放冷箭", skType: "dmg" },
+  { n: "朱然", t: "green", c: "Archer", w: "bow", h: "#e67e22", a: "#34495e", f: "#ffe0bd", b: false, s: "火箭封江", skType: "dmg" },
+  { n: "蔣欽", t: "green", c: "Archer", w: "bow", h: "#d35400", a: "#2c3e50", f: "#fed0a2", b: true, s: "水戰引弓", skType: "dmg" },
+  { n: "陳武", t: "green", c: "Spearman", w: "spear", h: "#c0392b", a: "#3e2723", f: "#c58356", b: false, s: "廬江悍卒", skType: "dmg" },
+  { n: "董襲", t: "green", c: "Shieldman", w: "blade", h: "#795548", a: "#212121", f: "#8d6e63", b: true, s: "斷纜力戰", skType: "def" },
+  { n: "凌統", t: "green", c: "Swordsman", w: "sword", h: "#e67e22", a: "#34495e", f: "#fed0a2", b: false, s: "少年驍勇", skType: "dmg" },
+  { n: "諸葛瑾", t: "green", c: "Archer", w: "fan", h: "#27ae60", a: "#34495e", f: "#fed0a2", b: true, s: "篤實長者", skType: "buff" },
+  { n: "顧雍", t: "green", c: "Archer", w: "fan", h: "#34495e", a: "#bdc3c7", f: "#fed0a2", b: false, s: "沉穩定相", skType: "buff" },
+  { n: "張昭", t: "green", c: "Archer", w: "fan", h: "#7f8c8d", a: "#5d4037", f: "#fed0a2", b: true, s: "江東顧命", skType: "buff" },
+  { n: "華歆", t: "green", c: "Archer", w: "sword", h: "#34495e", a: "#2c3e50", f: "#fed0a2", b: true, s: "迎合時變", skType: "buff" },
+  { n: "王朗", t: "green", c: "Archer", w: "fan", h: "#7f8c8d", a: "#3e2723", f: "#fed0a2", b: true, s: "舌辯陣前", skType: "buff" },
+  { n: "牛金", t: "green", c: "Shieldman", w: "blade", h: "#5d4037", a: "#37474f", f: "#c58356", b: false, s: "突入救主", skType: "def" },
+  { n: "李傕", t: "green", c: "Spearman", w: "spear", h: "#3e2723", a: "#212121", f: "#a07855", b: true, s: "飛熊亂政", skType: "dmg" },
+  { n: "郭汜", t: "green", c: "Swordsman", w: "blade", h: "#5d4037", a: "#3e2723", f: "#8d6e63", b: true, s: "劫掠長安", skType: "dmg" },
+  { n: "張濟", t: "green", c: "Spearman", w: "spear", h: "#34495e", a: "#5d4037", f: "#fed0a2", b: true, s: "西涼鐵騎", skType: "dmg" },
+  { n: "公孫瓚", t: "green", c: "Spearman", w: "spear", h: "#ecf0f1", a: "#2980b9", f: "#fed0a2", b: false, s: "白馬奔襲", skType: "dmg" },
+  { n: "陶謙", t: "green", c: "Archer", w: "fan", h: "#7f8c8d", a: "#27ae60", f: "#fed0a2", b: true, s: "三讓徐州", skType: "buff" },
+  { n: "劉表", t: "green", c: "Archer", w: "sword", h: "#34495e", a: "#795548", f: "#fed0a2", b: true, s: "坐談自守", skType: "buff" },
+  { n: "劉璋", t: "green", c: "Shieldman", w: "sword", h: "#5d4037", a: "#27ae60", f: "#fed0a2", b: false, s: "闇弱納降", skType: "def" }
+];
+
+const FORGE_ITEMS = [
+  { id: "w_g1", name: "生鐵環首刀", tier: "green", atk: 15, price: 80, eff: "基礎步卒利刃" },
+  { id: "w_g2", name: "獵戶杉木弓", tier: "green", atk: 12, price: 80, eff: "盲區外穩定輸出" },
+  { id: "w_b1", name: "點鋼混元槍", tier: "blue", atk: 28, price: 200, eff: "中距破甲 +5%" },
+  { id: "w_b2", name: "玄鐵硬藤盾", tier: "blue", atk: 18, price: 200, eff: "前鋒防禦減傷" },
+  { id: "w_p1", name: "百辟倚天劍", tier: "purple", atk: 45, price: 420, eff: "暴擊率提升 15%" },
+  { id: "w_p2", name: "元戎諸葛弩", tier: "purple", atk: 40, price: 420, eff: "遠距連環打擊" },
+  { id: "w_r1", name: "青龍偃月刀", tier: "red", atk: 75, price: 900, eff: "破甲撕裂重創" },
+  { id: "w_r2", name: "方天畫戟", tier: "red", atk: 85, price: 1000, eff: "無雙物理狂暴" }
+];
+
+const CHAPTERS = [];
+const HISTORICAL_CAMPAIGNS = [
+  { t: "幽州起兵·平定張梁", b: "張梁", c: "黃巾之亂", s: "黃巾妖黨肆虐幽燕，義勇軍初試啼聲！", e: ["黃巾先鋒", "黃巾長矛手", "黃巾妖道"] },
+  { t: "潁川血火·圍剿張寶", b: "張寶", c: "黃巾之亂", s: "皇甫嵩朱儁火攻潁川，波才張寶頑抗！", e: ["黃巾精銳", "黃巾刀盾兵", "黃巾弓弩手"] },
+  { t: "汜水關前·先拔頭籌", b: "華雄", c: "討伐董卓", s: "西涼大都督華雄按刀立關，關東聯軍受挫！", e: ["西涼鐵騎", "西涼重甲步兵", "西涼神射手", "隨軍祭酒"] },
+  { t: "虎牢天險·三英戰呂", b: "呂布", c: "討伐董卓", s: "方天畫戟赤兔嘶鳴，天下第一猛將親臨陣前！", e: ["并州狼騎", "陷陣親兵", "董卓羽林騎", "飛騎射手"] },
+  { t: "界橋爭雄·白馬義從", b: "顏良", c: "河北爭霸", s: "袁紹公孫瓚決戰界橋，大戟士列陣待發！", e: ["河北先鋒", "大戟重步兵", "麴義先登弩", "河北驍騎"] },
+  { t: "匡亭之戰·逐走袁術", b: "紀靈", c: "中原逐鹿", s: "淮南大將紀靈提三尖刀，袁術十萬先鋒列陣！", e: ["淮南刀斧手", "淮南長槍營", "精銳盾步兵"] },
+  { t: "濮陽鏖戰·火海爭雄", b: "陳宮", c: "中原逐鹿", s: "陳宮智謀反間兗州，呂布濮陽奇襲曹操！", e: ["陷陣死士", "并州飛騎", "伏兵弓手", "重甲步兵"] },
+  { t: "宛城死難·絕地血戰", b: "典韋", c: "宛城之變", s: "張繡降而復叛，夜襲曹營，火光衝天！", e: ["宛城夜襲兵", "叛軍驍勇槍", "伏擊長弓手", "刺客死士"] },
+  { t: "白門樓破·鬼神落幕", b: "高順", c: "下邳之戰", s: "水淹下邳，白門樓前陷陣營作最後死鬥！", e: ["陷陣營甲兵", "并州重騎", "下邳弓箭手", "親隨刀兵"] },
+  { t: "官渡序幕·白馬斬良", b: "文醜", c: "官渡之戰", s: "河北名將文醜引軍渡河，延津白馬告急！", e: ["河北中軍步兵", "河北大戟兵", "河北強弩營", "輕騎斥候"] },
+  { t: "夜襲烏巢·焚盡糧草", b: "于禁", c: "官渡之戰", s: "曹操親提五千輕騎夜馳烏巢，烈焰遮天！", e: ["烏巢守糧官", "曹軍突襲精騎", "重裝甲士", "伏路弩手"] },
+  { t: "博望坡火·軍師初捷", b: "李典", c: "三顧茅廬", s: "博望狹道蘆葦叢生，諸葛臥龍初出茅廬！", e: ["曹軍前鋒盾", "博望先鋒步兵", "隨軍弓手"] },
+  { t: "新野出奔·樊城避難", b: "曹仁", c: "荊襄風雲", s: "八門金鎖陣被破，曹仁提大軍壓境追擊！", e: ["八門金鎖重陣", "樊城鐵壁步兵", "曹軍大戟將", "百步神射"] },
+  { t: "長坂雄風·單騎救主", b: "夏侯惇", c: "長坂之役", s: "百萬曹軍南下，趙子龍七進七出，張翼德斷橋！", e: ["虎豹精騎", "虎豹飛騎", "曹營前哨弩", "追風先鋒", "黑甲驍將"] },
+  { t: "赤壁鏖兵·烈火張天", b: "周瑜", c: "赤壁之戰", s: "長江浪涌，火燒連環赤壁，八十萬大軍崩解！", e: ["東吳樓船先鋒", "水軍重甲兵", "東吳強弩手", "錦帆精銳"] },
+  { t: "華容古道·絕處逢生", b: "周倉", c: "赤壁餘波", s: "曹公敗走華容道，泥濘沼澤伏兵四起！", e: ["荊襄追擊騎", "蜀漢伏路槍", "林中哨探弩"] },
+  { t: "進取長沙·大義釋忠", b: "黃忠", c: "平定荊南", s: "關公戰黃忠，寶鵰弓射盔纓，義氣干雲！", e: ["長沙精裝步兵", "荊南弓弩營", "長沙刀盾校尉", "先鋒突騎"] },
+  { t: "潼關大戰·割鬚棄袍", b: "馬超", c: "西北烽煙", s: "西涼錦馬超為父報仇，渭水潼關殺得曹操奪路！", e: ["西涼重甲鐵騎", "羌族投槍兵", "西涼悍刀兵", "關中步騎"] },
+  { t: "葭萌關下·虎將對決", b: "張郃", c: "進圖西川", s: "張郃引軍犯葭萌，老將黃忠嚴顏並轡迎敵！", e: ["魏武精銳步兵", "大郃親軍", "硬弓死士", "先鋒突刺手"] },
+  { t: "雒城悲歌·金雁截擊", b: "龐統", c: "西川平定", s: "落鳳坡前風蕭蕭，川軍名將張任埋伏精兵！", e: ["川蜀竹甲兵", "金雁橋重弓", "西川伏路死士", "近衛盾兵"] },
+  { t: "瓦口隘破·智取張郃", b: "張郃", c: "漢中風雲", s: "張翼德巧借地形，三寨連環破張郃！", e: ["瓦口隘守軍", "魏國突擊槍", "山地伏兵", "強弓阻擊手"] },
+  { t: "定軍山巔·刀斬夏侯", b: "夏侯惇", c: "漢中風雲", s: "法正揮旗，黃忠自高馳下，老驥伏櫪斬妙才！", e: ["定軍山守營兵", "魏武虎賁侍衛", "高地射鵰手", "黑鎧親隨"] },
+  { t: "漢水之神·渾身是膽", b: "徐晃", c: "漢中爭奪", s: "偃月陣大開，趙子龍匹馬單槍拒曹瞞百萬！", e: ["漢水精銳騎", "長驅追擊步兵", "魏中軍弓兵", "鐵盾校尉"] },
+  { t: "襄陽拔城·震動中原", b: "曹仁", c: "荊州北伐", s: "關羽提三湘之眾圍襄樊，曹仁困守樊城！", e: ["襄陽重裝盾衛", "守城連弩手", "樊城敢死隊", "魏軍巡防騎"] },
+  { t: "水淹七軍·威震華夏", b: "于禁", c: "樊城之役", s: "霖雨傾盆漢水暴漲，龐德抬櫬于禁降漢！", e: ["水寨浮舟兵", "曹營避水殘兵", "青泥窪弩手", "于禁親軍"] },
+  { t: "白衣渡江·烽火暗熄", b: "呂蒙", c: "荊州之變", s: "呂子明潛師半渡，陸伯言暗書致意，荊襄危局！", e: ["東吳奇襲隊", "白衣偽裝兵", "東吳橫江射手", "解煩精甲兵"] },
+  { t: "臨沮絕道·忠魂長照", b: "潘璋", c: "麥城突圍", s: "英雄末路走麥城，雪嶺長松落忠骨！", e: ["吳國伏擊刀手", "馬忠絆馬死士", "臨沮哨卡弓手", "圍剿親騎"] },
+  { t: "先主稱尊·興師伐吳", b: "甘寧", c: "夷陵之戰", s: "劉玄德起傾國之兵，黃金甲染復仇之血！", e: ["東吳水寨悍將", "錦帆百騎兵", "江表死士", "先鋒短刀營"] },
+  { t: "夷陵連營·烈焰百里", b: "陸遜", c: "夷陵之戰", s: "陸遜堅壁不出，待暑熱藉順風一炬燒連營！", e: ["江南縱火死士", "東吳強攻盾陣", "陸氏近衛步手", "穿甲神弩兵"] },
+  { t: "八陣玄機·退敵白帝", b: "陸遜", c: "夷陵餘波", s: "諸葛亮八陣圖壘石退陸遜，魚腹浦狂瀾！", e: ["迷魂石陣傀儡", "東吳受阻先鋒", "追風快刀手"] },
+  { t: "南中平亂·七擒孟獲", b: "魏延", c: "平定南蠻", s: "五月渡瀘深入不毛，攻心為上化南疆！", e: ["蠻族藤甲兵", "象兵長矛手", "南蠻飛刀手", "毒泉巫蠱客"] },
+  { t: "出師北伐·首出祁山", b: "曹真", c: "北伐中原", s: "鞠躬盡瘁死而後已，南安安定天水三郡皆應！", e: ["魏關中大軍", "天水防禦盾", "隴右強弩兵", "巡防銳騎"] },
+  { t: "街亭之失·痛斬馬謖", b: "張郃", c: "第一次北伐", s: "馬謖捨水紮山，張郃斷水源四面合圍！", e: ["街亭包圍精騎", "斷水重步兵", "隴西長矛營", "高地狙擊弓"] },
+  { t: "石亭之戰·偽降破魏", b: "太史慈", c: "吳魏交兵", s: "周魴斷髮詐降，陸遜大破曹休十萬精銳！", e: ["東吳策應步隊", "破陣先登兵", "石亭弩手"] },
+  { t: "陳倉堅城·郝昭扼險", b: "司馬懿", c: "第二次北伐", s: "郝昭三千甲兵固守陳倉，飛梯衝車皆不能破！", e: ["陳倉石砲守軍", "魏國連環盾陣", "塞道大戟士", "強弓守兵"] },
+  { t: "上方谷火·天降大雨", b: "司馬懿", c: "上方谷之戰", s: "上方谷地雷火起，司馬父子待斃，驟降甘霖！", e: ["司馬親兵虎賁", "魏軍重裝護衛", "谷口死戰步兵", "玄甲勁弩兵"] },
+  { t: "五丈原風·星落秋風", b: "司馬懿", c: "五丈原之役", s: "長星墜落五丈原，出師未捷身先死，長使英雄淚滿襟！", e: ["司馬禁衛長槍", "中原主力重盾", "鷹視步弓兵", "魏宿衛死士"] },
+  { t: "高平陵變·司馬擅政", b: "司馬懿", c: "魏國權變", s: "司馬懿起死士三千閉洛陽城門，曹爽伏誅！", e: ["司馬私養死士", "洛陽禁軍叛兵", "伏甲先鋒", "內宮神射手"] },
+  { t: "東興堤戰·雪夜破敵", b: "丁奉", c: "東興之戰", s: "丁奉雪夜裸衣操短兵，大破諸葛誕魏軍！", e: ["東吳短刀勇士", "雪地行軍輕兵", "江東破陣營"] },
+  { t: "鐵籠山圍·薑維奇謀", b: "郭淮", c: "薑維北伐", s: "薑維引蜀軍圍郭淮於鐵籠山，糧水俱絕！", e: ["魏國隴西守軍", "鐵籠山重戟兵", "護糧刀衛", "邊塞弓箭手"] },
+  { t: "壽春三叛·淮南喋血", b: "文鴦", c: "淮南兵變", s: "文鴦單騎退雄兵，淮南兵戈連年，司馬昭鎮壓！", e: ["淮南叛將精銳", "文鴦近衛驃騎", "敢死步卒", "叛亂連弩隊"] },
+  { t: "洮水大捷·痛擊王經", b: "鄧艾", c: "薑維北伐", s: "薑維洮水大破魏將王經，斬首數萬！", e: ["魏洮西駐屯軍", "邊關折衝步兵", "隴右長弓手"] },
+  { t: "段谷之敗·鄧艾伏擊", b: "鄧艾", c: "薑維北伐", s: "鄧艾神機妙算，於段谷伏擊蜀軍，蜀漢銳氣折損！", e: ["段谷伏兵大戟", "鄧艾奇襲騎兵", "險道卡位盾衛", "隴山神射手"] },
+  { t: "劍閣天險·薑維死守", b: "鍾會", c: "魏滅蜀之戰", s: "一夫當關萬夫莫開，鍾會十萬大軍受挫於劍門！", e: ["鍾會中原先鋒", "魏國攻城盾軍", "先登長槍營", "劍閣阻擊弩"] },
+  { t: "偷渡陰平·神兵天降", b: "鄧艾", c: "魏滅蜀之戰", s: "鄧艾裹氈滾崖，行無人之地七百里，直逼綿竹！", e: ["陰平奇襲精甲", "偷渡輕裝悍卒", "綿竹破營騎兵", "突擊刀斧手"] },
+  { t: "綿竹血戰·諸葛殉節", b: "鄧艾", c: "魏滅蜀之戰", s: "諸葛瞻父子力戰綿竹陣亡，後主出降！", e: ["魏精銳入蜀軍", "鄧艾陷陣虎衛", "破關重甲兵", "精裝弓弩營"] },
+  { t: "永安防守·羅憲拒吳", b: "陸遜", c: "蜀漢覆亡", s: "羅憲二千孤軍固守永安，抗東吳步協陸抗圍攻！", e: ["吳國攻城大盾", "江陵重裝步兵", "水陸連弩手"] },
+  { t: "西陵爭雄·陸抗破晉", b: "羊祜", c: "晉吳對峙", s: "陸抗築雙重長圍，破羊祜救兵，克復西陵！", e: ["晉軍北來主力", "羊祜折衝都尉", "西陵重裝長槍", "北方善射營"] },
+  { t: "長江風冷·樓船下益", b: "王濬", c: "西晉滅吳", s: "王濬樓船下益州，金陵王氣黯然收！", e: ["晉軍巨艦步兵", "水戰突擊銳騎", "長江哨探弓弩", "平吳先鋒軍"] },
+  { t: "三家歸晉·天下混一", b: "司馬炎", c: "天下一統", s: "孫皓銜璧出降，三國五十年硝煙盡散，天下一統！", e: ["晉武帝御林軍", "中原羽林重甲", "天下大戟禁軍", "皇家神弩侍衛", "龍驤虎賁大將"] }
+];
+
+for(let i=0; i<50; i++) {
+  const camp = HISTORICAL_CAMPAIGNS[i];
+  const bossHero = HERO_NAMES.find(h => h.n === camp.b) || HERO_NAMES[0];
+  CHAPTERS.push({
+    index: i,
+    title: `第 ${i+1} 關：${camp.t}`,
+    era: camp.c,
+    story: camp.s,
+    bossName: bossHero.n,
+    bossTier: bossHero.t,
+    bossCls: bossHero.c,
+    bossSvg: bossHero,
+    enemyMinions: camp.e,
+    reward: 150 + i * 35,
+    hp: 280 + i * 28,
+    atk: 45 + i * 5,
+    def: 25 + i * 4
+  });
+}
+
+let userGold = 600;
+let curChapterIdx = 0;
+let userRoster = [];
+let deployedIds = [];
+let battleUnits = [];
+let selectedUnit = null;
+let curEquip = FORGE_ITEMS[0];
+let turn = 1;
+let isEnemyPhase = false;
+
+const avatarHero = {
+  id: "hero_avatar", name: "項雲", cls: "Spearman", tier: "purple",
+  stars: 1, shards: 0, weapon: "spear", hp: 260, atk: 48, def: 30,
+  skillName: "戰意昂揚", skType: "buff",
+  svg: { f: "#ffdbac", a: "#d4af37", h: "#2c3e50", w: "spear", b: false }
+};
+userRoster.push(avatarHero);
+deployedIds.push(avatarHero.id);
+
+function addHeroDirect(name) {
+  const base = HERO_NAMES.find(h => h.n === name);
+  if(base) {
+    const hObj = {
+      id: "hero_" + base.n, name: base.n, cls: base.c, tier: base.t,
+      stars: 1, shards: 0, weapon: base.w,
+      hp: base.t==='red'?320:250, atk: base.t==='red'?62:48, def: base.t==='red'?38:30,
+      skillName: base.s, skType: base.skType,
+      svg: { f: base.f, a: base.a, h: base.h, w: base.w, b: base.b }
+    };
+    userRoster.push(hObj);
+    deployedIds.push(hObj.id);
+  }
+}
+addHeroDirect("關羽");
+addHeroDirect("張飛");
+
+function switchTab(tKey) {
+  ['battle', 'deploy', 'tavern', 'forge'].forEach(k => {
+    document.getElementById(`${k}-view`).style.display = (k === tKey ? 'flex' : 'none');
+    document.getElementById(`btn-tab-${k}`).classList.toggle('btn-active', k === tKey);
+  });
+  if(tKey === 'deploy') renderDeployList();
+  if(tKey === 'tavern') renderTavernList();
+  if(tKey === 'forge') renderForgeList();
+  if(tKey === 'battle') renderBoard();
+}
+
+function updateGold() {
+  document.getElementById('gold-hud').innerText = `💰 ${userGold}`;
+  document.getElementById('deploy-hud').innerText = deployedIds.length;
+}
+
+function renderDeployList() {
+  const container = document.getElementById('deploy-list');
+  container.innerHTML = '';
+  document.getElementById('deploy-count').innerText = deployedIds.length;
+
+  userRoster.forEach(u => {
+    const isDeployed = deployedIds.includes(u.id);
+    const card = document.createElement('div');
+    card.className = `card bg-${u.tier}`;
+    card.innerHTML = `
+      <div class="card-thumb">${renderUnitSvg(u.svg.f, u.svg.a, u.svg.h, u.svg.w, u.svg.b)}</div>
+      <div style="font-weight:bold; font-size:14px;" class="tier-${u.tier}">${u.name} (★${u.stars})</div>
+      <div style="font-size:11px; color:#ffd54f;">兵種: ${u.cls} | 碎片: ${u.shards}/5</div>
+      <div style="font-size:11px; color:var(--dim);">攻: ${u.atk + (isDeployed?curEquip.atk:0)} | 防: ${u.def} | 血: ${u.hp}</div>
+      <button style="margin-top:8px; width:100%;" class="${isDeployed?'btn-act':'btn-main'}" 
+        ${u.id==='hero_avatar'?'disabled':''} onclick="toggleDeploy('${u.id}')">
+        ${u.id==='hero_avatar'?'主帥鎖定':(isDeployed?'✔ 已出征 (點擊下陣)':'＋ 點擊上陣')}
+      </button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleDeploy(id) {
+  if(deployedIds.includes(id)) {
+    deployedIds = deployedIds.filter(x => x !== id);
+  } else {
+    if(deployedIds.length >= 6) {
+      alert("出征軍團已達 6 人滿員！請先解除其他武將。");
+      return;
+    }
+    deployedIds.push(id);
+  }
+  updateGold();
+  renderDeployList();
+}
+
+let currentTavernPool = [];
+function rollRandomTier() {
+  const roll = Math.random() * 100;
+  if (roll < 1) return 'red';        // 紅將機率精準下調至 1%
+  if (roll < 20) return 'purple';    // 紫將 19%
+  if (roll < 55) return 'blue';      // 藍將 35%
+  return 'green';                    // 綠將 45%
+}
+
+function refreshTavern(costMoney) {
+  if(costMoney) {
+    if(userGold < 40) { alert("銅錢不足 40！"); return; }
+    userGold -= 40; updateGold();
+  }
+  currentTavernPool = [];
+  for (let i = 0; i < 4; i++) {
+    const t = rollRandomTier();
+    const candidates = HERO_NAMES.filter(h => h.t === t);
+    const chosen = candidates[Math.floor(Math.random() * candidates.length)] || HERO_NAMES[0];
+    currentTavernPool.push(chosen);
+  }
+  renderTavernList();
+}
+refreshTavern(false);
+
+function renderTavernList() {
+  const container = document.getElementById('tavern-list');
+  container.innerHTML = '';
+  currentTavernPool.forEach((h, idx) => {
+    const cost = TIER_PRICES[h.t];
+    const exist = userRoster.find(u => u.name === h.n);
+    const card = document.createElement('div');
+    card.className = `card bg-${h.t}`;
+    card.innerHTML = `
+      <div class="card-thumb">${renderUnitSvg(h.f, h.a, h.h, h.w, h.b)}</div>
+      <div style="font-weight:bold; font-size:14px;" class="tier-${h.t}">${h.n}</div>
+      <div style="font-size:11px; color:#ffca28;">品階: ${h.t.toUpperCase()} | 戰技: ${h.s}</div>
+      <div style="font-size:11px; color:var(--dim); margin:4px 0;">
+        ${exist ? `軍中在冊 (★${exist.stars} 碎片:${exist.shards}/5)` : '尚未結納'}
+      </div>
+      <button class="btn-main" onclick="buyHero(${idx})">💰 ${cost} 銅錢 ${exist?'+3碎片':'招攬'}</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function buyHero(idx) {
+  const h = currentTavernPool[idx];
+  const cost = TIER_PRICES[h.t];
+  if(userGold < cost) { alert(`銅錢不足 ${cost}！`); return; }
+
+  userGold -= cost; updateGold();
+  const exist = userRoster.find(u => u.name === h.n);
+  if(exist) {
+    exist.shards += 3;
+    let upMsg = `${h.n} 獲得 3 枚將魂碎片 (當前: ${exist.shards}/5)！`;
+    while(exist.shards >= 5) {
+      exist.shards -= 5;
+      exist.stars += 1;
+      exist.atk += 12;
+      exist.hp += 40;
+      exist.def += 10;
+      upMsg += `\n✨ 將魂突破！【${exist.name}】升星至 ★${exist.stars}！攻防氣血大幅精進！`;
+    }
+    alert(upMsg);
+  } else {
+    userRoster.push({
+      id: "hero_" + h.n, name: h.n, cls: h.c, tier: h.t,
+      stars: 1, shards: 0, weapon: h.w,
+      hp: h.t==='red'?320:250, atk: h.t==='red'?62:48, def: h.t==='red'?38:30,
+      skillName: h.s, skType: h.skType,
+      svg: { f: h.f, a: h.a, h: h.h, w: h.w, b: h.b }
+    });
+    alert(`🎉 成功延攬大將【${h.n}】！可至「軍團備戰」部署上陣。`);
+  }
+  renderTavernList();
+}
+
+function renderForgeList() {
+  const container = document.getElementById('forge-list');
+  container.innerHTML = '';
+  FORGE_ITEMS.forEach(it => {
+    const isEquipped = curEquip.id === it.id;
+    const card = document.createElement('div');
+    card.className = `card bg-${it.tier}`;
+    card.innerHTML = `
+      <div style="font-size:30px; margin-bottom:4px;">⚔</div>
+      <div style="font-weight:bold; font-size:14px;" class="tier-${it.tier}">${it.name}</div>
+      <div style="font-size:12px; color:var(--gold);">全軍物攻 +${it.atk}</div>
+      <div style="font-size:11px; color:var(--dim); min-height:26px;">${it.eff}</div>
+      <button class="${isEquipped?'btn-act':'btn-main'}" onclick="buyWeapon('${it.id}')" ${isEquipped?'disabled':''}>
+        ${isEquipped?'佩戴中':`💰 ${it.price} 鑄造裝備`}
+      </button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function buyWeapon(wId) {
+  const it = FORGE_ITEMS.find(x => x.id === wId);
+  if(userGold < it.price) { alert("銅錢不足！"); return; }
+  userGold -= it.price; updateGold();
+  curEquip = it;
+  alert(`✔ 兵器配備完成！全軍換裝【${it.name}】，物攻加成 +${it.atk}！`);
+  renderForgeList();
+}
+
+function initChapter(chIdx) {
+  const ch = CHAPTERS[chIdx];
+  turn = 1; isEnemyPhase = false; selectedUnit = null;
+  document.getElementById('ch-title').innerText = `${ch.title} (${ch.era})`;
+  document.getElementById('turn-txt').innerText = `回合 1 (玩家行動)`;
+  document.getElementById('story-txt').innerText = `【${ch.bossName}】統帥大軍列陣：「${ch.story}」`;
+
+  battleUnits = [];
+
+  const pCoords = [{x:0,y:5},{x:1,y:5},{x:2,y:5},{x:0,y:4},{x:1,y:4},{x:2,y:4}];
+  deployedIds.forEach((uid, idx) => {
+    const h = userRoster.find(r => r.id === uid);
+    if(h) {
+      battleUnits.push({
+        id: h.id, name: h.name, cls: h.cls, faction: 'player',
+        x: pCoords[idx].x, y: pCoords[idx].y,
+        hp: h.hp, maxHp: h.hp,
+        baseAtk: h.atk + curEquip.atk,
+        baseDef: h.def,
+        atk: h.atk + curEquip.atk, def: h.def,
+        buffTurns: 0, defTurns: 0,
+        hasMoved: false, acted: false, skillCd: 0,
+        skillName: h.skillName, skType: h.skType,
+        svg: h.svg, tier: h.tier
+      });
+    }
+  });
+
+  battleUnits.push({
+    id: "boss_" + chIdx, name: ch.bossName, cls: ch.bossCls, faction: 'enemy',
+    x: 3, y: 0, hp: ch.hp, maxHp: ch.hp,
+    baseAtk: ch.atk, baseDef: ch.def,
+    atk: ch.atk, def: ch.def,
+    buffTurns: 0, defTurns: 0,
+    isBoss: true, hasMoved: false, acted: false, skillCd: 0,
+    skillName: "主帥猛擊", skType: "dmg",
+    svg: { f: ch.bossSvg.f, a: ch.bossSvg.a, h: ch.bossSvg.h, w: ch.bossSvg.w, b: ch.bossSvg.b },
+    tier: ch.bossTier
+  });
+
+  const enemyLayouts = [
+    { x: 3, y: 1, cls: "Shieldman", w: "spear", c: "#37474f" },
+    { x: 2, y: 1, cls: "Spearman", w: "spear", c: "#5d4037" },
+    { x: 4, y: 1, cls: "Swordsman", w: "blade", c: "#424242" },
+    { x: 2, y: 0, cls: "Archer", w: "bow", c: "#2c3e50" },
+    { x: 4, y: 0, cls: "Archer", w: "bow", c: "#2c3e50" }
+  ];
+
+  const minionCount = Math.min(enemyLayouts.length, ch.enemyMinions.length);
+  for(let i=0; i<minionCount; i++) {
+    const mName = ch.enemyMinions[i];
+    const layout = enemyLayouts[i];
+    battleUnits.push({
+      id: `m_${chIdx}_${i}`, name: mName, cls: layout.cls, faction: 'enemy',
+      x: layout.x, y: layout.y,
+      hp: Math.round(ch.hp * 0.5), maxHp: Math.round(ch.hp * 0.5),
+      baseAtk: Math.round(ch.atk * 0.75), baseDef: Math.round(ch.def * 0.85),
+      atk: Math.round(ch.atk * 0.75), def: Math.round(ch.def * 0.85),
+      buffTurns: 0, defTurns: 0,
+      isBoss: false, hasMoved: false, acted: false, skillCd: 0,
+      svg: { f: "#8d6e63", a: layout.c, h: "#212121", w: layout.w, b: false },
+      tier: "green"
+    });
+  }
+
+  log(`=== 【${ch.title}】開戰！敵軍 ${minionCount+1} 人結成陣勢！===`);
+  selectedUnit = battleUnits[0];
+  renderBoard();
+}
+
+function log(msg) {
+  const el = document.getElementById('battle-log');
+  el.innerHTML += `<div>> ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function renderBoard() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  for(let y=0; y<6; y++) {
+    for(let x=0; x<6; x++) {
+      const cell = document.createElement('div');
+      const t = (x===2&&y===2)||(x===3&&y===2)?'fort':((x+y)%4===1?'forest':'plains');
+      cell.className = `cell ${t}`;
+      cell.onclick = () => onCellClick(x, y);
+
+      const u = battleUnits.find(b => b.x === x && b.y === y && b.hp > 0);
+      if(u) {
+        cell.classList.add('cell-unit', u.faction==='player'?'unit-p':'unit-e');
+        if(u.isBoss) cell.classList.add('unit-e-boss');
+        if(u.defTurns > 0) cell.classList.add('unit-shielded');
+        if(u === selectedUnit) cell.classList.add('cell-selected');
+        if(u.hasMoved && !u.acted) cell.classList.add('cell-moved');
+        if(u.acted) cell.classList.add('cell-acted');
+        cell.innerHTML = `<strong>${u.name}</strong><span style="font-size:9.5px">${u.hp}/${u.maxHp}</span>`;
+      }
+      grid.appendChild(cell);
+    }
+  }
+  updateRightConsole();
+}
+
+function updateRightConsole() {
+  const avBox = document.getElementById('cur-avatar');
+  const infoBox = document.getElementById('cur-info');
+  const skillBox = document.getElementById('cur-skills');
+  skillBox.innerHTML = '';
+
+  if(!selectedUnit) {
+    avBox.innerHTML = ''; infoBox.innerHTML = '點擊棋子檢視軍情'; return;
+  }
+  const u = selectedUnit;
+  avBox.innerHTML = renderUnitSvg(u.svg.f, u.svg.a, u.svg.h, u.svg.w, u.svg.b);
+  infoBox.innerHTML = `
+    <div style="font-size:14px; font-weight:bold;" class="tier-${u.tier}">${u.name} (${u.cls})</div>
+    <div>生命: <strong style="color:var(--c-green);">${u.hp}</strong> / ${u.maxHp}</div>
+    <div>攻擊: ${u.atk} ${u.buffTurns>0?'<span style="color:#f1c40f;">[增益中]</span>':''} | 防禦: ${u.def} ${u.defTurns>0?'<span style="color:#3498db;">[防護中]</span>':''}</div>
+    <div style="color:var(--gold); font-size:11px;">
+      ${u.cls === 'Archer' ? '🎯 特性：射程 2~3 格（貼身 1 格盲區不可攻擊）' : '⚔ 特性：近身 1 格突擊'}
+    </div>
+    <div style="color:${u.acted?'#e74c3c':(u.hasMoved?'#f1c40f':'#2ecc71')}">
+      ${u.acted?'本回合已行動':(u.hasMoved?'已走位 (可攻擊或待命)':'待命中 (可移動)')}
+    </div>
+  `;
+
+  if(u.faction === 'player' && !u.acted && !isEnemyPhase) {
+    const btnSk = document.createElement('button');
+    btnSk.className = 'btn-skill';
+    btnSk.innerHTML = `⚡ 戰技：${u.skillName} ${u.skillCd>0?`(${u.skillCd}CD)`:'[釋放]'}`;
+    btnSk.disabled = u.skillCd > 0;
+    btnSk.onclick = () => executeSkill(u);
+    skillBox.appendChild(btnSk);
+
+    const btnWait = document.createElement('button');
+    btnWait.style.width = '100%';
+    btnWait.innerText = u.hasMoved ? '🛑 就地待命' : '🛡 原地戒備';
+    btnWait.onclick = () => finishAction(u);
+    skillBox.appendChild(btnWait);
+  }
+}
+
+function executeSkill(u) {
+  // 1. 太史慈 貫日連珠 穿透兩名敵軍
+  if (u.skType === 'pierce') {
+    const enemies = battleUnits.filter(e => e.faction === 'enemy' && e.hp > 0);
+    const dirs = [{dx:1, dy:0}, {dx:-1, dy:0}, {dx:0, dy:1}, {dx:0, dy:-1}];
+    let bestLine = null;
+
+    for (const d of dirs) {
+      const lineHits = [];
+      for (let step = 1; step <= 4; step++) {
+        const tx = u.x + d.dx * step;
+        const ty = u.y + d.dy * step;
+        const hit = enemies.find(e => e.x === tx && e.y === ty);
+        if (hit) {
+          lineHits.push(hit);
+          if (lineHits.length === 2) break;
+        }
+      }
+      if (lineHits.length >= 2) {
+        bestLine = lineHits;
+        break;
+      } else if (lineHits.length === 1 && !bestLine) {
+        bestLine = lineHits;
+      }
+    }
+
+    if (!bestLine || bestLine.length === 0) {
+      alert("太史慈直線上無有效目標！請走位至與敵軍直線對齊位置。");
+      return;
+    }
+
+    u.skillCd = 2;
+    bestLine.forEach((target, idx) => {
+      const dmg = Math.max(1, Math.round(u.atk * (1.6 - idx * 0.2) - target.def * 0.4));
+      target.hp -= dmg;
+      log(`🏹 太史慈狂放【貫日連珠】，神矢呼嘯貫穿第 ${idx+1} 號目標 ${target.name}，造成 ${dmg} 點穿透打擊！`);
+      if (target.hp <= 0) log(`☠ 敵將【${target.name}】被貫日箭洞穿落馬！`);
+    });
+    finishAction(u);
+    return;
+  }
+
+  // 2. 增益技能 (Buff): 全體或周圍攻擊提升
+  if (u.skType === 'buff') {
+    u.skillCd = 3;
+    const allies = battleUnits.filter(a => a.faction === 'player' && a.hp > 0 && Math.abs(a.x - u.x) + Math.abs(a.y - u.y) <= 2);
+    allies.forEach(a => {
+      a.buffTurns = 2;
+      a.atk = Math.round(a.baseAtk * 1.3);
+    });
+    log(`✨ ${u.name} 施展【${u.skillName}】，鼓舞軍心！周圍友軍攻擊力提升 30%（持續 2 回合）！`);
+    finishAction(u);
+    return;
+  }
+
+  // 3. 防禦技能 (Defense): 自身及友軍護盾與防禦強化
+  if (u.skType === 'def') {
+    u.skillCd = 3;
+    const allies = battleUnits.filter(a => a.faction === 'player' && a.hp > 0 && Math.abs(a.x - u.x) + Math.abs(a.y - u.y) <= 2);
+    allies.forEach(a => {
+      a.defTurns = 2;
+      a.def = Math.round(a.baseDef * 1.5);
+    });
+    log(`🛡 ${u.name} 展開【${u.skillName}】，列陣嚴防！周圍部隊防禦力暴增 50%（持續 2 回合）！`);
+    finishAction(u);
+    return;
+  }
+
+  // 4. 普通單體或常規打擊戰技 (Damage)
+  const isArc = u.cls === 'Archer';
+  const target = battleUnits.find(e => {
+    if (e.faction !== 'enemy' || e.hp <= 0) return false;
+    const d = Math.abs(e.x - u.x) + Math.abs(e.y - u.y);
+    return isArc ? (d >= 2 && d <= 3) : (d <= 1);
+  });
+  if(!target) {
+    alert(isArc ? "射程 2~3 格內無目標（貼身 1 格不可釋放）！" : "身邊 1 格內沒有敵軍可釋放戰技！");
+    return;
+  }
+  u.skillCd = 2;
+  const dmg = Math.round(u.atk * 1.8 - target.def * 0.4);
+  target.hp -= dmg;
+  log(`💥 ${u.name} 暴起突刺【${u.skillName}】，撕裂 ${target.name} 造成 ${dmg} 點巨創！`);
+  finishAction(u);
+}
+
+function onCellClick(x, y) {
+  if(isEnemyPhase) return;
+  const clicked = battleUnits.find(u => u.x === x && u.y === y && u.hp > 0);
+
+  if(clicked && clicked.faction === 'player' && !clicked.acted) {
+    selectedUnit = clicked; renderBoard(); return;
+  }
+
+  if(selectedUnit && selectedUnit.faction === 'player' && !selectedUnit.acted) {
+    const dist = Math.abs(x - selectedUnit.x) + Math.abs(y - selectedUnit.y);
+    if(clicked && clicked.faction === 'enemy') {
+      if (selectedUnit.cls === 'Archer') {
+        if (dist === 1) {
+          log("❌ 弓兵盲區：敵人已逼近身前 1 格，無法拉弓射擊！");
+          return;
+        }
+        if (dist > 3) {
+          log("❌ 超出弓矢極限射程（最大 3 格）！");
+          return;
+        }
+      } else {
+        if (dist > 1) {
+          log("❌ 近戰兵刃距離不足（射程 1 格）！");
+          return;
+        }
+      }
+
+      const dmg = Math.max(1, selectedUnit.atk - clicked.def);
+      clicked.hp -= dmg;
+      log(`⚔ ${selectedUnit.name} 發動打擊，對 ${clicked.name} 造成 ${dmg} 傷害！`);
+      if(clicked.hp <= 0) log(`☠ 敵將【${clicked.name}】身負重創被斬落馬下！`);
+      finishAction(selectedUnit);
+      return;
+    }
+
+    if(!clicked && !selectedUnit.hasMoved) {
+      if(dist <= 3) {
+        selectedUnit.x = x; selectedUnit.y = y; selectedUnit.hasMoved = true;
+        renderBoard(); return;
+      }
+    }
+  }
+  if(clicked) { selectedUnit = clicked; renderBoard(); }
+}
+
+function finishAction(u) {
+  u.acted = true; u.hasMoved = true; selectedUnit = null; renderBoard();
+  if(checkBattleResult()) return;
+
+  const aliveP = battleUnits.filter(b => b.faction === 'player' && b.hp > 0 && !b.acted);
+  if(aliveP.length === 0) {
+    setTimeout(enemyTurn, 500);
+  }
+}
+
+function enemyTurn() {
+  isEnemyPhase = true;
+  document.getElementById('turn-txt').innerText = `回合 ${turn} (敵軍反撲)`;
+  log(`--- 敵軍陣列全線反擊 ---`);
+
+  const enemies = battleUnits.filter(e => e.faction === 'enemy' && e.hp > 0);
+  const players = battleUnits.filter(p => p.faction === 'player' && p.hp > 0);
+
+  enemies.forEach(e => {
+    if(players.length === 0) return;
+    const isArc = e.cls === 'Archer';
+
+    if (isArc) {
+      const shootTarget = players.find(p => {
+        const d = Math.abs(p.x - e.x) + Math.abs(p.y - e.y);
+        return d >= 2 && d <= 3;
+      });
+
+      if (shootTarget) {
+        const dmg = Math.max(1, e.atk - shootTarget.def);
+        shootTarget.hp -= dmg;
+        log(`🏹 敵方弓兵【${e.name}】精準狙射 ${shootTarget.name}，造成 ${dmg} 點遠程傷害！`);
+        if(shootTarget.hp <= 0) log(`☠ 我方大將【${shootTarget.name}】重傷暫退戰線！`);
+        return;
+      }
+
+      const closeP = players.find(p => (Math.abs(p.x - e.x) + Math.abs(p.y - e.y)) === 1);
+      if (closeP) {
+        const awayDirs = [
+          { dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
+        ].sort((a,b) => {
+          const d1 = Math.abs((e.x+b.dx)-closeP.x) + Math.abs((e.y+b.dy)-closeP.y);
+          const d2 = Math.abs((e.x+a.dx)-closeP.x) + Math.abs((e.y+a.dy)-closeP.y);
+          return d1 - d2;
+        });
+
+        for (const dir of awayDirs) {
+          const nx = e.x + dir.dx;
+          const ny = e.y + dir.dy;
+          if (nx >= 0 && nx < 6 && ny >= 0 && ny < 6 && !battleUnits.some(u => u.x === nx && u.y === ny && u.hp > 0)) {
+            e.x = nx; e.y = ny;
+            log(`💨 敵方弓手【${e.name}】被近身，緊急後撤拉開射程！`);
+            break;
+          }
+        }
+        return;
+      }
+    }
+
+    const target = players.sort((a,b) => (Math.abs(a.x-e.x)+Math.abs(a.y-e.y)) - (Math.abs(b.x-e.x)+Math.abs(b.y-e.y)))[0];
+    const dist = Math.abs(target.x - e.x) + Math.abs(target.y - e.y);
+
+    if(!isArc && dist <= 1) {
+      const dmg = Math.max(1, e.atk - target.def);
+      target.hp -= dmg;
+      log(`👹 ${e.name} 揮兵突刺 ${target.name}，造成 ${dmg} 點打擊！`);
+      if(target.hp <= 0) log(`☠ 我方大將【${target.name}】身負重傷，暫退戰線！`);
+    } else {
+      const dx = target.x > e.x ? 1 : (target.x < e.x ? -1 : 0);
+      const dy = target.y > e.y ? 1 : (target.y < e.y ? -1 : 0);
+      if(!battleUnits.some(u => u.x === e.x+dx && u.y === e.y && u.hp > 0)) e.x += dx;
+      else if(!battleUnits.some(u => u.x === e.x && u.y === e.y+dy && u.hp > 0)) e.y += dy;
+    }
+  });
+
+  battleUnits.forEach(u => {
+    if(u.faction === 'player') {
+      u.acted = false; u.hasMoved = false;
+      if(u.skillCd > 0) u.skillCd--;
+      if(u.buffTurns > 0) {
+        u.buffTurns--;
+        if(u.buffTurns === 0) u.atk = u.baseAtk;
+      }
+      if(u.defTurns > 0) {
+        u.defTurns--;
+        if(u.defTurns === 0) u.def = u.baseDef;
+      }
+    }
+  });
+
+  turn++; isEnemyPhase = false;
+  document.getElementById('turn-txt').innerText = `回合 ${turn} (玩家行動)`;
+  renderBoard();
+  checkBattleResult();
+}
+
+function checkBattleResult() {
+  const boss = battleUnits.find(u => u.faction === 'enemy' && u.isBoss && u.hp > 0);
+  if(!boss) {
+    const ch = CHAPTERS[curChapterIdx];
+    userGold += ch.reward; updateGold();
+    document.getElementById('win-desc').innerText = `敵軍主帥【${ch.bossName}】戰敗潰散，敵軍全線瓦解！奪下戰略重鎮！\n\n歷史紀元：${ch.story}`;
+    document.getElementById('win-reward').innerText = `💰 繳獲軍資賞賜 +${ch.reward} 銅錢！`;
+    document.getElementById('win-modal').style.display = 'flex';
+    return true;
+  }
+  const avatar = battleUnits.find(u => u.id === 'hero_avatar' && u.hp > 0);
+  if(!avatar) {
+    alert("💥 主角戰陣陷落！全軍潰退，請重整旗鼓再來！");
+    location.reload();
+    return true;
+  }
+  return false;
+}
+
+function nextChapter() {
+  document.getElementById('win-modal').style.display = 'none';
+  if(curChapterIdx < 49) {
+    curChapterIdx++;
+    initChapter(curChapterIdx);
+  } else {
+    alert("👑 恭喜你！歷經 50 場史詩大戰，從黃巾亂世戰至三家歸晉，全圖一統！");
+    location.reload();
+  }
+}
+
+initChapter(0);
+updateGold();
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雲端數位工具與互動應用總覽 · Web Apps Hub</title>
+  <meta name="description" content="精選獨立 Web 應用與策略遊戲專區：三國戰棋全紀元、台灣即時路況看板、國道通行費試算與工程吊裝安全計算。">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1a1e2e 0%, #0a0c14 100%);
+      --card-bg: rgba(22, 26, 40, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(99, 102, 241, 0.45);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --gold: #f59e0b;
+      --emerald: #10b981;
+      --cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #a5b4fc;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-hover-border);
+      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 20px 0 rgba(99, 102, 241, 0.15);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .app-icon {
+      font-size: 32px;
+      width: 52px;
+      height: 52px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ver-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .ver-gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .ver-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .ver-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .ver-indigo { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+
+    h2.app-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    p.app-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .features-list {
+      list-style: none;
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .features-list li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .launch-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .launch-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 24px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="badge-top">🚀 獨立 Web 應用公開入口</div>
+    <h1>雲端數位工具與互動應用</h1>
+    <p class="subtitle">彙整策略戰棋遊戲、全台即時路況監測、國道計程通行費試算與工程起重安全分析之純靜態 Web 工具箱。</p>
+  </header>
+
+  <main class="apps-grid">
+    <!-- Card 1: 三國戰棋 -->
+    <article class="app-card">
+      <div class="card-top">
+        <div class="app-icon">⚔️</div>
+        <span class="ver-badge ver-gold">v1.3.0 貫日增益版</span>
+      </div>
+      <h2 class="app-title">三國戰棋 · 歷史全紀元</h2>
+      <p class="app-desc">百位歷史武將立繪、50 關史詩戰役沙盤。支援將魂突破升星、太史慈直線雙目標「貫日連珠」穿透攻擊與軍團增益陣法。</p>
+      <ul class="features-list">
+        <li>50 關史詩演義章節 (黃巾至晉統)</li>
+        <li>100 位專屬持武立繪武將名冊</li>
+        <li>弓兵盲區與直線穿透戰技體系</li>
+      </ul>
+      <a href="./games/three-kingdoms-chess/" class="launch-btn" id="btn-chess">啟動三國戰棋 ➔</a>
+    </article>
+
+    <!-- Card 2: 台灣即時路況 -->
+    <article class="app-card">
+      <div class="card-top">
+        <div class="app-icon">🚦</div>
+        <span class="ver-badge ver-emerald">Live 即時監測</span>
+      </div>
+      <h2 class="app-title">台灣即時路況動態看板</h2>
+      <p class="app-desc">全台國道與快速道路車流速度監控，自動抓取 TDX 交通即時數據，視覺化呈現路段擁塞、平均時速與路況預警。</p>
+      <ul class="features-list">
+        <li>全台國道主線即時車速流向</li>
+        <li>路況壅塞分級與動態色條</li>
+        <li>自動更新數據與路段速查</li>
+      </ul>
+      <a href="./taiwan-traffic-live/" class="launch-btn" id="btn-traffic">開啟即時路況 ➔</a>
+    </article>
+
+    <!-- Card 3: 國道通行費試算 -->
+    <article class="app-card">
+      <div class="card-top">
+        <div class="app-icon">🚗</div>
+        <span class="ver-badge ver-cyan">計程試算器</span>
+      </div>
+      <h2 class="app-title">國道高速公路計程通行費試算</h2>
+      <p class="app-desc">精確計算台灣國道計程收費。支援小型車、大客車與聯結車各車種里程牌價、免費里程扣抵與長途折扣試算。</p>
+      <ul class="features-list">
+        <li>全台國道交會交流道精準計費</li>
+        <li>eTag 優惠與差別費率試算</li>
+        <li>車種自選與詳細費用明細分析</li>
+      </ul>
+      <a href="./highway-toll-calculator/" class="launch-btn" id="btn-toll">開始通行費試算 ➔</a>
+    </article>
+
+    <!-- Card 4: 吊車配重計算器 -->
+    <article class="app-card">
+      <div class="card-top">
+        <div class="app-icon">🏗️</div>
+        <span class="ver-badge ver-indigo">工程安全專用</span>
+      </div>
+      <h2 class="app-title">移動式起重機吊裝配重安全試算</h2>
+      <p class="app-desc">符合高壓氣體與工業安全法規之起重機作業參數試算，自動校核主臂長度、作業半徑、額定總負荷與安全額度比率。</p>
+      <ul class="features-list">
+        <li>多廠牌起重機性能曲線檢核</li>
+        <li>支腿受力與地耐力安全係數</li>
+        <li>極限作業半徑預警警報</li>
+      </ul>
+      <a href="./crane-calculator/" class="launch-btn" id="btn-crane">進入吊裝試算 ➔</a>
+    </article>
+  </main>
+
+  <footer>
+    <p>Web Apps Hub · 靜態獨立部署架構 · 託管於 GitHub Pages</p>
+  </footer>
+</div>
+
+</body>
+</html>

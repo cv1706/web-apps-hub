@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吊車作業計算工具 | Crane Lifting Calculator</title>
+  <meta name="description" content="專業吊車作業計算工具，輸入噸數與半徑即時估算最大吊重或作業半徑，適用 50 噸以下小型吊車。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-icon">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="28" y="4" width="8" height="48" rx="2" fill="url(#crane-grad)"/>
+          <rect x="8" y="4" width="48" height="8" rx="2" fill="url(#crane-grad)"/>
+          <rect x="8" y="8" width="6" height="4" rx="1" fill="#f59e0b"/>
+          <line x1="10" y1="12" x2="10" y2="52" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/>
+          <rect x="4" y="48" width="16" height="6" rx="2" fill="#f59e0b"/>
+          <rect x="2" y="54" width="20" height="6" rx="3" fill="url(#crane-grad)"/>
+          <rect x="24" y="54" width="16" height="6" rx="3" fill="url(#crane-grad)"/>
+          <circle cx="10" cy="52" r="3" fill="#fbbf24" opacity="0.8"/>
+          <defs>
+            <linearGradient id="crane-grad" x1="0" y1="0" x2="64" y2="64">
+              <stop stop-color="#f59e0b"/>
+              <stop offset="1" stop-color="#d97706"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>吊車作業計算工具</h1>
+        <p class="subtitle">Crane Lifting Calculator</p>
+      </div>
+    </header>
+
+    <!-- Mode Selector -->
+    <div class="mode-selector">
+      <button class="mode-btn active" data-mode="weight" id="mode-weight-btn">
+        <span class="mode-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 18L18 18"/>
+            <path d="M12 6L12 18"/>
+            <path d="M8 10L12 6L16 10"/>
+          </svg>
+        </span>
+        <span class="mode-label">估算最大吊重</span>
+        <span class="mode-desc">輸入噸數 + 半徑</span>
+      </button>
+      <button class="mode-btn" data-mode="radius" id="mode-radius-btn">
+        <span class="mode-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12H20"/>
+            <path d="M14 6L20 12L14 18"/>
+          </svg>
+        </span>
+        <span class="mode-label">估算作業半徑</span>
+        <span class="mode-desc">輸入噸數 + 吊重</span>
+      </button>
+    </div>
+
+    <!-- Calculator Card -->
+    <div class="calc-card">
+      <div class="card-inner">
+        <!-- Input Section -->
+        <div class="input-section">
+          <div class="input-group" id="input-tonnage-group">
+            <label for="input-tonnage">
+              <span class="label-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3L12 7L8 3"/></svg>
+              </span>
+              吊車工作噸數
+            </label>
+            <div class="input-wrapper">
+              <input type="number" id="input-tonnage" placeholder="例如：25" min="1" max="50" step="0.5">
+              <span class="input-unit">噸</span>
+            </div>
+            <span class="input-hint">適用 50 噸以下小型吊車</span>
+          </div>
+
+          <div class="input-group" id="input-radius-group">
+            <label for="input-radius">
+              <span class="label-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 12L18 12"/></svg>
+              </span>
+              作業半徑
+            </label>
+            <div class="input-wrapper">
+              <input type="number" id="input-radius" placeholder="例如：8" min="0.5" step="0.5">
+              <span class="input-unit">公尺</span>
+            </div>
+          </div>
+
+          <div class="input-group hidden" id="input-weight-group">
+            <label for="input-weight">
+              <span class="label-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7L12 12L22 7L12 2Z"/><path d="M2 17L12 22L22 17"/><path d="M2 12L12 17L22 12"/></svg>
+              </span>
+              吊裝物體重量
+            </label>
+            <div class="input-wrapper">
+              <input type="number" id="input-weight" placeholder="例如：10" min="0.1" step="0.1">
+              <span class="input-unit">噸</span>
+            </div>
+          </div>
+
+          <div class="safety-factor-group">
+            <label for="safety-factor">
+              <span class="label-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </span>
+              大臂吊鉤折減係數
+            </label>
+            <div class="slider-wrapper">
+              <input type="range" id="safety-factor" min="60" max="90" value="75" step="1">
+              <div class="slider-labels">
+                <span>60%</span>
+                <span class="slider-value" id="safety-value">75%</span>
+                <span>90%</span>
+              </div>
+            </div>
+            <span class="input-hint">預設 75%，已包含大臂與吊鉤重量折減</span>
+          </div>
+
+          <button class="calc-btn" id="calc-btn" disabled>
+            <span class="btn-text">開始計算</span>
+            <span class="btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-section" id="result-section">
+          <div class="result-placeholder" id="result-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+              <path d="M9 17H5a2 2 0 00-2 2 2 2 0 002 2h2a2 2 0 002-2zm12-2h-4a2 2 0 00-2 2 2 2 0 002 2h2a2 2 0 002-2v0a2 2 0 00-2-2z"/>
+              <polyline points="9 11 12 14 22 4"/>
+            </svg>
+            <p>輸入參數後按下計算</p>
+          </div>
+
+          <div class="result-content hidden" id="result-content">
+            <div class="result-badge" id="result-badge">計算結果</div>
+            <div class="result-main">
+              <div class="result-value-wrapper">
+                <span class="result-label" id="result-label">最大吊重</span>
+                <span class="result-value" id="result-value">0</span>
+                <span class="result-unit" id="result-unit">噸</span>
+              </div>
+            </div>
+
+            <div class="result-details">
+              <div class="detail-row">
+                <span class="detail-label">計算公式</span>
+                <span class="detail-value" id="detail-formula">--</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">理論值（未折減）</span>
+                <span class="detail-value" id="detail-theoretical">--</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">折減係數</span>
+                <span class="detail-value" id="detail-factor">75%</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">力矩基數</span>
+                <span class="detail-value" id="detail-moment">--</span>
+              </div>
+            </div>
+
+            <div class="warning-box" id="warning-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span id="warning-text">本計算僅供參考，實際作業需依吊車性能表操作。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+      <div class="info-header" id="info-toggle">
+        <h3>公式說明與注意事項</h3>
+        <svg class="info-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="info-body" id="info-body">
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>估算最大吊重</h4>
+            <div class="formula-block">
+              <code>最大吊重 = (噸數 x 3 / 半徑) x 折減係數</code>
+            </div>
+            <p>例：25 噸吊車，半徑 8 公尺<br>
+              (25 x 3 / 8) x 75% = <strong>7.03 噸</strong></p>
+          </div>
+          <div class="info-card">
+            <h4>估算作業半徑</h4>
+            <div class="formula-block">
+              <code>作業半徑 = 噸數 x 3 / 吊重</code>
+            </div>
+            <p>例：16 噸吊車，吊重 10 噸<br>
+              16 x 3 / 10 = <strong>4.8 公尺</strong></p>
+          </div>
+        </div>
+        <div class="info-notes">
+          <h4>注意事項</h4>
+          <ul>
+            <li>適用於 <strong>50 噸以下</strong>小型吊車（含汽車吊）</li>
+            <li>前提為支腿跨距約 <strong>6.2 公尺</strong></li>
+            <li>折減係數預設 75%，已概算大臂與吊鉤重量</li>
+            <li>實際操作需參考吊車性能表，並考量大臂長度、配重箱配置</li>
+            <li>大臂節數與長度並非越多越好，需依實際工況選擇</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>本工具僅供估算參考，不得作為正式工程計算依據。實際作業請以吊車原廠性能表為準。</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
