@@ -7,16 +7,18 @@
 ## 🌐 線上運行鏡像一覽
 
 * **Cloudflare Workers 邊緣節點（全球高速推薦）**：
-  * **入口總覽**：[https://three-kingdoms-chess.cv1706yang.workers.dev/](https://three-kingdoms-chess.cv1706yang.workers.dev/)
-  * **三國戰棋**：[https://three-kingdoms-chess.cv1706yang.workers.dev/games/three-kingdoms-chess/](https://three-kingdoms-chess.cv1706yang.workers.dev/games/three-kingdoms-chess/)
-  * **即時路況**：[https://three-kingdoms-chess.cv1706yang.workers.dev/taiwan-traffic-live/](https://three-kingdoms-chess.cv1706yang.workers.dev/taiwan-traffic-live/)
-  * **通行費試算**：[https://three-kingdoms-chess.cv1706yang.workers.dev/highway-toll-calculator/](https://three-kingdoms-chess.cv1706yang.workers.dev/highway-toll-calculator/)
-  * **吊車安全試算**：[https://three-kingdoms-chess.cv1706yang.workers.dev/crane-calculator/](https://three-kingdoms-chess.cv1706yang.workers.dev/crane-calculator/)
+  * **入口總覽**：[https://web-apps-hub.cv1706yang.workers.dev/](https://web-apps-hub.cv1706yang.workers.dev/)
+  * **三國戰棋**：[https://web-apps-hub.cv1706yang.workers.dev/games/three-kingdoms-chess/](https://web-apps-hub.cv1706yang.workers.dev/games/three-kingdoms-chess/)
+  * **即時路況**：[https://web-apps-hub.cv1706yang.workers.dev/taiwan-traffic-live/](https://web-apps-hub.cv1706yang.workers.dev/taiwan-traffic-live/)
+  * **通行費試算**：[https://web-apps-hub.cv1706yang.workers.dev/highway-toll-calculator/](https://web-apps-hub.cv1706yang.workers.dev/highway-toll-calculator/)
+  * **吊車安全試算**：[https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/](https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/)
 
 * **GitHub Pages 靜態站點**：
   * **入口總覽**：[https://cv1706.github.io/web-apps-hub/](https://cv1706.github.io/web-apps-hub/)
   * **三國戰棋**：[https://cv1706.github.io/web-apps-hub/games/three-kingdoms-chess/](https://cv1706.github.io/web-apps-hub/games/three-kingdoms-chess/)
   * **即時路況**：[https://cv1706.github.io/web-apps-hub/taiwan-traffic-live/](https://cv1706.github.io/web-apps-hub/taiwan-traffic-live/)
+  * **通行費試算**：[https://cv1706.github.io/web-apps-hub/highway-toll-calculator/](https://cv1706.github.io/web-apps-hub/highway-toll-calculator/)
+  * **吊車安全試算**：[https://cv1706.github.io/web-apps-hub/crane-calculator/](https://cv1706.github.io/web-apps-hub/crane-calculator/)
 
 ---
 
@@ -54,9 +56,9 @@
 
 ## 🚀 部署與維護方式
 
-1. **Cloudflare Workers 發布**：
-   ```powershell
-   npx wrangler deploy
-   ```
+1. **Cloudflare Workers 邊緣反向代理**：
+   * Worker 實例名稱：`web-apps-hub`
+   * 線上端點：`https://web-apps-hub.cv1706yang.workers.dev/`
+   * 自動鏡像轉發 GitHub Pages 來源，免手動重複發布。
 2. **GitHub Pages 發布**：
-   * 推送至 `main` 分支由 GitHub Actions 自動部署。
+   * 推送至 `main` 分支由 GitHub Pages / Actions 自動部署生效。
