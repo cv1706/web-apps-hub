@@ -1,23 +1,113 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>雲端數位工具與互動應用總覽 · Web Apps Hub</title>
-  <meta name="description" content="精選獨立 Web 應用與策略遊戲專區：三國戰棋全紀元、台灣即時路況看板、國道通行費試算與工程吊裝安全計算。">
+  <meta name="description" content="精選獨立 Web 應用與策略遊戲專區：三國戰棋全紀元、台灣即時路況看板、國道通行費試算、工程吊裝安全計算與選擇權量化決策工具。">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('hub-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
   <style>
     :root {
-      --bg-gradient: radial-gradient(circle at 50% 0%, #1a1e2e 0%, #0a0c14 100%);
-      --card-bg: rgba(22, 26, 40, 0.75);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-hover-border: rgba(99, 102, 241, 0.45);
+      --bg-gradient: radial-gradient(circle at 50% 0%, #eef2ff 0%, #f8fafc 60%, #f1f5f9 100%);
+      --body-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+      --card-hover-border: #818cf8;
+      --card-hover-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(99, 102, 241, 0.15);
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-border: #c7d2fe;
+      --text-title: #0f172a;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-sub: #475569;
+      --icon-bg: #f8fafc;
+      --icon-border: #e2e8f0;
+      --btn-bg: #f8fafc;
+      --btn-border: #cbd5e1;
+      --btn-text: #1e293b;
+      --btn-hover-bg: #4f46e5;
+      --btn-hover-text: #ffffff;
+      --badge-top-bg: #eef2ff;
+      --badge-top-border: #c7d2fe;
+      --badge-top-text: #4338ca;
+      
+      --ver-gold-bg: #fef3c7;
+      --ver-gold-border: #fde68a;
+      --ver-gold-text: #b45309;
+
+      --ver-emerald-bg: #d1fae5;
+      --ver-emerald-border: #a7f3d0;
+      --ver-emerald-text: #047857;
+
+      --ver-cyan-bg: #cffafe;
+      --ver-cyan-border: #a5f3fc;
+      --ver-cyan-text: #0e7490;
+
+      --ver-indigo-bg: #e0e7ff;
+      --ver-indigo-border: #c7d2fe;
+      --ver-indigo-text: #4338ca;
+
+      --divider: #e2e8f0;
+      --toggle-bg: #ffffff;
+      --toggle-border: #cbd5e1;
+      --toggle-text: #334155;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e2538 0%, #0f131f 100%);
+      --body-bg: #0f131f;
+      --card-bg: rgba(26, 32, 50, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --card-hover-border: rgba(129, 140, 248, 0.6);
+      --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 20px 0 rgba(99, 102, 241, 0.2);
       --primary: #6366f1;
       --primary-hover: #4f46e5;
-      --gold: #f59e0b;
-      --emerald: #10b981;
-      --cyan: #06b6d4;
-      --text-main: #f8fafc;
+      --primary-light: rgba(99, 102, 241, 0.15);
+      --primary-border: rgba(99, 102, 241, 0.35);
+      --text-title: #f8fafc;
+      --text-main: #f1f5f9;
       --text-muted: #94a3b8;
+      --text-sub: #cbd5e1;
+      --icon-bg: rgba(255, 255, 255, 0.06);
+      --icon-border: rgba(255, 255, 255, 0.12);
+      --btn-bg: rgba(255, 255, 255, 0.08);
+      --btn-border: rgba(255, 255, 255, 0.15);
+      --btn-text: #f8fafc;
+      --btn-hover-bg: #6366f1;
+      --btn-hover-text: #ffffff;
+      --badge-top-bg: rgba(99, 102, 241, 0.18);
+      --badge-top-border: rgba(99, 102, 241, 0.4);
+      --badge-top-text: #a5b4fc;
+      
+      --ver-gold-bg: rgba(245, 158, 11, 0.18);
+      --ver-gold-border: rgba(245, 158, 11, 0.35);
+      --ver-gold-text: #fbbf24;
+
+      --ver-emerald-bg: rgba(16, 185, 129, 0.18);
+      --ver-emerald-border: rgba(16, 185, 129, 0.35);
+      --ver-emerald-text: #34d399;
+
+      --ver-cyan-bg: rgba(6, 182, 212, 0.18);
+      --ver-cyan-border: rgba(6, 182, 212, 0.35);
+      --ver-cyan-text: #22d3ee;
+
+      --ver-indigo-bg: rgba(99, 102, 241, 0.18);
+      --ver-indigo-border: rgba(99, 102, 241, 0.35);
+      --ver-indigo-text: #a5b4fc;
+
+      --divider: rgba(255, 255, 255, 0.1);
+      --toggle-bg: rgba(255, 255, 255, 0.1);
+      --toggle-border: rgba(255, 255, 255, 0.2);
+      --toggle-text: #e2e8f0;
     }
 
     * {
@@ -29,59 +119,91 @@
     body {
       min-height: 100vh;
       background: var(--bg-gradient);
+      background-color: var(--body-bg);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
-      padding: 40px 20px;
+      padding: 32px 20px 48px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .container {
       width: 100%;
-      max-width: 1120px;
+      max-width: 1160px;
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--toggle-bg);
+      border: 1px solid var(--toggle-border);
+      color: var(--toggle-text);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .theme-toggle-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
     }
 
     header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 40px;
     }
 
     .badge-top {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      color: #a5b4fc;
+      background: var(--badge-top-bg);
+      border: 1px solid var(--badge-top-border);
+      color: var(--badge-top-text);
       font-size: 12px;
       font-weight: 600;
       padding: 4px 14px;
       border-radius: 9999px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
     h1 {
       font-size: 32px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-title);
       margin-bottom: 12px;
     }
 
     p.subtitle {
       color: var(--text-muted);
       font-size: 15px;
-      max-width: 600px;
+      max-width: 640px;
       margin: 0 auto;
       line-height: 1.6;
     }
 
     .apps-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
       margin-bottom: 48px;
     }
@@ -93,7 +215,7 @@
       padding: 24px;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(12px);
+      box-shadow: var(--card-shadow);
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
@@ -102,7 +224,7 @@
     .app-card:hover {
       transform: translateY(-4px);
       border-color: var(--card-hover-border);
-      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 20px 0 rgba(99, 102, 241, 0.15);
+      box-shadow: var(--card-hover-shadow);
     }
 
     .card-top {
@@ -113,65 +235,67 @@
     }
 
     .app-icon {
-      font-size: 32px;
+      font-size: 30px;
       width: 52px;
       height: 52px;
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--icon-bg);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--icon-border);
     }
 
     .ver-badge {
       font-size: 11px;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 4px 9px;
       border-radius: 6px;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
-    .ver-gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .ver-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .ver-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
-    .ver-indigo { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+    .ver-gold { background: var(--ver-gold-bg); color: var(--ver-gold-text); border: 1px solid var(--ver-gold-border); }
+    .ver-emerald { background: var(--ver-emerald-bg); color: var(--ver-emerald-text); border: 1px solid var(--ver-emerald-border); }
+    .ver-cyan { background: var(--ver-cyan-bg); color: var(--ver-cyan-text); border: 1px solid var(--ver-cyan-border); }
+    .ver-indigo { background: var(--ver-indigo-bg); color: var(--ver-indigo-text); border: 1px solid var(--ver-indigo-border); }
 
     h2.app-title {
       font-size: 18px;
       font-weight: 700;
-      color: #fff;
+      color: var(--text-title);
       margin-bottom: 8px;
+      line-height: 1.4;
     }
 
     p.app-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.55;
+      font-size: 13.5px;
+      color: var(--text-sub);
+      line-height: 1.6;
       margin-bottom: 20px;
       flex-grow: 1;
     }
 
     .features-list {
       list-style: none;
-      font-size: 12px;
-      color: #cbd5e1;
+      font-size: 12.5px;
+      color: var(--text-main);
       margin-bottom: 20px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 7px;
     }
 
     .features-list li {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
 
     .features-list li::before {
       content: "•";
       color: var(--primary);
       font-weight: bold;
+      font-size: 14px;
     }
 
     .launch-btn {
@@ -180,28 +304,28 @@
       align-items: center;
       gap: 8px;
       padding: 10px 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 8px;
-      color: #ffffff;
-      font-size: 13px;
+      color: var(--btn-text);
+      font-size: 13.5px;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .launch-btn:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      background: var(--btn-hover-bg);
+      border-color: var(--btn-hover-bg);
+      color: var(--btn-hover-text);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
     }
 
     footer {
       text-align: center;
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--text-muted);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--divider);
       padding-top: 24px;
       width: 100%;
     }
@@ -210,10 +334,16 @@
 <body>
 
 <div class="container">
+  <div class="top-controls">
+    <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
+      🌙 深色模式
+    </button>
+  </div>
+
   <header>
     <div class="badge-top">🚀 獨立 Web 應用公開入口</div>
     <h1>雲端數位工具與互動應用</h1>
-    <p class="subtitle">彙整策略戰棋遊戲、全台即時路況監測、國道計程通行費試算與工程起重安全分析之純靜態 Web 工具箱。</p>
+    <p class="subtitle">彙整策略戰棋遊戲、全台即時路況監測、國道計程通行費試算、工程起重安全分析與選擇權量化決策之純靜態 Web 工具箱。</p>
   </header>
 
   <main class="apps-grid">
@@ -280,12 +410,57 @@
       </ul>
       <a href="./crane-calculator/" class="launch-btn" id="btn-crane">進入吊裝試算 ➔</a>
     </article>
+
+    <!-- Card 5: 台指選擇權量化決策與損益平衡小工具 -->
+    <article class="app-card">
+      <div class="card-top">
+        <div class="app-icon">📈</div>
+        <span class="ver-badge ver-gold">量化決策 Pro</span>
+      </div>
+      <h2 class="app-title">台指選擇權量化多空決策與損益平衡小工具</h2>
+      <p class="app-desc">結合大盤多空濾網與 Black-Scholes 模型，即時產出高勝率價差組合（PCS / CCS / 鐵鷹）、損益平衡圖（Payoff Diagram）與 OptionStrat 風格多維度情境矩陣。</p>
+      <ul class="features-list">
+        <li>100% 對齊 Telegram Bot 三大實盤指令</li>
+        <li>到期結算線與 T+0 浮動損益動態繪製</li>
+        <li>Greeks 風險指標與手機端自適應觸控操作</li>
+      </ul>
+      <a href="./options-quant-app/" class="launch-btn" id="btn-options">啟動選擇權小工具 ➔</a>
+    </article>
   </main>
 
   <footer>
-    <p>Web Apps Hub · 靜態獨立部署架構 · 託管於 GitHub Pages</p>
+    <p>Web Apps Hub · 靜態獨立部署架構 · 託管於 Cloudflare Workers & GitHub Pages</p>
   </footer>
 </div>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('hub-theme', next);
+    updateToggleBtn(next);
+  }
+
+  function updateToggleBtn(theme) {
+    const btn = document.getElementById('theme-toggle-btn');
+    if (btn) {
+      if (theme === 'dark') {
+        btn.innerHTML = '☀️ 淺色模式';
+        btn.setAttribute('aria-label', '切換為淺色模式');
+      } else {
+        btn.innerHTML = '🌙 深色模式';
+        btn.setAttribute('aria-label', '切換為深色模式');
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    updateToggleBtn(current);
+  });
+</script>
 
 </body>
 </html>

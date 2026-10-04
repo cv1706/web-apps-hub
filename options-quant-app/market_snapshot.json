@@ -1,0 +1,340 @@
+{
+  "spot_price": 49346,
+  "symbol": "TXFJ6",
+  "futures_name": "臺股期貨10",
+  "change_pct": "+1.39%",
+  "change": 677.0,
+  "session": "週五夜盤結算",
+  "ta_action": "【偏多操作 (Bullish / 量縮試多)】 (67.5%)",
+  "source": "永豐 Shioaji API (Tier 1 - 週五夜盤結算)",
+  "updated_at": "2026-10-04 15:17:53",
+  "commands": {
+    "options_calc": {
+      "title": "/options_calc (週三一般結算)",
+      "contract": "202610W1",
+      "dte": 3,
+      "top3": [
+        {
+          "category": "保守穩健型 PCS (極度防守首選)",
+          "name": "PCS 保守防禦 (賣 48900P / 買 48700P)",
+          "type": "PCS",
+          "short_strike": 48900,
+          "long_strike": 48700,
+          "net_premium": 65.0,
+          "net_premium_ntd": 3250.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 32.5,
+          "bep": 48835.0,
+          "win_rate": 73.2,
+          "safety_buffer": 446.0,
+          "sell_leg_price": 210.0,
+          "buy_leg_price": 145.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 48900,
+              "premium": 210.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 48700,
+              "premium": 145.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        },
+        {
+          "category": "平衡收益型 PCS (波段推薦)",
+          "name": "PCS 平衡收租 (賣 49000P / 買 48800P)",
+          "type": "PCS",
+          "short_strike": 49000,
+          "long_strike": 48800,
+          "net_premium": 65.0,
+          "net_premium_ntd": 3250.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 32.5,
+          "bep": 48935.0,
+          "win_rate": 68.4,
+          "safety_buffer": 346.0,
+          "sell_leg_price": 250.0,
+          "buy_leg_price": 185.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 49000,
+              "premium": 250.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 48800,
+              "premium": 185.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        },
+        {
+          "category": "高資金效率 PCS (風控低標 >=0.35%)",
+          "name": "PCS 窄價差 (賣 49100P / 買 49000P)",
+          "type": "PCS",
+          "short_strike": 49100,
+          "long_strike": 49000,
+          "net_premium": 29.0,
+          "net_premium_ntd": 1450.0,
+          "margin_ntd": 5000.0,
+          "roi_pct": 29.0,
+          "bep": 49071.0,
+          "win_rate": 63.2,
+          "safety_buffer": 246.0,
+          "sell_leg_price": 294.0,
+          "buy_leg_price": 265.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 49100,
+              "premium": 294.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 49000,
+              "premium": 265.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        }
+      ]
+    },
+    "options_fri": {
+      "title": "/options_fri (週五極速收乾)",
+      "contract": "202610F2",
+      "dte": 1,
+      "top3": [
+        {
+          "category": "保守穩健型 PCS (極度防守首選)",
+          "name": "週五極度防禦 (賣 48900P / 買 48700P)",
+          "type": "PCS",
+          "short_strike": 48900,
+          "long_strike": 48700,
+          "net_premium": 28.0,
+          "net_premium_ntd": 1400.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 14.0,
+          "bep": 48872.0,
+          "win_rate": 89.7,
+          "safety_buffer": 446.0,
+          "sell_leg_price": 300.0,
+          "buy_leg_price": 272.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 48900,
+              "premium": 300.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 48700,
+              "premium": 272.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        },
+        {
+          "category": "平衡收益型 PCS (波段推薦)",
+          "name": "週五平衡收租 (賣 49000P / 買 48800P)",
+          "type": "PCS",
+          "short_strike": 49000,
+          "long_strike": 48800,
+          "net_premium": 65.0,
+          "net_premium_ntd": 3250.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 32.5,
+          "bep": 48935.0,
+          "win_rate": 83.6,
+          "safety_buffer": 346.0,
+          "sell_leg_price": 375.0,
+          "buy_leg_price": 310.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 49000,
+              "premium": 375.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 48800,
+              "premium": 310.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        },
+        {
+          "category": "保守穩健型 CCS (極度防守首選)",
+          "name": "週五極度防禦 (賣 49700C / 買 49900C)",
+          "type": "CCS",
+          "short_strike": 49700,
+          "long_strike": 49900,
+          "net_premium": 22.0,
+          "net_premium_ntd": 1100.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 11.0,
+          "bep": 49722.0,
+          "win_rate": 84.2,
+          "safety_buffer": 354.0,
+          "sell_leg_price": 181.0,
+          "buy_leg_price": 159.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "CALL",
+              "strike": 49700,
+              "premium": 181.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "CALL",
+              "strike": 49900,
+              "premium": 159.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        }
+      ]
+    },
+    "options_weekend": {
+      "title": "/options_weekend (跨週末防禦)",
+      "contract": "202610W1",
+      "dte": 4,
+      "top3": [
+        {
+          "category": "保守穩健型 PCS (極度防守首選)",
+          "name": "PCS 保守防禦 (賣 48900P / 買 48700P)",
+          "type": "PCS",
+          "short_strike": 48900,
+          "long_strike": 48700,
+          "net_premium": 65.0,
+          "net_premium_ntd": 3250.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 32.5,
+          "bep": 48835.0,
+          "win_rate": 68.3,
+          "safety_buffer": 446.0,
+          "sell_leg_price": 210.0,
+          "buy_leg_price": 145.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 48900,
+              "premium": 210.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 48700,
+              "premium": 145.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        },
+        {
+          "category": "平衡收益型 PCS (波段推薦)",
+          "name": "PCS 平衡收租 (賣 49000P / 買 48800P)",
+          "type": "PCS",
+          "short_strike": 49000,
+          "long_strike": 48800,
+          "net_premium": 65.0,
+          "net_premium_ntd": 3250.0,
+          "margin_ntd": 10000.0,
+          "roi_pct": 32.5,
+          "bep": 48935.0,
+          "win_rate": 64.3,
+          "safety_buffer": 346.0,
+          "sell_leg_price": 250.0,
+          "buy_leg_price": 185.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 49000,
+              "premium": 250.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 48800,
+              "premium": 185.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        },
+        {
+          "category": "高資金效率 PCS (風控低標 >=0.35%)",
+          "name": "PCS 窄價差 (賣 49100P / 買 49000P)",
+          "type": "PCS",
+          "short_strike": 49100,
+          "long_strike": 49000,
+          "net_premium": 29.0,
+          "net_premium_ntd": 1450.0,
+          "margin_ntd": 5000.0,
+          "roi_pct": 29.0,
+          "bep": 49071.0,
+          "win_rate": 60.2,
+          "safety_buffer": 246.0,
+          "sell_leg_price": 294.0,
+          "buy_leg_price": 265.0,
+          "legs": [
+            {
+              "side": "SELL",
+              "type": "PUT",
+              "strike": 49100,
+              "premium": 294.0,
+              "qty": 1,
+              "iv": 16.5
+            },
+            {
+              "side": "BUY",
+              "type": "PUT",
+              "strike": 49000,
+              "premium": 265.0,
+              "qty": 1,
+              "iv": 17.5
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
