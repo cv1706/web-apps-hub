@@ -491,6 +491,9 @@
       padding-top: 20px;
       width: 100%;
     }
+    #tab-mcp-helper, #client-config-container {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -966,7 +969,7 @@
   </div>
 
   <!-- 暫時隱藏 AI 分析提示詞精靈內容
-  <div id="tab-mcp-helper" class="tab-pane">
+  <div id="tab-mcp-helper" class="tab-pane" style="display: none !important;">
     <div class="card">
       <h2 class="card-title"><span>🤖</span> 智慧自然語言 Prompt 產生器</h2>
       <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
@@ -983,7 +986,6 @@
         伺服器連線網址：<code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:600;">https://toestate.tw/mcp</code>
       </p>
 
-      <!-- Client Config Tabs -->
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
         <button class="btn btn-secondary" onclick="showClientConfig('chatgpt')">ChatGPT</button>
         <button class="btn btn-secondary" onclick="showClientConfig('claude')">Claude (網頁/App)</button>
@@ -1526,7 +1528,7 @@ claude
     calculateValuation();
     calculateForeclosure();
     calculateMortgage();
-    showClientConfig('chatgpt');
+    // showClientConfig('chatgpt');
     checkMcpHealth();
     const current = document.documentElement.getAttribute('data-theme') || 'light';
     updateToggleBtn(current);
