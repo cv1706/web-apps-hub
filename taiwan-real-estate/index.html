@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>台灣房地產估價與開價合理性分析器 · ToEstate MCP Live</title>
-  <meta name="description" content="專業台灣房地產行情估算、即時連線 ToEstate MCP 實價登錄、社區行情查價、車位拆算、房貸試算與法拍屋折價分析。">
+  <title>台灣房地產估價與開價合理性分析器</title>
+  <meta name="description" content="專業台灣房地產行情估算、即時實價登錄、社區行情查價、車位拆算、房貸試算與法拍屋折價分析。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -503,9 +503,9 @@
     </a>
     -->
     <div class="nav-actions">
-      <div id="mcp-status-badge" class="mcp-status-pill" title="Cloudflare Worker 反向代理連線狀態">
+      <div id="mcp-status-badge" class="mcp-status-pill" title="資料庫連線狀態">
         <span id="mcp-status-dot" class="status-dot"></span>
-        <span id="mcp-status-text">MCP 代理連線就緒</span>
+        <span id="mcp-status-text">資料庫連線就緒</span>
       </div>
       <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
         🌙 深色模式
@@ -514,9 +514,9 @@
   </div>
 
   <header>
-    <div class="badge-top">🏡 ToEstate MCP 邊緣代理整合版</div>
+    <div class="badge-top">🏡 台灣房地產智慧估價系統</div>
     <h1>台灣房地產估價與開價合理性分析器</h1>
-    <p class="subtitle">整合區域行情特徵模型、扣車位淨坪拆算、法拍屋折價分析，並可直接透過 Cloudflare 邊緣代理即時連線 ToEstate MCP 查價。</p>
+    <p class="subtitle">整合區域行情特徵模型、扣車位淨坪拆算、法拍屋折價分析，即時連線實價登錄與歷史行情查價。</p>
   </header>
 
   <!-- Navigation Tabs -->
@@ -531,22 +531,21 @@
       <span>💰</span> 房貸本息與租金投報
     </button>
     <button class="tab-btn" onclick="switchTab('tab-mcp-helper', this)">
-      <span>🤖</span> ToEstate MCP 精靈與提示詞
+      <span>🤖</span> AI 分析提示詞精靈
     </button>
   </nav>
 
   <!-- TAB 1: 開價合理性與行情估算 -->
   <div id="tab-valuation" class="tab-pane active">
-    <!-- Live MCP Search Section -->
+    <!-- Live Search Section -->
     <div class="card" style="border: 1px solid var(--primary-border); background: var(--primary-light);">
       <div class="card-title">
         <span style="display:flex; align-items:center; gap:8px;">
-          <span>🌐</span> <strong>即時調用 ToEstate 實價登錄查價</strong>
+          <span>🌐</span> <strong>即時實價登錄查價</strong>
         </span>
-        <span style="font-size:12px; color:var(--text-muted);">免金鑰・經 Worker 邊緣連通</span>
       </div>
       <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">
-        輸入社區名稱、建案或地址路段，直接自 ToEstate 55 項 MCP 資料庫獲取近一年實價成交行情並自動帶入估算：
+        輸入社區名稱、建案或地址路段，直接獲取近一年實價成交行情並自動帶入估算：
       </p>
       <div class="mcp-search-bar">
         <input type="text" id="live-search-input" value="心之所向" placeholder="輸入社區、建案或路段，例如：心之所向、合環御品、文化路二段">
@@ -718,7 +717,7 @@
         <div class="alert alert-info">
           <span>💡</span>
           <div>
-            <strong>估價提示</strong>：本工具具備純前端 Hedonic 模型與 ToEstate MCP 遠端資料庫雙軌校核。在上方輸入社區關鍵字即可抓取最新成交紀錄。
+            <strong>估價提示</strong>：本工具具備純前端 Hedonic 模型與實價登錄資料庫雙軌校核。在上方輸入社區關鍵字即可抓取最新成交紀錄。
           </div>
         </div>
       </div>
@@ -964,12 +963,12 @@
     </div>
   </div>
 
-  <!-- TAB 4: ToEstate MCP 精靈與提示詞 -->
+  <!-- TAB 4: AI 分析提示詞精靈 -->
   <div id="tab-mcp-helper" class="tab-pane">
     <div class="card">
       <h2 class="card-title"><span>🤖</span> 智慧自然語言 Prompt 產生器</h2>
       <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
-        根據您在前述標籤頁輸入的標的條件，自動產出能發揮 ToEstate 55 項 MCP 工具最佳效果的高效提問詞。
+        根據您在前述標籤頁輸入的標的條件，自動產出能發揮 AI 助理深度分析房價的高效提問詞。
       </p>
 
       <div style="position: relative; margin-bottom: 20px;">
@@ -977,9 +976,9 @@
         <button class="copy-btn" onclick="copyPrompt('generated-prompt', this)">複製提問詞</button>
       </div>
 
-      <h2 class="card-title" style="margin-top: 28px;"><span>🔌</span> ToEstate MCP 各平台客戶端接入配置</h2>
+      <h2 class="card-title" style="margin-top: 28px;"><span>🔌</span> 各平台 AI 客戶端連接器配置</h2>
       <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
-        官方端點：<code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:600;">https://toestate.tw/mcp</code>（免金鑰、Streamable HTTP 協定）
+        伺服器連線網址：<code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:600;">https://toestate.tw/mcp</code>
       </p>
 
       <!-- Client Config Tabs -->
@@ -1071,11 +1070,11 @@
       const res = await callMcpTool('search', { query: '台中', limit: 1 });
       if (res) {
         dot.className = 'status-dot';
-        text.textContent = 'ToEstate MCP 已連通';
+        text.textContent = '資料庫連線就緒';
       }
     } catch (err) {
       dot.className = 'status-dot offline';
-      text.textContent = 'MCP 離線 (啟用本地模式)';
+      text.textContent = '離線 (本地模式)';
     }
   }
 
@@ -1432,7 +1431,7 @@
 
     const parkingText = hasParking ? '含車位' : '無車位';
 
-    const promptText = `請調用 ToEstate 工具幫我分析以下房屋開價合理性：
+    const promptText = `請幫我深度分析以下台灣房屋開價合理性：
 標的位置：${city}${district}
 總坪數：${totalPing} 坪 (${parkingText})
 所在樓層：${floorPos} 樓
@@ -1452,15 +1451,15 @@
     chatgpt: `【ChatGPT 設定方式】
 1. 前往「設定」→「連接器」或「應用程式與連接器」→ 開啟「開發者模式 (Developer mode)」
 2. 新增自訂連接器：
-   - 名稱：ToEstate
+   - 名稱：房產助理
    - 伺服器網址：https://toestate.tw/mcp
    - 驗證方式：無 (免帳號密碼)
-3. 在新對話框的工具選單中啟用 ToEstate，直接貼入提問詞提問。`,
+3. 在新對話框的工具選單中啟用此連接器，直接貼入提問詞提問。`,
 
     claude: `【Claude (網頁版 / 桌面版 / 手機 App) 設定方式】
 1. 電腦打開 claude.ai → 點選「設定」→「連接器 (Connectors)」
 2. 點選「新增自訂連接器 (Add custom connector)」：
-   - 名稱：ToEstate
+   - 名稱：房產助理
    - 伺服器網址：https://toestate.tw/mcp
 3. 勾選啟用後即可對話。網頁版設定完成後，Claude 手機 App 登入同一帳號自動同步啟用。`,
 
