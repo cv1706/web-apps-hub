@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>台灣房地產估價與開價合理性分析器 · ToEstate MCP Hub</title>
-  <meta name="description" content="專業台灣房地產行情估算、開價合理性判定、車位拆算、房貸試算、法拍折價評估與 ToEstate MCP AI 連接器助手。">
+  <title>台灣房地產估價與開價合理性分析器 · ToEstate MCP Live</title>
+  <meta name="description" content="專業台灣房地產行情估算、即時連線 ToEstate MCP 實價登錄、社區行情查價、車位拆算、房貸試算與法拍屋折價分析。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,7 +42,6 @@
       --warning-bg: #fffbeb;
       --danger: #ef4444;
       --danger-bg: #fef2f2;
-      --pill-bg: #e2e8f0;
       --badge-bg: #e0e7ff;
       --badge-text: #4338ca;
       --tab-active-border: #4f46e5;
@@ -77,7 +76,6 @@
       --warning-bg: rgba(245, 158, 11, 0.15);
       --danger: #f87171;
       --danger-bg: rgba(239, 68, 68, 0.15);
-      --pill-bg: rgba(255, 255, 255, 0.1);
       --badge-bg: rgba(99, 102, 241, 0.2);
       --badge-text: #a5b4fc;
       --tab-active-border: #818cf8;
@@ -85,11 +83,7 @@
       --tab-inactive-text: #94a3b8;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       min-height: 100vh;
@@ -104,12 +98,8 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
-    .container {
-      width: 100%;
-      max-width: 1140px;
-    }
+    .container { width: 100%; max-width: 1140px; }
 
-    /* Top Nav */
     .top-nav {
       display: flex;
       justify-content: space-between;
@@ -131,11 +121,35 @@
       border: 1px solid var(--primary-border);
       transition: all 0.2s ease;
     }
+    .back-link:hover { background: var(--primary); color: #ffffff; }
 
-    .back-link:hover {
-      background: var(--primary);
-      color: #ffffff;
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
+    .mcp-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    }
+    .status-dot.testing { background: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25); }
+    .status-dot.offline { background: #64748b; box-shadow: none; }
 
     .theme-toggle-btn {
       display: inline-flex;
@@ -152,11 +166,7 @@
       transition: all 0.2s ease;
     }
 
-    /* Header */
-    header {
-      margin-bottom: 24px;
-      text-align: center;
-    }
+    header { margin-bottom: 24px; text-align: center; }
 
     .badge-top {
       display: inline-flex;
@@ -182,12 +192,11 @@
     .subtitle {
       font-size: 14.5px;
       color: var(--text-muted);
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
       line-height: 1.6;
     }
 
-    /* Tabs */
     .tabs-nav {
       display: flex;
       gap: 8px;
@@ -214,44 +223,27 @@
       align-items: center;
       gap: 8px;
     }
-
     .tab-btn.active {
       color: var(--tab-active-text);
       border-bottom-color: var(--tab-active-border);
     }
+    .tab-btn:hover:not(.active) { color: var(--text-main); }
 
-    .tab-btn:hover:not(.active) {
-      color: var(--text-main);
-    }
-
-    /* Tab Content Panes */
-    .tab-pane {
-      display: none;
-    }
-    .tab-pane.active {
-      display: block;
-      animation: fadeIn 0.25s ease-out;
-    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeIn 0.25s ease-out; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Layout Grid */
     .grid-2 {
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
       gap: 20px;
     }
+    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
 
-    @media (max-width: 900px) {
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Card */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -268,25 +260,12 @@
       margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
     }
 
-    /* Form Fields */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    @media (max-width: 600px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
+    .form-group { margin-bottom: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
 
     label {
       display: block;
@@ -296,16 +275,9 @@
       margin-bottom: 6px;
     }
 
-    .input-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
+    .input-wrap { position: relative; display: flex; align-items: center; }
 
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
+    input[type="text"], input[type="number"], select, textarea {
       width: 100%;
       padding: 10px 14px;
       background: var(--input-bg);
@@ -317,7 +289,6 @@
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-
     input:focus, select:focus, textarea:focus {
       border-color: var(--input-focus);
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
@@ -340,15 +311,8 @@
       font-size: 13.5px;
       color: var(--text-main);
     }
+    .checkbox-wrap input { width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer; }
 
-    .checkbox-wrap input {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    /* Action Buttons */
     .btn {
       display: inline-flex;
       justify-content: center;
@@ -363,27 +327,14 @@
       transition: all 0.2s ease;
       text-decoration: none;
     }
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-      width: 100%;
-    }
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
+    .btn-secondary { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); }
+    .btn-secondary:hover { background: var(--divider); }
 
-    .btn-secondary {
-      background: var(--input-bg);
-      border: 1px solid var(--input-border);
-      color: var(--text-main);
-    }
-    .btn-secondary:hover {
-      background: var(--divider);
-    }
+    .btn-sm { padding: 6px 12px; font-size: 12.5px; }
 
-    /* Result Dashboard */
     .result-box {
       border-radius: 12px;
       padding: 18px;
@@ -400,29 +351,12 @@
       border-bottom: 1px dashed var(--divider);
       font-size: 13.5px;
     }
-    .metric-row:last-child {
-      border-bottom: none;
-    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-name { color: var(--text-muted); }
+    .metric-val { font-weight: 700; color: var(--text-title); }
+    .metric-highlight { font-size: 22px; font-weight: 800; color: var(--primary); }
 
-    .metric-name {
-      color: var(--text-muted);
-    }
-    .metric-val {
-      font-weight: 700;
-      color: var(--text-title);
-    }
-
-    .metric-highlight {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    /* Meter Gauge */
-    .gauge-wrapper {
-      margin: 16px 0;
-    }
-
+    .gauge-wrapper { margin: 16px 0; }
     .gauge-labels {
       display: flex;
       justify-content: space-between;
@@ -431,14 +365,12 @@
       color: var(--text-muted);
       margin-bottom: 6px;
     }
-
     .gauge-bar-bg {
       height: 12px;
       background: linear-gradient(to right, #10b981 0%, #10b981 25%, #3b82f6 30%, #3b82f6 55%, #f59e0b 60%, #f59e0b 80%, #ef4444 85%, #ef4444 100%);
       border-radius: 999px;
       position: relative;
     }
-
     .gauge-pointer {
       position: absolute;
       top: -4px;
@@ -452,7 +384,6 @@
       transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Verdict Card */
     .verdict-banner {
       display: flex;
       align-items: center;
@@ -463,29 +394,11 @@
       font-size: 15px;
       margin-bottom: 16px;
     }
+    .verdict-fair { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
+    .verdict-high { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning); }
+    .verdict-overpriced { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+    .verdict-bargain { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
 
-    .verdict-fair {
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid var(--success);
-    }
-    .verdict-high {
-      background: var(--warning-bg);
-      color: var(--warning);
-      border: 1px solid var(--warning);
-    }
-    .verdict-overpriced {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: 1px solid var(--danger);
-    }
-    .verdict-bargain {
-      background: var(--accent-light);
-      color: var(--accent);
-      border: 1px solid var(--accent);
-    }
-
-    /* Prompt Box */
     .prompt-box {
       position: relative;
       background: var(--input-bg);
@@ -516,11 +429,8 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    .copy-btn:hover {
-      background: var(--primary-hover);
-    }
+    .copy-btn:hover { background: var(--primary-hover); }
 
-    /* Snippet Box for MCP configs */
     .code-block {
       background: #1e1e2e;
       color: #cdd6f4;
@@ -533,7 +443,6 @@
       position: relative;
     }
 
-    /* Notice Alert */
     .alert {
       padding: 12px 16px;
       border-radius: 8px;
@@ -543,13 +452,36 @@
       display: flex;
       gap: 10px;
     }
-    .alert-info {
-      background: var(--primary-light);
-      color: var(--primary);
-      border: 1px solid var(--primary-border);
-    }
+    .alert-info { background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border); }
 
-    /* Footer */
+    /* Live MCP Results Styling */
+    .mcp-search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .live-results-list {
+      max-height: 240px;
+      overflow-y: auto;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      margin-bottom: 16px;
+      display: none;
+    }
+    .live-result-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s ease;
+    }
+    .live-result-item:last-child { border-bottom: none; }
+    .live-result-item:hover { background: var(--primary-light); }
+    .live-res-title { font-weight: 700; font-size: 13.5px; color: var(--text-title); }
+    .live-res-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
     footer {
       margin-top: 40px;
       text-align: center;
@@ -568,15 +500,21 @@
     <a href="../" class="back-link">
       <span>←</span> 返回 Web Apps Hub
     </a>
-    <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
-      🌙 深色模式
-    </button>
+    <div class="nav-actions">
+      <div id="mcp-status-badge" class="mcp-status-pill" title="Cloudflare Worker 反向代理連線狀態">
+        <span id="mcp-status-dot" class="status-dot"></span>
+        <span id="mcp-status-text">MCP 代理連線就緒</span>
+      </div>
+      <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
+        🌙 深色模式
+      </button>
+    </div>
   </div>
 
   <header>
-    <div class="badge-top">🏡 台灣房地產數據與評價工具箱</div>
+    <div class="badge-top">🏡 ToEstate MCP 邊緣代理整合版</div>
     <h1>台灣房地產估價與開價合理性分析器</h1>
-    <p class="subtitle">整合區域行情特徵統計模型、扣車位淨坪拆算、房貸試算、法拍屋折價分析與 ToEstate MCP AI 連接器助手。</p>
+    <p class="subtitle">整合區域行情特徵模型、扣車位淨坪拆算、法拍屋折價分析，並可直接透過 Cloudflare 邊緣代理即時連線 ToEstate MCP 查價。</p>
   </header>
 
   <!-- Navigation Tabs -->
@@ -597,6 +535,28 @@
 
   <!-- TAB 1: 開價合理性與行情估算 -->
   <div id="tab-valuation" class="tab-pane active">
+    <!-- Live MCP Search Section -->
+    <div class="card" style="border: 1px solid var(--primary-border); background: var(--primary-light);">
+      <div class="card-title">
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span>🌐</span> <strong>即時調用 ToEstate 實價登錄查價</strong>
+        </span>
+        <span style="font-size:12px; color:var(--text-muted);">免金鑰・經 Worker 邊緣連通</span>
+      </div>
+      <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">
+        輸入社區名稱、建案或地址路段，直接自 ToEstate 55 項 MCP 資料庫獲取近一年實價成交行情並自動帶入估算：
+      </p>
+      <div class="mcp-search-bar">
+        <input type="text" id="live-search-input" value="心之所向" placeholder="輸入社區、建案或路段，例如：心之所向、合環御品、文化路二段">
+        <button class="btn btn-primary" id="btn-live-search" onclick="doLiveSearch()" style="min-width: 140px;">
+          <span>🔍</span> 即時查行情
+        </button>
+      </div>
+
+      <!-- Live Search Results Container -->
+      <div id="live-search-results" class="live-results-list"></div>
+    </div>
+
     <div class="grid-2">
       <!-- Input Form -->
       <div class="card">
@@ -698,9 +658,11 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" onclick="calculateValuation()">
-          <span>⚡</span> 重新估算開價與合理性
-        </button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="calculateValuation()">
+            <span>⚡</span> 重新估算開價與合理性
+          </button>
+        </div>
       </div>
 
       <!-- Result Card -->
@@ -738,7 +700,7 @@
             <span class="metric-val" id="gross-unit-price">61.0 萬/坪</span>
           </div>
           <div class="metric-row">
-            <span class="metric-name">同區域特徵參考合理單價</span>
+            <span class="metric-name">參考合理單價基準</span>
             <span class="metric-val" id="fair-unit-price">68.5 萬/坪</span>
           </div>
           <div class="metric-row">
@@ -754,7 +716,7 @@
         <div class="alert alert-info">
           <span>💡</span>
           <div>
-            <strong>估價提示</strong>：本工具採用 Hedonic 區域基準定價與車位拆分演算法。如需比對附近特定社區實際實價登錄，可複製下方 ToEstate MCP 提問詞至 AI 進行實時比對。
+            <strong>估價提示</strong>：本工具具備純前端 Hedonic 模型與 ToEstate MCP 遠端資料庫雙軌校核。在上方輸入社區關鍵字即可抓取最新成交紀錄。
           </div>
         </div>
       </div>
@@ -763,6 +725,34 @@
 
   <!-- TAB 2: 法拍屋折價與風險試算 -->
   <div id="tab-foreclosure" class="tab-pane">
+    <!-- Live Foreclosures Fetch -->
+    <div class="card" style="border: 1px solid var(--primary-border); background: var(--primary-light);">
+      <div class="card-title">
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span>🏛️</span> <strong>即時載入司法院法拍公告待拍標的</strong>
+        </span>
+        <span style="font-size:12px; color:var(--text-muted);">調用 get_foreclosures 工具</span>
+      </div>
+      <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">
+        自全台地方法院即時抓取三週內開拍住宅點交之優質法拍屋，點選即可將底價與坪數帶入試算：
+      </p>
+      <div class="mcp-search-bar">
+        <select id="fc-county-select" style="max-width: 140px;">
+          <option value="臺北市">臺北市</option>
+          <option value="新北市" selected>新北市</option>
+          <option value="臺中市">臺中市</option>
+          <option value="高雄市">高雄市</option>
+          <option value="桃園市">桃園市</option>
+          <option value="臺南市">臺南市</option>
+        </select>
+        <button class="btn btn-primary" id="btn-live-fc" onclick="doLiveForeclosures()" style="min-width: 150px;">
+          <span>⚡</span> 抓取最新法拍標的
+        </button>
+      </div>
+
+      <div id="live-fc-results" class="live-results-list"></div>
+    </div>
+
     <div class="grid-2">
       <div class="card">
         <h2 class="card-title"><span>⚖️</span> 法拍標的條件輸入</h2>
@@ -775,7 +765,7 @@
               <option value="2">第二拍 (通常為首拍 80%)</option>
               <option value="3" selected>第三拍 (通常為首拍 64%)</option>
               <option value="4">第四拍 (通常為首拍 51.2%)</option>
-              <option value="apply">應買公告 (通常維持前次底價)</option>
+              <option value="apply">應買公告 (維持前次底價)</option>
             </select>
           </div>
           <div class="form-group">
@@ -987,7 +977,7 @@
 
       <h2 class="card-title" style="margin-top: 28px;"><span>🔌</span> ToEstate MCP 各平台客戶端接入配置</h2>
       <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
-        服務端點：<code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:600;">https://toestate.tw/mcp</code>（免金鑰、Streamable HTTP 協定）
+        官方端點：<code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:600;">https://toestate.tw/mcp</code>（免金鑰、Streamable HTTP 協定）
       </p>
 
       <!-- Client Config Tabs -->
@@ -1013,7 +1003,6 @@
 </div>
 
 <script>
-  // Regional benchmark price data (unit: 10k TWD / ping for new standard elevator building)
   const REGION_DATA = {
     '台北市': { basePrice: 105, parkingPlane: 280, parkingMech: 180, growth: 1.05 },
     '新北市': { basePrice: 62, parkingPlane: 220, parkingMech: 140, growth: 1.03 },
@@ -1024,6 +1013,215 @@
     '新竹縣市': { basePrice: 58, parkingPlane: 200, parkingMech: 130, growth: 1.05 },
     '其他縣市': { basePrice: 28, parkingPlane: 130, parkingMech: 80, growth: 1.02 }
   };
+
+  // Live MCP Proxy endpoint on Cloudflare Worker
+  const MCP_PROXY_URL = '/api/toestate-mcp';
+
+  async function callMcpTool(toolName, args = {}) {
+    const payload = {
+      jsonrpc: '2.0',
+      id: Date.now(),
+      method: 'tools/call',
+      params: {
+        name: toolName,
+        arguments: args
+      }
+    };
+
+    const resp = await fetch(MCP_PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/event-stream'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) {
+      throw new Error(`MCP Proxy HTTP ${resp.status}`);
+    }
+
+    const text = await resp.text();
+    // Parse SSE format: data: {"jsonrpc":"2.0", ...}
+    const lines = text.split('\n');
+    for (const line of lines) {
+      if (line.startsWith('data:')) {
+        const jsonStr = line.substring(5).trim();
+        const data = JSON.parse(jsonStr);
+        if (data.result && data.result.content && data.result.content[0]) {
+          return JSON.parse(data.result.content[0].text);
+        }
+      }
+    }
+    // Fallback direct JSON
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      throw new Error('無法解析 MCP 回傳內容');
+    }
+  }
+
+  // Check MCP Health
+  async function checkMcpHealth() {
+    const dot = document.getElementById('mcp-status-dot');
+    const text = document.getElementById('mcp-status-text');
+    try {
+      const res = await callMcpTool('search', { query: '台中', limit: 1 });
+      if (res) {
+        dot.className = 'status-dot';
+        text.textContent = 'ToEstate MCP 已連通';
+      }
+    } catch (err) {
+      dot.className = 'status-dot offline';
+      text.textContent = 'MCP 離線 (啟用本地模式)';
+    }
+  }
+
+  // Live Search Communities
+  async function doLiveSearch() {
+    const query = document.getElementById('live-search-input').value.trim();
+    if (!query) return;
+
+    const btn = document.getElementById('btn-live-search');
+    const resultsContainer = document.getElementById('live-search-results');
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<span>⏳</span> 查詢中...';
+    btn.disabled = true;
+
+    try {
+      const data = await callMcpTool('search', { query: query, limit: 8 });
+      resultsContainer.innerHTML = '';
+      
+      const items = data.items || [];
+      if (items.length === 0) {
+        resultsContainer.innerHTML = '<div style="padding:12px; font-size:13px; color:var(--text-muted); text-align:center;">查無相符社區或建案，請更換關鍵字</div>';
+      } else {
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'live-result-item';
+          div.innerHTML = `
+            <div>
+              <div class="live-res-title">${item.title}</div>
+              <div class="live-res-sub">${item.sub || ''}</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick='applyCommunityData(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
+              帶入此數據
+            </button>
+          `;
+          resultsContainer.appendChild(div);
+        });
+      }
+      resultsContainer.style.display = 'block';
+    } catch (err) {
+      resultsContainer.innerHTML = `<div style="padding:12px; font-size:13px; color:var(--danger); text-align:center;">連線查詢失敗：${err.message}（若在本地 file:// 預覽，請使用線上 Cloudflare 網址測試）</div>`;
+      resultsContainer.style.display = 'block';
+    } finally {
+      btn.innerHTML = origText;
+      btn.disabled = false;
+    }
+  }
+
+  function applyCommunityData(item) {
+    document.getElementById('district-input').value = item.title;
+
+    // Parse sub text to guess city & unit price
+    if (item.sub) {
+      const sub = item.sub;
+      for (const city of ['台北市', '新北市', '桃園市', '台中市', '台南市', '高雄市', '新竹縣市']) {
+        const altCity = city.replace('台', '臺');
+        if (sub.includes(city) || sub.includes(altCity)) {
+          document.getElementById('city-select').value = city;
+          break;
+        }
+      }
+
+      // Extract price: "近一年 32.8 萬/坪"
+      const match = sub.match(/(\d+\.?\d*)\s*萬\/坪/);
+      if (match) {
+        const price = parseFloat(match[1]);
+        if (price > 0) {
+          const netPing = parseFloat(document.getElementById('total-ping').value) || 30;
+          const parkPrice = document.getElementById('has-parking').checked ? (parseFloat(document.getElementById('parking-price').value) || 0) : 0;
+          document.getElementById('asking-price').value = Math.round((price * (netPing - 8)) + parkPrice);
+        }
+      }
+    }
+
+    calculateValuation();
+    document.getElementById('live-search-results').style.display = 'none';
+  }
+
+  // Live Foreclosures
+  async function doLiveForeclosures() {
+    const county = document.getElementById('fc-county-select').value;
+    const btn = document.getElementById('btn-live-fc');
+    const container = document.getElementById('live-fc-results');
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<span>⏳</span> 檢索法院公告...';
+    btn.disabled = true;
+
+    try {
+      const data = await callMcpTool('get_foreclosures', {
+        county: county,
+        status: 'selling',
+        kind: 'house',
+        featured: true,
+        limit: 5
+      });
+
+      container.innerHTML = '';
+      const items = (data && data.items) ? data.items : (Array.isArray(data) ? data : []);
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="padding:12px; font-size:13px; color:var(--text-muted); text-align:center;">${county} 目前無符合「精選住宅點交」之三週內開拍標的</div>`;
+      } else {
+        items.forEach(lot => {
+          const baseWan = lot.base_price ? Math.round(lot.base_price / 10000) : (lot.min_price || 1000);
+          const ping = lot.area_ping || 30;
+          const discountPct = lot.discount ? (lot.discount * 100).toFixed(1) : '-25.0';
+          const deliveryLabel = (lot.delivery && lot.delivery.label) ? lot.delivery.label : '點交';
+
+          const div = document.createElement('div');
+          div.className = 'live-result-item';
+          div.innerHTML = `
+            <div>
+              <div class="live-res-title">${lot.address || lot.town || '司法院公告法拍住宅'}</div>
+              <div class="live-res-sub">案號：${lot.case_no || lot.lot_key || '法院公告'} ｜ 底價：${baseWan} 萬 ｜ 坪數：${ping} 坪 ｜ ${deliveryLabel}</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="applyForeclosureData(${baseWan}, ${ping}, '${deliveryLabel}')">
+              帶入試算
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+      container.style.display = 'block';
+    } catch (err) {
+      container.innerHTML = `<div style="padding:12px; font-size:13px; color:var(--danger); text-align:center;">法拍標的載入失敗：${err.message}</div>`;
+      container.style.display = 'block';
+    } finally {
+      btn.innerHTML = origText;
+      btn.disabled = false;
+    }
+  }
+
+  function applyForeclosureData(basePrice, ping, deliveryLabel) {
+    document.getElementById('fc-base-price').value = basePrice;
+    document.getElementById('fc-ping').value = ping;
+    // Estimate market price roughly 35% higher than base price
+    document.getElementById('fc-market-price').value = Math.round(basePrice * 1.35);
+
+    if (deliveryLabel.includes('不點交')) {
+      document.getElementById('fc-delivery').value = 'none';
+    } else if (deliveryLabel.includes('部分')) {
+      document.getElementById('fc-delivery').value = 'partial';
+    } else {
+      document.getElementById('fc-delivery').value = 'full';
+    }
+
+    calculateForeclosure();
+    document.getElementById('live-fc-results').style.display = 'none';
+  }
 
   function toggleTheme() {
     const html = document.documentElement;
@@ -1044,7 +1242,6 @@
   function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    
     document.getElementById(tabId).classList.add('active');
     btn.classList.add('active');
 
@@ -1066,10 +1263,8 @@
     calculateValuation();
   }
 
-  // TAB 1: Valuation Calculation
   function calculateValuation() {
     const city = document.getElementById('city-select').value;
-    const district = document.getElementById('district-input').value;
     const bType = document.getElementById('building-type').value;
     const floorPos = parseInt(document.getElementById('floor-pos').value) || 5;
     const totalFloors = parseInt(document.getElementById('total-floors').value) || 12;
@@ -1080,28 +1275,23 @@
     const parkingPing = hasParking ? (parseFloat(document.getElementById('parking-ping').value) || 0) : 0;
     const askingPrice = parseFloat(document.getElementById('asking-price').value) || 2000;
 
-    // Net house area & price calculation
     const netPing = Math.max(1, totalPing - parkingPing);
     const netHousePrice = Math.max(0, askingPrice - parkingPrice);
     const netUnitPrice = netHousePrice / netPing;
     const grossUnitPrice = askingPrice / totalPing;
 
-    // Baseline calculation based on city & adjustments
     const base = REGION_DATA[city] || REGION_DATA['新北市'];
     let adjustedUnitPrice = base.basePrice;
 
-    // Building type adjustment
     if (bType === 'mansion') adjustedUnitPrice *= 0.92;
     else if (bType === 'apartment') adjustedUnitPrice *= 0.76;
     else if (bType === 'townhouse') adjustedUnitPrice *= 0.85;
 
-    // Age depreciation (e.g. 1.2% per year, capped at 40% depreciation)
     const depFactor = Math.max(0.60, 1 - (ageYears * 0.013));
     adjustedUnitPrice *= depFactor;
 
-    // Floor factor (middle-high floors slightly higher)
     if (floorPos === 4) adjustedUnitPrice *= 0.96;
-    else if (floorPos === 1) adjustedUnitPrice *= 1.15; // 1F retail/patio bonus
+    else if (floorPos === 1) adjustedUnitPrice *= 1.15;
     else if (floorPos > totalFloors * 0.6) adjustedUnitPrice *= 1.05;
     else if (floorPos <= 3) adjustedUnitPrice *= 0.96;
 
@@ -1109,18 +1299,14 @@
     const fairTotalMid = (fairUnitPrice * netPing) + parkingPrice;
     const fairTotalLow = fairTotalMid * 0.93;
     const fairTotalHigh = fairTotalMid * 1.07;
-
-    // Percentage deviation: (asking - fairMid) / fairMid
     const deviation = (askingPrice - fairTotalMid) / fairTotalMid;
 
-    // Update UI Metrics
     document.getElementById('net-house-ping').textContent = netPing.toFixed(1) + ' 坪';
     document.getElementById('net-unit-price').textContent = netUnitPrice.toFixed(1) + ' 萬/坪';
     document.getElementById('gross-unit-price').textContent = grossUnitPrice.toFixed(1) + ' 萬/坪';
     document.getElementById('fair-unit-price').textContent = fairUnitPrice.toFixed(1) + ' 萬/坪';
     document.getElementById('fair-total-range').textContent = Math.round(fairTotalLow).toLocaleString() + ' ~ ' + Math.round(fairTotalHigh).toLocaleString() + ' 萬元';
 
-    // Bargain suggestion
     if (deviation > 0.03) {
       const diff = Math.round(askingPrice - fairTotalMid);
       const discountPct = Math.round((1 - (fairTotalMid / askingPrice)) * 100);
@@ -1129,13 +1315,11 @@
       document.getElementById('bargain-space').textContent = '已具備合理性，議價空間約 3%~5%';
     }
 
-    // Verdict and Gauge
     const banner = document.getElementById('verdict-banner');
     const vText = document.getElementById('verdict-text');
     const vIcon = document.getElementById('verdict-icon');
     const pointer = document.getElementById('gauge-pointer');
 
-    // Gauge mapping (-20% -> 0%, 0% -> 50%, +20% -> 100%)
     let gaugePercent = 50 + (deviation * 250);
     gaugePercent = Math.max(5, Math.min(95, gaugePercent));
     pointer.style.left = gaugePercent + '%';
@@ -1162,7 +1346,6 @@
     updatePrompt();
   }
 
-  // TAB 2: Foreclosure Calculation
   function calculateForeclosure() {
     const basePrice = parseFloat(document.getElementById('fc-base-price').value) || 1000;
     const marketPrice = parseFloat(document.getElementById('fc-market-price').value) || 1500;
@@ -1199,7 +1382,6 @@
     }
   }
 
-  // TAB 3: Mortgage Calculation
   function calculateMortgage() {
     const totalPrice = parseFloat(document.getElementById('mg-total-price').value) || 2000;
     const loanRatio = parseFloat(document.getElementById('mg-loan-ratio').value) || 80;
@@ -1208,18 +1390,16 @@
     const graceYears = parseInt(document.getElementById('mg-grace').value) || 0;
     const monthlyRent = parseFloat(document.getElementById('mg-rent').value) || 35000;
 
-    const loanAmount = totalPrice * (loanRatio / 100); // 萬元
-    const downPayment = totalPrice - loanAmount; // 萬元
+    const loanAmount = totalPrice * (loanRatio / 100);
+    const downPayment = totalPrice - loanAmount;
 
     const monthlyRate = rate / 12;
     const totalMonths = years * 12;
     const graceMonths = graceYears * 12;
     const amortMonths = totalMonths - graceMonths;
 
-    // Grace monthly interest payment
     const graceMonthlyPayment = (loanAmount * 10000) * monthlyRate;
 
-    // Amortization monthly payment after grace: P * [r(1+r)^n] / [(1+r)^n - 1]
     let regularMonthly = 0;
     if (monthlyRate > 0 && amortMonths > 0) {
       const pow = Math.pow(1 + monthlyRate, amortMonths);
@@ -1239,7 +1419,6 @@
     document.getElementById('mg-rental-yield').textContent = grossRentalYield.toFixed(2) + ' %';
   }
 
-  // TAB 4: Update Natural Prompt
   function updatePrompt() {
     const city = document.getElementById('city-select').value;
     const district = document.getElementById('district-input').value;
@@ -1267,7 +1446,6 @@
     if (el) el.textContent = promptText;
   }
 
-  // Client Configs
   const CLIENT_CONFIGS = {
     chatgpt: `【ChatGPT 設定方式】
 1. 前往「設定」→「連接器」或「應用程式與連接器」→ 開啟「開發者模式 (Developer mode)」
@@ -1340,12 +1518,12 @@ claude
     });
   }
 
-  // Initial runs
   window.addEventListener('DOMContentLoaded', () => {
     calculateValuation();
     calculateForeclosure();
     calculateMortgage();
     showClientConfig('chatgpt');
+    checkMcpHealth();
     const current = document.documentElement.getAttribute('data-theme') || 'light';
     updateToggleBtn(current);
   });
