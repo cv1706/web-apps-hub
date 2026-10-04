@@ -102,13 +102,13 @@
 
     .top-nav {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       margin-bottom: 20px;
     }
 
     .back-link {
-      display: inline-flex;
+      display: none !important;
       align-items: center;
       gap: 6px;
       color: var(--primary);
@@ -497,9 +497,11 @@
 
 <div class="container">
   <div class="top-nav">
+    <!-- 暫時隱藏返回主頁功能
     <a href="../" class="back-link">
       <span>←</span> 返回 Web Apps Hub
     </a>
+    -->
     <div class="nav-actions">
       <div id="mcp-status-badge" class="mcp-status-pill" title="Cloudflare Worker 反向代理連線狀態">
         <span id="mcp-status-dot" class="status-dot"></span>
