@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣房地產估價與開價合理性分析器 · ToEstate MCP Hub</title>
+  <meta name="description" content="專業台灣房地產行情估算、開價合理性判定、車位拆算、房貸試算、法拍折價評估與 ToEstate MCP AI 連接器助手。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('hub-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #f0f4ff 0%, #f8fafc 60%, #f1f5f9 100%);
+      --body-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+      --card-hover-border: #818cf8;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-border: #c7d2fe;
+      --accent: #0ea5e9;
+      --accent-light: #e0f2fe;
+      --text-title: #0f172a;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-sub: #475569;
+      --input-bg: #f8fafc;
+      --input-border: #cbd5e1;
+      --input-focus: #4f46e5;
+      --divider: #e2e8f0;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --pill-bg: #e2e8f0;
+      --badge-bg: #e0e7ff;
+      --badge-text: #4338ca;
+      --tab-active-border: #4f46e5;
+      --tab-active-text: #4f46e5;
+      --tab-inactive-text: #64748b;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e2538 0%, #0f131f 100%);
+      --body-bg: #0f131f;
+      --card-bg: rgba(26, 32, 50, 0.92);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --card-hover-border: rgba(129, 140, 248, 0.6);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: rgba(99, 102, 241, 0.15);
+      --primary-border: rgba(99, 102, 241, 0.35);
+      --accent: #38bdf8;
+      --accent-light: rgba(56, 189, 248, 0.15);
+      --text-title: #f8fafc;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-sub: #cbd5e1;
+      --input-bg: rgba(15, 23, 42, 0.6);
+      --input-border: rgba(255, 255, 255, 0.15);
+      --input-focus: #818cf8;
+      --divider: rgba(255, 255, 255, 0.1);
+      --success: #34d399;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --warning: #fbbf24;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --danger: #f87171;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --pill-bg: rgba(255, 255, 255, 0.1);
+      --badge-bg: rgba(99, 102, 241, 0.2);
+      --badge-text: #a5b4fc;
+      --tab-active-border: #818cf8;
+      --tab-active-text: #818cf8;
+      --tab-inactive-text: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      background-color: var(--body-bg);
+      color: var(--text-main);
+      font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 24px 16px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1140px;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-title);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--divider);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-nav::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      padding: 10px 18px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--tab-inactive-text);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      color: var(--tab-active-text);
+      border-bottom-color: var(--tab-active-border);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-main);
+    }
+
+    /* Tab Content Panes */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Layout Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-title);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .unit-label {
+      position: absolute;
+      right: 12px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      color: var(--text-main);
+    }
+
+    .checkbox-wrap input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Action Buttons */
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      width: 100%;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: var(--divider);
+    }
+
+    /* Result Dashboard */
+    .result-box {
+      border-radius: 12px;
+      padding: 18px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      margin-bottom: 16px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--divider);
+      font-size: 13.5px;
+    }
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-name {
+      color: var(--text-muted);
+    }
+    .metric-val {
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .metric-highlight {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* Meter Gauge */
+    .gauge-wrapper {
+      margin: 16px 0;
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .gauge-bar-bg {
+      height: 12px;
+      background: linear-gradient(to right, #10b981 0%, #10b981 25%, #3b82f6 30%, #3b82f6 55%, #f59e0b 60%, #f59e0b 80%, #ef4444 85%, #ef4444 100%);
+      border-radius: 999px;
+      position: relative;
+    }
+
+    .gauge-pointer {
+      position: absolute;
+      top: -4px;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border: 3px solid var(--primary);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Verdict Card */
+    .verdict-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .verdict-fair {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+    .verdict-high {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+    }
+    .verdict-overpriced {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+    .verdict-bargain {
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    /* Prompt Box */
+    .prompt-box {
+      position: relative;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Snippet Box for MCP configs */
+    .code-block {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      padding: 14px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12.5px;
+      overflow-x: auto;
+      margin-top: 8px;
+      position: relative;
+    }
+
+    /* Notice Alert */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+    }
+    .alert-info {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--divider);
+      padding-top: 20px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav">
+    <a href="../" class="back-link">
+      <span>←</span> 返回 Web Apps Hub
+    </a>
+    <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
+      🌙 深色模式
+    </button>
+  </div>
+
+  <header>
+    <div class="badge-top">🏡 台灣房地產數據與評價工具箱</div>
+    <h1>台灣房地產估價與開價合理性分析器</h1>
+    <p class="subtitle">整合區域行情特徵統計模型、扣車位淨坪拆算、房貸試算、法拍屋折價分析與 ToEstate MCP AI 連接器助手。</p>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-nav" aria-label="功能標籤頁">
+    <button class="tab-btn active" onclick="switchTab('tab-valuation', this)">
+      <span>📊</span> 開價合理性與行情估算
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-foreclosure', this)">
+      <span>⚖️</span> 法拍屋折價與風險試算
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-mortgage', this)">
+      <span>💰</span> 房貸本息與租金投報
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-mcp-helper', this)">
+      <span>🤖</span> ToEstate MCP 精靈與提示詞
+    </button>
+  </nav>
+
+  <!-- TAB 1: 開價合理性與行情估算 -->
+  <div id="tab-valuation" class="tab-pane active">
+    <div class="grid-2">
+      <!-- Input Form -->
+      <div class="card">
+        <h2 class="card-title"><span>📝</span> 物件條件輸入</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city-select">縣市</label>
+            <select id="city-select" onchange="onCityChange()">
+              <option value="台北市">台北市</option>
+              <option value="新北市" selected>新北市</option>
+              <option value="桃園市">桃園市</option>
+              <option value="台中市">台中市</option>
+              <option value="台南市">台南市</option>
+              <option value="高雄市">高雄市</option>
+              <option value="新竹縣市">新竹縣市</option>
+              <option value="其他縣市">其他縣市</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="district-input">行政區 / 路段社區</label>
+            <input type="text" id="district-input" value="板橋區文化路二段" placeholder="例：新莊區中正路、心之所向">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="building-type">建築型態</label>
+            <select id="building-type" onchange="calculateValuation()">
+              <option value="building" selected>電梯大樓 (含公設)</option>
+              <option value="mansion">華廈 (7-10樓)</option>
+              <option value="apartment">無電梯公寓 (低公設)</option>
+              <option value="townhouse">透天 / 別墅</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="floor-pos">所在樓層 / 總樓層</label>
+            <div class="form-row">
+              <input type="number" id="floor-pos" value="8" min="1" max="100" placeholder="樓層" oninput="calculateValuation()">
+              <input type="number" id="total-floors" value="15" min="1" max="100" placeholder="總樓" oninput="calculateValuation()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="total-ping">權狀總坪數 (含車位)</label>
+            <div class="input-wrap">
+              <input type="number" id="total-ping" value="38.5" step="0.1" min="1" oninput="calculateValuation()">
+              <span class="unit-label">坪</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="age-years">屋齡</label>
+            <div class="input-wrap">
+              <input type="number" id="age-years" value="8" step="0.5" min="0" oninput="calculateValuation()">
+              <span class="unit-label">年</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 車位拆算設定 -->
+        <div class="form-group">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="has-parking" checked onchange="toggleParkingFields()">
+            <span>包含車位（啟用車位拆算，分離真實單價）</span>
+          </label>
+        </div>
+
+        <div id="parking-fields" class="form-row" style="background: var(--input-bg); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="parking-type">車位型態</label>
+            <select id="parking-type" onchange="calculateValuation()">
+              <option value="plane" selected>坡道平面車位</option>
+              <option value="mech">坡道機械車位</option>
+              <option value="auto">全機械昇降車位</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="parking-price">車位價格 / 坪數</label>
+            <div class="form-row">
+              <div class="input-wrap">
+                <input type="number" id="parking-price" value="220" step="10" placeholder="價格" oninput="calculateValuation()">
+                <span class="unit-label">萬</span>
+              </div>
+              <div class="input-wrap">
+                <input type="number" id="parking-ping" value="8.5" step="0.5" placeholder="坪數" oninput="calculateValuation()">
+                <span class="unit-label">坪</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="asking-price">賣方開價總價</label>
+          <div class="input-wrap">
+            <input type="number" id="asking-price" value="2350" step="10" min="10" oninput="calculateValuation()">
+            <span class="unit-label">萬元</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="calculateValuation()">
+          <span>⚡</span> 重新估算開價與合理性
+        </button>
+      </div>
+
+      <!-- Result Card -->
+      <div class="card">
+        <h2 class="card-title"><span>📈</span> 開價合理性分析結果</h2>
+
+        <div id="verdict-banner" class="verdict-banner verdict-fair">
+          <span id="verdict-icon">⚖️</span>
+          <span id="verdict-text">開價貼近合理市場區間</span>
+        </div>
+
+        <div class="gauge-wrapper">
+          <div class="gauge-labels">
+            <span>低估超值 (-15%)</span>
+            <span>合理中位</span>
+            <span>偏高溢價 (+15%)</span>
+            <span>顯著偏高</span>
+          </div>
+          <div class="gauge-bar-bg">
+            <div id="gauge-pointer" class="gauge-pointer" style="left: 50%;"></div>
+          </div>
+        </div>
+
+        <div class="result-box">
+          <div class="metric-row">
+            <span class="metric-name">扣車位純房屋淨坪數</span>
+            <span class="metric-val" id="net-house-ping">30.0 坪</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">扣車位真實開價單價</span>
+            <span class="metric-val metric-highlight" id="net-unit-price">71.0 萬/坪</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">表面含車位開價單價</span>
+            <span class="metric-val" id="gross-unit-price">61.0 萬/坪</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">同區域特徵參考合理單價</span>
+            <span class="metric-val" id="fair-unit-price">68.5 萬/坪</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">估計合理成交總價區間</span>
+            <span class="metric-val" id="fair-total-range">2,150 ~ 2,320 萬元</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">建議議價談判空間</span>
+            <span class="metric-val" id="bargain-space">約 80 ~ 150 萬元 (93 折)</span>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <span>💡</span>
+          <div>
+            <strong>估價提示</strong>：本工具採用 Hedonic 區域基準定價與車位拆分演算法。如需比對附近特定社區實際實價登錄，可複製下方 ToEstate MCP 提問詞至 AI 進行實時比對。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: 法拍屋折價與風險試算 -->
+  <div id="tab-foreclosure" class="tab-pane">
+    <div class="grid-2">
+      <div class="card">
+        <h2 class="card-title"><span>⚖️</span> 法拍標的條件輸入</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fc-round">法拍拍次</label>
+            <select id="fc-round" onchange="calculateForeclosure()">
+              <option value="1">第一拍 (公告底價 100%)</option>
+              <option value="2">第二拍 (通常為首拍 80%)</option>
+              <option value="3" selected>第三拍 (通常為首拍 64%)</option>
+              <option value="4">第四拍 (通常為首拍 51.2%)</option>
+              <option value="apply">應買公告 (通常維持前次底價)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fc-delivery">點交狀態</label>
+            <select id="fc-delivery" onchange="calculateForeclosure()">
+              <option value="full" selected>點交 (法院強制交屋)</option>
+              <option value="partial">部分點交 (部分公設/車位不點交)</option>
+              <option value="none">不點交 (第三人占用/租約存在)</option>
+              <option value="share">持分拍賣 (共有人享優先購買權)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fc-base-price">本拍拍賣底價</label>
+            <div class="input-wrap">
+              <input type="number" id="fc-base-price" value="1280" step="10" oninput="calculateForeclosure()">
+              <span class="unit-label">萬元</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="fc-market-price">周邊/同棟市場預估市價</label>
+            <div class="input-wrap">
+              <input type="number" id="fc-market-price" value="1950" step="10" oninput="calculateForeclosure()">
+              <span class="unit-label">萬元</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fc-ping">建物面積</label>
+            <div class="input-wrap">
+              <input type="number" id="fc-ping" value="32.5" step="0.1" oninput="calculateForeclosure()">
+              <span class="unit-label">坪</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="fc-extra-cost">預估隱性成本 (點交談判/搬遷/裝修)</label>
+            <div class="input-wrap">
+              <input type="number" id="fc-extra-cost" value="50" step="5" oninput="calculateForeclosure()">
+              <span class="unit-label">萬元</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="calculateForeclosure()">
+          <span>🔍</span> 試算法拍折價與安全邊際
+        </button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title"><span>📋</span> 法拍投資利潤與安全評估</h2>
+        
+        <div class="result-box">
+          <div class="metric-row">
+            <span class="metric-name">相對市價折價率 (Discount)</span>
+            <span class="metric-val metric-highlight" id="fc-discount">-34.4%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">底價折合每坪單價</span>
+            <span class="metric-val" id="fc-unit-price">39.4 萬/坪</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">正常市價每坪單價</span>
+            <span class="metric-val" id="fc-market-unit-price">60.0 萬/坪</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">帳面毛利潤空間</span>
+            <span class="metric-val" id="fc-gross-profit">670 萬元</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">扣除預估隱性成本後淨利潤</span>
+            <span class="metric-val" id="fc-net-profit">620 萬元 (投報 46.6%)</span>
+          </div>
+        </div>
+
+        <div id="fc-risk-warning" class="verdict-banner verdict-fair">
+          <span>🛡️</span>
+          <span id="fc-risk-text">具備充足安全邊際 (折價超過 30%)，且全戶點交風險低</span>
+        </div>
+
+        <div class="alert alert-info">
+          <span>⚠️</span>
+          <div>
+            <strong>法拍注意事項</strong>：依司法院強制執行法規定，不點交標的可能面臨不定期租約或第三人佔有；持分變賣共有人具法定優先承買權。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: 房貸本息與租金投報 -->
+  <div id="tab-mortgage" class="tab-pane">
+    <div class="grid-2">
+      <div class="card">
+        <h2 class="card-title"><span>💳</span> 房貸與收益參數設定</h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mg-total-price">房屋成交總價</label>
+            <div class="input-wrap">
+              <input type="number" id="mg-total-price" value="2200" step="10" oninput="calculateMortgage()">
+              <span class="unit-label">萬元</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="mg-loan-ratio">貸款成數</label>
+            <div class="input-wrap">
+              <input type="number" id="mg-loan-ratio" value="80" min="10" max="90" step="5" oninput="calculateMortgage()">
+              <span class="unit-label">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mg-rate">房貸年利率</label>
+            <div class="input-wrap">
+              <input type="number" id="mg-rate" value="2.185" step="0.01" oninput="calculateMortgage()">
+              <span class="unit-label">%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="mg-years">貸款年限</label>
+            <select id="mg-years" onchange="calculateMortgage()">
+              <option value="20">20 年 (240 期)</option>
+              <option value="30" selected>30 年 (360 期)</option>
+              <option value="40">40 年 (480 期 / 新青安)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mg-grace">寬限期 (只付息不還本)</label>
+            <div class="input-wrap">
+              <input type="number" id="mg-grace" value="3" min="0" max="5" oninput="calculateMortgage()">
+              <span class="unit-label">年</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="mg-rent">預估每月可收租金</label>
+            <div class="input-wrap">
+              <input type="number" id="mg-rent" value="38000" step="1000" oninput="calculateMortgage()">
+              <span class="unit-label">元/月</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="calculateMortgage()">
+          <span>🧮</span> 試算還款金流與租金報酬
+        </button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title"><span>📊</span> 金流試算與收益率分析</h2>
+
+        <div class="result-box">
+          <div class="metric-row">
+            <span class="metric-name">自備款金額 (頭期款)</span>
+            <span class="metric-val" id="mg-down-payment">440 萬元</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">銀行貸款總額</span>
+            <span class="metric-val" id="mg-loan-amount">1,760 萬元</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">寬限期每月利息支出</span>
+            <span class="metric-val" id="mg-grace-monthly">32,047 元/月</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">寬限期後每月本息攤還</span>
+            <span class="metric-val metric-highlight" id="mg-monthly-payment">71,842 元/月</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">貸款全期累計利息總額</span>
+            <span class="metric-val" id="mg-total-interest">682 萬元</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">毛租金年收益率 (Gross Yield)</span>
+            <span class="metric-val" id="mg-rental-yield">2.07 %</span>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <span>💡</span>
+          <div>
+            <strong>還款建議</strong>：本息均攤計算依據年金法公式。如預計收租出租，月租金扣抵寬限期利息具備微幅正現金流，寬限期滿後需備妥額外現金補足月付缺口。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ToEstate MCP 精靈與提示詞 -->
+  <div id="tab-mcp-helper" class="tab-pane">
+    <div class="card">
+      <h2 class="card-title"><span>🤖</span> 智慧自然語言 Prompt 產生器</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
+        根據您在前述標籤頁輸入的標的條件，自動產出能發揮 ToEstate 55 項 MCP 工具最佳效果的高效提問詞。
+      </p>
+
+      <div style="position: relative; margin-bottom: 20px;">
+        <pre id="generated-prompt" class="prompt-box">載入中...</pre>
+        <button class="copy-btn" onclick="copyPrompt('generated-prompt', this)">複製提問詞</button>
+      </div>
+
+      <h2 class="card-title" style="margin-top: 28px;"><span>🔌</span> ToEstate MCP 各平台客戶端接入配置</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
+        服務端點：<code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:600;">https://toestate.tw/mcp</code>（免金鑰、Streamable HTTP 協定）
+      </p>
+
+      <!-- Client Config Tabs -->
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+        <button class="btn btn-secondary" onclick="showClientConfig('chatgpt')">ChatGPT</button>
+        <button class="btn btn-secondary" onclick="showClientConfig('claude')">Claude (網頁/App)</button>
+        <button class="btn btn-secondary" onclick="showClientConfig('cursor')">Cursor</button>
+        <button class="btn btn-secondary" onclick="showClientConfig('vscode')">VS Code</button>
+        <button class="btn btn-secondary" onclick="showClientConfig('claudecode')">Claude Code</button>
+        <button class="btn btn-secondary" onclick="showClientConfig('gemini')">Gemini CLI</button>
+      </div>
+
+      <div id="client-config-container" style="position: relative;">
+        <pre id="client-config-code" class="code-block"></pre>
+        <button class="copy-btn" onclick="copyPrompt('client-config-code', this)">複製設定</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Web Apps Hub · 台灣房地產估價與開價合理性分析器 · 託管於 Cloudflare Workers & GitHub Pages</p>
+  </footer>
+</div>
+
+<script>
+  // Regional benchmark price data (unit: 10k TWD / ping for new standard elevator building)
+  const REGION_DATA = {
+    '台北市': { basePrice: 105, parkingPlane: 280, parkingMech: 180, growth: 1.05 },
+    '新北市': { basePrice: 62, parkingPlane: 220, parkingMech: 140, growth: 1.03 },
+    '桃園市': { basePrice: 38, parkingPlane: 180, parkingMech: 110, growth: 1.04 },
+    '台中市': { basePrice: 46, parkingPlane: 190, parkingMech: 120, growth: 1.04 },
+    '台南市': { basePrice: 36, parkingPlane: 160, parkingMech: 100, growth: 1.03 },
+    '高雄市': { basePrice: 38, parkingPlane: 180, parkingMech: 110, growth: 1.03 },
+    '新竹縣市': { basePrice: 58, parkingPlane: 200, parkingMech: 130, growth: 1.05 },
+    '其他縣市': { basePrice: 28, parkingPlane: 130, parkingMech: 80, growth: 1.02 }
+  };
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('hub-theme', next);
+    updateToggleBtn(next);
+  }
+
+  function updateToggleBtn(theme) {
+    const btn = document.getElementById('theme-toggle-btn');
+    if (btn) {
+      btn.innerHTML = theme === 'dark' ? '☀️ 淺色模式' : '🌙 深色模式';
+    }
+  }
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+
+    if (tabId === 'tab-mcp-helper') {
+      updatePrompt();
+    }
+  }
+
+  function onCityChange() {
+    const city = document.getElementById('city-select').value;
+    const d = REGION_DATA[city] || REGION_DATA['新北市'];
+    document.getElementById('parking-price').value = d.parkingPlane;
+    calculateValuation();
+  }
+
+  function toggleParkingFields() {
+    const hasParking = document.getElementById('has-parking').checked;
+    document.getElementById('parking-fields').style.display = hasParking ? 'grid' : 'none';
+    calculateValuation();
+  }
+
+  // TAB 1: Valuation Calculation
+  function calculateValuation() {
+    const city = document.getElementById('city-select').value;
+    const district = document.getElementById('district-input').value;
+    const bType = document.getElementById('building-type').value;
+    const floorPos = parseInt(document.getElementById('floor-pos').value) || 5;
+    const totalFloors = parseInt(document.getElementById('total-floors').value) || 12;
+    const totalPing = parseFloat(document.getElementById('total-ping').value) || 30;
+    const ageYears = parseFloat(document.getElementById('age-years').value) || 10;
+    const hasParking = document.getElementById('has-parking').checked;
+    const parkingPrice = hasParking ? (parseFloat(document.getElementById('parking-price').value) || 0) : 0;
+    const parkingPing = hasParking ? (parseFloat(document.getElementById('parking-ping').value) || 0) : 0;
+    const askingPrice = parseFloat(document.getElementById('asking-price').value) || 2000;
+
+    // Net house area & price calculation
+    const netPing = Math.max(1, totalPing - parkingPing);
+    const netHousePrice = Math.max(0, askingPrice - parkingPrice);
+    const netUnitPrice = netHousePrice / netPing;
+    const grossUnitPrice = askingPrice / totalPing;
+
+    // Baseline calculation based on city & adjustments
+    const base = REGION_DATA[city] || REGION_DATA['新北市'];
+    let adjustedUnitPrice = base.basePrice;
+
+    // Building type adjustment
+    if (bType === 'mansion') adjustedUnitPrice *= 0.92;
+    else if (bType === 'apartment') adjustedUnitPrice *= 0.76;
+    else if (bType === 'townhouse') adjustedUnitPrice *= 0.85;
+
+    // Age depreciation (e.g. 1.2% per year, capped at 40% depreciation)
+    const depFactor = Math.max(0.60, 1 - (ageYears * 0.013));
+    adjustedUnitPrice *= depFactor;
+
+    // Floor factor (middle-high floors slightly higher)
+    if (floorPos === 4) adjustedUnitPrice *= 0.96;
+    else if (floorPos === 1) adjustedUnitPrice *= 1.15; // 1F retail/patio bonus
+    else if (floorPos > totalFloors * 0.6) adjustedUnitPrice *= 1.05;
+    else if (floorPos <= 3) adjustedUnitPrice *= 0.96;
+
+    const fairUnitPrice = adjustedUnitPrice;
+    const fairTotalMid = (fairUnitPrice * netPing) + parkingPrice;
+    const fairTotalLow = fairTotalMid * 0.93;
+    const fairTotalHigh = fairTotalMid * 1.07;
+
+    // Percentage deviation: (asking - fairMid) / fairMid
+    const deviation = (askingPrice - fairTotalMid) / fairTotalMid;
+
+    // Update UI Metrics
+    document.getElementById('net-house-ping').textContent = netPing.toFixed(1) + ' 坪';
+    document.getElementById('net-unit-price').textContent = netUnitPrice.toFixed(1) + ' 萬/坪';
+    document.getElementById('gross-unit-price').textContent = grossUnitPrice.toFixed(1) + ' 萬/坪';
+    document.getElementById('fair-unit-price').textContent = fairUnitPrice.toFixed(1) + ' 萬/坪';
+    document.getElementById('fair-total-range').textContent = Math.round(fairTotalLow).toLocaleString() + ' ~ ' + Math.round(fairTotalHigh).toLocaleString() + ' 萬元';
+
+    // Bargain suggestion
+    if (deviation > 0.03) {
+      const diff = Math.round(askingPrice - fairTotalMid);
+      const discountPct = Math.round((1 - (fairTotalMid / askingPrice)) * 100);
+      document.getElementById('bargain-space').textContent = `約 ${diff} 萬元 (可試談 ${100 - discountPct} 折)`;
+    } else {
+      document.getElementById('bargain-space').textContent = '已具備合理性，議價空間約 3%~5%';
+    }
+
+    // Verdict and Gauge
+    const banner = document.getElementById('verdict-banner');
+    const vText = document.getElementById('verdict-text');
+    const vIcon = document.getElementById('verdict-icon');
+    const pointer = document.getElementById('gauge-pointer');
+
+    // Gauge mapping (-20% -> 0%, 0% -> 50%, +20% -> 100%)
+    let gaugePercent = 50 + (deviation * 250);
+    gaugePercent = Math.max(5, Math.min(95, gaugePercent));
+    pointer.style.left = gaugePercent + '%';
+
+    banner.className = 'verdict-banner';
+    if (deviation <= -0.10) {
+      banner.classList.add('verdict-bargain');
+      vIcon.textContent = '💎';
+      vText.textContent = `開價顯著低於市場行情 (${(deviation * 100).toFixed(1)}%)，具高性價比`;
+    } else if (deviation >= -0.10 && deviation <= 0.05) {
+      banner.classList.add('verdict-fair');
+      vIcon.textContent = '⚖️';
+      vText.textContent = `開價貼近合理市場區間 (${deviation >= 0 ? '+' : ''}${(deviation * 100).toFixed(1)}%)`;
+    } else if (deviation > 0.05 && deviation <= 0.15) {
+      banner.classList.add('verdict-high');
+      vIcon.textContent = '⚠️';
+      vText.textContent = `開價略高於市場估值 (+${(deviation * 100).toFixed(1)}%)，建議拉大議價空間`;
+    } else {
+      banner.classList.add('verdict-overpriced');
+      vIcon.textContent = '🚨';
+      vText.textContent = `開價顯著高於周邊行情 (+${(deviation * 100).toFixed(1)}%)，存在高溢價風險`;
+    }
+
+    updatePrompt();
+  }
+
+  // TAB 2: Foreclosure Calculation
+  function calculateForeclosure() {
+    const basePrice = parseFloat(document.getElementById('fc-base-price').value) || 1000;
+    const marketPrice = parseFloat(document.getElementById('fc-market-price').value) || 1500;
+    const ping = parseFloat(document.getElementById('fc-ping').value) || 30;
+    const extraCost = parseFloat(document.getElementById('fc-extra-cost').value) || 0;
+    const delivery = document.getElementById('fc-delivery').value;
+
+    const discount = ((basePrice / marketPrice) - 1);
+    const unitPrice = basePrice / ping;
+    const marketUnitPrice = marketPrice / ping;
+    const grossProfit = marketPrice - basePrice;
+    const netProfit = grossProfit - extraCost;
+    const roi = (netProfit / (basePrice + extraCost)) * 100;
+
+    document.getElementById('fc-discount').textContent = (discount * 100).toFixed(1) + '%';
+    document.getElementById('fc-unit-price').textContent = unitPrice.toFixed(1) + ' 萬/坪';
+    document.getElementById('fc-market-unit-price').textContent = marketUnitPrice.toFixed(1) + ' 萬/坪';
+    document.getElementById('fc-gross-profit').textContent = Math.round(grossProfit).toLocaleString() + ' 萬元';
+    document.getElementById('fc-net-profit').textContent = `${Math.round(netProfit).toLocaleString()} 萬元 (投報率 ${roi.toFixed(1)}%)`;
+
+    const warningBox = document.getElementById('fc-risk-warning');
+    const riskText = document.getElementById('fc-risk-text');
+    warningBox.className = 'verdict-banner';
+
+    if (delivery === 'none' || delivery === 'share') {
+      warningBox.classList.add('verdict-overpriced');
+      riskText.textContent = delivery === 'none' ? '🚨 注意：不點交標的，可能涉及第三人非法占用或長期無租約糾紛' : '🚨 注意：持分產權，共有人依法享有優先承買權，得標可能無法過戶完整房屋';
+    } else if (discount <= -0.30) {
+      warningBox.classList.add('verdict-fair');
+      riskText.textContent = `🛡️ 具備安全邊際 (折價 ${(Math.abs(discount) * 100).toFixed(1)}%)，且為法院點交標的`;
+    } else {
+      warningBox.classList.add('verdict-high');
+      riskText.textContent = '⚠️ 折價幅度在 20% 以內，扣除轉手成本與利息後獲利空間偏薄';
+    }
+  }
+
+  // TAB 3: Mortgage Calculation
+  function calculateMortgage() {
+    const totalPrice = parseFloat(document.getElementById('mg-total-price').value) || 2000;
+    const loanRatio = parseFloat(document.getElementById('mg-loan-ratio').value) || 80;
+    const rate = (parseFloat(document.getElementById('mg-rate').value) || 2.185) / 100;
+    const years = parseInt(document.getElementById('mg-years').value) || 30;
+    const graceYears = parseInt(document.getElementById('mg-grace').value) || 0;
+    const monthlyRent = parseFloat(document.getElementById('mg-rent').value) || 35000;
+
+    const loanAmount = totalPrice * (loanRatio / 100); // 萬元
+    const downPayment = totalPrice - loanAmount; // 萬元
+
+    const monthlyRate = rate / 12;
+    const totalMonths = years * 12;
+    const graceMonths = graceYears * 12;
+    const amortMonths = totalMonths - graceMonths;
+
+    // Grace monthly interest payment
+    const graceMonthlyPayment = (loanAmount * 10000) * monthlyRate;
+
+    // Amortization monthly payment after grace: P * [r(1+r)^n] / [(1+r)^n - 1]
+    let regularMonthly = 0;
+    if (monthlyRate > 0 && amortMonths > 0) {
+      const pow = Math.pow(1 + monthlyRate, amortMonths);
+      regularMonthly = (loanAmount * 10000) * (monthlyRate * pow) / (pow - 1);
+    } else {
+      regularMonthly = (loanAmount * 10000) / amortMonths;
+    }
+
+    const totalInterest = ((graceMonthlyPayment * graceMonths) + (regularMonthly * amortMonths) - (loanAmount * 10000)) / 10000;
+    const grossRentalYield = ((monthlyRent * 12) / (totalPrice * 10000)) * 100;
+
+    document.getElementById('mg-down-payment').textContent = Math.round(downPayment).toLocaleString() + ' 萬元';
+    document.getElementById('mg-loan-amount').textContent = Math.round(loanAmount).toLocaleString() + ' 萬元';
+    document.getElementById('mg-grace-monthly').textContent = Math.round(graceMonthlyPayment).toLocaleString() + ' 元/月';
+    document.getElementById('mg-monthly-payment').textContent = Math.round(regularMonthly).toLocaleString() + ' 元/月';
+    document.getElementById('mg-total-interest').textContent = Math.round(totalInterest).toLocaleString() + ' 萬元';
+    document.getElementById('mg-rental-yield').textContent = grossRentalYield.toFixed(2) + ' %';
+  }
+
+  // TAB 4: Update Natural Prompt
+  function updatePrompt() {
+    const city = document.getElementById('city-select').value;
+    const district = document.getElementById('district-input').value;
+    const totalPing = document.getElementById('total-ping').value;
+    const ageYears = document.getElementById('age-years').value;
+    const floorPos = document.getElementById('floor-pos').value;
+    const askingPrice = document.getElementById('asking-price').value;
+    const hasParking = document.getElementById('has-parking').checked;
+
+    const parkingText = hasParking ? '含車位' : '無車位';
+
+    const promptText = `請調用 ToEstate 工具幫我分析以下房屋開價合理性：
+標的位置：${city}${district}
+總坪數：${totalPing} 坪 (${parkingText})
+所在樓層：${floorPos} 樓
+建物屋齡：${ageYears} 年
+屋主開價：${askingPrice} 萬元
+
+請幫我查詢：
+1. 扣除車位後的真實單價落點，以及同社區或周邊 500 公尺同類型物件近 1 年真實成交單價區間。
+2. 開價相對市場中位數是偏高還是偏低？建議合理的議價出價區間為何？
+3. 列出附近具備代表性的相似成交比對案例（附成交年月與扣車位單價）。`;
+
+    const el = document.getElementById('generated-prompt');
+    if (el) el.textContent = promptText;
+  }
+
+  // Client Configs
+  const CLIENT_CONFIGS = {
+    chatgpt: `【ChatGPT 設定方式】
+1. 前往「設定」→「連接器」或「應用程式與連接器」→ 開啟「開發者模式 (Developer mode)」
+2. 新增自訂連接器：
+   - 名稱：ToEstate
+   - 伺服器網址：https://toestate.tw/mcp
+   - 驗證方式：無 (免帳號密碼)
+3. 在新對話框的工具選單中啟用 ToEstate，直接貼入提問詞提問。`,
+
+    claude: `【Claude (網頁版 / 桌面版 / 手機 App) 設定方式】
+1. 電腦打開 claude.ai → 點選「設定」→「連接器 (Connectors)」
+2. 點選「新增自訂連接器 (Add custom connector)」：
+   - 名稱：ToEstate
+   - 伺服器網址：https://toestate.tw/mcp
+3. 勾選啟用後即可對話。網頁版設定完成後，Claude 手機 App 登入同一帳號自動同步啟用。`,
+
+    cursor: `// 加入專案 .cursor/mcp.json 或全域 ~/.cursor/mcp.json：
+{
+  "mcpServers": {
+    "toestate": {
+      "url": "https://toestate.tw/mcp"
+    }
+  }
+}`,
+
+    vscode: `// 加入專案 .vscode/mcp.json：
+{
+  "servers": {
+    "toestate": {
+      "type": "http",
+      "url": "https://toestate.tw/mcp"
+    }
+  }
+}`,
+
+    claudecode: `# 於命令列終端機執行：
+claude mcp add --transport http toestate https://toestate.tw/mcp
+
+# 驗證連線狀態：
+claude
+/mcp`,
+
+    gemini: `// 加入 ~/.gemini/settings.json：
+{
+  "mcpServers": {
+    "toestate": {
+      "httpUrl": "https://toestate.tw/mcp"
+    }
+  }
+}`
+  };
+
+  function showClientConfig(clientKey) {
+    const codeEl = document.getElementById('client-config-code');
+    if (codeEl) {
+      codeEl.textContent = CLIENT_CONFIGS[clientKey] || CLIENT_CONFIGS['chatgpt'];
+    }
+  }
+
+  function copyPrompt(elementId, btn) {
+    const text = document.getElementById(elementId).innerText || document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ 已複製';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+      }, 2000);
+    });
+  }
+
+  // Initial runs
+  window.addEventListener('DOMContentLoaded', () => {
+    calculateValuation();
+    calculateForeclosure();
+    calculateMortgage();
+    showClientConfig('chatgpt');
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    updateToggleBtn(current);
+  });
+</script>
+
+</body>
+</html>

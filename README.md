@@ -12,6 +12,8 @@
   * **即時路況**：[https://web-apps-hub.cv1706yang.workers.dev/taiwan-traffic-live/](https://web-apps-hub.cv1706yang.workers.dev/taiwan-traffic-live/)
   * **通行費試算**：[https://web-apps-hub.cv1706yang.workers.dev/highway-toll-calculator/](https://web-apps-hub.cv1706yang.workers.dev/highway-toll-calculator/)
   * **吊車安全試算**：[https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/](https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/)
+  * **選擇權量化決策**：[https://web-apps-hub.cv1706yang.workers.dev/options-quant-app/](https://web-apps-hub.cv1706yang.workers.dev/options-quant-app/)
+  * **台灣房產估價 & MCP**：[https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/](https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/)
 
 * **GitHub Pages 靜態站點**：
   * **入口總覽**：[https://cv1706.github.io/web-apps-hub/](https://cv1706.github.io/web-apps-hub/)
@@ -19,6 +21,8 @@
   * **即時路況**：[https://cv1706.github.io/web-apps-hub/taiwan-traffic-live/](https://cv1706.github.io/web-apps-hub/taiwan-traffic-live/)
   * **通行費試算**：[https://cv1706.github.io/web-apps-hub/highway-toll-calculator/](https://cv1706.github.io/web-apps-hub/highway-toll-calculator/)
   * **吊車安全試算**：[https://cv1706.github.io/web-apps-hub/crane-calculator/](https://cv1706.github.io/web-apps-hub/crane-calculator/)
+  * **選擇權量化決策**：[https://cv1706.github.io/web-apps-hub/options-quant-app/](https://cv1706.github.io/web-apps-hub/options-quant-app/)
+  * **台灣房產估價 & MCP**：[https://cv1706.github.io/web-apps-hub/taiwan-real-estate/](https://cv1706.github.io/web-apps-hub/taiwan-real-estate/)
 
 ---
 
@@ -51,6 +55,20 @@
 * **使用說明**：
   * **參數校核**：輸入主臂長度、作業半徑、吊物重與索具重，自動計算額定總負荷與安全額度比率。
   * **法規預警**：依起重升降機具安全標準驗算，超出極限作業半徑即時警示。
+
+### 5. 📈 台指選擇權量化多空決策與損益平衡小工具
+* **路徑**：`/options-quant-app/`
+* **使用說明**：
+  * **策略對齊**：支援牛市價差、熊市價差與鐵鷹策略量化產出。
+  * **情境矩陣**：OptionStrat 風格損益平衡矩陣與 Greeks 敏感度分析。
+
+### 6. 🏡 台灣房地產估價與開價合理性分析器 (ToEstate MCP Hub)
+* **路徑**：`/taiwan-real-estate/`
+* **使用說明**：
+  * **開價合理性評估**：整合縣市區域基準與 Hedonic 折舊模型，拆分車位價格計算真實淨坪單價，呈現溢價/折價指針量表與建議出價空間。
+  * **法拍屋折價與風險試算**：全台地院與行政執行署拍次折價率（Discount %）即時推算，解析點交條件、持分優先承買權與隱性成本。
+  * **房貸與租金收益**：支援新青安/一般房貸本息均攤計算、寬限期利息及毛租金收益率（Gross Yield）。
+  * **ToEstate MCP 提示詞精靈**：依物件參數自動產出最佳化繁體中文提示詞，並提供 ChatGPT、Claude、Cursor、VS Code、Claude Code 等多客戶端連線配置指令。
 
 ---
 
