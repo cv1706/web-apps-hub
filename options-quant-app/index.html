@@ -531,19 +531,19 @@
     <div class="snapshot-bar">
         <div class="snapshot-item">
             <span class="label">標的：</span>
-            <span class="val" id="snapSymbol">台指期貨 TXFJ6</span>
+            <span class="val" id="snapSymbol">臺指期夜盤 TXFJ6-M</span>
         </div>
         <div class="snapshot-item">
             <span class="label">現價：</span>
-            <span class="val" style="color: #4ade80;" id="snapPrice">49,346 點</span>
+            <span class="val" style="color: #4ade80;" id="snapPrice">49,367 點</span>
         </div>
         <div class="snapshot-item">
             <span class="label">仲裁：</span>
-            <span class="val" style="color: #38bdf8;" id="snapArbitration">【偏多操作】</span>
+            <span class="val" style="color: #38bdf8;" id="snapArbitration">【空手觀望 (Neutral / 區間防守)】 (47.5%)</span>
         </div>
         <div class="snapshot-item">
             <span class="label">更新：</span>
-            <span class="val" id="snapTime" style="color: var(--text-muted);">2026-10-04 15:17:50</span>
+            <span class="val" id="snapTime" style="color: var(--text-muted);">2026-10-12 16:05:17</span>
         </div>
     </div>
 
@@ -566,7 +566,7 @@
                 <div class="form-group">
                     <label>當前標的指數 (Spot Price)</label>
                     <div class="input-wrapper">
-                        <input type="number" id="spotPrice" class="form-control" value="49346" step="50" oninput="onSpotPriceChange()">
+                        <input type="number" id="spotPrice" class="form-control" value="49367" step="50" oninput="onSpotPriceChange()">
                         <span class="input-suffix">點</span>
                     </div>
                 </div>
@@ -744,123 +744,236 @@ let activeLegs = [];
 let currentSafetyBuffer = '+446 點 (0.9%)';
 
 let liveSnapshotData = {
-    spot_price: 49346,
-    symbol: "TXFJ6",
-    futures_name: "臺股期貨10",
-    change_pct: "+1.39%",
-    change: 677.0,
-    session: "週五夜盤結算",
-    ta_action: "【偏多操作】",
-    source: "永豐 Shioaji API",
-    updated_at: "2026-10-04 15:17:50",
-    commands: {
+    "spot_price": 49367,
+    "symbol": "TXFJ6-M",
+    "futures_name": "臺指期夜盤",
+    "change_pct": "+0.02%",
+    "change": 10.0,
+    "session": "夜盤即時",
+    "ta_action": "【空手觀望 (Neutral / 區間防守)】 (47.5%)",
+    "source": "TAIFEX 官方 MIS (Tier 2 - 夜盤)",
+    "updated_at": "2026-10-12 16:05:17",
+    "commands": {
         "options_calc": {
             "title": "/options_calc (週三一般結算)",
-            "contract": "202610W1",
+            "contract": "202610W2",
             "dte": 3,
             "top3": [
                 {
-                    "category": "防守型 PCS (保守款)",
-                    "name": "PCS 防守型 (賣 48900P / 買 48700P)",
-                    "type": "PCS",
-                    "short_strike": 48900,
-                    "long_strike": 48700,
-                    "net_premium": 65.0,
-                    "net_premium_ntd": 3250.0,
+                    "category": "保守穩健型 CCS (極度防守首選)",
+                    "name": "CCS 保守防禦 (賣 49800C / 買 50000C)",
+                    "type": "CCS",
+                    "short_strike": 49800,
+                    "long_strike": 50000,
+                    "net_premium": 27.5,
+                    "net_premium_ntd": 1375.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 32.5,
-                    "bep": 48835.0,
-                    "win_rate": 73.2,
-                    "safety_buffer": 446,
+                    "roi_pct": 13.75,
+                    "bep": 49827.5,
+                    "win_rate": 77.1,
+                    "safety_buffer": 433.0,
+                    "sell_leg_price": 74.0,
+                    "buy_leg_price": 46.5,
                     "legs": [
-                        { "side": "SELL", "type": "PUT", "strike": 48900, "premium": 210.0, "qty": 1, "iv": 16.5 },
-                        { "side": "BUY", "type": "PUT", "strike": 48700, "premium": 145.0, "qty": 1, "iv": 17.5 }
+                        {
+                            "side": "SELL",
+                            "type": "CALL",
+                            "strike": 49800,
+                            "premium": 74.0,
+                            "qty": 1,
+                            "iv": 16.5
+                        },
+                        {
+                            "side": "BUY",
+                            "type": "CALL",
+                            "strike": 50000,
+                            "premium": 46.5,
+                            "qty": 1,
+                            "iv": 17.5
+                        }
                     ]
                 },
                 {
-                    "category": "均衡型 PCS (進攻款)",
-                    "name": "PCS 均衡型 (賣 49000P / 買 48800P)",
-                    "type": "PCS",
-                    "short_strike": 49000,
-                    "long_strike": 48800,
-                    "net_premium": 65.0,
-                    "net_premium_ntd": 3250.0,
+                    "category": "平衡收益型 CCS (波段推薦)",
+                    "name": "CCS 平衡收租 (賣 49700C / 買 49900C)",
+                    "type": "CCS",
+                    "short_strike": 49700,
+                    "long_strike": 49900,
+                    "net_premium": 34.0,
+                    "net_premium_ntd": 1700.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 32.5,
-                    "bep": 48935.0,
-                    "win_rate": 68.4,
-                    "safety_buffer": 346,
+                    "roi_pct": 17.0,
+                    "bep": 49734.0,
+                    "win_rate": 71.7,
+                    "safety_buffer": 333.0,
+                    "sell_leg_price": 94.0,
+                    "buy_leg_price": 60.0,
                     "legs": [
-                        { "side": "SELL", "type": "PUT", "strike": 49000, "premium": 250.0, "qty": 1, "iv": 16.5 },
-                        { "side": "BUY", "type": "PUT", "strike": 48800, "premium": 185.0, "qty": 1, "iv": 17.5 }
+                        {
+                            "side": "SELL",
+                            "type": "CALL",
+                            "strike": 49700,
+                            "premium": 94.0,
+                            "qty": 1,
+                            "iv": 16.5
+                        },
+                        {
+                            "side": "BUY",
+                            "type": "CALL",
+                            "strike": 49900,
+                            "premium": 60.0,
+                            "qty": 1,
+                            "iv": 17.5
+                        }
                     ]
                 },
                 {
-                    "category": "效率型 PCS",
-                    "name": "PCS 效率型 (賣 49100P / 買 49000P)",
-                    "type": "PCS",
-                    "short_strike": 49100,
-                    "long_strike": 49000,
-                    "net_premium": 29.0,
-                    "net_premium_ntd": 1450.0,
+                    "category": "高資金效率 CCS (風控低標 >=0.35%)",
+                    "name": "CCS 窄價差 (賣 49600C / 買 49700C)",
+                    "type": "CCS",
+                    "short_strike": 49600,
+                    "long_strike": 49700,
+                    "net_premium": 22.0,
+                    "net_premium_ntd": 1100.0,
                     "margin_ntd": 5000.0,
-                    "roi_pct": 29.0,
-                    "bep": 49071.0,
-                    "win_rate": 63.2,
-                    "safety_buffer": 246,
+                    "roi_pct": 22.0,
+                    "bep": 49622.0,
+                    "win_rate": 65.7,
+                    "safety_buffer": 233.0,
+                    "sell_leg_price": 117.0,
+                    "buy_leg_price": 95.0,
                     "legs": [
-                        { "side": "SELL", "type": "PUT", "strike": 49100, "premium": 294.0, "qty": 1, "iv": 16.5 },
-                        { "side": "BUY", "type": "PUT", "strike": 49000, "premium": 265.0, "qty": 1, "iv": 17.5 }
+                        {
+                            "side": "SELL",
+                            "type": "CALL",
+                            "strike": 49600,
+                            "premium": 117.0,
+                            "qty": 1,
+                            "iv": 16.5
+                        },
+                        {
+                            "side": "BUY",
+                            "type": "CALL",
+                            "strike": 49700,
+                            "premium": 95.0,
+                            "qty": 1,
+                            "iv": 17.5
+                        }
                     ]
                 }
             ]
         },
         "options_fri": {
             "title": "/options_fri (週五極速收乾)",
-            "contract": "週五結算合約",
+            "contract": "202610F2",
             "dte": 1,
-            "top3": [
-                {
-                    "category": "極速收乾款 PCS",
-                    "name": "週五極速收乾 (賣 49100P / 買 48900P)",
-                    "type": "PCS",
-                    "short_strike": 49100,
-                    "long_strike": 48900,
-                    "net_premium": 42.0,
-                    "net_premium_ntd": 2100.0,
-                    "margin_ntd": 10000.0,
-                    "roi_pct": 21.0,
-                    "bep": 49058.0,
-                    "win_rate": 79.5,
-                    "safety_buffer": 246,
-                    "legs": [
-                        { "side": "SELL", "type": "PUT", "strike": 49100, "premium": 110.0, "qty": 1, "iv": 16.0 },
-                        { "side": "BUY", "type": "PUT", "strike": 48900, "premium": 68.0, "qty": 1, "iv": 17.0 }
-                    ]
-                }
-            ]
+            "top3": []
         },
         "options_weekend": {
             "title": "/options_weekend (跨週末防禦)",
-            "contract": "跨週末保護合約",
+            "contract": "202610W2",
             "dte": 4,
             "top3": [
                 {
-                    "category": "跨週末防禦款 PCS",
-                    "name": "跨週末寬幅防禦 (賣 48800P / 買 48500P)",
-                    "type": "PCS",
-                    "short_strike": 48800,
-                    "long_strike": 48500,
-                    "net_premium": 78.0,
-                    "net_premium_ntd": 3900.0,
-                    "margin_ntd": 15000.0,
-                    "roi_pct": 26.0,
-                    "bep": 48722.0,
-                    "win_rate": 81.2,
-                    "safety_buffer": 546,
+                    "category": "保守穩健型 CCS (極度防守首選)",
+                    "name": "CCS 保守防禦 (賣 49800C / 買 50000C)",
+                    "type": "CCS",
+                    "short_strike": 49800,
+                    "long_strike": 50000,
+                    "net_premium": 27.5,
+                    "net_premium_ntd": 1375.0,
+                    "margin_ntd": 10000.0,
+                    "roi_pct": 13.75,
+                    "bep": 49827.5,
+                    "win_rate": 68.3,
+                    "safety_buffer": 433.0,
+                    "sell_leg_price": 74.0,
+                    "buy_leg_price": 46.5,
                     "legs": [
-                        { "side": "SELL", "type": "PUT", "strike": 48800, "premium": 180.0, "qty": 1, "iv": 17.0 },
-                        { "side": "BUY", "type": "PUT", "strike": 48500, "premium": 102.0, "qty": 1, "iv": 18.0 }
+                        {
+                            "side": "SELL",
+                            "type": "CALL",
+                            "strike": 49800,
+                            "premium": 74.0,
+                            "qty": 1,
+                            "iv": 16.5
+                        },
+                        {
+                            "side": "BUY",
+                            "type": "CALL",
+                            "strike": 50000,
+                            "premium": 46.5,
+                            "qty": 1,
+                            "iv": 17.5
+                        }
+                    ]
+                },
+                {
+                    "category": "平衡收益型 CCS (波段推薦)",
+                    "name": "CCS 平衡收租 (賣 49700C / 買 49900C)",
+                    "type": "CCS",
+                    "short_strike": 49700,
+                    "long_strike": 49900,
+                    "net_premium": 34.0,
+                    "net_premium_ntd": 1700.0,
+                    "margin_ntd": 10000.0,
+                    "roi_pct": 17.0,
+                    "bep": 49734.0,
+                    "win_rate": 64.4,
+                    "safety_buffer": 333.0,
+                    "sell_leg_price": 94.0,
+                    "buy_leg_price": 60.0,
+                    "legs": [
+                        {
+                            "side": "SELL",
+                            "type": "CALL",
+                            "strike": 49700,
+                            "premium": 94.0,
+                            "qty": 1,
+                            "iv": 16.5
+                        },
+                        {
+                            "side": "BUY",
+                            "type": "CALL",
+                            "strike": 49900,
+                            "premium": 60.0,
+                            "qty": 1,
+                            "iv": 17.5
+                        }
+                    ]
+                },
+                {
+                    "category": "高資金效率 CCS (風控低標 >=0.35%)",
+                    "name": "CCS 窄價差 (賣 49600C / 買 49700C)",
+                    "type": "CCS",
+                    "short_strike": 49600,
+                    "long_strike": 49700,
+                    "net_premium": 22.0,
+                    "net_premium_ntd": 1100.0,
+                    "margin_ntd": 5000.0,
+                    "roi_pct": 22.0,
+                    "bep": 49622.0,
+                    "win_rate": 60.3,
+                    "safety_buffer": 233.0,
+                    "sell_leg_price": 117.0,
+                    "buy_leg_price": 95.0,
+                    "legs": [
+                        {
+                            "side": "SELL",
+                            "type": "CALL",
+                            "strike": 49600,
+                            "premium": 117.0,
+                            "qty": 1,
+                            "iv": 16.5
+                        },
+                        {
+                            "side": "BUY",
+                            "type": "CALL",
+                            "strike": 49700,
+                            "premium": 95.0,
+                            "qty": 1,
+                            "iv": 17.5
+                        }
                     ]
                 }
             ]
@@ -993,7 +1106,7 @@ function evaluatePortfolio(spot, dte, r, defaultIV) {
 // ==============================================================================
 // 4. 指令切換與 UI 渲染
 // ==============================================================================
-function switchCommandTab(cmdKey) {
+function switchCommandTab(cmdKey, updateHash = true) {
     currentTab = cmdKey;
     selectedComboIdx = 0;
 
@@ -1009,6 +1122,14 @@ function switchCommandTab(cmdKey) {
             activeLegs = JSON.parse(JSON.stringify(combos[0].legs));
             currentSafetyBuffer = `+${combos[0].safety_buffer} 點`;
         }
+    }
+
+    if (updateHash && window.location && window.history && window.history.replaceState) {
+        try {
+            const url = new URL(window.location.href);
+            url.searchParams.set('cmd', cmdKey);
+            window.history.replaceState(null, '', url.toString());
+        } catch (e) {}
     }
 
     renderStrategyList();
@@ -1116,7 +1237,13 @@ function calculateSingleLegDelta(leg) {
 }
 
 function updateLegField(idx, field, val) {
-    activeLegs[idx][field] = val;
+    if (field === 'side' || field === 'type') {
+        activeLegs[idx][field] = val;
+    } else if (field === 'qty') {
+        if (Number.isFinite(val) && val >= 1) activeLegs[idx][field] = Math.round(val);
+    } else if (Number.isFinite(val) && val > 0) {
+        activeLegs[idx][field] = val;
+    }
     renderLegsTable();
     updateAllViews();
 }
@@ -1156,20 +1283,49 @@ function resetToDefaults() {
     applySnapshot(liveSnapshotData);
 }
 
-function applySnapshot(data) {
-    document.getElementById('snapSymbol').innerText = `${data.futures_name} ${data.symbol}`;
-    document.getElementById('snapPrice').innerText = `${data.spot_price.toLocaleString()} 點`;
-    document.getElementById('snapArbitration').innerText = data.ta_action || '【偏多操作】';
-    document.getElementById('snapTime').innerText = data.updated_at;
+function getInitialCommandTab() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const cmdParam = params.get('cmd') || params.get('tab');
+        if (cmdParam) {
+            if (['options_calc', 'options_fri', 'options_weekend', 'custom'].includes(cmdParam)) {
+                return cmdParam;
+            }
+            if (cmdParam.includes('weekend') || cmdParam.includes('跨週末')) return 'options_weekend';
+            if (cmdParam.includes('fri') || cmdParam.includes('週五')) return 'options_fri';
+            if (cmdParam.includes('calc')) return 'options_calc';
+        }
+        const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+        if (hash.includes('weekend') || hash.includes('跨週末')) return 'options_weekend';
+        if (hash.includes('fri') || hash.includes('週五')) return 'options_fri';
+        if (hash.includes('calc')) return 'options_calc';
+        if (hash.includes('custom')) return 'custom';
+    } catch (e) {}
+    return 'options_calc';
+}
 
-    document.getElementById('spotPrice').value = data.spot_price;
-    switchCommandTab('options_calc');
+function applySnapshot(data) {
+    if (!data) return;
+    const spot = Number(data.spot_price);
+    if (!Number.isFinite(spot) || spot <= 0) return;
+
+    document.getElementById('snapSymbol').innerText = `${data.futures_name || '台指期貨'} ${data.symbol || ''}`.trim();
+    document.getElementById('snapPrice').innerText = `${spot.toLocaleString()} 點`;
+    document.getElementById('snapArbitration').innerText = data.ta_action || '【偏多操作】';
+    document.getElementById('snapTime').innerText = data.updated_at || '';
+
+    document.getElementById('spotPrice').value = spot;
+    switchCommandTab(getInitialCommandTab(), false);
 }
 
 function loadLiveSnapshot() {
     fetch('market_snapshot.json?t=' + Date.now())
         .then(res => res.json())
         .then(data => {
+            const spot = Number(data && data.spot_price);
+            if (!Number.isFinite(spot) || spot <= 0) {
+                throw new Error('快照資料欄位不完整');
+            }
             liveSnapshotData = data;
             applySnapshot(data);
         })
