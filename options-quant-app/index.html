@@ -543,7 +543,7 @@
         </div>
         <div class="snapshot-item">
             <span class="label">現價：</span>
-            <span class="val" style="color: #4ade80;" id="snapPrice">47,099 點</span>
+            <span class="val" style="color: #4ade80;" id="snapPrice">47,100 點</span>
         </div>
         <div class="snapshot-item">
             <span class="label">仲裁：</span>
@@ -551,7 +551,7 @@
         </div>
         <div class="snapshot-item">
             <span class="label">更新：</span>
-            <span class="val" id="snapTime" style="color: var(--text-muted);">2026-10-15 17:36:12</span>
+            <span class="val" id="snapTime" style="color: var(--text-muted);">2026-10-15 18:08:34</span>
         </div>
     </div>
 
@@ -574,7 +574,7 @@
                 <div class="form-group">
                     <label>當前標的指數 (Spot Price)</label>
                     <div class="input-wrapper">
-                        <input type="number" id="spotPrice" class="form-control" value="47099" step="50" oninput="onSpotPriceChange()">
+                        <input type="number" id="spotPrice" class="form-control" value="47100" step="50" oninput="onSpotPriceChange()">
                         <span class="input-suffix">點</span>
                     </div>
                 </div>
@@ -752,15 +752,15 @@ let activeLegs = [];
 let currentSafetyBuffer = '+446 點 (0.9%)';
 
 let liveSnapshotData = {
-    "spot_price": 47099,
+    "spot_price": 47100,
     "symbol": "TXFJ6",
     "futures_name": "臺股期貨10",
     "change_pct": "+0.36%",
-    "change": 168.0,
+    "change": 169.0,
     "session": "夜盤即時",
     "ta_action": "【偏空操作 (Bearish / 反彈偏空)】 (26.7%)",
     "source": "永豐 Shioaji API (Tier 1 - 夜盤即時)",
-    "updated_at": "2026-10-15 17:36:12",
+    "updated_at": "2026-10-15 18:08:34",
     "commands": {
         "options_calc": {
             "title": "/options_calc (週三一般結算)",
@@ -779,7 +779,7 @@ let liveSnapshotData = {
                     "roi_pct": 40.0,
                     "bep": 47580.0,
                     "win_rate": 66.4,
-                    "safety_buffer": 401.0,
+                    "safety_buffer": 400.0,
                     "sell_leg_price": 770.0,
                     "buy_leg_price": 690.0,
                     "legs": [
@@ -812,16 +812,16 @@ let liveSnapshotData = {
                     "margin_ntd": 10000.0,
                     "roi_pct": 40.0,
                     "bep": 47480.0,
-                    "win_rate": 62.6,
-                    "safety_buffer": 301.0,
-                    "sell_leg_price": 820.0,
-                    "buy_leg_price": 740.0,
+                    "win_rate": 62.5,
+                    "safety_buffer": 300.0,
+                    "sell_leg_price": 815.0,
+                    "buy_leg_price": 735.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 47400,
-                            "premium": 820.0,
+                            "premium": 815.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -829,7 +829,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 47600,
-                            "premium": 740.0,
+                            "premium": 735.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -847,15 +847,15 @@ let liveSnapshotData = {
                     "roi_pct": 35.0,
                     "bep": 47335.0,
                     "win_rate": 58.6,
-                    "safety_buffer": 201.0,
-                    "sell_leg_price": 870.0,
-                    "buy_leg_price": 835.0,
+                    "safety_buffer": 200.0,
+                    "sell_leg_price": 865.0,
+                    "buy_leg_price": 830.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 47300,
-                            "premium": 870.0,
+                            "premium": 865.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -863,7 +863,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 47400,
-                            "premium": 835.0,
+                            "premium": 830.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -887,8 +887,8 @@ let liveSnapshotData = {
                     "margin_ntd": 10000.0,
                     "roi_pct": 40.0,
                     "bep": 47580.0,
-                    "win_rate": 88.3,
-                    "safety_buffer": 401.0,
+                    "win_rate": 88.2,
+                    "safety_buffer": 400.0,
                     "sell_leg_price": 770.0,
                     "buy_leg_price": 690.0,
                     "legs": [
@@ -922,15 +922,15 @@ let liveSnapshotData = {
                     "roi_pct": 40.0,
                     "bep": 47480.0,
                     "win_rate": 81.4,
-                    "safety_buffer": 301.0,
-                    "sell_leg_price": 820.0,
-                    "buy_leg_price": 740.0,
+                    "safety_buffer": 300.0,
+                    "sell_leg_price": 815.0,
+                    "buy_leg_price": 735.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 47400,
-                            "premium": 820.0,
+                            "premium": 815.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -938,7 +938,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 47600,
-                            "premium": 740.0,
+                            "premium": 735.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -955,16 +955,16 @@ let liveSnapshotData = {
                     "margin_ntd": 5000.0,
                     "roi_pct": 35.0,
                     "bep": 47335.0,
-                    "win_rate": 72.5,
-                    "safety_buffer": 201.0,
-                    "sell_leg_price": 870.0,
-                    "buy_leg_price": 835.0,
+                    "win_rate": 72.4,
+                    "safety_buffer": 200.0,
+                    "sell_leg_price": 865.0,
+                    "buy_leg_price": 830.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 47300,
-                            "premium": 870.0,
+                            "premium": 865.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -972,7 +972,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 47400,
-                            "premium": 835.0,
+                            "premium": 830.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -997,7 +997,7 @@ let liveSnapshotData = {
                     "roi_pct": 40.0,
                     "bep": 47580.0,
                     "win_rate": 67.8,
-                    "safety_buffer": 401.0,
+                    "safety_buffer": 400.0,
                     "sell_leg_price": 770.0,
                     "buy_leg_price": 690.0,
                     "legs": [
@@ -1030,16 +1030,16 @@ let liveSnapshotData = {
                     "margin_ntd": 10000.0,
                     "roi_pct": 40.0,
                     "bep": 47480.0,
-                    "win_rate": 63.7,
-                    "safety_buffer": 301.0,
-                    "sell_leg_price": 820.0,
-                    "buy_leg_price": 740.0,
+                    "win_rate": 63.6,
+                    "safety_buffer": 300.0,
+                    "sell_leg_price": 815.0,
+                    "buy_leg_price": 735.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 47400,
-                            "premium": 820.0,
+                            "premium": 815.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -1047,7 +1047,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 47600,
-                            "premium": 740.0,
+                            "premium": 735.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -1064,16 +1064,16 @@ let liveSnapshotData = {
                     "margin_ntd": 5000.0,
                     "roi_pct": 35.0,
                     "bep": 47335.0,
-                    "win_rate": 59.4,
-                    "safety_buffer": 201.0,
-                    "sell_leg_price": 870.0,
-                    "buy_leg_price": 835.0,
+                    "win_rate": 59.3,
+                    "safety_buffer": 200.0,
+                    "sell_leg_price": 865.0,
+                    "buy_leg_price": 830.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 47300,
-                            "premium": 870.0,
+                            "premium": 865.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -1081,7 +1081,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 47400,
-                            "premium": 835.0,
+                            "premium": 830.0,
                             "qty": 1,
                             "iv": 17.5
                         }
