@@ -14,6 +14,7 @@
   * **吊車安全試算**：[https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/](https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/)
   * **選擇權量化決策**：[https://web-apps-hub.cv1706yang.workers.dev/options-quant-app/](https://web-apps-hub.cv1706yang.workers.dev/options-quant-app/)
   * **台灣房產估價 & MCP**：[https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/](https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/)
+  * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
   * **入口總覽**：[https://cv1706.github.io/web-apps-hub/](https://cv1706.github.io/web-apps-hub/)
@@ -23,6 +24,7 @@
   * **吊車安全試算**：[https://cv1706.github.io/web-apps-hub/crane-calculator/](https://cv1706.github.io/web-apps-hub/crane-calculator/)
   * **選擇權量化決策**：[https://cv1706.github.io/web-apps-hub/options-quant-app/](https://cv1706.github.io/web-apps-hub/options-quant-app/)
   * **台灣房產估價 & MCP**：[https://cv1706.github.io/web-apps-hub/taiwan-real-estate/](https://cv1706.github.io/web-apps-hub/taiwan-real-estate/)
+  * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
 
@@ -84,6 +86,16 @@
   * **法拍屋折價與風險排查**：自動計算各拍次底價相對於市場估值之折價率（Discount %），並對不點交、第三人占用與共有物優先承買權進行風險警示與隱性成本淨利潤試算。
   * **房貸與租金收益**：支援 20 / 30 / 40 年（新青安）本息均攤計算、寬限期利息支出與毛租金年收益率（Gross Yield）。
   * **ToEstate MCP 提示詞與配置精靈**：自動將物件參數轉換為結構化繁體中文 Prompt，並內建 ChatGPT、Claude、Cursor、VS Code、Claude Code 與 Gemini CLI 的直接配置代碼。
+
+### 7. 🗺️ Open Live Map · 公開即時地圖 (全台路況監視器 / 環保車 / 氣象 / 實價登錄)
+* **外連網址**：[https://gslai.win/](https://gslai.win/)
+* **使用說明**：
+  * **全台即時路況與監視器（CCTV）**：整合國道、公路局省道、市區攝影機、全球/景點即時串流影像（含 YouTube 串流與即時快照），支援多分割畫面監控。
+  * **行車前方跟車導覽（Follow Mode）**：依目前 GPS 行進方向（北上/南下/東向/西向）與國道/省道路線，自動依序輪播前方指定公里數內的即時監視器。
+  * **中央氣象署即時測站**：在地圖上疊加全台氣象測站即時溫度、雨量、風速與濕度資料。
+  * **桃園環保車動態 GPS**：即時掌握垃圾車與資源回收車的行駛位置與即時路班資訊。
+  * **內政部實價登錄圖層**：依縮放視野自動進行縣市/行政區聚合，並於放大後精準顯示各門牌買賣、預售屋與租賃成交紀錄。
+  * **輔助工具與圖資自訂**：支援 Mapillary 街景實景對照、地圖直線量距、自訂監視器點位（支援匯入/匯出與公開投稿）與自訂常用定位點。
 
 ---
 
