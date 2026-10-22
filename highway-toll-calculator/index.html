@@ -3,734 +3,1522 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>台灣高速公路過路費估算器</title>
-    <meta name="description" content="設定起點、途經點與終點，自動偵測高速公路交流道並估算 eTag 過路費">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>自行開車交通費一覽表與費用申報系統</title>
     <style>
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-        :root{
-            --bg-1:#0f1117;--bg-2:#1a1d27;--bg-g:rgba(30,34,48,.72);
-            --brd:rgba(255,255,255,.08);--brd-a:rgba(66,133,244,.45);
-            --t1:#e8eaed;--t2:#9aa0a6;--t3:#5f6368;
-            --acc:#4285f4;--acc-l:#8ab4f8;
-            --grad:linear-gradient(135deg,#667eea,#764ba2);
-            --grn:#34a853;--yel:#fbbc04;--red:#ea4335;--org:#fa7b17;--toll:#f9ab00;
-            --hw1:#4285f4;--hw3:#34a853;--hw5:#a142f4;--hwo:#fa7b17;
-            --r:8px;--rm:12px;--rl:16px;
-            --font:'Inter','Noto Sans TC',-apple-system,sans-serif;
-            --sb:430px;--tr:all .3s cubic-bezier(.4,0,.2,1);
+        :root {
+            --primary: #00838f;
+            --primary-dark: #006064;
+            --primary-light: #e0f7fa;
+            --border-color: #b0bec5;
+            --table-header: #00bcd4;
+            --table-header-dark: #00838f;
+            --bg-gray: #f8fafc;
+            --text-main: #263238;
+            --text-muted: #546e7a;
+            --accent-green: #2e7d32;
+            --accent-red: #c62828;
         }
-        body{font-family:var(--font);background:var(--bg-1);color:var(--t1);height:100vh;overflow:hidden;display:flex}
 
-        /* Sidebar */
-        .sb{width:var(--sb);height:100vh;background:var(--bg-2);border-right:1px solid var(--brd);display:flex;flex-direction:column;z-index:10;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
-        .sb::-webkit-scrollbar{width:5px}.sb::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
-        .sb-hd{padding:22px 22px 16px;border-bottom:1px solid var(--brd);background:linear-gradient(180deg,rgba(102,126,234,.06),transparent)}
-        .sb-hd h1{font-size:19px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.3px;margin-bottom:3px}
-        .sb-hd p{font-size:11px;color:var(--t3);letter-spacing:.3px}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        /* API */
-        .api{padding:14px 22px;border-bottom:1px solid var(--brd);background:rgba(66,133,244,.04)}
-        .api label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:7px}
-        .api-r{display:flex;gap:8px}
-        .api-r input{flex:1;padding:9px 12px;border:1px solid var(--brd);border-radius:var(--r);background:var(--bg-1);color:var(--t1);font-size:12px;font-family:'Courier New',monospace;transition:var(--tr)}
-        .api-r input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(66,133,244,.12)}
-        .bsm{padding:9px 16px;border:none;border-radius:var(--r);background:var(--acc);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:var(--tr);white-space:nowrap}
-        .bsm:hover{background:#5a95f5;transform:translateY(-1px)}.bsm:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
-        .api-st{margin-top:5px;font-size:11px;min-height:16px}
-        .api-st.ok{color:var(--grn)}.api-st.err{color:var(--red)}.api-st.ld{color:var(--t2)}
-        .api-h{margin-top:6px;font-size:10px;color:var(--t3);line-height:1.6}.api-h a{color:var(--acc-l);text-decoration:none}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            background-color: #eceff1;
+            color: var(--text-main);
+            padding: 24px;
+            line-height: 1.5;
+        }
 
-        /* Route */
-        .rt{padding:18px 22px;border-bottom:1px solid var(--brd)}
-        .st{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
-        .ig{margin-bottom:8px}
-        .ig>label{font-size:11px;font-weight:500;color:var(--t3);display:block;margin-bottom:5px}
-        .ir{display:flex;gap:5px;align-items:stretch}
-        .iw{position:relative;flex:1}
-        .iw .dot{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;z-index:2}
-        .d-s{background:var(--grn);box-shadow:0 0 6px rgba(52,168,83,.4)}
-        .d-e{background:var(--red);box-shadow:0 0 6px rgba(234,67,53,.4)}
-        .d-w{background:var(--org);box-shadow:0 0 6px rgba(250,123,23,.4)}
-        .iw input{width:100%;padding:10px 12px 10px 34px;border:1px solid var(--brd);border-radius:var(--r);background:var(--bg-1);color:var(--t1);font-size:13px;font-family:var(--font);transition:var(--tr)}
-        .iw input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(66,133,244,.12)}
-        .iw input::placeholder{color:var(--t3)}.iw input:disabled{opacity:.35;cursor:not-allowed}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-        .bp{width:38px;border:1px solid var(--brd);border-radius:var(--r);background:transparent;color:var(--t2);font-size:15px;cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .bp:hover{border-color:var(--acc);color:var(--acc);background:rgba(66,133,244,.06)}
-        .bp.on{border-color:var(--acc);color:#fff;background:var(--acc);animation:ppulse 1.5s ease infinite}
-        .bp:disabled{opacity:.35;cursor:not-allowed}
-        @keyframes ppulse{0%,100%{box-shadow:0 0 0 0 rgba(66,133,244,.3)}50%{box-shadow:0 0 0 6px rgba(66,133,244,0)}}
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
 
-        .bd{width:32px;border:none;border-radius:var(--r);background:transparent;color:var(--t3);font-size:14px;cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .bd:hover{color:var(--red);background:rgba(234,67,53,.1)}
+        .header-title-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
 
-        .conn{width:2px;height:6px;background:var(--brd);margin-left:16px}
-        .chint{font-size:11px;color:var(--acc-l);margin-top:6px;min-height:16px;transition:var(--tr)}
+        .header-title-box h1 {
+            font-size: 20px;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
 
-        /* Add waypoint btn */
-        .btn-add{width:100%;padding:8px;border:1px dashed rgba(255,255,255,.12);border-radius:var(--r);background:transparent;color:var(--t2);font-size:12px;font-family:var(--font);cursor:pointer;transition:var(--tr);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
-        .btn-add:hover{border-color:var(--acc);color:var(--acc);background:rgba(66,133,244,.04)}
-        .btn-add:disabled{opacity:.35;cursor:not-allowed}
-        .btn-add .plus{font-size:16px;font-weight:300;line-height:1}
+        .header-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
 
-        /* Vehicle */
-        .vg{margin-top:12px}
-        .vs{display:flex;gap:6px}
-        .vb{flex:1;padding:7px 4px;border:1px solid var(--brd);border-radius:var(--r);background:transparent;color:var(--t2);font-size:12px;font-family:var(--font);cursor:pointer;text-align:center;transition:var(--tr)}
-        .vb.on{border-color:var(--acc);background:rgba(66,133,244,.12);color:var(--t1);font-weight:600}
-        .vb:hover:not(.on){border-color:rgba(66,133,244,.25)}
-        .vb .rt2{display:block;font-size:10px;color:var(--t3);margin-top:1px;font-weight:400}
-        .vb.on .rt2{color:var(--acc-l)}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-        .bsearch{width:100%;padding:12px;border:none;border-radius:var(--r);background:var(--grad);color:#fff;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--tr);margin-top:14px}
-        .bsearch:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(102,126,234,.35)}
-        .bsearch:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
 
-        /* Routes */
-        .rs-sec{padding:16px 22px;border-bottom:1px solid var(--brd)}
-        .rc{padding:13px;border:1px solid var(--brd);border-radius:var(--rm);margin-bottom:8px;cursor:pointer;transition:var(--tr);border-left:3px solid transparent}
-        .rc:hover{border-color:rgba(66,133,244,.25);background:rgba(66,133,244,.04)}
-        .rc.sel{border-color:var(--brd-a);border-left-color:var(--acc);background:rgba(66,133,244,.08)}
-        .rc .rn{font-size:13px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:8px}
-        .rbdg{font-size:9px;padding:2px 7px;border-radius:10px;background:var(--acc);color:#fff;font-weight:700}
-        .rc .rs2{font-size:11px;color:var(--t3);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .rc .rm2{display:flex;gap:14px;font-size:12px;color:var(--t2)}
+        .form-control {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-        /* Toll */
-        .tl-sec{padding:16px 22px 24px}
-        .tc{background:var(--bg-g);border:1px solid var(--brd);border-radius:var(--rl);padding:20px;backdrop-filter:blur(16px)}
-        .ta{font-size:36px;font-weight:700;color:var(--toll);line-height:1;letter-spacing:-1px}
-        .tl-lb{font-size:12px;color:var(--t2);margin:4px 0 16px}
-        .tl-sts{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-        .tl-st{padding:7px 11px;background:rgba(255,255,255,.03);border-radius:var(--r);border:1px solid var(--brd);font-size:11px;color:var(--t2)}
-        .tl-st strong{color:var(--t1);font-weight:600}
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 131, 143, 0.15);
+        }
 
-        .ic-tt{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-        .ic-tl{position:relative;padding-left:20px}
-        .ic-tl::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--brd);border-radius:1px}
-        .ic-n{position:relative;padding:5px 0 5px 16px;font-size:12px;color:var(--t2);transition:var(--tr)}
-        .ic-n::before{content:'';position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--t3);border:2px solid var(--bg-2);z-index:1;transition:var(--tr)}
-        .ic-n.en::before{background:var(--grn);width:10px;height:10px;left:-15px;box-shadow:0 0 6px rgba(52,168,83,.5)}
-        .ic-n.ex::before{background:var(--red);width:10px;height:10px;left:-15px;box-shadow:0 0 6px rgba(234,67,53,.5)}
-        .ic-n.en,.ic-n.ex{color:var(--t1);font-weight:600;font-size:13px}
-        .ic-n .km{font-size:10px;color:var(--t3);font-weight:400;margin-left:6px}
-        .ic-n:hover{color:var(--t1)}
+        .editor-section {
+            background: #fdfdfd;
+            border: 1px dashed #b0bec5;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
 
-        .sh{display:flex;align-items:center;gap:10px;margin:14px 0 8px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:var(--r);border-left:3px solid var(--hw1)}
-        .sh[data-h="3"]{border-left-color:var(--hw3)}.sh[data-h="5"]{border-left-color:var(--hw5)}
-        .sh .ht{font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;color:#fff;background:var(--hw1)}
-        .sh .ht[data-h="3"]{background:var(--hw3)}.sh .ht[data-h="5"]{background:var(--hw5)}.sh .ht[data-h="o"]{background:var(--hwo)}
-        .sh .sm{font-size:11px;color:var(--t2)}
+        .trip-header-fields {
+            display: grid;
+            grid-template-columns: 140px 1fr 150px 120px 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: flex-end;
+        }
 
-        .tn{margin-top:16px;padding:12px;background:rgba(251,188,4,.06);border-radius:var(--r);border:1px solid rgba(251,188,4,.15)}
-        .tn p{font-size:11px;color:var(--yel);line-height:1.7}.tn p+p{margin-top:3px}
+        .segment-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
 
-        .nohw{text-align:center;padding:28px 16px;color:var(--t2)}
-        .nohw .ni{font-size:36px;margin-bottom:8px;opacity:.6}
-        .nohw .nt2{font-size:14px;font-weight:600;margin-bottom:3px}
-        .nohw .nd{font-size:12px;color:var(--t3)}
+        .segment-row {
+            display: grid;
+            grid-template-columns: 80px 130px 1fr 70px 1fr 70px 90px 90px 40px;
+            gap: 8px;
+            align-items: center;
+            background: #ffffff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
 
-        /* Map */
-        .mb{flex:1;height:100vh;position:relative}
-        #map{width:100%;height:100%}
-        .mph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-1);z-index:5}
-        .mph .ic2{width:80px;height:80px;border-radius:50%;background:var(--bg-2);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
-        .mph .ic2 svg{width:36px;height:36px;fill:var(--t3)}
-        .mph h2{font-size:18px;font-weight:600;margin-bottom:5px}
-        .mph p{font-size:13px;color:var(--t3)}
+        .segment-badge {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: center;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
 
-        .mm{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:20;padding:10px 20px;border-radius:var(--rm);font-size:13px;font-weight:600;font-family:var(--font);color:#fff;pointer-events:none;transition:var(--tr);opacity:0}
-        .mm.show{opacity:1}
-        .mm.ms{background:rgba(52,168,83,.9);box-shadow:0 4px 16px rgba(52,168,83,.3)}
-        .mm.me{background:rgba(234,67,53,.9);box-shadow:0 4px 16px rgba(234,67,53,.3)}
-        .mm.mw{background:rgba(250,123,23,.9);box-shadow:0 4px 16px rgba(250,123,23,.3)}
+        .km-pill {
+            background: #f1f5f9;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+        }
 
-        @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.an{animation:fi .3s ease-out forwards}
+        .calc-pill {
+            background: #e8f5e9;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid #c8e6c9;
+            color: var(--accent-green);
+        }
 
-        .pac-container{background:var(--bg-2)!important;border:1px solid var(--brd)!important;border-radius:var(--r)!important;box-shadow:0 4px 16px rgba(0,0,0,.4)!important;font-family:var(--font)!important;margin-top:4px!important;z-index:9999!important}
-        .pac-item{padding:10px 14px!important;border-top:1px solid var(--brd)!important;color:var(--t1)!important;font-size:13px!important;cursor:pointer!important;line-height:1.5!important}
-        .pac-item:first-child{border-top:none!important}
-        .pac-item:hover{background:rgba(66,133,244,.08)!important}
-        .pac-item-query{color:var(--t1)!important;font-weight:600!important}
-        .pac-icon{display:none!important}
-        .pac-matched{color:var(--acc-l)!important}
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
 
-        @media(max-width:860px){:root{--sb:100%}body{flex-direction:column}.sb{height:auto;max-height:55vh}.mb{height:45vh}}
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #546e7a;
+            color: #ffffff;
+        }
+        .btn-secondary:hover {
+            background: #37474f;
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-danger-outline {
+            background: transparent;
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        .btn-danger-outline:hover {
+            background: #ffebee;
+        }
+
+        .btn-success {
+            background: #2e7d32;
+            color: #ffffff;
+        }
+        .btn-success:hover {
+            background: #1b5e20;
+        }
+
+        .report-section {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .report-banner {
+            background-color: #00bcd4;
+            color: #000000;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 10px 16px;
+            border: 1px solid #00838f;
+        }
+
+        .report-meta-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #cfd8dc;
+            border-top: none;
+            background: #ffffff;
+            font-weight: 500;
+        }
+
+        /* 螢幕預覽表格樣式 */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 0;
+            border: 1px solid #90a4ae;
+            table-layout: auto;
+        }
+
+        .report-table th, .report-table td {
+            border: 1px solid #b0bec5;
+            padding: 8px 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .report-table th {
+            background-color: #e0f2f1;
+            color: #263238;
+            font-weight: 700;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .th-group-main {
+            background-color: #b2dfdb !important;
+            font-size: 14px;
+        }
+
+        .report-table tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        .report-table tr:hover {
+            background-color: #f0f7ff;
+        }
+
+        .nowrap-cell {
+            white-space: nowrap;
+        }
+
+        .purpose-cell {
+            text-align: left !important;
+            min-width: 150px;
+            max-width: 300px;
+            word-break: break-word;
+        }
+
+        .remarks-cell {
+            text-align: left !important;
+            min-width: 90px;
+            max-width: 180px;
+            word-break: break-word;
+        }
+
+        .cell-left {
+            text-align: left !important;
+        }
+
+        .cell-right {
+            text-align: right !important;
+            font-family: Consolas, monospace;
+            white-space: nowrap;
+        }
+
+        .cell-bold {
+            font-weight: 700;
+        }
+
+        .total-row {
+            background-color: #e8f5e9 !important;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .kpi-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            padding: 14px 18px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-family: Consolas, monospace;
+        }
+
+        /* 水平排列費用加總彙整表 */
+        .summary-horizontal-container {
+            margin-top: 24px;
+            width: 100%;
+        }
+
+        .summary-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-horizontal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border: 2px solid #00838f;
+            background: #ffffff;
+            table-layout: auto;
+        }
+
+        .summary-horizontal-table th, .summary-horizontal-table td {
+            border: 1px solid #b0bec5;
+            padding: 10px 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .summary-horizontal-table th {
+            background-color: #e0f2f1;
+            color: #263238;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .summary-horizontal-table .item-val {
+            font-family: Consolas, monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #263238;
+            white-space: nowrap;
+            background-color: #ffffff;
+        }
+
+        .summary-horizontal-table .th-total {
+            background-color: #00bcd4 !important;
+            color: #000000 !important;
+            font-size: 14px;
+            font-weight: 800;
+            width: 180px;
+        }
+
+        .summary-horizontal-table .td-total {
+            background-color: #e8f5e9 !important;
+            color: #1b5e20 !important;
+            font-family: Consolas, monospace;
+            font-size: 18px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .summary-input-control-h {
+            width: 100%;
+            min-width: 80px;
+            max-width: 120px;
+            padding: 6px 8px;
+            border: 1px solid #b0bec5;
+            border-radius: 4px;
+            text-align: right;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            font-weight: 700;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        .summary-input-control-h:focus {
+            border-color: #00838f;
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 2px rgba(0, 131, 143, 0.15);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #263238;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 14px;
+            display: none;
+            z-index: 1000;
+        }
+
+        /* ★★★ 列印與另存 PDF 專屬最佳化：嚴格防止右側超出邊界，完美單頁 A4 橫向自適應 ★★★ */
+        @page {
+            size: A4 landscape;
+            margin: 5mm; /* 極簡邊界，給予最大橫向列印寬度 */
+        }
+
+        @media print {
+            *, *:before, *:after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            html {
+                background: #ffffff !important;
+            }
+
+            body {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                font-size: 9pt !important;
+                line-height: 1.2 !important;
+                zoom: 0.90; /* 核心縮放：縮小至 90%，即使使用者在瀏覽器列印選「邊界：預設值」，也 100% 裝入不超出！ */
+            }
+
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .report-section {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: visible !important;
+            }
+
+            .report-banner {
+                background-color: #00bcd4 !important;
+                font-size: 13px !important;
+                padding: 5px 10px !important;
+            }
+
+            .report-meta-row {
+                padding: 5px 10px !important;
+                font-size: 10px !important;
+            }
+
+            /* 列印時強制百分比分配，固定表格寬度，嚴禁溢出 */
+            .report-table {
+                width: 100% !important;
+                max-width: 100% !important;
+                font-size: 8.5pt !important;
+                table-layout: fixed !important; /* 強制鎖死 100% 寬度 */
+                page-break-inside: auto;
+            }
+
+            .report-table th, .report-table td {
+                padding: 3px 2px !important;
+                border: 1px solid #78909c !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+            }
+
+            .report-table th {
+                background-color: #e0f2f1 !important;
+                font-size: 8.5pt !important;
+                line-height: 1.15 !important;
+            }
+
+            /* 精確列印欄寬比例鎖定 (總和剛好 100%) */
+            .col-date { width: 7.5% !important; }
+            .col-purpose { width: 17% !important; text-align: left !important; }
+            .col-tot-mile { width: 6.5% !important; }
+            .col-highway { width: 6.5% !important; }
+            .col-from-exit { width: 9% !important; }
+            .col-from-km { width: 4.5% !important; }
+            .col-to-exit { width: 9% !important; }
+            .col-to-km { width: 4.5% !important; }
+            .col-free-m { width: 4% !important; }
+            .col-paid-m { width: 6.5% !important; }
+            .col-toll-fee { width: 6.5% !important; }
+            .col-park-fee { width: 6.5% !important; }
+            .col-remarks { width: 12% !important; text-align: left !important; }
+
+            .summary-horizontal-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-top: 8px !important;
+                page-break-inside: avoid !important;
+            }
+
+            .summary-horizontal-table {
+                width: 100% !important;
+                max-width: 100% !important;
+                font-size: 9pt !important;
+                table-layout: fixed !important;
+            }
+
+            .summary-horizontal-table th, .summary-horizontal-table td {
+                padding: 5px 6px !important;
+            }
+
+            .summary-horizontal-table th {
+                background-color: #e0f2f1 !important;
+                font-size: 9pt !important;
+            }
+
+            .summary-horizontal-table .th-total {
+                background-color: #00bcd4 !important;
+                width: 20% !important;
+            }
+
+            .summary-horizontal-table .td-total {
+                background-color: #e8f5e9 !important;
+                font-size: 13pt !important;
+            }
+
+            .summary-input-control-h {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                font-size: 10pt !important;
+                text-align: right !important;
+                max-width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <aside class="sb">
-        <div class="sb-hd"><h1>高速公路過路費估算</h1><p>Taiwan Highway Toll Estimator</p></div>
 
-        <div class="api">
-            <label>Google Maps API Key</label>
-            <div class="api-r">
-                <input type="password" id="keyIn" placeholder="貼上 API Key...">
-                <button class="bsm" id="bLoad">載入</button>
+<div class="container">
+    <div class="card no-print">
+        <div class="header-title-box">
+            <h1>自行開車交通費一覽表與費用申報系統</h1>
+            <div class="btn-group">
+                <a href="../" class="btn btn-outline" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">← 返回 Web Apps Hub</a>
+                <button class="btn btn-outline" onclick="loadSampleData()">載入範例資料</button>
+                <button class="btn btn-danger-outline" onclick="clearAllData()">清空資料庫</button>
             </div>
-            <div class="api-st" id="apiSt"></div>
-            <div class="api-h">需啟用 Maps JavaScript、Places、Directions API。<a href="https://console.cloud.google.com/apis/credentials" target="_blank">取得 Key</a></div>
         </div>
 
-        <div class="rt" id="routePanel">
-            <div class="st">路線規劃</div>
-
-            <!-- Start -->
-            <div class="ig">
-                <label>起點</label>
-                <div class="ir">
-                    <div class="iw"><div class="dot d-s"></div><input type="text" id="inS" placeholder="輸入地址或地圖點選" disabled></div>
-                    <button class="bp" id="pS" disabled>&#128205;</button>
-                </div>
+        <div class="header-info-grid">
+            <div class="form-group">
+                <label>姓名 Name</label>
+                <input type="text" id="cfg-name" class="form-control" value="楊正樑" onchange="saveConfig()">
             </div>
-            <div class="conn"></div>
-
-            <!-- Waypoints container -->
-            <div id="wpBox"></div>
-
-            <!-- End -->
-            <div class="ig">
-                <label>終點</label>
-                <div class="ir">
-                    <div class="iw"><div class="dot d-e"></div><input type="text" id="inE" placeholder="輸入地址或地圖點選" disabled></div>
-                    <button class="bp" id="pE" disabled>&#128205;</button>
-                </div>
+            <div class="form-group">
+                <label>員工編號 Employee No.</label>
+                <input type="text" id="cfg-emp-no" class="form-control" value="AL-0004343" onchange="saveConfig()">
             </div>
-
-            <div class="chint" id="cHint"></div>
-
-            <button class="btn-add" id="bAdd" disabled><span class="plus">+</span> 新增途經點</button>
-
-            <div class="vg">
-                <label style="font-size:11px;font-weight:500;color:var(--t3);display:block;margin-bottom:5px">車輛類型</label>
-                <div class="vs">
-                    <button class="vb on" data-rate="1.20">小型車<span class="rt2">$1.20/km</span></button>
-                    <button class="vb" data-rate="1.50">大型車<span class="rt2">$1.50/km</span></button>
-                    <button class="vb" data-rate="1.80">聯結車<span class="rt2">$1.80/km</span></button>
-                </div>
+            <div class="form-group">
+                <label>部門 / 代碼 COTS</label>
+                <input type="text" id="cfg-cots" class="form-control" value="COTS" onchange="saveConfig()">
             </div>
-            <button class="bsearch" id="bSrch" disabled>搜尋路線</button>
+            <div class="form-group">
+                <label>申報月份 Month / period</label>
+                <input type="text" id="cfg-period" class="form-control" value="2026/9" onchange="saveConfig()">
+            </div>
+            <div class="form-group">
+                <label>日期顯示格式</label>
+                <select id="cfg-date-format" class="form-control" onchange="updateDateFormat()">
+                    <option value="slash_pad" selected>年月日：YYYY/MM/DD (如 2026/09/01)</option>
+                    <option value="slash">年月日：YYYY/M/D (如 2026/9/1)</option>
+                    <option value="chinese">年月日：YYYY年M月D日 (如 2026年9月1日)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>國道通行費計費倍率</label>
+                <select id="cfg-rate" class="form-control" onchange="updateRate()">
+                    <option value="1.08" selected>eTag 九折費率：1.08 元 / 公里 (預設)</option>
+                    <option value="1.2">標準法定費率：1.2 元 / 公里</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>里程補助單價</label>
+                <input type="number" id="cfg-mileage-rate" class="form-control" value="8" step="1" onchange="saveConfig(); renderAll();">
+            </div>
         </div>
 
-        <div class="rs-sec" id="rsSec" style="display:none"><div class="st">路線方案</div><div id="rsList"></div></div>
-        <div class="tl-sec" id="tlSec" style="display:none"><div class="st">過路費估算</div><div id="tlRes"></div></div>
-    </aside>
+        <div class="editor-section">
+            <div style="font-weight: 700; margin-bottom: 12px; color: var(--primary-dark); font-size: 15px;">
+                新增 / 編輯單日出差紀錄
+            </div>
 
-    <div class="mb">
-        <div id="map"></div>
-        <div class="mm" id="mapMode"></div>
-        <div class="mph" id="mapPH">
-            <div class="ic2"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-            <h2>請先載入 Google Maps</h2><p>在左側欄輸入 API Key 後點擊「載入」</p>
+            <div class="trip-header-fields">
+                <div class="form-group">
+                    <label>A 欄：日期 Date</label>
+                    <input type="date" id="trip-date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>B 欄：事由 Purpose</label>
+                    <input type="text" id="trip-purpose" class="form-control" placeholder="例如：ATC 看現場 / 環球晶兆遠廠">
+                </div>
+                <div class="form-group">
+                    <label>C 欄：總核銷里程 (km)</label>
+                    <input type="number" step="0.1" id="trip-total-mileage" class="form-control" placeholder="例如：130.0">
+                </div>
+                <div class="form-group">
+                    <label>停車費 (元)</label>
+                    <input type="number" id="trip-parking" class="form-control" placeholder="例如：20" value="0">
+                </div>
+                <div class="form-group">
+                    <label>備註 Remarks</label>
+                    <input type="text" id="trip-remarks" class="form-control" placeholder="選填備註說明">
+                </div>
+            </div>
+
+            <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--text-muted);">
+                國道行駛路段（支援去程、回程及途中新增停靠站）
+            </div>
+
+            <div id="segments-list" class="segment-container"></div>
+
+            <div class="btn-group" style="margin-top: 10px;">
+                <button class="btn btn-outline" onclick="addSegment()">+ 新增途經路段</button>
+                <button class="btn btn-outline" onclick="addReturnSegment()">+ 產生反向返程路段</button>
+                <button class="btn btn-outline" onclick="makeRoundTrip()">一鍵轉為標準來回（A 往返 B）</button>
+                <div style="flex: 1;"></div>
+                <button class="btn btn-primary" style="padding: 10px 24px;" onclick="saveTripRecord()">加入申報清單</button>
+            </div>
         </div>
     </div>
 
-<script>
-/* ================================================================ State */
-let map,dirSvc,geo;
-let renderers=[];
-let acS,acE;
-let routes=[],selIdx=-1,tollRate=1.20,loaded=false;
-let clickMode=null; // null|'start'|'end'|'wp-N'
-let mkS=null,mkE=null,llS=null,llE=null;
-
-// Waypoints: [{latLng,marker,ac}]
-let wps=[];
-
-const $=id=>document.getElementById(id);
-const $key=$('keyIn'),$bLoad=$('bLoad'),$ast=$('apiSt');
-const $inS=$('inS'),$inE=$('inE');
-const $pS=$('pS'),$pE=$('pE'),$hint=$('cHint');
-const $bSrch=$('bSrch'),$bAdd=$('bAdd');
-const $rsSec=$('rsSec'),$rsList=$('rsList');
-const $tlSec=$('tlSec'),$tlRes=$('tlRes');
-const $ph=$('mapPH'),$mm=$('mapMode');
-const $wpBox=$('wpBox');
-
-/* ================================================================ Events */
-$bLoad.onclick=loadAPI;
-$key.onkeydown=e=>{if(e.key==='Enter')loadAPI()};
-$bSrch.onclick=searchRoute;
-$pS.onclick=()=>setMode('start');
-$pE.onclick=()=>setMode('end');
-$bAdd.onclick=addWaypoint;
-
-document.querySelectorAll('.vb').forEach(b=>b.onclick=()=>{
-    document.querySelectorAll('.vb').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on'); tollRate=parseFloat(b.dataset.rate);
-    if(selIdx>=0) analyze(selIdx);
-});
-
-/* ================================================================ Click Mode */
-function setMode(m){
-    if(clickMode===m){clearMode();return;}
-    clickMode=m;
-    // Update pin highlights
-    $pS.classList.toggle('on',m==='start');
-    $pE.classList.toggle('on',m==='end');
-    document.querySelectorAll('.bp-wp').forEach((b,i)=>b.classList.toggle('on',m==='wp-'+i));
-
-    const labels={start:'點選地圖設定起點',end:'點選地圖設定終點'};
-    if(m.startsWith('wp-')) labels[m]='點選地圖設定途經點 '+(parseInt(m.split('-')[1])+1);
-    $hint.textContent=labels[m]||'';
-    const cls=m==='start'?'ms':m==='end'?'me':'mw';
-    $mm.textContent=labels[m]||'';
-    $mm.className='mm show '+cls;
-    if(map)map.setOptions({draggableCursor:'crosshair'});
-}
-
-function clearMode(){
-    clickMode=null;
-    $pS.classList.remove('on');$pE.classList.remove('on');
-    document.querySelectorAll('.bp-wp').forEach(b=>b.classList.remove('on'));
-    $hint.textContent='';
-    $mm.classList.remove('show');
-    if(map)map.setOptions({draggableCursor:null});
-}
-
-function onMapClick(e){
-    if(!clickMode)return;
-    const ll=e.latLng;
-    if(clickMode==='start'){
-        llS=ll; placeMk('start',ll); revGeo(ll,$inS);
-        if(!llE && !$inE.value) setMode('end'); else clearMode();
-    } else if(clickMode==='end'){
-        llE=ll; placeMk('end',ll); revGeo(ll,$inE); clearMode();
-    } else if(clickMode.startsWith('wp-')){
-        const i=parseInt(clickMode.split('-')[1]);
-        if(i<wps.length){
-            wps[i].latLng=ll;
-            placeWpMk(i,ll);
-            const inp=$wpBox.querySelectorAll('.wp-in')[i];
-            if(inp) revGeo(ll,inp);
-        }
-        clearMode();
-    }
-}
-
-/* ================================================================ Markers */
-function placeMk(type,ll){
-    const isS=type==='start';
-    const old=isS?mkS:mkE;
-    if(old)old.setMap(null);
-    const mk=new google.maps.Marker({
-        position:ll,map,draggable:true,zIndex:100,
-        icon:{path:google.maps.SymbolPath.CIRCLE,scale:10,fillColor:isS?'#34a853':'#ea4335',fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5},
-        title:isS?'起點':'終點',
-    });
-    mk.addListener('dragend',()=>{
-        const p=mk.getPosition();
-        if(isS){llS=p;revGeo(p,$inS);}else{llE=p;revGeo(p,$inE);}
-    });
-    if(isS)mkS=mk;else mkE=mk;
-}
-
-function placeWpMk(idx,ll){
-    if(wps[idx].marker) wps[idx].marker.setMap(null);
-    const mk=new google.maps.Marker({
-        position:ll,map,draggable:true,zIndex:90,
-        icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:'#fa7b17',fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5},
-        title:'途經點 '+(idx+1),
-    });
-    mk.addListener('dragend',()=>{
-        const p=mk.getPosition();
-        wps[idx].latLng=p;
-        const inp=$wpBox.querySelectorAll('.wp-in')[idx];
-        if(inp) revGeo(p,inp);
-    });
-    wps[idx].marker=mk;
-}
-
-function revGeo(ll,el){
-    geo.geocode({location:ll},(r,s)=>{
-        el.value=(s==='OK'&&r[0])?r[0].formatted_address:ll.lat().toFixed(6)+', '+ll.lng().toFixed(6);
-    });
-}
-
-/* ================================================================ Waypoints */
-function addWaypoint(){
-    const idx=wps.length;
-    wps.push({latLng:null,marker:null,ac:null});
-
-    const row=document.createElement('div');
-    row.className='ig wp-row';
-    row.dataset.idx=idx;
-    row.innerHTML=`
-        <label>途經點 ${idx+1}</label>
-        <div class="ir">
-            <div class="iw"><div class="dot d-w"></div>
-                <input type="text" class="wp-in" placeholder="途經點 ${idx+1}" data-idx="${idx}">
-            </div>
-            <button class="bp bp-wp" data-idx="${idx}" title="地圖選取">&#128205;</button>
-            <button class="bd" data-idx="${idx}" title="移除">&times;</button>
+    <div class="kpi-bar no-print">
+        <div class="kpi-card">
+            <span class="kpi-label">申報總天數 / 筆數</span>
+            <span id="kpi-days" class="kpi-value">0 天</span>
         </div>
-        <div class="conn"></div>
-    `;
+        <div class="kpi-card">
+            <span class="kpi-label">總核銷里程數 (C 欄累計)</span>
+            <span id="kpi-total-mileage" class="kpi-value">0.0 km</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">交通費 (里程x8 + 停車費)</span>
+            <span id="kpi-traffic-fee" class="kpi-value" style="color: #0288d1;">$ 0</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">國道通行費合計 (9折)</span>
+            <span id="kpi-toll-fee" class="kpi-value">$ 0</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">停車費合計</span>
+            <span id="kpi-parking-fee" class="kpi-value">$ 0</span>
+        </div>
+        <div class="kpi-card" style="border-left: 4px solid var(--accent-green);">
+            <span class="kpi-label">申報請領總額 Total</span>
+            <span id="kpi-grand-total" class="kpi-value" style="color: var(--accent-green);">$ 0</span>
+        </div>
+    </div>
 
-    $wpBox.appendChild(row);
+    <div class="report-section">
+        <div class="btn-group no-print" style="margin-bottom: 16px;">
+            <button class="btn btn-success" onclick="copyExcelTSV()">一鍵複製為 Excel 表格</button>
+            <button class="btn btn-outline" onclick="exportCSV()">匯出 CSV 檔</button>
+            <button class="btn btn-secondary" onclick="window.print()">列印 / 另存 PDF</button>
+        </div>
 
-    // Events
-    const pinBtn=row.querySelector('.bp-wp');
-    const delBtn=row.querySelector('.bd');
-    const inp=row.querySelector('.wp-in');
+        <div class="report-banner">
+            自行開車交通費一覽表/ Transportation fee summary by driving
+        </div>
+        <div class="report-meta-row">
+            <div><strong>Name:</strong> <span id="rep-name">楊正樑</span></div>
+            <div><strong>Employee No.:</strong> <span id="rep-emp-no">AL-0004343</span></div>
+            <div><span id="rep-cots">COTS</span></div>
+            <div><strong>Month/ period:</strong> <span id="rep-period">2026/9</span></div>
+        </div>
 
-    pinBtn.onclick=()=>setMode('wp-'+row.dataset.idx);
-    delBtn.onclick=()=>removeWaypoint(parseInt(row.dataset.idx));
+        <!-- 依內容自適應最佳欄寬的報表表格 -->
+        <table class="report-table" id="main-report-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="col-date">Date<br>(A)</th>
+                    <th rowspan="2" class="col-purpose">Purpose<br>(B)</th>
+                    <th rowspan="2" class="col-tot-mile">總核銷里程數<br>Total Mileage (C)</th>
+                    <th colspan="7" class="th-group-main">國道高速公路里程 Highway Toll Fee</th>
+                    <th rowspan="2" class="col-toll-fee">通行費合計<br>Total Toll Fee</th>
+                    <th rowspan="2" class="col-park-fee">停車費<br>Parking Fee</th>
+                    <th rowspan="2" class="col-remarks">Remarks</th>
+                    <th rowspan="2" class="no-print" style="width: 60px;">操作</th>
+                </tr>
+                <tr>
+                    <th class="col-highway">Highway</th>
+                    <th class="col-from-exit">From Hi Way Exit</th>
+                    <th class="col-from-km">Hi Way Exit<br>Mileage</th>
+                    <th class="col-to-exit">To Hi Way Exit</th>
+                    <th class="col-to-km">Hi Way Exit<br>Mileage</th>
+                    <th class="col-free-m">Free<br>Miles</th>
+                    <th class="col-paid-m">Total Paid Miles<br>for toll</th>
+                </tr>
+            </thead>
+            <tbody id="report-tbody"></tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="2">合計 Total</td>
+                    <td id="foot-total-mileage" class="cell-right">0.0</td>
+                    <td colspan="6"></td>
+                    <td id="foot-paid-miles" class="cell-right">0</td>
+                    <td id="foot-toll-fee" class="cell-right">0</td>
+                    <td id="foot-parking-fee" class="cell-right">0</td>
+                    <td colspan="2"></td>
+                </tr>
+            </tfoot>
+        </table>
 
-    // Autocomplete
-    const bounds=new google.maps.LatLngBounds({lat:21.85,lng:119.9},{lat:25.35,lng:122.05});
-    wps[idx].ac=new google.maps.places.Autocomplete(inp,{bounds,componentRestrictions:{country:'tw'},fields:['place_id','geometry','name','formatted_address']});
-
-    // Auto enter pin mode
-    setMode('wp-'+idx);
-}
-
-function removeWaypoint(idx){
-    if(idx>=wps.length)return;
-    if(wps[idx].marker) wps[idx].marker.setMap(null);
-    wps.splice(idx,1);
-    rebuildWpUI();
-    clearMode();
-}
-
-function rebuildWpUI(){
-    $wpBox.innerHTML='';
-    const saved=wps.map(w=>({latLng:w.latLng,address:null}));
-    // Read addresses from existing inputs would be lost; use latLng to re-populate
-    wps.forEach((w,i)=>{w.ac=null;});
-
-    wps.forEach((w,i)=>{
-        const row=document.createElement('div');
-        row.className='ig wp-row';
-        row.dataset.idx=i;
-        row.innerHTML=`
-            <label>途經點 ${i+1}</label>
-            <div class="ir">
-                <div class="iw"><div class="dot d-w"></div>
-                    <input type="text" class="wp-in" placeholder="途經點 ${i+1}" data-idx="${i}">
-                </div>
-                <button class="bp bp-wp" data-idx="${i}" title="地圖選取">&#128205;</button>
-                <button class="bd" data-idx="${i}" title="移除">&times;</button>
+        <!-- 下方費用加總彙整表（水平排列：上方項目、下方金額、最後方加總金額） -->
+        <div class="summary-horizontal-container">
+            <div class="summary-section-title">
+                費用加總彙整資訊 / Summary of Claims
             </div>
-            <div class="conn"></div>
+            <table class="summary-horizontal-table">
+                <thead>
+                    <tr>
+                        <th style="width: 22%;">交通費（里程加總 x <span id="label-mile-rate">8</span> + 停車費加總）</th>
+                        <th style="width: 15%;">國道通行費合計</th>
+                        <th style="width: 13%;">聚餐費</th>
+                        <th style="width: 13%;">其他費用</th>
+                        <th style="width: 13%;">電話費</th>
+                        <th class="th-total" style="width: 24%;">Total 請款總額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-val" id="sum-traffic-fee">0</td>
+                        <td class="item-val" id="sum-toll-fee">0</td>
+                        <td>
+                            <input type="number" id="sum-meal-input" class="summary-input-control-h" value="0" placeholder="0" oninput="onExtraCostChange()">
+                        </td>
+                        <td>
+                            <input type="number" id="sum-other-input" class="summary-input-control-h" value="0" placeholder="0" oninput="onExtraCostChange()">
+                        </td>
+                        <td>
+                            <input type="number" id="sum-phone-input" class="summary-input-control-h" value="1200" placeholder="1200" oninput="onExtraCostChange()">
+                        </td>
+                        <td class="td-total" id="sum-grand-total">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="toast-msg" class="toast">已複製到剪貼簿</div>
+
+<script>
+    const HIGHWAY_DATA = {"國道1號": [{"name": "基隆端", "km": 0.0, "note": "基隆市區"}, {"name": "基隆交流道", "km": 1.0, "note": "金山,八堵"}, {"name": "八堵交流道", "km": 2.0, "note": "瑞芳,八堵,暖暖"}, {"name": "大華系統交流道", "km": 5.0, "note": "連接台62(萬里瑞濱)線快速公路"}, {"name": "五堵交流道", "km": 6.0, "note": "五堵"}, {"name": "汐止交流道", "km": 10.0, "note": "汐止"}, {"name": "汐止系統交流道", "km": 11.0, "note": "連接國道3號"}, {"name": "高架道路汐止端", "km": 13.0, "note": "連接汐止五股高架道路"}, {"name": "東湖交流道", "km": 15.0, "note": "台北市(康寧路)"}, {"name": "內湖交流道", "km": 17.0, "note": "台北市(南京東路,成功路)"}, {"name": "圓山交流道", "km": 23.0, "note": "台北市(建國北路,松江路,濱江街)"}, {"name": "台北交流道", "km": 25.0, "note": "台北市(重慶北路)"}, {"name": "三重交流道", "km": 27.0, "note": "三重"}, {"name": "五股轉接道", "km": 32.0, "note": "連接汐五高架道路"}, {"name": "五股交流道", "km": 33.0, "note": "新莊,五股"}, {"name": "泰山轉接道", "km": 35.0, "note": "連接五楊高架道路"}, {"name": "林口交流道", "km": 41.0, "note": "林口,龜山"}, {"name": "桃園交流道", "km": 49.0, "note": "桃園,蘆竹(南崁)"}, {"name": "機場系統交流道", "km": 52.0, "note": "連接國道2號"}, {"name": "中壢服務區", "km": 55.0, "note": "--"}, {"name": "內壢交流道", "km": 57.0, "note": "中壢(內壢),大園"}, {"name": "中壢轉接道", "km": 59.0, "note": "連接五楊高架道路"}, {"name": "中壢交流道", "km": 62.0, "note": "中壢,平鎮,新屋"}, {"name": "平鎮系統交流道", "km": 65.0, "note": "連接台66(觀音大溪)線快速公路"}, {"name": "幼獅交流道", "km": 67.0, "note": "幼獅工業區"}, {"name": "楊梅交流道", "km": 69.0, "note": "楊梅,埔心"}, {"name": "高架道路楊梅端", "km": 71.0, "note": "連接五楊高架道路"}, {"name": "楊梅休息站", "km": 71.0, "note": "--"}, {"name": "湖口交流道", "km": 83.0, "note": "湖口,新豐,新竹工業區"}, {"name": "湖口服務區", "km": 86.0, "note": "--"}, {"name": "竹北交流道", "km": 91.0, "note": "竹北,芎林"}, {"name": "新竹交流道", "km": 95.0, "note": "新竹,竹東,科學園區"}, {"name": "新竹系統交流道", "km": 99.0, "note": "連接國道3號"}, {"name": "頭份交流道", "km": 110.0, "note": "頭份,三灣"}, {"name": "頭屋交流道", "km": 125.0, "note": "造橋,頭屋"}, {"name": "苗栗交流道", "km": 132.0, "note": "苗栗,公館"}, {"name": "銅鑼交流道", "km": 140.0, "note": "銅鑼,銅鑼科學園區"}, {"name": "三義交流道", "km": 150.0, "note": "三義"}, {"name": "泰安服務區", "km": 158.0, "note": "--"}, {"name": "后里交流道", "km": 160.0, "note": "后里,外埔"}, {"name": "台中系統交流道", "km": 165.0, "note": "連接國道4號"}, {"name": "豐原交流道", "km": 168.0, "note": "豐原,神岡"}, {"name": "大雅系統交流道", "km": 172.0, "note": "連接台74(快官霧峰)線快速公路"}, {"name": "大雅交流道", "km": 174.0, "note": "台中市(中清路),大雅"}, {"name": "台中交流道", "km": 178.0, "note": "台中市(台灣大道),沙鹿"}, {"name": "南屯交流道", "km": 181.0, "note": "台中市(五權西路),龍井"}, {"name": "王田交流道", "km": 189.0, "note": "烏日,大肚"}, {"name": "彰化系統交流道", "km": 192.0, "note": "連接國道3號"}, {"name": "彰化交流道", "km": 198.0, "note": "彰化,鹿港"}, {"name": "埔鹽系統交流道", "km": 207.0, "note": "連接台76(漢寶草屯)線快速公路"}, {"name": "員林交流道", "km": 211.0, "note": "員林,溪湖"}, {"name": "北斗交流道", "km": 220.0, "note": "北斗,埤頭"}, {"name": "西螺服務區", "km": 229.0, "note": "--"}, {"name": "西螺交流道", "km": 230.0, "note": "西螺,莿桐"}, {"name": "虎尾交流道", "km": 235.0, "note": "斗六,虎尾"}, {"name": "斗南交流道", "km": 240.0, "note": "斗南,虎尾"}, {"name": "雲林系統交流道", "km": 243.0, "note": "連接台78(台西古坑)線快速公路"}, {"name": "大林交流道", "km": 250.0, "note": "大林,溪口"}, {"name": "民雄交流道", "km": 257.0, "note": "民雄,新港"}, {"name": "嘉義交流道", "km": 264.0, "note": "嘉義,北港,新港"}, {"name": "水上交流道", "km": 270.0, "note": "水上,朴子,太保"}, {"name": "嘉義系統交流道", "km": 272.0, "note": "連接台82(東石嘉義)線快速公路"}, {"name": "新營服務區", "km": 284.0, "note": "--"}, {"name": "新營交流道", "km": 288.0, "note": "新營,鹽水"}, {"name": "下營系統交流道", "km": 299.0, "note": "連接台84(北門玉井)線快速公路"}, {"name": "麻豆交流道", "km": 303.0, "note": "麻豆,佳里"}, {"name": "安定交流道", "km": 311.0, "note": "安定,善化"}, {"name": "台南系統交流道", "km": 315.0, "note": "連接國道8號"}, {"name": "永康交流道", "km": 319.0, "note": "永康,新市,台南市北區"}, {"name": "大灣交流道", "km": 324.0, "note": "台南市東區,大灣,新化"}, {"name": "仁德交流道", "km": 327.0, "note": "台南市東區,仁德,關廟"}, {"name": "仁德系統交流道", "km": 330.0, "note": "連接台86(台南關廟)線快速公路"}, {"name": "仁德服務區", "km": 335.0, "note": "--"}, {"name": "路竹交流道", "km": 338.0, "note": "路竹,阿蓮"}, {"name": "高科交流道", "km": 342.0, "note": "高雄科學園區"}, {"name": "岡山交流道", "km": 349.0, "note": "岡山,燕巢"}, {"name": "楠梓交流道", "km": 356.0, "note": "楠梓,仁武"}, {"name": "鼎金系統交流道", "km": 362.0, "note": "連接國道10號"}, {"name": "高雄交流道", "km": 367.0, "note": "高雄市區"}, {"name": "瑞隆路出口匝道", "km": 369.0, "note": "瑞隆東路"}, {"name": "五甲系統交流道", "km": 370.0, "note": "連接台88(高雄潮州)線快速公路"}, {"name": "五甲交流道", "km": 372.0, "note": "鳳山、小港"}, {"name": "高雄端", "km": 373.0, "note": "高雄市中山四路、高雄航空站\n漁港路\n高雄港第一~五貨櫃中心、旗津"}], "國道3號": [{"name": "基金交流道", "km": 0.0, "note": "萬里,基隆,基隆港"}, {"name": "台北端", "km": 0.0, "note": "台北市(辛亥路)"}, {"name": "瑪東系統交流道", "km": 2.0, "note": "連接台62(萬里瑞濱)線快速公路"}, {"name": "萬芳交流道", "km": 3.0, "note": "台北市(木柵路),信義快速道路(信義路)"}, {"name": "木柵交流道", "km": 5.0, "note": "連接國道3號"}, {"name": "深坑端", "km": 6.0, "note": "深坑"}, {"name": "汐止系統交流道", "km": 10.0, "note": "連接國道1號"}, {"name": "新台五路交流道", "km": 12.0, "note": "汐止,南港"}, {"name": "南港交流道", "km": 14.0, "note": "南港,連接環東大道"}, {"name": "南港系統交流道", "km": 16.0, "note": "連接國道5號"}, {"name": "南深路出口匝道", "km": 16.0, "note": "南港,深坑"}, {"name": "木柵交流道", "km": 20.0, "note": "連接國道3甲"}, {"name": "木柵休息站", "km": 25.0, "note": "--"}, {"name": "新店交流道", "km": 26.0, "note": "新店"}, {"name": "安坑交流道", "km": 31.0, "note": "安坑,新店,水源快速道路(台北市)"}, {"name": "中和交流道", "km": 35.0, "note": "板橋,中和,連接台64 (八里新店)線快速公路"}, {"name": "土城交流道", "km": 42.0, "note": "板橋,土城,連接台65線快速公路"}, {"name": "樹林交流道", "km": 46.0, "note": "樹林,三峽"}, {"name": "三鶯交流道", "km": 50.0, "note": "三峽,鶯歌"}, {"name": "鶯歌系統交流道", "km": 54.0, "note": "連接國道2號"}, {"name": "大溪交流道", "km": 62.0, "note": "大溪,中壢,台66 (觀音大溪)線快速公路"}, {"name": "龍潭交流道", "km": 68.0, "note": "龍潭"}, {"name": "高原交流道", "km": 73.0, "note": "龍潭"}, {"name": "關西服務區", "km": 76.0, "note": "--"}, {"name": "關西交流道", "km": 79.0, "note": "關西,新埔"}, {"name": "竹林交流道", "km": 90.0, "note": "竹東,芎林"}, {"name": "寶山休息站", "km": 96.0, "note": "--"}, {"name": "寶山交流道", "km": 98.0, "note": "寶山,新竹科學園區"}, {"name": "新竹系統交流道", "km": 100.0, "note": "連接國道1號"}, {"name": "茄苳交流道", "km": 103.0, "note": "新竹市"}, {"name": "香山交流道", "km": 109.0, "note": "頭份,竹南,新竹市"}, {"name": "西濱交流道", "km": 115.0, "note": "連接台61(西濱快速公路),竹南"}, {"name": "竹南交流道", "km": 119.0, "note": "竹南,頭份"}, {"name": "大山交流道", "km": 124.0, "note": "大山,造橋"}, {"name": "後龍交流道", "km": 130.0, "note": "苗栗,後龍"}, {"name": "西湖服務區", "km": 134.0, "note": "--"}, {"name": "通霄交流道", "km": 144.0, "note": "通霄,銅鑼"}, {"name": "苑裡交流道", "km": 156.0, "note": "苑裡,三義"}, {"name": "大甲交流道", "km": 164.0, "note": "大甲,外埔"}, {"name": "中港系統交流道", "km": 169.0, "note": "連接國道4號"}, {"name": "清水服務區", "km": 172.0, "note": "--"}, {"name": "沙鹿交流道", "km": 176.0, "note": "沙鹿,大雅"}, {"name": "龍井交流道", "km": 182.0, "note": "龍井,台中市"}, {"name": "和美交流道", "km": 191.0, "note": "和美,伸港"}, {"name": "彰化系統交流道", "km": 196.0, "note": "連接國道1號"}, {"name": "快官交流道", "km": 202.0, "note": "連接台74線 (中彰快速公路)"}, {"name": "烏日交流道", "km": 207.0, "note": "烏日"}, {"name": "中投交流道", "km": 209.0, "note": "連接台63線 (中投公路)"}, {"name": "霧峰交流道\r\n\t\t\t(100.12.31起 開放通往台74 )", "km": 211.0, "note": "霧峰,太平"}, {"name": "霧峰系統交流道", "km": 214.0, "note": "連接國道6號"}, {"name": "草屯交流道", "km": 217.0, "note": "草屯,芬園"}, {"name": "中興系統交流道", "km": 222.0, "note": "連接台76 (漢寶草屯)線快速公路"}, {"name": "中興交流道", "km": 224.0, "note": "南投,草屯,中興新村"}, {"name": "南投交流道", "km": 228.0, "note": "南投、中寮"}, {"name": "南投服務區", "km": 231.0, "note": "--"}, {"name": "名間交流道", "km": 237.0, "note": "名間,南投,集集"}, {"name": "竹山交流道", "km": 243.0, "note": "竹山,鹿谷"}, {"name": "南雲交流道", "km": 250.0, "note": "竹山,林內"}, {"name": "斗六交流道", "km": 260.0, "note": "斗六,林內"}, {"name": "古坑系統交流道", "km": 269.0, "note": "連接台78 (台西古坑)線快速公路"}, {"name": "古坑交流道", "km": 271.0, "note": "古坑"}, {"name": "古坑服務區", "km": 276.0, "note": "--"}, {"name": "梅山交流道", "km": 279.0, "note": "大林,梅山"}, {"name": "竹崎交流道", "km": 290.0, "note": "嘉義市,竹崎, 民雄"}, {"name": "中埔交流道", "km": 297.0, "note": "嘉義市,中埔"}, {"name": "水上系統交流道", "km": 300.0, "note": "連接台82 (東石嘉義)線快速公路"}, {"name": "白河交流道", "km": 311.0, "note": "白河,東山"}, {"name": "東山服務區", "km": 319.0, "note": "--"}, {"name": "柳營交流道", "km": 322.0, "note": "柳營,東山"}, {"name": "烏山頭交流道", "km": 329.0, "note": "六甲,官田"}, {"name": "官田系統交流道", "km": 334.0, "note": "連接台84 (北門玉井)線快速公路"}, {"name": "善化交流道", "km": 340.0, "note": "善化,山上"}, {"name": "新化系統交流道", "km": 346.0, "note": "連接國道8號"}, {"name": "新化休息站", "km": 350.0, "note": "--"}, {"name": "關廟交流道", "km": 357.0, "note": "關廟,歸仁,連接台86 (台南關廟)線快速公路"}, {"name": "關廟服務區", "km": 363.0, "note": "--"}, {"name": "田寮交流道", "km": 369.0, "note": "田寮,阿蓮"}, {"name": "燕巢系統交流道", "km": 383.0, "note": "連接國道10號"}, {"name": "九如交流道", "km": 391.0, "note": "屏東,九如,里港"}, {"name": "屏東交流道", "km": 396.0, "note": "連接台27、屏17"}, {"name": "長治交流道", "km": 400.0, "note": "屏東,長治,三地門"}, {"name": "麟洛交流道", "km": 407.0, "note": "屏東,麟洛,內埔"}, {"name": "竹田系統交流道", "km": 415.0, "note": "連接台88 (高雄潮州)線快速公路"}, {"name": "崁頂交流道", "km": 421.0, "note": "崁頂"}, {"name": "南州交流道", "km": 424.0, "note": "南州,新埤"}, {"name": "林邊交流道", "km": 430.0, "note": "林邊,東港"}, {"name": "大鵬灣端", "km": 431.0, "note": "大鵬灣環灣道路"}], "國道5號": [{"name": "南港系統交流道", "km": 0.0, "note": "連接國道3號"}, {"name": "石碇交流道", "km": 4.0, "note": "石碇,深坑"}, {"name": "石碇服務區", "km": 4.0, "note": ""}, {"name": "坪林交控中心專用道", "km": 14.0, "note": "坪林交控中心"}, {"name": "頭城交流道", "km": 30.0, "note": "頭城,礁溪"}, {"name": "宜蘭交流道", "km": 38.0, "note": "宜蘭,壯圍"}, {"name": "羅東交流道", "km": 47.0, "note": "羅東,五結"}, {"name": "蘇澳交流道", "km": 54.0, "note": "蘇澳,冬山"}, {"name": "蘇澳服務區", "km": 54.0, "note": ""}]};
+
+    let tripRecords = [];
+    let currentEditingId = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadConfig();
+        loadExtraCosts();
+        const saved = localStorage.getItem('highway_trip_records');
+        if (saved) {
+            try {
+                tripRecords = JSON.parse(saved);
+            } catch(e) {
+                tripRecords = [];
+            }
+        }
+        
+        if (!tripRecords || tripRecords.length === 0) {
+            loadInitialSample();
+        }
+
+        resetEditorForm();
+        renderAll();
+    });
+
+    function loadInitialSample() {
+        tripRecords = [
+            {
+                id: 'trip_' + Date.now() + '_1',
+                date: '2026-09-01',
+                purpose: '環球晶兆遠廠 H2 Bundle 看現場',
+                totalMileage: 75.0,
+                parking: 20,
+                remarks: '',
+                segments: [
+                    { highway: '國道1號', from: '竹北交流道', fromKm: 91, to: '頭份交流道', toKm: 110, paidMiles: 19 },
+                    { highway: '國道1號', from: '頭份交流道', fromKm: 110, to: '竹北交流道', toKm: 91, paidMiles: 19 }
+                ]
+            },
+            {
+                id: 'trip_' + Date.now() + '_2',
+                date: '2026-09-02',
+                purpose: 'ATC 看現場',
+                totalMileage: 130.0,
+                parking: 0,
+                remarks: '',
+                segments: [
+                    { highway: '國道1號', from: '竹北交流道', fromKm: 91, to: '桃園交流道', toKm: 49, paidMiles: 42 },
+                    { highway: '國道1號', from: '桃園交流道', fromKm: 49, to: '竹北交流道', toKm: 91, paidMiles: 42 }
+                ]
+            },
+            {
+                id: 'trip_' + Date.now() + '_3',
+                date: '2026-09-03',
+                purpose: 'ATC-電力系統PSSR',
+                totalMileage: 130.0,
+                parking: 0,
+                remarks: '',
+                segments: [
+                    { highway: '國道1號', from: '竹北交流道', fromKm: 91, to: '桃園交流道', toKm: 49, paidMiles: 42 },
+                    { highway: '國道1號', from: '桃園交流道', fromKm: 49, to: '竹北交流道', toKm: 91, paidMiles: 42 }
+                ]
+            }
+        ];
+        saveRecordsToStorage();
+    }
+
+    function loadSampleData() {
+        if (confirm('是否確認重新載入範例資料？現有資料將被覆蓋。')) {
+            loadInitialSample();
+            document.getElementById('sum-meal-input').value = 0;
+            document.getElementById('sum-other-input').value = 0;
+            document.getElementById('sum-phone-input').value = 1200;
+            saveExtraCosts();
+            renderAll();
+            showToast('已成功載入範例資料');
+        }
+    }
+
+    function clearAllData() {
+        if (confirm('確定要清空所有申報資料嗎？此動作無法復原。')) {
+            tripRecords = [];
+            saveRecordsToStorage();
+            renderAll();
+            resetEditorForm();
+            showToast('已清空所有申報資料');
+        }
+    }
+
+    function saveConfig() {
+        const config = {
+            name: document.getElementById('cfg-name').value,
+            empNo: document.getElementById('cfg-emp-no').value,
+            cots: document.getElementById('cfg-cots').value,
+            period: document.getElementById('cfg-period').value,
+            rate: document.getElementById('cfg-rate').value,
+            mileRate: document.getElementById('cfg-mileage-rate').value,
+            dateFormat: document.getElementById('cfg-date-format').value
+        };
+        localStorage.setItem('highway_calc_config', JSON.stringify(config));
+        updateReportMeta();
+    }
+
+    function loadConfig() {
+        const saved = localStorage.getItem('highway_calc_config');
+        if (saved) {
+            try {
+                const cfg = JSON.parse(saved);
+                if (cfg.name) document.getElementById('cfg-name').value = cfg.name;
+                if (cfg.empNo) document.getElementById('cfg-emp-no').value = cfg.empNo;
+                if (cfg.cots) document.getElementById('cfg-cots').value = cfg.cots;
+                if (cfg.period) document.getElementById('cfg-period').value = cfg.period;
+                if (cfg.rate) {
+                    document.getElementById('cfg-rate').value = cfg.rate;
+                } else {
+                    document.getElementById('cfg-rate').value = '1.08';
+                }
+                if (cfg.mileRate) document.getElementById('cfg-mileage-rate').value = cfg.mileRate;
+                if (cfg.dateFormat) document.getElementById('cfg-date-format').value = cfg.dateFormat;
+            } catch(e) {}
+        } else {
+            document.getElementById('cfg-rate').value = '1.08';
+            document.getElementById('cfg-date-format').value = 'slash_pad';
+        }
+        updateReportMeta();
+    }
+
+    function updateDateFormat() {
+        saveConfig();
+        renderAll();
+    }
+
+    function saveExtraCosts() {
+        const extra = {
+            meal: document.getElementById('sum-meal-input').value,
+            other: document.getElementById('sum-other-input').value,
+            phone: document.getElementById('sum-phone-input').value
+        };
+        localStorage.setItem('highway_extra_costs', JSON.stringify(extra));
+    }
+
+    function loadExtraCosts() {
+        const saved = localStorage.getItem('highway_extra_costs');
+        if (saved) {
+            try {
+                const extra = JSON.parse(saved);
+                if (extra.meal !== undefined) {
+                    document.getElementById('sum-meal-input').value = extra.meal;
+                } else {
+                    document.getElementById('sum-meal-input').value = 0;
+                }
+                if (extra.other !== undefined) {
+                    document.getElementById('sum-other-input').value = extra.other;
+                } else {
+                    document.getElementById('sum-other-input').value = 0;
+                }
+                if (extra.phone !== undefined) {
+                    document.getElementById('sum-phone-input').value = extra.phone;
+                } else {
+                    document.getElementById('sum-phone-input').value = 1200;
+                }
+            } catch(e) {}
+        } else {
+            document.getElementById('sum-meal-input').value = 0;
+            document.getElementById('sum-other-input').value = 0;
+            document.getElementById('sum-phone-input').value = 1200;
+        }
+    }
+
+    function onExtraCostChange() {
+        saveExtraCosts();
+        renderAll();
+    }
+
+    function updateRate() {
+        saveConfig();
+        renderAll();
+    }
+
+    function updateReportMeta() {
+        document.getElementById('rep-name').innerText = document.getElementById('cfg-name').value;
+        document.getElementById('rep-emp-no').innerText = document.getElementById('cfg-emp-no').value;
+        document.getElementById('rep-cots').innerText = document.getElementById('cfg-cots').value;
+        document.getElementById('rep-period').innerText = document.getElementById('cfg-period').value;
+        const mileRate = document.getElementById('cfg-mileage-rate').value || '8';
+        document.getElementById('label-mile-rate').innerText = mileRate;
+    }
+
+    function getTollRate() {
+        const rateVal = parseFloat(document.getElementById('cfg-rate').value);
+        return isNaN(rateVal) ? 1.08 : rateVal;
+    }
+
+    function getMileageRate() {
+        const val = parseFloat(document.getElementById('cfg-mileage-rate').value);
+        return isNaN(val) ? 8 : val;
+    }
+
+    function formatDateYMD(isoDateStr) {
+        if (!isoDateStr) return '';
+        const parts = isoDateStr.split('-');
+        if (parts.length === 3) {
+            const y = parts[0];
+            const m = parts[1];
+            const d = parts[2];
+            const mInt = parseInt(m, 10);
+            const dInt = parseInt(d, 10);
+
+            const fmt = document.getElementById('cfg-date-format').value;
+            if (fmt === 'chinese') {
+                return `${y}年${mInt}月${dInt}日`;
+            } else if (fmt === 'slash') {
+                return `${y}/${mInt}/${dInt}`;
+            } else {
+                return `${y}/${m.padStart(2, '0')}/${d.padStart(2, '0')}`;
+            }
+        }
+        return isoDateStr;
+    }
+
+    function resetEditorForm() {
+        currentEditingId = null;
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('trip-date').value = today;
+        document.getElementById('trip-purpose').value = '';
+        document.getElementById('trip-total-mileage').value = '';
+        document.getElementById('trip-parking').value = '0';
+        document.getElementById('trip-remarks').value = '';
+
+        const container = document.getElementById('segments-list');
+        container.innerHTML = '';
+        addSegment('國道1號', '竹北交流道', '桃園交流道');
+    }
+
+    function addSegment(defaultHw = '國道1號', defaultFrom = '', defaultTo = '') {
+        const container = document.getElementById('segments-list');
+        const segIndex = container.children.length;
+
+        if (segIndex > 0 && !defaultFrom) {
+            const prevRow = container.children[segIndex - 1];
+            const prevToSelect = prevRow.querySelector('.seg-to');
+            const prevHwSelect = prevRow.querySelector('.seg-hw');
+            if (prevToSelect && prevToSelect.value) {
+                defaultFrom = prevToSelect.value;
+                defaultHw = prevHwSelect.value;
+            }
+        }
+
+        const row = document.createElement('div');
+        row.className = 'segment-row';
+        row.innerHTML = `
+            <span class="segment-badge">路段 ${segIndex + 1}</span>
+            <select class="form-control seg-hw" onchange="onHighwayChange(this)">
+                <option value="國道1號" ${defaultHw === '國道1號' ? 'selected' : ''}>國道1號</option>
+                <option value="國道3號" ${defaultHw === '國道3號' ? 'selected' : ''}>國道3號</option>
+                <option value="國道5號" ${defaultHw === '國道5號' ? 'selected' : ''}>國道5號</option>
+            </select>
+            <select class="form-control seg-from" onchange="onExitChange(this)"></select>
+            <span class="km-pill seg-from-km">- K</span>
+            <select class="form-control seg-to" onchange="onExitChange(this)"></select>
+            <span class="km-pill seg-to-km">- K</span>
+            <span class="calc-pill seg-diff">0 km</span>
+            <span class="calc-pill seg-fee" style="background:#e3f2fd; color:var(--primary-dark); border-color:#bbdefb;">$ 0</span>
+            <button class="btn btn-danger-outline" onclick="removeSegment(this)" title="刪除路段">✕</button>
         `;
-        $wpBox.appendChild(row);
 
-        const pinBtn=row.querySelector('.bp-wp');
-        const delBtn=row.querySelector('.bd');
-        const inp=row.querySelector('.wp-in');
+        container.appendChild(row);
+        populateExitDropdown(row.querySelector('.seg-hw'), row.querySelector('.seg-from'), defaultFrom);
+        populateExitDropdown(row.querySelector('.seg-hw'), row.querySelector('.seg-to'), defaultTo);
+        calculateSegmentRow(row);
+    }
 
-        pinBtn.onclick=()=>setMode('wp-'+i);
-        delBtn.onclick=()=>removeWaypoint(i);
+    function removeSegment(btn) {
+        const container = document.getElementById('segments-list');
+        if (container.children.length <= 1) {
+            alert('行程中至少需保留一個行駛路段');
+            return;
+        }
+        btn.closest('.segment-row').remove();
+        Array.from(container.children).forEach((row, idx) => {
+            row.querySelector('.segment-badge').innerText = `路段 ${idx + 1}`;
+        });
+    }
 
-        const bounds=new google.maps.LatLngBounds({lat:21.85,lng:119.9},{lat:25.35,lng:122.05});
-        w.ac=new google.maps.places.Autocomplete(inp,{bounds,componentRestrictions:{country:'tw'},fields:['place_id','geometry','name','formatted_address']});
+    function addReturnSegment() {
+        const container = document.getElementById('segments-list');
+        if (container.children.length === 0) {
+            addSegment();
+            return;
+        }
+        const lastRow = container.children[container.children.length - 1];
+        const firstRow = container.children[0];
 
-        // Restore address via reverse geocode if latLng exists
-        if(w.latLng) revGeo(w.latLng,inp);
-    });
-}
+        const lastTo = lastRow.querySelector('.seg-to').value;
+        const firstFrom = firstRow.querySelector('.seg-from').value;
+        const hw = lastRow.querySelector('.seg-hw').value;
 
-/* ================================================================ Load API */
-function loadAPI(){
-    const k=$key.value.trim();
-    if(!k){setSt('請輸入 API Key','err');return;}
-    setSt('載入中...','ld');$bLoad.disabled=true;
-    const s=document.createElement('script');
-    s.src=`https://maps.googleapis.com/maps/api/js?key=${k}&libraries=places,geometry&callback=onReady&language=zh-TW&region=TW`;
-    s.async=true;s.defer=true;
-    s.onerror=()=>{setSt('載入失敗','err');$bLoad.disabled=false;};
-    document.head.appendChild(s);
-}
-function setSt(m,c){$ast.textContent=m;$ast.className='api-st '+(c||'')}
+        addSegment(hw, lastTo, firstFrom);
+    }
 
-window.onReady=function(){
-    loaded=true;setSt('已連線','ok');$ph.style.display='none';
-    [$inS,$inE].forEach(e=>e.disabled=false);
-    [$pS,$pE,$bSrch,$bAdd].forEach(e=>e.disabled=false);
+    function makeRoundTrip() {
+        const container = document.getElementById('segments-list');
+        if (container.children.length === 0) return;
+        const firstRow = container.children[0];
+        const hw = firstRow.querySelector('.seg-hw').value;
+        const from = firstRow.querySelector('.seg-from').value;
+        const to = firstRow.querySelector('.seg-to').value;
 
-    map=new google.maps.Map(document.getElementById('map'),{
-        center:{lat:23.6,lng:120.9},zoom:8,styles:DARK,
-        disableDefaultUI:false,zoomControl:true,mapTypeControl:false,streetViewControl:false,fullscreenControl:true
-    });
-    map.addListener('click',onMapClick);
-    dirSvc=new google.maps.DirectionsService();
-    geo=new google.maps.Geocoder();
+        if (!from || !to) {
+            alert('請先選妥第一路段之起點與終點交流道');
+            return;
+        }
 
-    const b=new google.maps.LatLngBounds({lat:21.85,lng:119.9},{lat:25.35,lng:122.05});
-    const o={bounds:b,componentRestrictions:{country:'tw'},fields:['place_id','geometry','name','formatted_address']};
-    acS=new google.maps.places.Autocomplete($inS,o);
-    acE=new google.maps.places.Autocomplete($inE,o);
-};
+        container.innerHTML = '';
+        addSegment(hw, from, to);
+        addSegment(hw, to, from);
+    }
 
-/* ================================================================ Search */
-function searchRoute(){
-    if(!$inS.value.trim()||!$inE.value.trim())return;
-    clearRoutes();
-    $bSrch.textContent='搜尋中...';$bSrch.disabled=true;
+    function onHighwayChange(selectElem) {
+        const row = selectElem.closest('.segment-row');
+        populateExitDropdown(selectElem, row.querySelector('.seg-from'));
+        populateExitDropdown(selectElem, row.querySelector('.seg-to'));
+        calculateSegmentRow(row);
+    }
 
-    // Build waypoints
-    const wpLocs=[];
-    wps.forEach((w,i)=>{
-        const inp=$wpBox.querySelectorAll('.wp-in')[i];
-        const loc=w.latLng||((inp&&inp.value.trim())?inp.value.trim():null);
-        if(loc) wpLocs.push({location:loc,stopover:true});
-    });
+    function populateExitDropdown(hwSelect, exitSelect, defaultValue = '') {
+        const hw = hwSelect.value;
+        const nodes = HIGHWAY_DATA[hw] || [];
+        exitSelect.innerHTML = '';
 
-    dirSvc.route({
-        origin:llS||$inS.value,
-        destination:llE||$inE.value,
-        waypoints:wpLocs,
-        travelMode:google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives:wpLocs.length===0, // no alternatives when waypoints
-        region:'TW',
-    },(r,s)=>{
-        $bSrch.textContent='搜尋路線';$bSrch.disabled=false;
-        if(s==='OK'){routes=r.routes;showRoutes(r);}
-        else alert('無法取得路線：'+s);
-    });
-}
+        nodes.forEach(node => {
+            const opt = document.createElement('option');
+            opt.value = node.name;
+            opt.dataset.km = node.km;
+            opt.innerText = `${node.name} (${node.km}K)`;
+            if (node.name === defaultValue) {
+                opt.selected = true;
+            }
+            exitSelect.appendChild(opt);
+        });
 
-function clearRoutes(){
-    renderers.forEach(r=>r.setMap(null));
-    renderers=[];routes=[];selIdx=-1;
-    $rsSec.style.display='none';$tlSec.style.display='none';
-}
-
-/* ================================================================ Show Routes */
-const COLS=['#3b82f6','#06b6d4','#8b5cf6','#6366f1','#14b8a6'];
-
-function showRoutes(resp){
-    $rsList.innerHTML='';$rsSec.style.display='block';
-    resp.routes.forEach((r,i)=>{
-        const c=COLS[i%COLS.length];
-        renderers.push(new google.maps.DirectionsRenderer({
-            map,directions:resp,routeIndex:i,
-            polylineOptions:{strokeColor:c,strokeWeight:i===0?6:4,strokeOpacity:i===0?.9:.4},
-            suppressMarkers:i>0,suppressInfoWindows:true,
-        }));
-        const totalD=r.legs.reduce((s,l)=>s+l.distance.value,0);
-        const totalT=r.legs.reduce((s,l)=>s+l.duration.value,0);
-        const d=document.createElement('div');
-        d.className='rc an'+(i===0?' sel':'');
-        d.style.animationDelay=(i*.08)+'s';
-        d.innerHTML=`
-            <div class="rn"><span style="color:${c}">路線 ${i+1}</span>${i===0?'<span class="rbdg">建議</span>':''}</div>
-            <div class="rs2">${r.summary}</div>
-            <div class="rm2"><span>${fmtDist(totalD)}</span><span>${fmtDur(totalT)}</span>${r.legs.length>1?'<span>'+r.legs.length+' 段</span>':''}</div>`;
-        d.onclick=()=>selectRoute(i);
-        $rsList.appendChild(d);
-    });
-    selectRoute(0);
-    $rsSec.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function selectRoute(i){
-    selIdx=i;
-    document.querySelectorAll('.rc').forEach((c,j)=>c.classList.toggle('sel',j===i));
-    renderers.forEach((r,j)=>r.setOptions({polylineOptions:{strokeColor:COLS[j%COLS.length],strokeWeight:j===i?6:4,strokeOpacity:j===i?.9:.3}}));
-    analyze(i);
-}
-
-/* ================================================================ Analyze */
-function analyze(idx){
-    const route=routes[idx];
-    // Flatten steps across all legs
-    const allSteps=route.legs.flatMap(l=>l.steps);
-    const segments=[];
-    let onHw=false,hwN='',hwNum='',dist=0,enN='',enL=null,exL=null;
-
-    for(let i=0;i<allSteps.length;i++){
-        const txt=strip(allSteps[i].instructions||'');
-        const m=txt.match(/國道(\d+)號/);
-        if(m){
-            const num=m[1],name='國道'+num+'號';
-            if(!onHw){onHw=true;hwN=name;hwNum=num;dist=allSteps[i].distance.value;enN=findIC(txt,allSteps,i,'en');enL=allSteps[i].start_location;}
-            else if(name!==hwN){exL=allSteps[i].start_location;segments.push({highway:hwN,hwNum,entry:enN,exit:'系統交流道',distance:dist,enL,exL});hwN=name;hwNum=num;dist=allSteps[i].distance.value;enN='系統交流道';enL=allSteps[i].start_location;}
-            else{dist+=allSteps[i].distance.value;}
-        } else if(onHw){
-            exL=allSteps[i].start_location;
-            segments.push({highway:hwN,hwNum,entry:enN,exit:findIC(txt,allSteps,i,'ex'),distance:dist,enL,exL});
-            onHw=false;hwN='';dist=0;
+        if (!defaultValue && nodes.length > 0) {
+            exitSelect.selectedIndex = 0;
         }
     }
-    if(onHw){
-        const last=allSteps[allSteps.length-1];
-        exL=last.end_location;
-        segments.push({highway:hwN,hwNum,entry:enN,exit:'(終點附近)',distance:dist,enL,exL});
+
+    function onExitChange(selectElem) {
+        const row = selectElem.closest('.segment-row');
+        calculateSegmentRow(row);
     }
 
-    segments.forEach(seg=>{seg.icList=matchICs(seg.hwNum,seg.enL,seg.exL);});
-    showToll(segments,route);
-}
+    function calculateSegmentRow(row) {
+        const fromSelect = row.querySelector('.seg-from');
+        const toSelect = row.querySelector('.seg-to');
+        const fromOpt = fromSelect.options[fromSelect.selectedIndex];
+        const toOpt = toSelect.options[toSelect.selectedIndex];
 
-function findIC(txt,steps,idx,dir){
-    const ps=[/從(.+?)交流道/,/(.+?)交流道/,/(.+?)系統/,/(.+?)出口/,/(.+?)端/,/走(.+?)的匝道/];
-    const ts=[txt];
-    if(dir==='en'&&idx>0)ts.unshift(strip(steps[idx-1].instructions||''));
-    if(dir==='ex'&&idx+1<steps.length)ts.push(strip(steps[idx+1].instructions||''));
-    for(const t of ts)for(const p of ps){const m=t.match(p);if(m){let n=m[1].trim().replace(/^(走|從|沿|靠左走|靠右走|合併到)\s*/g,'');if(n.length>0&&n.length<15)return n;}}
-    return dir==='en'?'(上匝道)':'(下匝道)';
-}
-function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||'';}
+        const fromKm = fromOpt ? parseFloat(fromOpt.dataset.km) : 0;
+        const toKm = toOpt ? parseFloat(toOpt.dataset.km) : 0;
 
-/* ================================================================ IC Match */
-function matchICs(hwNum,enL,exL){
-    const db=IC_DB[hwNum];if(!db||!db.length)return[];
-    const eIC=nearest(db,enL),xIC=nearest(db,exL);
-    if(!eIC||!xIC)return[];
-    if(eIC.i===xIC.i)return[{...db[eIC.i],role:'both'}];
-    const asc=eIC.i<xIC.i, lo=Math.min(eIC.i,xIC.i), hi=Math.max(eIC.i,xIC.i);
-    const res=[];
-    for(let i=lo;i<=hi;i++){
-        const ic=db[asc?i:(hi-(i-lo))];
-        const role=(asc?(i===lo?'en':i===hi?'ex':'via'):(i===hi?'en':i===lo?'ex':'via'));
-        res.push({...ic,role});
+        row.querySelector('.seg-from-km').innerText = `${fromKm} K`;
+        row.querySelector('.seg-to-km').innerText = `${toKm} K`;
+
+        const diff = Math.abs(toKm - fromKm);
+        const rate = getTollRate();
+        const fee = Math.round(diff * rate);
+
+        row.querySelector('.seg-diff').innerText = `${diff.toFixed(0)} km`;
+        row.querySelector('.seg-fee').innerText = `$ ${fee}`;
+
+        return { fromKm, toKm, diff, fee };
     }
-    return res;
-}
-function nearest(db,loc){
-    if(!loc)return null;
-    let best=null,bd=Infinity;
-    const lat=typeof loc.lat==='function'?loc.lat():loc.lat;
-    const lng=typeof loc.lng==='function'?loc.lng():loc.lng;
-    db.forEach((ic,i)=>{const d=hav(lat,lng,ic.lat,ic.lng);if(d<bd){bd=d;best={i,d};}});
-    return best&&best.d<15?best:null;
-}
-function hav(a,b,c,d){const R=6371,r=x=>x*Math.PI/180,dl=r(c-a),dn=r(d-b),s=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));}
 
-/* ================================================================ Show Toll */
-function showToll(segs,route){
-    $tlSec.style.display='block';
-    if(!segs.length){
-        $tlRes.innerHTML='<div class="nohw an"><div class="ni">&#128739;</div><div class="nt2">此路線未使用國道高速公路</div><div class="nd">無需支付高速公路過路費</div></div>';
-        $tlSec.scrollIntoView({behavior:'smooth',block:'nearest'});return;
-    }
-    const hwM=segs.reduce((s,x)=>s+x.distance,0), hwKm=hwM/1000;
-    const totalD=route.legs.reduce((s,l)=>s+l.distance.value,0);
-    const totalT=route.legs.reduce((s,l)=>s+l.duration.value,0);
-    const vL=document.querySelector('.vb.on').childNodes[0].textContent.trim();
+    function saveTripRecord() {
+        const date = document.getElementById('trip-date').value;
+        const purpose = document.getElementById('trip-purpose').value.trim();
+        const totalMileageStr = document.getElementById('trip-total-mileage').value;
+        const parkingStr = document.getElementById('trip-parking').value;
+        const remarks = document.getElementById('trip-remarks').value.trim();
 
-    let toll=Math.round(hwKm*tollRate),dH='';
-    if(hwKm>200){const b=toll;toll=Math.round(b-(hwKm-200)*tollRate*.2);dH=`<p>已套用長途優惠（200 km 以上 8 折），原價 NT$ ${b.toLocaleString()}</p>`;}
+        if (!date) {
+            alert('請選擇出差日期');
+            return;
+        }
+        if (!purpose) {
+            alert('請輸入事由 Purpose');
+            return;
+        }
 
-    let sH='';
-    segs.forEach((seg,si)=>{
-        const hk=['1','3','5'].includes(seg.hwNum)?seg.hwNum:'other';
-        const sk=(seg.distance/1000).toFixed(1), st=Math.round((seg.distance/1000)*tollRate);
-        sH+=`<div class="sh an" data-h="${hk}" style="animation-delay:${si*.06}s"><span class="ht" data-h="${hk}">${seg.highway}</span><span class="sm">${seg.entry} → ${seg.exit}｜${sk} km｜NT$ ${st.toLocaleString()}</span></div>`;
-        if(seg.icList&&seg.icList.length){
-            sH+='<div class="ic-tl an" style="animation-delay:'+((si*.06)+.04)+'s">';
-            seg.icList.forEach(ic=>{
-                const cls=ic.role==='en'?'en':ic.role==='ex'?'ex':ic.role==='both'?'en ex':'';
-                const lb=ic.role==='en'?' (上)':ic.role==='ex'?' (下)':ic.role==='both'?' (上/下)':'';
-                sH+=`<div class="ic-n ${cls}">${ic.name}${lb}<span class="km">${ic.km.toFixed(1)}K</span></div>`;
+        const totalMileage = totalMileageStr === '' ? 0 : parseFloat(totalMileageStr);
+        const parking = parkingStr === '' ? 0 : parseInt(parkingStr, 10);
+
+        const container = document.getElementById('segments-list');
+        const segmentRows = Array.from(container.children);
+        if (segmentRows.length === 0) {
+            alert('行程中至少需有一段國道路段');
+            return;
+        }
+
+        const segments = [];
+        for (let row of segmentRows) {
+            const hw = row.querySelector('.seg-hw').value;
+            const fromSelect = row.querySelector('.seg-from');
+            const toSelect = row.querySelector('.seg-to');
+            const fromName = fromSelect.value;
+            const toName = toSelect.value;
+            const fromKm = parseFloat(fromSelect.options[fromSelect.selectedIndex].dataset.km);
+            const toKm = parseFloat(toSelect.options[toSelect.selectedIndex].dataset.km);
+            const paidMiles = Math.abs(toKm - fromKm);
+
+            segments.push({
+                highway: hw,
+                from: fromName,
+                fromKm: fromKm,
+                to: toName,
+                toKm: toKm,
+                paidMiles: paidMiles
             });
-            sH+='</div>';
         }
-    });
 
-    $tlRes.innerHTML=`
-        <div class="tc an">
-            <div class="ta">NT$ ${toll.toLocaleString()}</div>
-            <div class="tl-lb">預估過路費（${vL}，${tollRate} 元/km）</div>
-            <div class="tl-sts">
-                <div class="tl-st">全程 <strong>${fmtDist(totalD)}</strong></div>
-                <div class="tl-st">時間 <strong>${fmtDur(totalT)}</strong></div>
-                <div class="tl-st">國道 <strong>${hwKm.toFixed(1)} km</strong></div>
-                ${route.legs.length>1?'<div class="tl-st">途經 <strong>'+(route.legs.length-1)+' 點</strong></div>':''}
-            </div>
-            <div class="ic-tt">沿途交流道清單</div>
-            ${sH}
-            <div class="tn">
-                <p>費率：小型車 $1.20/km、大型車 $1.50/km、聯結車 $1.80/km</p>
-                ${dH}
-                <p>此為依里程概估值，實際費用以 eTag 門架計費為準。</p>
-            </div>
-        </div>`;
-    $tlSec.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+        if (currentEditingId) {
+            const idx = tripRecords.findIndex(t => t.id === currentEditingId);
+            if (idx !== -1) {
+                tripRecords[idx] = {
+                    id: currentEditingId,
+                    date,
+                    purpose,
+                    totalMileage,
+                    parking,
+                    remarks,
+                    segments
+                };
+            }
+            showToast('已更新紀錄');
+        } else {
+            tripRecords.push({
+                id: 'trip_' + Date.now(),
+                date,
+                purpose,
+                totalMileage,
+                parking,
+                remarks,
+                segments
+            });
+            showToast('已新增紀錄至清單');
+        }
 
-function fmtDist(m){return m>=1000?(m/1000).toFixed(1)+' 公里':m+' 公尺';}
-function fmtDur(s){const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h>0?h+' 小時 '+m+' 分':m+' 分鐘';}
+        tripRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-/* ================================================================ Dark Style */
-const DARK=[
-{elementType:'geometry',stylers:[{color:'#1d2c4d'}]},{elementType:'labels.text.fill',stylers:[{color:'#8ec3b9'}]},{elementType:'labels.text.stroke',stylers:[{color:'#1a3646'}]},
-{featureType:'administrative.country',elementType:'geometry.stroke',stylers:[{color:'#4b6878'}]},{featureType:'administrative.province',elementType:'geometry.stroke',stylers:[{color:'#4b6878'}]},
-{featureType:'landscape.man_made',elementType:'geometry.stroke',stylers:[{color:'#334e87'}]},{featureType:'landscape.natural',elementType:'geometry',stylers:[{color:'#023e58'}]},
-{featureType:'poi',elementType:'geometry',stylers:[{color:'#283d6a'}]},{featureType:'poi',elementType:'labels.text.fill',stylers:[{color:'#6f9ba5'}]},{featureType:'poi',elementType:'labels.text.stroke',stylers:[{color:'#1d2c4d'}]},
-{featureType:'poi.park',elementType:'geometry.fill',stylers:[{color:'#023e58'}]},
-{featureType:'road',elementType:'geometry',stylers:[{color:'#304a7d'}]},{featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#98a5be'}]},{featureType:'road',elementType:'labels.text.stroke',stylers:[{color:'#1d2c4d'}]},
-{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#2c6675'}]},{featureType:'road.highway',elementType:'geometry.stroke',stylers:[{color:'#255763'}]},{featureType:'road.highway',elementType:'labels.text.fill',stylers:[{color:'#b0d5ce'}]},
-{featureType:'transit',elementType:'labels.text.fill',stylers:[{color:'#98a5be'}]},{featureType:'transit.line',elementType:'geometry.fill',stylers:[{color:'#283d6a'}]},
-{featureType:'water',elementType:'geometry',stylers:[{color:'#0e1626'}]},{featureType:'water',elementType:'labels.text.fill',stylers:[{color:'#4e6d70'}]},
-];
+        saveRecordsToStorage();
+        renderAll();
+        resetEditorForm();
+    }
 
-/* ================================================================ IC DB */
-const IC_DB={
-'1':[
-{name:'基隆端',km:0,lat:25.129,lng:121.739},{name:'八堵',km:3.5,lat:25.105,lng:121.726},{name:'大華系統',km:5.2,lat:25.088,lng:121.718},
-{name:'五堵',km:8.2,lat:25.069,lng:121.693},{name:'汐止',km:10.6,lat:25.063,lng:121.669},{name:'汐止系統',km:14.3,lat:25.058,lng:121.643},
-{name:'東湖',km:16.8,lat:25.067,lng:121.613},{name:'內湖',km:18.5,lat:25.069,lng:121.592},{name:'圓山',km:21.7,lat:25.079,lng:121.526},
-{name:'台北',km:25.3,lat:25.041,lng:121.508},{name:'三重',km:27.5,lat:25.060,lng:121.488},{name:'五股',km:31.2,lat:25.078,lng:121.443},
-{name:'五股轉接道',km:33,lat:25.075,lng:121.428},{name:'林口A',km:40.1,lat:25.062,lng:121.396},{name:'機場系統',km:46.5,lat:25.052,lng:121.328},
-{name:'桃園',km:52.6,lat:24.991,lng:121.311},{name:'中壢',km:62.5,lat:24.955,lng:121.232},{name:'內壢',km:65,lat:24.945,lng:121.215},
-{name:'楊梅',km:71.2,lat:24.908,lng:121.153},{name:'幼獅',km:75,lat:24.888,lng:121.120},{name:'湖口',km:81.7,lat:24.870,lng:121.065},
-{name:'竹北',km:91,lat:24.835,lng:121.012},{name:'新竹',km:95.5,lat:24.793,lng:120.976},{name:'新竹系統',km:98.5,lat:24.762,lng:120.958},
-{name:'頭份',km:110.9,lat:24.680,lng:120.912},{name:'頭屋',km:126,lat:24.610,lng:120.862},{name:'苗栗',km:132,lat:24.558,lng:120.828},
-{name:'銅鑼',km:140.5,lat:24.488,lng:120.792},{name:'三義',km:150,lat:24.408,lng:120.762},{name:'后里',km:162.5,lat:24.328,lng:120.732},
-{name:'豐原',km:168,lat:24.262,lng:121.722},{name:'台中系統',km:174.2,lat:24.218,lng:120.678},{name:'大雅',km:176,lat:24.218,lng:120.648},
-{name:'台中',km:178.5,lat:24.173,lng:120.642},{name:'南屯',km:181,lat:24.142,lng:120.622},{name:'王田',km:189.5,lat:24.088,lng:120.578},
-{name:'彰化系統',km:193,lat:24.058,lng:120.565},{name:'彰化',km:198,lat:24.042,lng:120.548},{name:'埔鹽系統',km:205,lat:23.995,lng:120.558},
-{name:'員林',km:210.5,lat:23.958,lng:120.568},{name:'北斗',km:220,lat:23.872,lng:120.522},{name:'西螺',km:232,lat:23.792,lng:120.472},
-{name:'虎尾',km:240,lat:23.742,lng:120.452},{name:'斗南',km:246.5,lat:23.682,lng:120.472},{name:'大林',km:255,lat:23.612,lng:120.458},
-{name:'民雄',km:262.5,lat:23.558,lng:120.438},{name:'嘉義系統',km:268,lat:23.510,lng:120.430},{name:'嘉義',km:272,lat:23.492,lng:120.422},
-{name:'水上',km:280.5,lat:23.432,lng:120.392},{name:'南靖',km:288,lat:23.380,lng:120.368},{name:'新營',km:297,lat:23.312,lng:120.322},
-{name:'新營系統',km:300,lat:23.295,lng:120.312},{name:'柳營',km:303,lat:23.272,lng:120.308},{name:'麻豆',km:312,lat:23.192,lng:120.262},
-{name:'下營系統',km:316,lat:23.170,lng:120.280},{name:'官田',km:320,lat:23.162,lng:120.312},{name:'善化',km:325,lat:23.128,lng:120.308},
-{name:'新市',km:330,lat:23.082,lng:120.302},{name:'永康',km:337.5,lat:23.042,lng:120.272},{name:'台南系統',km:340,lat:23.018,lng:120.258},
-{name:'大灣',km:341,lat:23.012,lng:120.252},{name:'仁德',km:345.5,lat:22.962,lng:120.238},{name:'仁德系統',km:347,lat:22.948,lng:120.240},
-{name:'路竹',km:356.5,lat:22.862,lng:120.272},{name:'高科',km:360,lat:22.838,lng:120.285},{name:'岡山',km:363,lat:22.802,lng:120.302},
-{name:'楠梓',km:372,lat:22.742,lng:120.322},{name:'鼎金系統',km:377.5,lat:22.682,lng:120.332},{name:'高雄',km:381,lat:22.642,lng:120.308},
-{name:'瑞隆路',km:384,lat:22.618,lng:120.318},{name:'高雄端',km:387,lat:22.598,lng:120.298},
-],
-'3':[
-{name:'基金',km:0,lat:25.142,lng:121.712},{name:'瑪東系統',km:6,lat:25.098,lng:121.695},{name:'汐止系統',km:14,lat:25.058,lng:121.643},
-{name:'新台五路',km:17,lat:25.048,lng:121.628},{name:'南港系統',km:21,lat:25.038,lng:121.618},{name:'南深路',km:23,lat:25.018,lng:121.608},
-{name:'木柵',km:27,lat:25.002,lng:121.578},{name:'新店',km:31,lat:24.978,lng:121.542},{name:'安坑',km:34,lat:24.962,lng:121.512},
-{name:'中和',km:37,lat:24.978,lng:121.478},{name:'土城',km:40,lat:24.962,lng:121.452},{name:'三鶯',km:47,lat:24.938,lng:121.382},
-{name:'大溪',km:56,lat:24.888,lng:121.292},{name:'龍潭',km:62,lat:24.862,lng:121.232},{name:'關西',km:76,lat:24.792,lng:121.182},
-{name:'竹林',km:83,lat:24.772,lng:121.122},{name:'寶山',km:98,lat:24.742,lng:121.002},{name:'新竹系統',km:100,lat:24.762,lng:120.958},
-{name:'茄苳',km:103,lat:24.732,lng:120.962},{name:'香山',km:108,lat:24.702,lng:120.932},{name:'西濱',km:113,lat:24.652,lng:120.892},
-{name:'竹南',km:119,lat:24.682,lng:120.872},{name:'後龍',km:128,lat:24.622,lng:120.812},{name:'大山',km:133,lat:24.590,lng:120.785},
-{name:'通霄',km:143,lat:24.512,lng:120.712},{name:'苑裡',km:151,lat:24.432,lng:120.682},{name:'大甲',km:159,lat:24.362,lng:120.652},
-{name:'清水',km:168,lat:24.312,lng:120.602},{name:'沙鹿',km:174,lat:24.252,lng:120.572},{name:'龍井',km:179,lat:24.212,lng:120.542},
-{name:'大肚',km:183,lat:24.158,lng:120.530},{name:'彰化系統',km:190,lat:24.058,lng:120.565},{name:'快官',km:195,lat:24.068,lng:120.522},
-{name:'和美',km:200,lat:24.102,lng:120.482},{name:'埤頭',km:220,lat:23.910,lng:120.468},{name:'北斗',km:226,lat:23.862,lng:120.440},
-{name:'西螺',km:238,lat:23.785,lng:120.442},{name:'古坑系統',km:250,lat:23.662,lng:120.512},{name:'梅山',km:258,lat:23.582,lng:120.492},
-{name:'竹崎',km:265,lat:23.532,lng:120.512},{name:'中埔',km:272,lat:23.472,lng:120.532},{name:'水上系統',km:282,lat:23.432,lng:120.392},
-{name:'白河',km:295,lat:23.362,lng:120.422},{name:'柳營',km:305,lat:23.272,lng:120.358},{name:'烏山頭',km:315,lat:23.222,lng:120.372},
-{name:'善化系統',km:322,lat:23.128,lng:120.308},{name:'新化系統',km:332,lat:23.052,lng:120.342},{name:'關廟',km:340,lat:23.002,lng:120.352},
-{name:'田寮',km:355,lat:22.892,lng:120.382},{name:'旗山',km:362,lat:22.852,lng:120.432},{name:'燕巢系統',km:370,lat:22.792,lng:120.382},
-{name:'燕巢',km:373,lat:22.772,lng:120.368},{name:'鼎金系統',km:380,lat:22.682,lng:120.332},{name:'九如',km:393,lat:22.732,lng:120.502},
-{name:'長治',km:400,lat:22.682,lng:120.552},{name:'竹田',km:410,lat:22.612,lng:120.562},{name:'南州',km:420,lat:22.542,lng:120.522},
-{name:'林邊',km:430,lat:22.472,lng:120.522},{name:'大鵬灣端',km:436,lat:22.442,lng:120.492},
-],
-'5':[
-{name:'南港系統',km:0,lat:25.038,lng:121.618},{name:'石碇',km:8,lat:24.992,lng:121.652},{name:'坪林',km:15,lat:24.942,lng:121.712},
-{name:'頭城',km:33,lat:24.862,lng:121.802},{name:'宜蘭',km:42,lat:24.752,lng:121.762},{name:'羅東',km:48,lat:24.682,lng:121.772},
-{name:'蘇澳',km:54,lat:24.602,lng:121.858},
-],
-'2':[{name:'機場系統',km:0,lat:25.052,lng:121.328},{name:'大園',km:5,lat:25.042,lng:121.202},{name:'南桃園',km:12,lat:24.988,lng:121.242}],
-'4':[{name:'台中系統',km:0,lat:24.218,lng:120.678},{name:'豐原端',km:3,lat:24.240,lng:120.702},{name:'石岡',km:8,lat:24.275,lng:120.755},{name:'清水端',km:18,lat:24.272,lng:120.568}],
-'6':[{name:'霧峰系統',km:0,lat:24.052,lng:120.705},{name:'愛蘭',km:18,lat:23.975,lng:120.935},{name:'埔里端',km:25,lat:23.972,lng:120.975}],
-'8':[{name:'台南系統',km:0,lat:23.018,lng:120.258},{name:'新化',km:8,lat:23.032,lng:120.328}],
-'10':[{name:'鼎金系統',km:0,lat:22.682,lng:120.332},{name:'仁武',km:5,lat:22.698,lng:120.372},{name:'燕巢',km:10,lat:22.738,lng:120.412},{name:'旗山端',km:18,lat:22.778,lng:120.468}],
-};
+    function editTrip(id) {
+        const trip = tripRecords.find(t => t.id === id);
+        if (!trip) return;
+
+        currentEditingId = trip.id;
+        document.getElementById('trip-date').value = trip.date;
+        document.getElementById('trip-purpose').value = trip.purpose;
+        document.getElementById('trip-total-mileage').value = trip.totalMileage;
+        document.getElementById('trip-parking').value = trip.parking;
+        document.getElementById('trip-remarks').value = trip.remarks;
+
+        const container = document.getElementById('segments-list');
+        container.innerHTML = '';
+
+        trip.segments.forEach(seg => {
+            addSegment(seg.highway, seg.from, seg.to);
+        });
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteTrip(id) {
+        if (confirm('確定刪除此筆出差紀錄？')) {
+            tripRecords = tripRecords.filter(t => t.id !== id);
+            saveRecordsToStorage();
+            renderAll();
+            showToast('已刪除紀錄');
+        }
+    }
+
+    function saveRecordsToStorage() {
+        localStorage.setItem('highway_trip_records', JSON.stringify(tripRecords));
+    }
+
+    function formatNumber(num) {
+        return num.toLocaleString('en-US');
+    }
+
+    function renderAll() {
+        updateReportMeta();
+        const tbody = document.getElementById('report-tbody');
+        tbody.innerHTML = '';
+
+        let sumTotalMileage = 0;
+        let sumPaidMiles = 0;
+        let sumTollFee = 0;
+        let sumParking = 0;
+
+        const rate = getTollRate();
+
+        tripRecords.forEach(trip => {
+            sumTotalMileage += (trip.totalMileage || 0);
+            sumParking += (trip.parking || 0);
+
+            const segCount = trip.segments.length;
+
+            trip.segments.forEach((seg, sIdx) => {
+                sumPaidMiles += seg.paidMiles;
+                const segFee = Math.round(seg.paidMiles * rate);
+                sumTollFee += segFee;
+
+                const tr = document.createElement('tr');
+
+                if (sIdx === 0) {
+                    tr.innerHTML += `
+                        <td rowspan="${segCount}" class="cell-bold col-date">${formatDateYMD(trip.date)}</td>
+                        <td rowspan="${segCount}" class="purpose-cell col-purpose">${trip.purpose}</td>
+                        <td rowspan="${segCount}" class="cell-right cell-bold col-tot-mile">${trip.totalMileage > 0 ? trip.totalMileage.toFixed(1) : ''}</td>
+                    `;
+                }
+
+                tr.innerHTML += `
+                    <td class="col-highway">${seg.highway}</td>
+                    <td class="col-from-exit">${seg.from}</td>
+                    <td class="cell-right col-from-km">${seg.fromKm}</td>
+                    <td class="col-to-exit">${seg.to}</td>
+                    <td class="cell-right col-to-km">${seg.toKm}</td>
+                    <td class="cell-right col-free-m"></td>
+                    <td class="cell-right cell-bold col-paid-m">${seg.paidMiles}</td>
+                    <td class="cell-right cell-bold col-toll-fee">${segFee}</td>
+                `;
+
+                if (sIdx === 0) {
+                    tr.innerHTML += `
+                        <td rowspan="${segCount}" class="cell-right col-park-fee">${trip.parking > 0 ? trip.parking : ''}</td>
+                        <td rowspan="${segCount}" class="remarks-cell col-remarks">${trip.remarks || ''}</td>
+                        <td rowspan="${segCount}" class="no-print">
+                            <button class="btn btn-outline" style="padding: 2px 6px; font-size: 11px; margin-bottom: 2px;" onclick="editTrip('${trip.id}')">編輯</button>
+                            <button class="btn btn-danger-outline" style="padding: 2px 6px; font-size: 11px;" onclick="deleteTrip('${trip.id}')">刪除</button>
+                        </td>
+                    `;
+                }
+
+                tbody.appendChild(tr);
+            });
+        });
+
+        document.getElementById('foot-total-mileage').innerText = sumTotalMileage > 0 ? sumTotalMileage.toFixed(1) : '0.0';
+        document.getElementById('foot-paid-miles').innerText = sumPaidMiles;
+        document.getElementById('foot-toll-fee').innerText = sumTollFee;
+        document.getElementById('foot-parking-fee').innerText = sumParking;
+
+        const mileRate = getMileageRate();
+        const trafficFee = Math.round(sumTotalMileage * mileRate) + sumParking;
+
+        const mealFee = parseFloat(document.getElementById('sum-meal-input').value) || 0;
+        const otherFee = parseFloat(document.getElementById('sum-other-input').value) || 0;
+        const phoneFee = parseFloat(document.getElementById('sum-phone-input').value) || 0;
+
+        const grandTotal = trafficFee + sumTollFee + mealFee + otherFee + phoneFee;
+
+        document.getElementById('sum-traffic-fee').innerText = formatNumber(trafficFee);
+        document.getElementById('sum-toll-fee').innerText = formatNumber(sumTollFee);
+        document.getElementById('sum-grand-total').innerText = formatNumber(grandTotal);
+
+        document.getElementById('kpi-days').innerText = `${tripRecords.length} 天`;
+        document.getElementById('kpi-total-mileage').innerText = `${sumTotalMileage.toFixed(1)} km`;
+        document.getElementById('kpi-traffic-fee').innerText = `$ ${formatNumber(trafficFee)}`;
+        document.getElementById('kpi-toll-fee').innerText = `$ ${formatNumber(sumTollFee)}`;
+        document.getElementById('kpi-parking-fee').innerText = `$ ${formatNumber(sumParking)}`;
+        document.getElementById('kpi-grand-total').innerText = `$ ${formatNumber(grandTotal)}`;
+    }
+
+    function copyExcelTSV() {
+        const rate = getTollRate();
+        let tsv = 'Date\tPurpose\t總核銷里程數 Total Mileage\tHighway\tFrom Hi Way Exit\tHi Way Exit Mileage\tTo Hi Way Exit\tHi Way Exit Mileage\tFree Miles\tTotal Paid Miles for toll\t通行費合計 Total Toll Fee\t停車費 Parking Fee\tRemarks\n';
+
+        let sumTotalMileage = 0;
+        let sumPaidMiles = 0;
+        let sumTollFee = 0;
+        let sumParking = 0;
+
+        tripRecords.forEach(trip => {
+            sumTotalMileage += (trip.totalMileage || 0);
+            sumParking += (trip.parking || 0);
+
+            const formattedDate = formatDateYMD(trip.date);
+            const totalMileageStr = trip.totalMileage > 0 ? trip.totalMileage.toFixed(1) : '';
+            const parkingStr = trip.parking > 0 ? trip.parking : '';
+
+            trip.segments.forEach((seg, sIdx) => {
+                sumPaidMiles += seg.paidMiles;
+                const segFee = Math.round(seg.paidMiles * rate);
+                sumTollFee += segFee;
+
+                const d = (sIdx === 0) ? formattedDate : '';
+                const p = (sIdx === 0) ? trip.purpose : '';
+                const tm = (sIdx === 0) ? totalMileageStr : '';
+                const park = (sIdx === 0) ? parkingStr : '';
+                const rem = (sIdx === 0) ? (trip.remarks || '') : '';
+
+                tsv += `${d}\t${p}\t${tm}\t${seg.highway}\t${seg.from}\t${seg.fromKm}\t${seg.to}\t${seg.toKm}\t\t${seg.paidMiles}\t${segFee}\t${park}\t${rem}\n`;
+            });
+        });
+
+        tsv += `合計 Total\t\t${sumTotalMileage.toFixed(1)}\t\t\t\t\t\t\t${sumPaidMiles}\t${sumTollFee}\t${sumParking}\t\n`;
+
+        const mileRate = getMileageRate();
+        const trafficFee = Math.round(sumTotalMileage * mileRate) + sumParking;
+        const mealFee = parseFloat(document.getElementById('sum-meal-input').value) || 0;
+        const otherFee = parseFloat(document.getElementById('sum-other-input').value) || 0;
+        const phoneFee = parseFloat(document.getElementById('sum-phone-input').value) || 0;
+        const grandTotal = trafficFee + sumTollFee + mealFee + otherFee + phoneFee;
+
+        tsv += `\n`;
+        tsv += `交通費（里程加總 x ${mileRate} + 停車費加總）\t國道通行費合計\t聚餐費\t其他費用\t電話費\tTotal 請款總額\n`;
+        tsv += `${trafficFee}\t${sumTollFee}\t${mealFee}\t${otherFee}\t${phoneFee}\t${grandTotal}\n`;
+
+        navigator.clipboard.writeText(tsv).then(() => {
+            showToast('已複製為 Excel 相容格式（含明細與水平加總彙整表），可直接貼上');
+        }).catch(err => {
+            alert('複製失敗，請手動選取：' + err);
+        });
+    }
+
+    function exportCSV() {
+        const rate = getTollRate();
+        let csv = '\uFEFFDate,Purpose,總核銷里程數 Total Mileage,Highway,From Hi Way Exit,Hi Way Exit Mileage,To Hi Way Exit,Hi Way Exit Mileage,Free Miles,Total Paid Miles for toll,通行費合計 Total Toll Fee,停車費 Parking Fee,Remarks\n';
+
+        let sumTotalMileage = 0;
+        let sumPaidMiles = 0;
+        let sumTollFee = 0;
+        let sumParking = 0;
+
+        tripRecords.forEach(trip => {
+            sumTotalMileage += (trip.totalMileage || 0);
+            sumParking += (trip.parking || 0);
+
+            const formattedDate = formatDateYMD(trip.date);
+            const totalMileageStr = trip.totalMileage > 0 ? trip.totalMileage.toFixed(1) : '';
+            const parkingStr = trip.parking > 0 ? trip.parking : '';
+
+            trip.segments.forEach((seg, sIdx) => {
+                sumPaidMiles += seg.paidMiles;
+                const segFee = Math.round(seg.paidMiles * rate);
+                sumTollFee += segFee;
+
+                const d = (sIdx === 0) ? formattedDate : '';
+                const p = (sIdx === 0) ? `"${trip.purpose.replace(/"/g, '""')}"` : '';
+                const tm = (sIdx === 0) ? totalMileageStr : '';
+                const park = (sIdx === 0) ? parkingStr : '';
+                const rem = (sIdx === 0) ? `"${(trip.remarks || '').replace(/"/g, '""')}"` : '';
+
+                csv += `${d},${p},${tm},${seg.highway},${seg.from},${seg.fromKm},${seg.to},${seg.toKm},,${seg.paidMiles},${segFee},${park},${rem}\n`;
+            });
+        });
+
+        csv += `合計 Total,,${sumTotalMileage.toFixed(1)},,,,,,,${sumPaidMiles},${sumTollFee},${sumParking},\n\n`;
+
+        const mileRate = getMileageRate();
+        const trafficFee = Math.round(sumTotalMileage * mileRate) + sumParking;
+        const mealFee = parseFloat(document.getElementById('sum-meal-input').value) || 0;
+        const otherFee = parseFloat(document.getElementById('sum-other-input').value) || 0;
+        const phoneFee = parseFloat(document.getElementById('sum-phone-input').value) || 0;
+        const grandTotal = trafficFee + sumTollFee + mealFee + otherFee + phoneFee;
+
+        csv += `交通費（里程加總 x ${mileRate} + 停車費加總）,國道通行費合計,聚餐費,其他費用,電話費,Total 請款總額\n`;
+        csv += `${trafficFee},${sumTollFee},${mealFee},${otherFee},${phoneFee},${grandTotal}\n`;
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `自行開車交通費一覽表_${document.getElementById('cfg-period').value.replace('/', '-')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('已下載 CSV 檔案');
+    }
+
+    function showToast(text) {
+        const toast = document.getElementById('toast-msg');
+        toast.innerText = text;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
 </script>
+
 </body>
 </html>
