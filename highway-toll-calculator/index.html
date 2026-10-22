@@ -618,9 +618,25 @@
             <h1>自行開車交通費一覽表與費用申報系統</h1>
             <div class="btn-group">
                 <a href="../" class="btn btn-outline" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">← 返回 Web Apps Hub</a>
+                <button class="btn btn-outline" onclick="toggleHelpModal()" style="font-weight: 600; color: var(--primary-dark);">📖 使用說明</button>
                 <button class="btn btn-outline" onclick="loadSampleData()">載入範例資料</button>
                 <button class="btn btn-danger-outline" onclick="clearAllData()">清空資料庫</button>
             </div>
+        </div>
+
+        <!-- 摺疊式快速操作手冊 -->
+        <div id="help-panel" style="display: none; background: #e0f7fa; border: 1px solid #80deea; border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; line-height: 1.6; color: #006064;">
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #80deea; padding-bottom: 6px;">
+                <span>💡 自行開車交通費一覽表 · 五步操作手冊</span>
+                <span style="cursor: pointer; font-size: 18px; font-weight: bold; line-height: 1;" onclick="toggleHelpModal()" title="關閉說明">×</span>
+            </div>
+            <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+                <li><strong>設定表頭資訊</strong>：填寫姓名、工號、部門、申報月份，並依需求設定日期格式（預設 YYYY/MM/DD）、通行費率（預設 eTag 9 折 1.08 元/km）與里程單價（預設 8 元/km）。</li>
+                <li><strong>輸入單日出差紀錄</strong>：設定出差日期、事由、總核銷里程數（C 欄），選取高速公路（國 1 / 國 3 / 國 5）與起訖交流道，系統自動依官方數據帶入樁號並求得付費里程。</li>
+                <li><strong>去回程快捷工具</strong>：當日若為往返行程，點擊「一鍵轉為標準來回」即刻自動生成 A 去 B 與 B 返 A 兩段路段；若中途拜訪客戶可點擊「+ 新增途經路段」。</li>
+                <li><strong>即時費用計算</strong>：交通費依公式「總核銷里程數 × 8 元 + 停車費合計」自動試算，下方 Summary of Claims 彙整表支援直接修改聚餐費、電話費（預設 1200 元）與其他費用。</li>
+                <li><strong>多元匯出與列印</strong>：可點擊「一鍵複製為 Excel 表格」直接貼入試算表，或點擊「列印 / 另存 PDF」自動採用 A4 橫向版型排版，操作按鈕自動隱藏不超頁。</li>
+            </ol>
         </div>
 
         <div class="header-info-grid">
@@ -830,6 +846,13 @@
 
     let tripRecords = [];
     let currentEditingId = null;
+
+    function toggleHelpModal() {
+        const p = document.getElementById('help-panel');
+        if (p) {
+            p.style.display = p.style.display === 'none' ? 'block' : 'none';
+        }
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
         loadConfig();
