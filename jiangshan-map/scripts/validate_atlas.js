@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Automated Integrity & Topology Validation Suite for Jiangshan Atlas (江山时序)
+ * Automated Integrity & Topology Validation Suite for Jiangshan Atlas (江山時序)
  * Zero external dependencies — runs in standard Node.js.
  */
 'use strict';
@@ -96,11 +96,11 @@ function main() {
     (item.appear === undefined || y >= item.appear) &&
     (item.vanish === undefined || y < item.vanish);
   const sampleEras = [
-    [-200, '河水（禹贡故道）'],
-    [500, '黄 河（王景故道）'],
-    [1100, '黄 河（北宋北流）'],
-    [1500, '黄 河（夺淮故道）'],
-    [2000, '黄 河'],
+    [-200, '河水（禹貢故道）'],
+    [500, '黃 河（王景故道）'],
+    [1100, '黃 河（北宋北流）'],
+    [1500, '黃 河（奪淮故道）'],
+    [2000, '黃 河'],
   ];
   for (const [sampleY, expectedLabel] of sampleEras) {
     const activeHuangTrunks = hydro.rivers.filter(
@@ -200,13 +200,13 @@ function main() {
   // 3b. Validate 1864 Fall of the Taiping Heavenly Kingdom milestone & s_qing_e4 transition
   const qingDyn = dynasties.find((d) => d.key === 'qing');
   assert(
-    qingDyn && qingDyn.milestones.some((m) => m.year === 1864 && m.headline.includes('太平天国')),
+    qingDyn && qingDyn.milestones.some((m) => m.year === 1864 && m.headline.includes('太平天國')),
     'Qing dynasty must include the 1864 Fall of the Taiping Heavenly Kingdom milestone'
   );
   assert(
     snapshots.s_qing_e4 &&
-      snapshots.s_qing_e4.polities.some((p) => p.title === '太平天国') &&
-      !snapshots.s_qing_f.polities.some((p) => p.title === '太平天国'),
+      snapshots.s_qing_e4.polities.some((p) => p.title === '太平天國') &&
+      !snapshots.s_qing_f.polities.some((p) => p.title === '太平天國'),
     's_qing_e4 (1860-1864) must retain Taiping Heavenly Kingdom while s_qing_f (1864+) removes it'
   );
 
@@ -316,7 +316,7 @@ function main() {
   for (const c of corridors) {
     assert(enLocale.corridors && enLocale.corridors[c.key], `Missing English translation for corridor ${c.key}`);
   }
-  const zhouExceptions = new Set(['贵州', '北朝幽州', '曹魏徐州', '南阳邓州', '酒泉瓜州']);
+  const zhouExceptions = new Set(['貴州', '贵州', '北朝幽州', '曹魏徐州', '南陽鄧州', '酒泉瓜州']);
   for (const [zhKey, enVal] of Object.entries((enLocale && enLocale.dict) || {})) {
     if (zhKey.length >= 2 && zhKey.length <= 4 && zhKey.endsWith('州') && !zhouExceptions.has(zhKey)) {
       assert(
@@ -341,7 +341,7 @@ function main() {
   );
   verifyShape(bootSnaps.s_zhanguo_a.polities[0].shape, 'boot.s_zhanguo_a.polities[0]');
 
-  // 6. Verify Unified Milestone Balloon Auto-Show ("史事浮签") follows #chk-milestones directly & dead code pruned
+  // 6. Verify Unified Milestone Balloon Auto-Show ("史事浮簽") follows #chk-milestones directly & dead code pruned
   const indexHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert(
     appCode.includes('_syncAutoMilestoneBalloon') &&
@@ -515,38 +515,38 @@ function main() {
   ctrl._initTimelineBands();
 
   // CUJ 9a: 0D Single-Place Resolution & Exact-First Disambiguation (Poems, Passes, Battles, Cities)
-  const languan819 = ctrl.inspect({ year: 819, place: '蓝关' });
+  const languan819 = ctrl.inspect({ year: 819, place: '藍關' });
   assert.strictEqual(languan819.year, 819);
   assert.strictEqual(languan819.polity, '唐');
   assert(languan819.era.includes('元和十四年'), `Expected 元和十四年 for 819 CE, got ${languan819.era}`);
   assert(
     Math.hypot(languan819.coord[0] - 109.52, languan819.coord[1] - 34.03) < 0.2,
-    `Expected 蓝关 near [109.52, 34.03], got ${JSON.stringify(languan819.coord)}`
+    `Expected 藍關 near [109.52, 34.03], got ${JSON.stringify(languan819.coord)}`
   );
 
   const jingkou1205 = ctrl.inspect({ year: 1205, place: '京口' });
   assert.strictEqual(jingkou1205.year, 1205);
   assert.strictEqual(jingkou1205.polity, '南宋');
-  assert(jingkou1205.modernProvince.includes('江苏'), `Expected 江苏 for 京口, got ${jingkou1205.modernProvince}`);
+  assert(jingkou1205.modernProvince.includes('江蘇'), `Expected 江蘇 for 京口, got ${jingkou1205.modernProvince}`);
 
-  // Exact-First check: '西安' and '洛阳' must resolve to the capital settlements, not substring-match a pass's modern description
+  // Exact-First check: '西安' and '洛陽' must resolve to the capital settlements, not substring-match a pass's modern description
   const xianHit = ctrl.resolvePlace('西安', 741);
-  const luoyangHit = ctrl.resolvePlace('洛阳', 741);
+  const luoyangHit = ctrl.resolvePlace('洛陽', 741);
   assert(xianHit && xianHit.kind === 'city', `Expected '西安' to resolve to city, got ${JSON.stringify(xianHit)}`);
-  assert(luoyangHit && luoyangHit.kind === 'city', `Expected '洛阳' to resolve to city, got ${JSON.stringify(luoyangHit)}`);
+  assert(luoyangHit && luoyangHit.kind === 'city', `Expected '洛陽' to resolve to city, got ${JSON.stringify(luoyangHit)}`);
 
-  // CUJ 9b: 1D Same-Year Multi-Stop Poetic Route (?year=763&place=剑外,巴峡,巫峡,襄阳,洛阳)
-  const dufu763 = ctrl.inspect({ year: 763, place: '剑外,巴峡,巫峡,襄阳,洛阳' });
+  // CUJ 9b: 1D Same-Year Multi-Stop Poetic Route (?year=763&place=劍外,巴峽,巫峽,襄陽,洛陽)
+  const dufu763 = ctrl.inspect({ year: 763, place: '劍外,巴峽,巫峽,襄陽,洛陽' });
   assert(Array.isArray(dufu763.route) && dufu763.route.length === 5, 'Du Fu 763 route must resolve all 5 stops');
   assert(dufu763.route.every((st) => st.year === 763), 'All stops in Du Fu 763 route must share year 763');
   assert(dufu763.routeDistanceKm >= 700 && dufu763.routeDistanceKm <= 1400, `Unexpected Du Fu route distance: ${dufu763.routeDistanceKm} km`);
   assert(
-    dufu763.url.includes('year=763') && decodeURIComponent(dufu763.url).includes('place=剑外,巴峡,巫峡,襄阳,洛阳'),
+    dufu763.url.includes('year=763') && decodeURIComponent(dufu763.url).includes('place=劍外,巴峽,巫峽,襄陽,洛陽'),
     `Unexpected Du Fu 1D route URL: ${decodeURIComponent(dufu763.url)}`
   );
 
-  // CUJ 9c: 4D Multi-Year Trajectory (?year=1079,1080,1094,1097&place=湖州,黄州,惠州,儋州) + Inline Year Fallback
-  const sushiRoute = ctrl.inspect({ year: '1079,1080,1094,1097', place: '湖州,黄州,惠州,儋州' });
+  // CUJ 9c: 4D Multi-Year Trajectory (?year=1079,1080,1094,1097&place=湖州,黃州,惠州,儋州) + Inline Year Fallback
+  const sushiRoute = ctrl.inspect({ year: '1079,1080,1094,1097', place: '湖州,黃州,惠州,儋州' });
   assert(Array.isArray(sushiRoute.route) && sushiRoute.route.length === 4, 'Su Shi route must resolve all 4 stops');
   assert.strictEqual(
     sushiRoute.route.map((s) => s.year).join(','),
@@ -557,7 +557,7 @@ function main() {
     decodeURIComponent(sushiRoute.url).includes('year=1079,1080,1094,1097'),
     `Multi-year route URL must preserve comma-separated years, got ${decodeURIComponent(sushiRoute.url)}`
   );
-  const sushiInline = ctrl.inspect({ place: '1079:湖州,1080:黄州,1094:惠州,1097:儋州' });
+  const sushiInline = ctrl.inspect({ place: '1079:湖州,1080:黃州,1094:惠州,1097:儋州' });
   assert.strictEqual(
     JSON.stringify(sushiInline.route.map((s) => [s.year, s.place])),
     JSON.stringify(sushiRoute.route.map((s) => [s.year, s.place])),
@@ -565,10 +565,10 @@ function main() {
   );
 
   // CUJ 9d: Timeline Clamping & No-Year-Zero Contract
-  const mingtiaoClamped = ctrl.inspect({ year: -1600, place: '鸣条' });
+  const mingtiaoClamped = ctrl.inspect({ year: -1600, place: '鳴條' });
   assert.strictEqual(mingtiaoClamped.year, -403, 'Years before -403 must clamp to -403 (Warring States start)');
-  assert(mingtiaoClamped.modernProvince.includes('山西'), `Expected 鸣条 in 山西, got ${mingtiaoClamped.modernProvince}`);
-  const yearZeroNorm = ctrl.inspect({ year: 0, place: '长安' });
+  assert(mingtiaoClamped.modernProvince.includes('山西'), `Expected 鳴條 in 山西, got ${mingtiaoClamped.modernProvince}`);
+  const yearZeroNorm = ctrl.inspect({ year: 0, place: '長安' });
   assert.strictEqual(yearZeroNorm.year, 1, 'Year 0 must normalize to 1 CE');
 
   // CUJ 9e: 100% Gazetteer & Alias Resolution Coverage
@@ -655,11 +655,11 @@ function main() {
     }
   }
   assert.strictEqual(ctrl.formatEraLabel(-214, dynasties[1]), '秦始皇三十三年');
-  assert.strictEqual(ctrl.formatEraLabel(-119, dynasties[2]), '西汉武帝·元狩四年');
-  assert.strictEqual(ctrl.formatEraLabel(627, dynasties[9]), '唐太宗·贞观元年');
-  assert.strictEqual(ctrl.formatEraLabel(819, dynasties[9]), '唐宪宗·元和十四年');
-  assert.strictEqual(ctrl.formatEraLabel(1082, dynasties[11]), '北宋神宗·元丰五年');
-  assert.strictEqual(ctrl.formatEraLabel(1587, dynasties[14]), '明万历十五年');
+  assert.strictEqual(ctrl.formatEraLabel(-119, dynasties[2]), '西漢武帝·元狩四年');
+  assert.strictEqual(ctrl.formatEraLabel(627, dynasties[9]), '唐太宗·貞觀元年');
+  assert.strictEqual(ctrl.formatEraLabel(819, dynasties[9]), '唐憲宗·元和十四年');
+  assert.strictEqual(ctrl.formatEraLabel(1082, dynasties[11]), '北宋神宗·元豐五年');
+  assert.strictEqual(ctrl.formatEraLabel(1587, dynasties[14]), '明萬曆十五年');
   assert.strictEqual(ctrl.formatEraLabel(1683, dynasties[15]), '清康熙二十二年');
 
   // CUJ 9h: Adjacent / Overlapping Polity Color Collision Guard across all snapshots
@@ -768,14 +768,14 @@ function main() {
   const yuanMain = yuanA.polities.find((p) => p.role === 'main');
   assert(
     !pointInShape(91.1, 29.7, yuanMain.shape),
-    's_yuan_a: Yuan main polygon must leave Lhasa to the 吐蕃（总制院辖） protectorate'
+    's_yuan_a: Yuan main polygon must leave Lhasa to the 吐蕃（總制院轄） protectorate'
   );
   const xihanE = snapshots.s_xihan_e;
   const gengshiMain = xihanE.polities.find((p) => p.role === 'main');
-  const weixiaoRival = xihanE.polities.find((p) => p.title.includes('隗嚣'));
+  const weixiaoRival = xihanE.polities.find((p) => p.title.includes('隗囂'));
   assert(
     pointInShape(108.9, 34.3, gengshiMain.shape) && !pointInShape(108.9, 34.3, weixiaoRival.shape),
-    's_xihan_e: Chang\'an (108.9, 34.3) must belong exclusively to 更始（汉） rather than 隗嚣 · 窦融'
+    's_xihan_e: Chang\'an (108.9, 34.3) must belong exclusively to 更始（漢） rather than 隗囂 · 竇融'
   );
 
   // CUJ 9i: Quick Search (_queryQuickSearch) End-to-End Verification (Era Chinese Numerals, Emperors, Cities, Passes, Events, Journeys)
@@ -784,20 +784,20 @@ function main() {
     eraHit1.length > 0 && eraHit1[0].kind === 'era' && eraHit1[0].year === -121,
     `Expected '元狩二年' to resolve to -121 BCE era, got ${JSON.stringify(eraHit1[0])}`
   );
-  const eraHit2 = ctrl._queryQuickSearch('贞观元年');
+  const eraHit2 = ctrl._queryQuickSearch('貞觀元年');
   assert(
     eraHit2.length > 0 && eraHit2[0].kind === 'era' && eraHit2[0].year === 627,
-    `Expected '贞观元年' to resolve to 627 CE era, got ${JSON.stringify(eraHit2[0])}`
+    `Expected '貞觀元年' to resolve to 627 CE era, got ${JSON.stringify(eraHit2[0])}`
   );
-  const eraHit3 = ctrl._queryQuickSearch('公元前214年');
+  const eraHit3 = ctrl._queryQuickSearch('西元前214年');
   assert(
     eraHit3.length > 0 && eraHit3[0].kind === 'era' && eraHit3[0].year === -214,
-    `Expected '公元前214年' to resolve to -214 BCE, got ${JSON.stringify(eraHit3[0])}`
+    `Expected '西元前214年' to resolve to -214 BCE, got ${JSON.stringify(eraHit3[0])}`
   );
-  const empHit1 = ctrl._queryQuickSearch('汉武帝');
+  const empHit1 = ctrl._queryQuickSearch('漢武帝');
   assert(
     empHit1.some((item) => item.kind === 'era' && item.year === -140),
-    `Expected '汉武帝' quick search to include -140 BCE accession era, got ${JSON.stringify(empHit1)}`
+    `Expected '漢武帝' quick search to include -140 BCE accession era, got ${JSON.stringify(empHit1)}`
   );
   const empHit2 = ctrl._queryQuickSearch('宋神宗');
   assert(
@@ -809,26 +809,26 @@ function main() {
     empHit3.some((item) => item.kind === 'era' && item.year === 1573),
     `Expected '明神宗' quick search to include 1573 CE Wanli accession era, got ${JSON.stringify(empHit3)}`
   );
-  const passSearch = ctrl._queryQuickSearch('函谷关');
+  const passSearch = ctrl._queryQuickSearch('函谷關');
   assert(
     passSearch.some((item) => item.kind === 'pass' && item.passKey === 'hanguguan'),
-    'Quick search for "函谷关" must return strategic pass entry'
+    'Quick search for "函谷關" must return strategic pass entry'
   );
-  const eventSearch = ctrl._queryQuickSearch('淝水之战');
+  const eventSearch = ctrl._queryQuickSearch('淝水之戰');
   assert(
     eventSearch.some((item) => item.kind === 'event' && item.year === 383),
-    'Quick search for "淝水之战" must return 383 CE milestone event'
+    'Quick search for "淝水之戰" must return 383 CE milestone event'
   );
-  const personJourneySearch = ctrl._queryQuickSearch('苏轼');
+  const personJourneySearch = ctrl._queryQuickSearch('蘇軾');
   assert(
     personJourneySearch.some((item) => item.kind === 'person' && item.personKey === 'sushi') &&
       !personJourneySearch.some((item) => item.kind === 'journey'),
-    'Quick search for "苏轼" must return unified person chronicle without duplicate journey entries'
+    'Quick search for "蘇軾" must return unified person chronicle without duplicate journey entries'
   );
-  const quizSearch = ctrl._queryQuickSearch('舆图寻址');
+  const quizSearch = ctrl._queryQuickSearch('輿圖定址');
   assert(
     quizSearch.some((item) => item.kind === 'quiz'),
-    'Quick search for "舆图寻址" must return the Map Pinpoint Quiz entry'
+    'Quick search for "輿圖定址" must return the Map Pinpoint Quiz entry'
   );
   assert(
     appCode.includes('sr-showcase-row') &&
@@ -897,12 +897,12 @@ function main() {
   const pyCmd = process.platform === 'win32' ? 'python' : 'python3';
   const cliOut = execFileSync(
     pyCmd,
-    [skillPyPath, '--year', '1079, 1080, 1094, 1097', '--place', '湖州 → 黄州 → 惠州 → 儋州'],
+    [skillPyPath, '--year', '1079, 1080, 1094, 1097', '--place', '湖州 → 黃州 → 惠州 → 儋州'],
     { encoding: 'utf8' }
   ).trim();
   const decodedCliOut = decodeURIComponent(cliOut);
   assert(
-    decodedCliOut.includes('URL: https://deanchen.me/jiangshan-map/?year=1079,1080,1094,1097&place=湖州,黄州,惠州,儋州'),
+    decodedCliOut.includes('URL: https://deanchen.me/jiangshan-map/?year=1079,1080,1094,1097&place=湖州,黃州,惠州,儋州'),
     `Unexpected jiangshan.py CLI output: ${decodedCliOut}`
   );
 
@@ -941,25 +941,25 @@ function main() {
 
   // CUJ 9m: Major Territorial Change Milestones & Map Linkage Verification
   const territorialMilestoneChecks = [
-    { dyn: 'zhanguo', year: -300, keyword: '秦开' },
-    { dyn: 'donghan', year: 43, keyword: '马援' },
-    { dyn: 'sanguo', year: 238, keyword: '公孙渊' },
+    { dyn: 'zhanguo', year: -300, keyword: '秦開' },
+    { dyn: 'donghan', year: 43, keyword: '馬援' },
+    { dyn: 'sanguo', year: 238, keyword: '公孫淵' },
     { dyn: 'nanbei', year: 554, keyword: '西梁' },
     { dyn: 'sui', year: 587, keyword: '西梁' },
-    { dyn: 'tang', year: 635, keyword: '吐谷浑' },
+    { dyn: 'tang', year: 635, keyword: '吐谷渾' },
     { dyn: 'tang', year: 648, keyword: '王玄策' },
     { dyn: 'nansong', year: 1234, keyword: '端平入洛' },
     { dyn: 'yuan', year: 1288, keyword: '宣政院' },
     { dyn: 'qing', year: 1881, keyword: '伊犁' },
-    { dyn: 'qing', year: 1898, keyword: '胶州湾' },
-    { dyn: 'roc', year: 1916, keyword: '袁世凯' },
-    { dyn: 'roc', year: 1920, keyword: '直皖战争' },
-    { dyn: 'roc', year: 1924, keyword: '黄埔军校' },
+    { dyn: 'qing', year: 1898, keyword: '膠州灣' },
+    { dyn: 'roc', year: 1916, keyword: '袁世凱' },
+    { dyn: 'roc', year: 1920, keyword: '直皖戰爭' },
+    { dyn: 'roc', year: 1924, keyword: '黃埔軍校' },
     { dyn: 'roc', year: 1926, keyword: '北伐' },
     { dyn: 'roc', year: 1928, keyword: '北伐完成' },
     { dyn: 'roc', year: 1931, keyword: '九一八' },
-    { dyn: 'roc', year: 1932, keyword: '满洲国' },
-    { dyn: 'roc', year: 1945, keyword: '台湾' },
+    { dyn: 'roc', year: 1932, keyword: '滿洲國' },
+    { dyn: 'roc', year: 1945, keyword: '臺灣' },
     { dyn: 'roc', year: 1946, keyword: '外蒙古' },
   ];
   for (const tmc of territorialMilestoneChecks) {
@@ -1029,14 +1029,14 @@ function main() {
 
   // Quick search coverage verification for landmark events and newly indexed places
   const sampleSearchQueries = [
-    ['迁都咸阳', 'event'],
-    ['水淹七军', 'event'],
-    ['风波亭', 'event'],
-    ['积水潭', 'event'],
-    ['井陉之战', 'event'],
+    ['遷都咸陽', 'event'],
+    ['水淹七軍', 'event'],
+    ['風波亭', 'event'],
+    ['積水潭', 'event'],
+    ['井陘之戰', 'event'],
     ['洛邑', 'gazetteer'],
-    ['东京汴梁', 'gazetteer'],
-    ['井陉关', 'pass'],
+    ['東京汴梁', 'gazetteer'],
+    ['井陘關', 'pass'],
   ];
   for (const [query, expectedKind] of sampleSearchQueries) {
     const hits = ctrl._queryQuickSearch(query);
@@ -1128,17 +1128,17 @@ function main() {
     );
   }
 
-  // Verify cross-dynasty city search deduplication (e.g. "长安" returns 1 city entry + events/journeys)
-  const changanHits = ctrl._queryQuickSearch('长安');
-  const changanCityHits = changanHits.filter((h) => h.kind === 'city' && h.titleZh === '长安');
+  // Verify cross-dynasty city search deduplication (e.g. "長安" returns 1 city entry + events/journeys)
+  const changanHits = ctrl._queryQuickSearch('長安');
+  const changanCityHits = changanHits.filter((h) => h.kind === 'city' && h.titleZh === '長安');
   assert.strictEqual(
     changanCityHits.length,
     1,
-    `Expected cross-dynasty city "长安" to be deduplicated to 1 city row, got ${changanCityHits.length}`
+    `Expected cross-dynasty city "長安" to be deduplicated to 1 city row, got ${changanCityHits.length}`
   );
   assert(
     changanHits.some((h) => h.kind === 'event' || h.kind === 'person'),
-    'Expected deduplicated "长安" search dropdown to surface related events or figures'
+    'Expected deduplicated "長安" search dropdown to surface related events or figures'
   );
 
   // Verify English monarch name search in _matchEraResults
@@ -1161,10 +1161,10 @@ function main() {
   const contributingSrc = fs.readFileSync(path.join(ROOT, 'CONTRIBUTING.md'), 'utf8');
   const contributingZhSrc = fs.readFileSync(path.join(ROOT, 'CONTRIBUTING_ZH.md'), 'utf8');
   assert(
-    !readmeZhSrc.includes('点右上角的 **「开始挑战」**') &&
-      !readmeZhSrc.includes('青史行迹 ▾') &&
-      readmeZhSrc.includes('点人溯事') &&
-      readmeZhSrc.includes('舆图寻址 · 古地名小试') &&
+    !readmeZhSrc.includes('點右上角的 **「開始挑戰」**') &&
+      !readmeZhSrc.includes('青史行跡 ▾') &&
+      readmeZhSrc.includes('點人溯事') &&
+      readmeZhSrc.includes('輿圖定址 · 古地名小試') &&
       readmeZhSrc.includes('href="README.md"') &&
       !readmeSrc.includes('Journeys ▾') &&
       readmeSrc.includes('Person Chronicles') &&
@@ -1177,7 +1177,7 @@ function main() {
       !readmeSrc.includes('&event=') &&
       !readmeZhSrc.includes('&event=') &&
       !appCode.includes("q.has('event')") &&
-      !/\b\d{3}\s*(幅|座|处|条|桩|段)/.test(readmeZhSrc),
+      !/\b\d{3}\s*(幅|座|處|條|樁|段)/.test(readmeZhSrc),
     'README.md, README_ZH.md, CONTRIBUTING.md, CONTRIBUTING_ZH.md, and app.js must cross-link between English and Chinese docs, reference lore_data.js, document unified Person Chronicles & search-box Quiz entry point, avoid redundant &event= query params, and avoid hardcoded 3-digit entity counts'
   );
   const llmsSrc = fs.readFileSync(path.join(ROOT, 'llms.txt'), 'utf8');
@@ -1207,7 +1207,7 @@ function main() {
     return node;
   };
 
-  // 1) Tang peak (669 CE, with 安西都护府/北庭都护府 protectorate) -> Late Tang contraction (820 CE)
+  // 1) Tang peak (669 CE, with 安西都護府/北庭都護府 protectorate) -> Late Tang contraction (820 CE)
   const tangPeakSnap = snapshots[ctrl._resolveSnapKey(tangDyn, 669)];
   const tangLateSnap = snapshots[ctrl._resolveSnapKey(tangDyn, 820)];
   ctrl.lastRenderedSnap = tangLateSnap;
@@ -1265,11 +1265,11 @@ function main() {
     `Expected resolvePlace("江州", -300) in Warring States to resolve to Chongqing (~106.55, 29.56), got ${JSON.stringify(jzZg)}`
   );
   for (const [placeName, yr, expLng, expLat] of [
-    ['浔阳楼', 1102, 115.98, 29.71],
+    ['潯陽樓', 1102, 115.98, 29.71],
     ['梁山泊', 1119, 116.09, 35.80],
-    ['景阳冈', 1102, 115.92, 36.11],
+    ['景陽岡', 1102, 115.92, 36.11],
     ['大名府', 1115, 115.15, 36.28],
-    ['风波亭', 1142, 120.14, 30.25],
+    ['風波亭', 1142, 120.14, 30.25],
   ]) {
     const hit = ctrl.resolvePlace(placeName, yr);
     assert(
@@ -1279,16 +1279,16 @@ function main() {
   }
 
   // 5) Challenge Deck Quality, Strategic Passes & Spoiler Sanitization
-  assert.strictEqual(ctrl._stripPromptParenthetical('襄平（辽阳）'), '襄平');
-  assert.strictEqual(ctrl._stripPromptParenthetical('山海关（渝关）'), '山海关');
+  assert.strictEqual(ctrl._stripPromptParenthetical('襄平（遼陽）'), '襄平');
+  assert.strictEqual(ctrl._stripPromptParenthetical('山海關（渝關）'), '山海關');
   const scrubbedZibo = ctrl._sanitizeChallengeClue(
-    '齐国都城（今山东淄博临淄），姜太公封地，淄博重镇',
-    { ancient: '临淄', modern: '山东淄博临淄' },
-    '临淄'
+    '齊國都城（今山東淄博臨淄），姜太公封地，淄博重鎮',
+    { ancient: '臨淄', modern: '山東淄博臨淄' },
+    '臨淄'
   );
   assert(
-    !scrubbedZibo.includes('淄博') && !scrubbedZibo.includes('山东'),
-    `Expected modern spoilers "山东/淄博" to be scrubbed from clue, got: ${scrubbedZibo}`
+    !scrubbedZibo.includes('淄博') && !scrubbedZibo.includes('山東'),
+    `Expected modern spoilers "山東/淄博" to be scrubbed from clue, got: ${scrubbedZibo}`
   );
   let sawPassInDeck = false;
   for (let run = 0; run < 45; run++) {
@@ -1337,7 +1337,7 @@ function main() {
     'app.js & style.css must implement persistent trace onboarding (#2), traced prefecture highlight (#5), custom route control card (#3), challenge scrubber lock (#6), and icon-only mobile GitHub link'
   );
   const mockPrefNodes = [
-    { dataset: { prefTitle: '黄州' }, classList: { _s: new Set(), add(c) { this._s.add(c); }, remove(c) { this._s.delete(c); }, contains(c) { return this._s.has(c); } } },
+    { dataset: { prefTitle: '黃州' }, classList: { _s: new Set(), add(c) { this._s.add(c); }, remove(c) { this._s.delete(c); }, contains(c) { return this._s.has(c); } } },
     { dataset: { prefTitle: '江州' }, classList: { _s: new Set(), add(c) { this._s.add(c); }, remove(c) { this._s.delete(c); }, contains(c) { return this._s.has(c); } } },
   ];
   ctrl.grpPrefectures = {
@@ -1349,7 +1349,7 @@ function main() {
   ctrl._syncTracedPrefecture();
   assert(
     mockPrefNodes[0].classList.contains('is-traced') && !mockPrefNodes[1].classList.contains('is-traced'),
-    'Expected _syncTracedPrefecture to mark containing prefecture (黄州) with .is-traced'
+    'Expected _syncTracedPrefecture to mark containing prefecture (黃州) with .is-traced'
   );
   ctrl.activeTrace = null;
   ctrl._syncTracedPrefecture();
@@ -1358,7 +1358,7 @@ function main() {
     'Expected _syncTracedPrefecture to clear .is-traced when activeTrace is null'
   );
 
-  // 6) Genealogy heading "今 X" must assert identity, never a far-away neighbour (regression: 岳阳楼 -> "今赤壁")
+  // 6) Genealogy heading "今 X" must assert identity, never a far-away neighbour (regression: 岳陽樓 -> "今赤壁")
   const nearestAcrossDynasties = (coord) => {
     let best = null;
     for (const d of dynasties) {
@@ -1369,16 +1369,16 @@ function main() {
     }
     return best;
   };
-  const yueyang = loreData.PLACE_GAZETTEER.find((g) => g.name === '岳阳楼');
+  const yueyang = loreData.PLACE_GAZETTEER.find((g) => g.name === '岳陽樓');
   const yueyangNear = nearestAcrossDynasties(yueyang.coord);
   assert.strictEqual(
-    ctrl._resolveModernIdentity(yueyang.coord[0], yueyang.coord[1], '岳阳楼', '湖南省', { s: { modern: '赤壁' }, km: 87 }),
-    '岳阳',
+    ctrl._resolveModernIdentity(yueyang.coord[0], yueyang.coord[1], '岳陽樓', '湖南省', { s: { modern: '赤壁' }, km: 87 }),
+    '岳陽',
     'Gazetteer landmark must use its own modern field (province prefix stripped), not a far neighbour'
   );
   assert.strictEqual(
-    ctrl._resolveModernIdentity(yueyang.coord[0], yueyang.coord[1], '岳阳楼', '湖南省', yueyangNear),
-    '岳阳',
+    ctrl._resolveModernIdentity(yueyang.coord[0], yueyang.coord[1], '岳陽樓', '湖南省', yueyangNear),
+    '岳陽',
     'Gazetteer landmark identity must be stable regardless of the nearest settlement'
   );
   assert.strictEqual(
@@ -1387,7 +1387,7 @@ function main() {
     'A settlement 87 km away must not be asserted as "今赤壁"'
   );
   assert.strictEqual(
-    ctrl._resolveModernIdentity(0, 0, '', '陕西省', { s: { modern: '西安' }, km: 4 }),
+    ctrl._resolveModernIdentity(0, 0, '', '陝西省', { s: { modern: '西安' }, km: 4 }),
     '西安',
     'A settlement within 25 km is a valid identity'
   );
@@ -1403,29 +1403,29 @@ function main() {
 
   // CUJ 17: Historical coups & political turning points across dynasties discoverable via Quick Search
   const expectedCoups = [
-    ['沙丘政变', 'qin', -210],
-    ['巫蛊之祸', 'xihan', -91],
+    ['沙丘政變', 'qin', -210],
+    ['巫蠱之禍', 'xihan', -91],
     ['霍光', 'xihan', -74],
     ['永元之隆', 'donghan', 92],
-    ['甘露之变', 'sanguo', 260],
+    ['甘露之變', 'sanguo', 260],
     ['曹髦', 'sanguo', 260],
-    ['王敦之乱', 'dongjin', 322],
+    ['王敦之亂', 'dongjin', 322],
     ['桓玄', 'dongjin', 404],
-    ['景龙政变', 'tang', 707],
-    ['唐隆政变', 'tang', 710],
-    ['先天政变', 'tang', 713],
-    ['马嵬驿兵变', 'tang', 756],
-    ['永贞内禅', 'tang', 805],
-    ['甘露之变', 'tang', 835],
-    ['兴教门之变', 'wudai', 926],
-    ['斧声烛影', 'beisong', 976],
-    ['苗刘兵变', 'nansong', 1129],
-    ['绍熙内禅', 'nansong', 1194],
-    ['南坡之变', 'yuan', 1323],
-    ['夺门之变', 'ming', 1457],
-    ['壬寅宫变', 'ming', 1542],
-    ['辛酉政变', 'qing', 1861],
-    ['戊戌政变', 'qing', 1898],
+    ['景龍政變', 'tang', 707],
+    ['唐隆政變', 'tang', 710],
+    ['先天政變', 'tang', 713],
+    ['馬嵬驛兵變', 'tang', 756],
+    ['永貞內禪', 'tang', 805],
+    ['甘露之變', 'tang', 835],
+    ['興教門之變', 'wudai', 926],
+    ['斧聲燭影', 'beisong', 976],
+    ['苗劉兵變', 'nansong', 1129],
+    ['紹熙內禪', 'nansong', 1194],
+    ['南坡之變', 'yuan', 1323],
+    ['奪門之變', 'ming', 1457],
+    ['壬寅宮變', 'ming', 1542],
+    ['辛酉政變', 'qing', 1861],
+    ['戊戌政變', 'qing', 1898],
   ];
   for (const [kw, dynKey, yr] of expectedCoups) {
     const hits = ctrl._queryQuickSearch(kw);
@@ -1438,7 +1438,7 @@ function main() {
   // CUJ 18: UX Friction Polish — same-effective-year milestone stepping, balloon nav, genealogy camera preservation, and pre-rendered HTML sync
   assert(
     indexHtml.includes('value="-403"') &&
-      indexHtml.includes('公元前403年 · 周威烈王二十三年') &&
+      indexHtml.includes('西元前403年 · 周威烈王二十三年') &&
       indexHtml.includes(dynasties[0].summary) &&
       indexHtml.includes(dynasties[0].milestones[0].headline) &&
       appCode.includes('fromYearSync: true') &&
@@ -1521,20 +1521,20 @@ function main() {
       snapshots.s_donghan.prefectures.length >= 48,
     'Warring States, Qin, and Han snapshots must reflect chronological commandery (郡) progression including 薛郡'
   );
-  // Regression guard: State of Lu (鲁) survives until -250 BCE, annexed by Chu in -249 BCE, becomes Qin 薛郡 in -223 BCE
+  // Regression guard: State of Lu (魯) survives until -250 BCE, annexed by Chu in -249 BCE, becomes Qin 薛郡 in -223 BCE
   assert(
-    snapshots.s_zhanguo_a.polities.some((p) => p.title === '鲁') &&
-      snapshots.s_zhanguo_c.polities.some((p) => p.title === '鲁') &&
-      !snapshots.s_zhanguo_c2.polities.some((p) => p.title === '鲁') &&
-      pointInShape(116.99, 35.6, snapshots.s_zhanguo_c.polities.find((p) => p.title === '鲁').shape) &&
+    snapshots.s_zhanguo_a.polities.some((p) => p.title === '魯') &&
+      snapshots.s_zhanguo_c.polities.some((p) => p.title === '魯') &&
+      !snapshots.s_zhanguo_c2.polities.some((p) => p.title === '魯') &&
+      pointInShape(116.99, 35.6, snapshots.s_zhanguo_c.polities.find((p) => p.title === '魯').shape) &&
       pointInShape(116.99, 35.6, snapshots.s_zhanguo_c2.polities.find((p) => p.title === '楚').shape) &&
       pointInShape(116.99, 35.6, snapshots.s_zhanguo_e5.polities.find((p) => p.title === '秦').shape) &&
       snapshots.s_qin_a.prefectures.some((p) => p.title === '薛郡') &&
       loreData.PLACE_LANDMARK_EVENTS.some((ev) => ev.zh.includes('薛仁杲')) &&
       !loreData.PLACE_LANDMARK_EVENTS.some((ev) => ev.zh.includes('薛仁果')),
-    'State of Lu (鲁) chronology (-403..-250 -> Chu -249 -> Qin 薛郡 -223) and 薛仁杲 spelling must hold'
+    'State of Lu (魯) chronology (-403..-250 -> Chu -249 -> Qin 薛郡 -223) and 薛仁杲 spelling must hold'
   );
-  for (const anachronistic of ['会稽郡', '鄣郡', '东海郡', '泗水郡']) {
+  for (const anachronistic of ['會稽郡', '鄣郡', '東海郡', '泗水郡']) {
     assert(
       !snapshots.s_zhanguo_a.prefectures.some((p) => p.title === anachronistic) &&
         !snapshots.s_zhanguo_a.regions.some((r) => r.title === anachronistic),
@@ -1543,14 +1543,14 @@ function main() {
   }
   for (const qinSnapKey of ['s_zhanguo_e5', 's_qin_a', 's_qin_b', 's_qin', 's_qin_chuhan']) {
     const qSnap = snapshots[qinSnapKey];
-    for (const cmdTitle of ['泗水郡', '东海郡', '鄣郡', '会稽郡']) {
+    for (const cmdTitle of ['泗水郡', '東海郡', '鄣郡', '會稽郡']) {
       assert(
         qSnap.prefectures.some((p) => p.title === cmdTitle) &&
           qSnap.regions.some((r) => r.title === cmdTitle),
         `${qinSnapKey} must include ${cmdTitle} in both prefectures and regions`
       );
     }
-    for (const southTitle of ['鄣郡', '会稽郡']) {
+    for (const southTitle of ['鄣郡', '會稽郡']) {
       const feat = qSnap.prefectures.find((p) => p.title === southTitle);
       const maxLat = Math.max(...feat.shape.coordinates[0].map((pt) => pt[1]));
       assert(
@@ -1562,28 +1562,28 @@ function main() {
   const xihanDyn = dynasties.find((d) => d.key === 'xihan');
   assert.strictEqual(ctrl._resolveSnapKey(qinDyn, -204), 's_qin_chuhan', 'Qin at -204 BCE must resolve to s_qin_chuhan');
   assert(
-    snapshots.s_qin_chuhan.polities.some((p) => p.title === '汉（刘邦）') &&
-      snapshots.s_qin_chuhan.polities.some((p) => p.title === '西楚（项羽）'),
+    snapshots.s_qin_chuhan.polities.some((p) => p.title === '漢（劉邦）') &&
+      snapshots.s_qin_chuhan.polities.some((p) => p.title === '西楚（項羽）'),
     's_qin_chuhan must map both Han (Liu Bang) and Western Chu (Xiang Yu)'
   );
   assert.strictEqual(ctrl._resolveSnapKey(xihanDyn, 24), 's_xihan_e', 'Western Han at 24 CE must resolve to s_xihan_e');
   assert(
-    snapshots.s_xihan_e.polities.some((p) => p.title === '更始（汉）') &&
-      snapshots.s_xihan_e.polities.some((p) => p.title === '刘秀（河北）') &&
-      snapshots.s_xihan_e.polities.some((p) => p.title === '赤眉军'),
+    snapshots.s_xihan_e.polities.some((p) => p.title === '更始（漢）') &&
+      snapshots.s_xihan_e.polities.some((p) => p.title === '劉秀（河北）') &&
+      snapshots.s_xihan_e.polities.some((p) => p.title === '赤眉軍'),
     's_xihan_e must map Gengshi, Liu Xiu (Hebei), and Chimei Army'
   );
   assert.strictEqual(ctrl._resolveSnapKey(tangDyn, 881), 's_tang_d1', 'Tang at 881 CE must resolve to s_tang_d1');
   assert(
-    snapshots.s_tang_d1.polities.some((p) => p.title === '大齐（黄巢）'),
+    snapshots.s_tang_d1.polities.some((p) => p.title === '大齊（黃巢）'),
     's_tang_d1 must map Huang Chao Great Qi rival polity'
   );
   assert.strictEqual(ctrl._resolveSnapKey(tangDyn, 895), 's_tang_d2', 'Tang at 895 CE must resolve to s_tang_d2');
   assert(
-    snapshots.s_tang_d2.polities.some((p) => p.title === '宣武（朱温）') &&
-      snapshots.s_tang_d2.polities.some((p) => p.title === '河东（李克用）') &&
+    snapshots.s_tang_d2.polities.some((p) => p.title === '宣武（朱溫）') &&
+      snapshots.s_tang_d2.polities.some((p) => p.title === '河東（李克用）') &&
       snapshots.s_tang_d2.polities.some((p) => p.title === '西川（王建）') &&
-      snapshots.s_tang_d2.polities.some((p) => p.title === '淮南（杨行密）'),
+      snapshots.s_tang_d2.polities.some((p) => p.title === '淮南（楊行密）'),
     's_tang_d2 must map Late Tang regional warlords (Zhu Wen, Li Keyong, Wang Jian, Yang Xingmi)'
   );
 
@@ -1592,21 +1592,21 @@ function main() {
   assert.strictEqual(ctrl._resolveSnapKey(mingDyn, 1642), 's_ming_c', 'Ming at 1642 CE must resolve to s_ming_c');
   assert.strictEqual(ctrl._resolveSnapKey(mingDyn, 1643), 's_ming_d', 'Ming at 1643 CE must resolve to s_ming_d');
   assert(
-    snapshots.s_ming_d.polities.some((p) => p.title === '大顺（李自成）') &&
-      snapshots.s_ming_d.polities.some((p) => p.title === '大西（张献忠）') &&
-      snapshots.s_ming_d.polities.some((p) => p.title === '后金（1636 年起称清）'),
+    snapshots.s_ming_d.polities.some((p) => p.title === '大順（李自成）') &&
+      snapshots.s_ming_d.polities.some((p) => p.title === '大西（張獻忠）') &&
+      snapshots.s_ming_d.polities.some((p) => p.title === '後金（1636 年起稱清）'),
     's_ming_d must map Li Zicheng Dashun, Zhang Xianzhong Daxi, and Qing alongside Ming'
   );
   assert.strictEqual(ctrl._resolveSnapKey(qingDyn, 1650), 's_qing_a0', 'Qing at 1650 CE must resolve to s_qing_a0');
   assert.strictEqual(ctrl._resolveSnapKey(qingDyn, 1665), 's_qing_a1', 'Qing at 1665 CE must resolve to s_qing_a1');
   assert(
     snapshots.s_qing_a1.polities.some((p) => p.title === '清') &&
-      snapshots.s_qing_a1.polities.some((p) => p.title === '郑氏台湾') &&
+      snapshots.s_qing_a1.polities.some((p) => p.title === '鄭氏臺灣') &&
       !snapshots.s_qing_a1.polities.some((p) => p.title.includes('三藩')),
     's_qing_a1 (1661-1673) must map unified mainland Qing and Koxinga Taiwan prior to the Revolt of the Three Feudatories'
   );
   assert.strictEqual(ctrl._resolveSnapKey(qingDyn, 1675), 's_qing_a', 'Qing at 1675 CE must resolve to s_qing_a');
-  const sanfanPolity = snapshots.s_qing_a.polities.find((p) => p.title === '吴周 · 三藩');
+  const sanfanPolity = snapshots.s_qing_a.polities.find((p) => p.title === '吳周 · 三藩');
   const qingSanfanMain = snapshots.s_qing_a.polities.find((p) => p.title === '清');
   assert(
     sanfanPolity &&
@@ -1677,9 +1677,9 @@ function main() {
       mockBodyClasses.has('is-mobile-chronicle-open') &&
       !mockBodyClasses.has('is-pane-collapsed') &&
       mockToggleBtn.isCollapsed === false &&
-      mockToggleBtn.innerHTML.includes('全图') &&
+      mockToggleBtn.innerHTML.includes('全圖') &&
       mockMobBtn.ariaExpanded === 'true',
-    'Opening mobile chronicle must clear is-pane-collapsed, add is-mobile-chronicle-open, and flip #act-toggle-pane to 全图'
+    'Opening mobile chronicle must clear is-pane-collapsed, add is-mobile-chronicle-open, and flip #act-toggle-pane to 全圖'
   );
   ctrl.toggleMobileChronicle(false);
   assert(
@@ -1731,15 +1731,15 @@ function main() {
   }
   // Verify non-anachronistic historical state translations
   assert.strictEqual(enDict['魏'], 'Wei', 'dict["魏"] must be "Wei", not anachronistic "Cao Wei"');
-  assert.strictEqual(enDict['齐'], 'Qi', 'dict["齐"] must be "Qi", not anachronistic "Southern Qi"');
-  assert.strictEqual(enDict['吴'], 'Wu', 'dict["吴"] must be "Wu", not anachronistic "Eastern Wu"');
-  assert.strictEqual(enDict['韩'], 'Han', 'dict["韩"] must be "Han", not "Han (Warring States)"');
+  assert.strictEqual(enDict['齊'], 'Qi', 'dict["齊"] must be "Qi", not anachronistic "Southern Qi"');
+  assert.strictEqual(enDict['吳'], 'Wu', 'dict["吳"] must be "Wu", not anachronistic "Eastern Wu"');
+  assert.strictEqual(enDict['韓'], 'Han', 'dict["韓"] must be "Han", not "Han (Warring States)"');
   assert.strictEqual(enDict['曹魏'], 'Cao Wei', 'dict["曹魏"] must be "Cao Wei"');
-  assert.strictEqual(enDict['孙吴'], 'Eastern Wu', 'dict["孙吴"] must be "Eastern Wu"');
-  assert.strictEqual(enDict['东吴'], 'Eastern Wu', 'dict["东吴"] must be "Eastern Wu"');
-  assert.strictEqual(enDict['杨吴'], 'Yang Wu', 'dict["杨吴"] must be "Yang Wu"');
-  assert.strictEqual(enDict['南齐'], 'Southern Qi', 'dict["南齐"] must be "Southern Qi"');
-  assert.strictEqual(enDict['刘宋'], 'Liu Song', 'dict["刘宋"] must be "Liu Song"');
+  assert.strictEqual(enDict['孫吳'], 'Eastern Wu', 'dict["孫吳"] must be "Eastern Wu"');
+  assert.strictEqual(enDict['東吳'], 'Eastern Wu', 'dict["東吳"] must be "Eastern Wu"');
+  assert.strictEqual(enDict['楊吳'], 'Yang Wu', 'dict["楊吳"] must be "Yang Wu"');
+  assert.strictEqual(enDict['南齊'], 'Southern Qi', 'dict["南齊"] must be "Southern Qi"');
+  assert.strictEqual(enDict['劉宋'], 'Liu Song', 'dict["劉宋"] must be "Liu Song"');
   assert.strictEqual(enDict['南梁'], 'Southern Liang', 'dict["南梁"] must be "Southern Liang"');
   for (const d of dynasties) {
     for (const st of d.settlements || []) {
@@ -1858,8 +1858,8 @@ function main() {
       mingPol && mingPol.shape.type === 'MultiPolygon' && mingPol.shape.coordinates.length === 4,
       `${sk} Ming polity must have 4 disjoint sub-polygons (no duplicate overlapping mainland polygon)`
     );
-    const jurchenPol = snapshots[sk].polities.find((p) => p.title === '女真诸部');
-    assert(jurchenPol && jurchenPol.role === 'neighbor', `${sk} must include 女真诸部 neighbor polity in the Northeast`);
+    const jurchenPol = snapshots[sk].polities.find((p) => p.title === '女真諸部');
+    assert(jurchenPol && jurchenPol.role === 'neighbor', `${sk} must include 女真諸部 neighbor polity in the Northeast`);
   }
 
   // Verify Western Regions Great Lakes (Lop Nur vanish 1972, labels, and gazetteer resolution)
@@ -1868,12 +1868,12 @@ function main() {
     lopNurLake && lopNurLake.rank === 2 && lopNurLake.vanish === 1972,
     `Lop Nur lake must have rank 2 and vanish 1972, got ${JSON.stringify(lopNurLake)}`
   );
-  const lopNurLabel = (sandbox.window.HYDRO_DATA.labels || []).find((lb) => lb.zh === '蒲昌海·罗布泊');
+  const lopNurLabel = (sandbox.window.HYDRO_DATA.labels || []).find((lb) => lb.zh === '蒲昌海·羅布泊');
   assert(
     lopNurLabel && lopNurLabel.vanish === 1972,
-    `蒲昌海·罗布泊 hydro label must have vanish 1972, got ${JSON.stringify(lopNurLabel)}`
+    `蒲昌海·羅布泊 hydro label must have vanish 1972, got ${JSON.stringify(lopNurLabel)}`
   );
-  for (const westernLake of ['蒲昌海', '博斯腾湖', '热海', '夷播海', '居延海']) {
+  for (const westernLake of ['蒲昌海', '博斯騰湖', '熱海', '夷播海', '居延海']) {
     const hit = ctrl.resolvePlace(westernLake, 741);
     assert(
       hit && hit.kind === 'gazetteer',
@@ -1881,17 +1881,17 @@ function main() {
     );
   }
   for (const culturalPlace of [
-    '曲阜', '孔庙', '琅琊', '琅琊台', '景德镇', '昌南镇', '宁古塔',
-    '潍坊', '密州', '广元', '利州', '忻州', '代州', '吴忠', '灵州', '阿克苏', '龟兹', '和田', '于阗',
-    '牡丹江', '上京龙泉府', '通化', '国内城', '崇左', '太平府', '锡林郭勒', '元上都', '阿拉善', '黑水城',
-    '眉山', '眉州', '上饶', '信州', '陇南', '武都',
-    '淮安', '楚州', '温州', '永嘉', '嘉兴', '秀州', '金华', '婺州', '衢州', '丽水', '处州',
-    '亳州', '谯郡', '黄山', '徽州', '阜阳', '颍州', '连云港', '海州', '南通', '盐城', '无锡',
-    '南充', '阆中', '宜宾', '叙州', '乐山', '嘉州', '泸州', '达州', '凉山', '西昌',
-    '抚州', '临川', '宜春', '袁州', '莆田', '兴化军', '荆门', '当阳', '随州', '十堰', '武当山',
-    '邵阳', '宝庆府', '郴州', '怀化', '芷江', '韶关', '韶州', '肇庆', '端州', '湛江', '雷州',
-    '茂名', '高州', '梧州', '北海', '合浦', '三亚', '崖州', '平凉', '庆阳', '保山', '永昌',
-    '红河', '建水', '山南', '桑耶寺', '阿里', '古格', '烟台', '登州', '芝罘', '龙岩', '汀州', '三明', '宁化', '武川镇', '怀朔镇',
+    '曲阜', '孔廟', '琅琊', '琅琊臺', '景德鎮', '昌南鎮', '寧古塔',
+    '濰坊', '密州', '廣元', '利州', '忻州', '代州', '吳忠', '靈州', '阿克蘇', '龜茲', '和田', '于闐',
+    '牡丹江', '上京龍泉府', '通化', '國內城', '崇左', '太平府', '錫林郭勒', '元上都', '阿拉善', '黑水城',
+    '眉山', '眉州', '上饒', '信州', '隴南', '武都',
+    '淮安', '楚州', '溫州', '永嘉', '嘉興', '秀州', '金華', '婺州', '衢州', '麗水', '處州',
+    '亳州', '譙郡', '黃山', '徽州', '阜陽', '潁州', '連雲港', '海州', '南通', '鹽城', '無錫',
+    '南充', '閬中', '宜賓', '敘州', '樂山', '嘉州', '瀘州', '達州', '涼山', '西昌',
+    '撫州', '臨川', '宜春', '袁州', '莆田', '興化軍', '荊門', '當陽', '隨州', '十堰', '武當山',
+    '邵陽', '寶慶府', '郴州', '懷化', '芷江', '韶關', '韶州', '肇慶', '端州', '湛江', '雷州',
+    '茂名', '高州', '梧州', '北海', '合浦', '三亞', '崖州', '平涼', '慶陽', '保山', '永昌',
+    '紅河', '建水', '山南', '桑耶寺', '阿里', '古格', '煙臺', '登州', '芝罘', '龍巖', '汀州', '三明', '寧化', '武川鎮', '懷朔鎮',
   ]) {
     const hit = ctrl.resolvePlace(culturalPlace, 1076);
     assert(
@@ -1914,26 +1914,26 @@ function main() {
     'Expected #scale-label-text to use clean metric km format without _formatChineseLi'
   );
 
-  // ── 24. CUJ 24: Place Genealogy (点地溯源) Full 18-Era Coverage to Present (PRC) & ROC/PRC City Resolution ──
-  const yueyang2026 = ctrl.inspect({ year: 2026, place: '岳阳' });
-  assert.strictEqual(yueyang2026.polity, '中华人民共和国', 'inspect(2026, 岳阳) must return polity 中华人民共和国');
+  // ── 24. CUJ 24: Place Genealogy (點地溯源) Full 18-Era Coverage to Present (PRC) & ROC/PRC City Resolution ──
+  const yueyang2026 = ctrl.inspect({ year: 2026, place: '岳陽' });
+  assert.strictEqual(yueyang2026.polity, '中華人民共和國', 'inspect(2026, 岳陽) must return polity 中華人民共和國');
   assert(
     Array.isArray(yueyang2026.regions) &&
       yueyang2026.regions.length === 1 &&
       yueyang2026.regions[0] === '湖南省' &&
       Array.isArray(yueyang2026.prefectures) &&
-      yueyang2026.prefectures.includes('岳阳') &&
+      yueyang2026.prefectures.includes('岳陽') &&
       yueyang2026.nearestCity &&
-      yueyang2026.nearestCity.ancient === '岳阳' &&
+      yueyang2026.nearestCity.ancient === '岳陽' &&
       yueyang2026.nearestCity.distanceKm <= 10,
-    `inspect(2026, 岳阳) must resolve 湖南省 · 岳阳 within <=10 km, got ${JSON.stringify(yueyang2026)}`
+    `inspect(2026, 岳陽) must resolve 湖南省 · 岳陽 within <=10 km, got ${JSON.stringify(yueyang2026)}`
   );
-  const yueyang1936 = ctrl.inspect({ year: 1936, place: '岳阳' });
+  const yueyang1936 = ctrl.inspect({ year: 1936, place: '岳陽' });
   assert(
     yueyang1936.nearestCity &&
-      yueyang1936.nearestCity.ancient === '岳阳' &&
+      yueyang1936.nearestCity.ancient === '岳陽' &&
       yueyang1936.nearestCity.distanceKm <= 10,
-    `inspect(1936, 岳阳) in ROC must resolve local city 岳阳 (<=10 km) rather than Changsha (127 km), got ${JSON.stringify(yueyang1936.nearestCity)}`
+    `inspect(1936, 岳陽) in ROC must resolve local city 岳陽 (<=10 km) rather than Changsha (127 km), got ${JSON.stringify(yueyang1936.nearestCity)}`
   );
   assert(
     !String(ctrl.openGenealogyAt).includes("if (d.key === 'prc') continue;"),
@@ -2013,60 +2013,60 @@ function main() {
   );
   assert(
     !mockLoreEl.isHidden &&
-      mockLoreEl.innerHTML.includes('名城形胜') &&
-      mockLoreEl.innerHTML.includes('洞庭湖口 · 江湖锁钥'),
+      mockLoreEl.innerHTML.includes('名城形勝') &&
+      mockLoreEl.innerHTML.includes('洞庭湖口 · 江湖鎖鑰'),
     `Expected #genealogy-lore at Yueyang to render curated city lore banner, got ${mockLoreEl.innerHTML}`
   );
   const tangRowHtml = mockTimelineItems[9].innerHTML;
   const rocRowHtml = mockTimelineItems[16].innerHTML;
   const prcRowHtml = mockTimelineItems[17].innerHTML;
   assert(
-    tangRowHtml.includes('邻近古城：岳州（即此地）') &&
-      tangRowHtml.includes('开元四年张说谪守岳州，始建岳阳楼'),
-    `Expected Tang row at Yueyang to surface per-dynasty settlement remark 开元四年张说谪守岳州，始建岳阳楼, got ${tangRowHtml}`
+    tangRowHtml.includes('鄰近古城：嶽州（即此地）') &&
+      tangRowHtml.includes('開元四年張說謫守嶽州，始建岳陽樓'),
+    `Expected Tang row at Yueyang to surface per-dynasty settlement remark 開元四年張說謫守嶽州，始建岳陽樓, got ${tangRowHtml}`
   );
   assert(
-    rocRowHtml.includes('中华民国') && rocRowHtml.includes('邻近古城：岳阳（即此地）'),
-    `Expected ROC row at Yueyang to resolve 邻近古城：岳阳（即此地）, got ${rocRowHtml}`
+    rocRowHtml.includes('中華民國') && rocRowHtml.includes('鄰近古城：岳陽（即此地）'),
+    `Expected ROC row at Yueyang to resolve 鄰近古城：岳陽（即此地）, got ${rocRowHtml}`
   );
   assert(
-    prcRowHtml.includes('中华人民共和国') &&
-      prcRowHtml.includes('湖南省 · 岳阳') &&
-      prcRowHtml.includes('现代城市：岳阳（即此地）'),
-    `Expected PRC row at Yueyang to display 湖南省 · 岳阳 and 现代城市：岳阳（即此地）, got ${prcRowHtml}`
+    prcRowHtml.includes('中華人民共和國') &&
+      prcRowHtml.includes('湖南省 · 岳陽') &&
+      prcRowHtml.includes('現代城市：岳陽（即此地）'),
+    `Expected PRC row at Yueyang to display 湖南省 · 岳陽 and 現代城市：岳陽（即此地）, got ${prcRowHtml}`
   );
   ctrl.openGenealogyAt(112.24, 30.33, null, { fromYearSync: true });
   assert.strictEqual(mockTimelineItems.length, 18, 'Expected 18 rows at Jingzhou (江陵)');
   assert(
     !mockLoreEl.isHidden &&
-      mockLoreEl.innerHTML.includes('名城形胜') &&
-      mockLoreEl.innerHTML.includes('荆楚雄都 · 江汉锁钥'),
+      mockLoreEl.innerHTML.includes('名城形勝') &&
+      mockLoreEl.innerHTML.includes('荊楚雄都 · 江漢鎖鑰'),
     `Expected #genealogy-lore at Jingzhou to render curated city lore banner, got ${mockLoreEl.innerHTML}`
   );
   const jzQingHtml = mockTimelineItems[15].innerHTML;
   const jzRocHtml = mockTimelineItems[16].innerHTML;
   const jzPrcHtml = mockTimelineItems[17].innerHTML;
   assert(
-    jzQingHtml.includes('荆州府') && !jzQingHtml.includes('宜昌府'),
+    jzQingHtml.includes('荊州府') && !jzQingHtml.includes('宜昌府'),
     `Expected Qing row at Jingzhou not to show misleading 100 km neighbor 宜昌府, got ${jzQingHtml}`
   );
   assert(
-    jzRocHtml.includes('邻近古城：荆州（即此地）') &&
-      jzPrcHtml.includes('湖北省 · 荆州') &&
-      jzPrcHtml.includes('现代城市：荆州（即此地）'),
-    `Expected ROC and PRC rows at Jingzhou to resolve 荆州（即此地）, got ROC=${jzRocHtml} PRC=${jzPrcHtml}`
+    jzRocHtml.includes('鄰近古城：荊州（即此地）') &&
+      jzPrcHtml.includes('湖北省 · 荊州') &&
+      jzPrcHtml.includes('現代城市：荊州（即此地）'),
+    `Expected ROC and PRC rows at Jingzhou to resolve 荊州（即此地）, got ROC=${jzRocHtml} PRC=${jzPrcHtml}`
   );
   ctrl.openGenealogyAt(113.38, 31.69, null, { fromYearSync: true });
   assert(
     !mockLoreEl.isHidden &&
-      mockLoreEl.innerHTML.includes('城池形胜') &&
+      mockLoreEl.innerHTML.includes('城池形勝') &&
       mockLoreEl.innerHTML.includes('曾侯乙墓'),
     `Expected #genealogy-lore at non-curated city Suizhou to render synthesized City Profile banner, got ${mockLoreEl.innerHTML}`
   );
   ctrl.openGenealogyAt(110.9, 34.64, null, { fromYearSync: true });
   assert(
     !mockLoreEl.isHidden &&
-      mockLoreEl.innerHTML.includes('雄关形胜'),
+      mockLoreEl.innerHTML.includes('雄關形勝'),
     `Expected #genealogy-lore at Hangu Pass to render Strategic Pass banner, got ${mockLoreEl.innerHTML}`
   );
   const prevLocaleGen = ctrl.locale;
@@ -2093,7 +2093,7 @@ function main() {
     rocDyn && rocDyn.settlements.length >= 180 && prcDyn && prcDyn.settlements.length >= 185,
     `Expected ROC (>=180) and PRC (>=185) to include deduplicated modern cities, got ROC=${rocDyn && rocDyn.settlements.length}, PRC=${prcDyn && prcDyn.settlements.length}`
   );
-  for (const modCity of ['淮安', '温州', '嘉兴', '金华', '衢州', '丽水', '亳州', '阜阳', '连云港', '南通', '盐城', '无锡', '宜宾', '乐山', '泸州', '达州', '抚州', '宜春', '莆田', '随州', '邵阳', '郴州', '韶关', '肇庆', '梧州', '崇左', '三亚', '平凉', '庆阳', '保山', '山南', '阿里', '潍坊', '黄山', '南充', '西昌', '马鞍山', '运城', '绵阳', '酒泉', '抚顺', '牡丹江', '济宁', '怀化', '北海', '锡林郭勒', '忻州', '吴忠', '通化', '湛江', '茂名', '红河', '张家口', '葫芦岛', '日喀则', '江门', '赤峰', '定西', '海东', '淮南', '驻马店', '南平', '宝鸡', '周口', '烟台', '龙岩', '三明']) {
+  for (const modCity of ['淮安', '溫州', '嘉興', '金華', '衢州', '麗水', '亳州', '阜陽', '連雲港', '南通', '鹽城', '無錫', '宜賓', '樂山', '瀘州', '達州', '撫州', '宜春', '莆田', '隨州', '邵陽', '郴州', '韶關', '肇慶', '梧州', '崇左', '三亞', '平涼', '慶陽', '保山', '山南', '阿里', '濰坊', '黃山', '南充', '西昌', '馬鞍山', '運城', '綿陽', '酒泉', '撫順', '牡丹江', '濟寧', '懷化', '北海', '錫林郭勒', '忻州', '吳忠', '通化', '湛江', '茂名', '紅河', '張家口', '葫蘆島', '日喀則', '江門', '赤峰', '定西', '海東', '淮南', '駐馬店', '南平', '寶雞', '周口', '煙臺', '龍巖', '三明']) {
     assert(
       prcDyn.settlements.some((s) => s.modern === modCity && s.ancient === modCity) &&
         rocDyn.settlements.some((s) => s.modern === modCity),
@@ -2101,10 +2101,10 @@ function main() {
     );
   }
   const bannedUnseparated = new Set([
-    '南平建瓯', '南阳邓州', '周口淮阳', '呼和浩特托克托', '宝鸡凤翔', '张家口蔚县',
-    '抚顺新宾', '济宁曲阜', '牡丹江海林', '石家庄平山', '绵阳三台', '葫芦岛兴城',
-    '运城夏县', '运城永济', '邢台平乡', '邯郸临漳', '郑州荥阳', '酒泉瓜州',
-    '青岛平度东南', '青岛黄岛', '马鞍山当涂',
+    '南平建甌', '南陽鄧州', '周口淮陽', '呼和浩特托克托', '寶雞鳳翔', '張家口蔚縣',
+    '撫順新賓', '濟寧曲阜', '牡丹江海林', '石家莊平山', '綿陽三臺', '葫蘆島興城',
+    '運城夏縣', '運城永濟', '邢臺平鄉', '邯鄲臨漳', '鄭州滎陽', '酒泉瓜州',
+    '青島平度東南', '青島黃島', '馬鞍山當塗',
   ]);
   for (const d of dynasties) {
     for (const s of d.settlements || []) {
@@ -2138,10 +2138,10 @@ function main() {
   ctrl.dynastyIdx = 17;
   ctrl.year = 2026;
   ctrl.searchIndex = null;
-  const wfHits = ctrl._queryQuickSearch('潍坊');
+  const wfHits = ctrl._queryQuickSearch('濰坊');
   assert(
     wfHits.length > 0 && wfHits[0].kind === 'city' && wfHits[0].dynasty.key === 'prc',
-    `Expected searching "潍坊" in PRC era to rank PRC city entry first, got ${JSON.stringify(wfHits[0] && { kind: wfHits[0].kind, dyn: wfHits[0].dynasty && wfHits[0].dynasty.key, title: wfHits[0].titleZh })}`
+    `Expected searching "濰坊" in PRC era to rank PRC city entry first, got ${JSON.stringify(wfHits[0] && { kind: wfHits[0].kind, dyn: wfHits[0].dynasty && wfHits[0].dynasty.key, title: wfHits[0].titleZh })}`
   );
 
   // 23c. Verify deduplicated modern province boundary paths & PRC boundary styling
@@ -2171,7 +2171,7 @@ function main() {
     'style.css and app.js must style cased modern province boundaries across historical and PRC eras and hide them when #grp-provinces.is-hidden is active'
   );
 
-  // 23d. Verify hovering in regions without secondary prefectures (e.g. Western Sichuan / 剑南道 in Tang) does not highlight the entire polity, non-PRC eras do not hover-highlight modern provinces, and canonical place registry unifies openGenealogyAt & _inspectCoord
+  // 23d. Verify hovering in regions without secondary prefectures (e.g. Western Sichuan / 劍南道 in Tang) does not highlight the entire polity, non-PRC eras do not hover-highlight modern provinces, and canonical place registry unifies openGenealogyAt & _inspectCoord
   assert(
     !/\.polity-shape:hover\b/.test(styleCss) &&
       !/^\.province-shape:not\(\.maritime-dash\):hover\b/m.test(styleCss) &&
@@ -2200,7 +2200,7 @@ function main() {
     'index.html, style.css, and app.js must include autoplay aria-pressed state, accessible timeline band buttons, SEO directory locale sync, and quick search cleanup'
   );
   const mockSeoNav = {
-    innerHTML: '<h2>江山时序</h2>',
+    innerHTML: '<h2>江山時序</h2>',
     dataset: {},
     setAttribute(k, v) {
       this[k] = v;
@@ -2230,12 +2230,12 @@ function main() {
   );
   ctrl.locale = 'zh';
   ctrl._syncSeoDirectoryLocale();
-  assert.strictEqual(mockSeoNav.innerHTML, '<h2>江山时序</h2>', '_syncSeoDirectoryLocale() must restore Chinese HTML when switching back to zh');
+  assert.strictEqual(mockSeoNav.innerHTML, '<h2>江山時序</h2>', '_syncSeoDirectoryLocale() must restore Chinese HTML when switching back to zh');
   ctrl._clearQuickSearchInput();
   assert.strictEqual(mockSearchInp.value, '', '_clearQuickSearchInput() must clear #inp-map-search value');
   ctrl._id = origId23e;
 
-  // 23f. Verify Dali (大理, 937–1253 CE), Nanzhao (南诏, 649–936 CE), and unified Tubo (吐蕃, 618–877 CE) vs fragmented Tibetan polities (吐蕃诸部, 880–1246 CE)
+  // 23f. Verify Dali (大理, 937–1253 CE), Nanzhao (南詔, 649–936 CE), and unified Tubo (吐蕃, 618–877 CE) vs fragmented Tibetan polities (吐蕃諸部, 880–1246 CE)
   const daliSnapKeys = [
     's_wudai_c0',
     's_wudai_c',
@@ -2306,30 +2306,30 @@ function main() {
     ...daliSnapKeys.filter((k) => k !== 's_nansong_e'),
   ];
   for (const sk of fragmentedTuboSnapKeys) {
-    const fragPol = (snapshots[sk].polities || []).find((p) => p.title === '吐蕃诸部');
+    const fragPol = (snapshots[sk].polities || []).find((p) => p.title === '吐蕃諸部');
     assert(
       fragPol && fragPol.role === 'neighbor' && !fragPol.tint,
-      `${sk} must model post-877 fragmented Tibet as uncolored 吐蕃诸部 (role="neighbor", tint=null)`
+      `${sk} must model post-877 fragmented Tibet as uncolored 吐蕃諸部 (role="neighbor", tint=null)`
     );
   }
   const nzSnapKeys = [...tangSnapKeys, 's_wudai_a', 's_wudai_b1', 's_wudai_b', 's_wudai_b2'];
   for (const sk of nzSnapKeys) {
-    const nzPol = (snapshots[sk].polities || []).find((p) => p.title === '南诏');
+    const nzPol = (snapshots[sk].polities || []).find((p) => p.title === '南詔');
     assert(
       nzPol && nzPol.role === 'rival' && nzPol.tint === '#7a5c91',
-      `${sk} must model 南诏 as role="rival" with tint="#7a5c91"`
+      `${sk} must model 南詔 as role="rival" with tint="#7a5c91"`
     );
     assert(
       pointInShape(100.161, 25.691, nzPol.shape),
-      `${sk}: 南诏 polygon must contain Taihecheng/Dali capital ([100.161, 25.691])`
+      `${sk}: 南詔 polygon must contain Taihecheng/Dali capital ([100.161, 25.691])`
     );
     assert(
       pointInShape(102.68, 24.82, nzPol.shape),
-      `${sk}: 南诏 polygon must contain Dianchi/Kunming ([102.68, 24.82])`
+      `${sk}: 南詔 polygon must contain Dianchi/Kunming ([102.68, 24.82])`
     );
   }
   const tangDynObj = dynasties.find((d) => d.key === 'tang');
-  for (const capName of ['逻些', '太和城']) {
+  for (const capName of ['邏些', '太和城']) {
     const capSet = (tangDynObj.settlements || []).find((s) => s.ancient === capName);
     assert(
       capSet && (!capSet.tier || capSet.tier === 1),
@@ -2348,8 +2348,8 @@ function main() {
   }
   for (const sk of [...nzSnapKeys, ...daliSnapKeys]) {
     const pols = snapshots[sk].polities || [];
-    const swPol = pols.find((p) => p.title === '南诏' || p.title === '大理');
-    assert(swPol && swPol.shape, `${sk} must contain 南诏 or 大理`);
+    const swPol = pols.find((p) => p.title === '南詔' || p.title === '大理');
+    assert(swPol && swPol.shape, `${sk} must contain 南詔 or 大理`);
     const swVerts = collectVertices(swPol.shape);
     const otherVerts = new Set();
     for (const p of pols) {
@@ -2368,9 +2368,9 @@ function main() {
 
   // 23g. National Map Compliance Guard (Zangnan, Aksai Chin, Taiwan, Ten-Dash Line & ROC Tibet Unification)
   assert(
-    !snapshots.neighbors.some((n) => n.title === '台湾地区') &&
-      !bootSnaps.neighbors.some((n) => n.title === '台湾地区'),
-    'snapshots.neighbors and bootSnaps.neighbors must not list 台湾地区 as a foreign neighbor'
+    !snapshots.neighbors.some((n) => n.title === '臺灣地區') &&
+      !bootSnaps.neighbors.some((n) => n.title === '臺灣地區'),
+    'snapshots.neighbors and bootSnaps.neighbors must not list 臺灣地區 as a foreign neighbor'
   );
   assert(
     /\.province-shape\.maritime-dash\s*\{[\s\S]*?stroke:\s*rgba\(/m.test(styleCss) &&
@@ -2378,16 +2378,16 @@ function main() {
     'css/style.css .province-shape.maritime-dash must reinforce Ten-Dash Line (100000_JD) with explicit non-scaling stroke'
   );
   const complianceCheckPts = [
-    ['达旺', 91.86, 27.58],
+    ['達旺', 91.86, 27.58],
     ['山南南端', 92.5, 27.15],
-    ['下苏班西里', 93.8, 27.6],
-    ['墨脱南端', 95.33, 28.2],
+    ['下蘇班西里', 93.8, 27.6],
+    ['墨脫南端', 95.33, 28.2],
     ['下察隅', 96.5, 28.1],
-    ['阿克赛钦中', 79.8, 35.1],
-    ['阿克赛钦西', 78.9, 34.7],
-    ['阿克赛钦北', 79.4, 35.6],
+    ['阿克賽欽中', 79.8, 35.1],
+    ['阿克賽欽西', 78.9, 34.7],
+    ['阿克賽欽北', 79.4, 35.6],
   ];
-  for (const [label, cx, cy] of [...complianceCheckPts, ['台湾', 120.99, 23.98]]) {
+  for (const [label, cx, cy] of [...complianceCheckPts, ['臺灣', 120.99, 23.98]]) {
     for (const nb of snapshots.neighbors) {
       assert(
         !pointInShape(cx, cy, nb.shape),
@@ -2396,23 +2396,23 @@ function main() {
     }
   }
   const foreignSouthWest = new Set([
-    '英属印度',
+    '英屬印度',
     '印度',
     '不丹',
-    '尼泊尔',
-    '克什米尔·拉达克',
-    '莫卧儿帝国',
-    '锡克（拉合尔）',
+    '尼泊爾',
+    '克什米爾·拉達克',
+    '莫臥兒帝國',
+    '錫克（拉合爾）',
     '阿富汗',
-    '浩罕汗国',
-    '德里苏丹国',
-    '缅甸',
+    '浩罕汗國',
+    '德里蘇丹國',
+    '緬甸',
   ]);
   for (const [sk, snap] of Object.entries(snapshots)) {
     if (!snap || Array.isArray(snap) || sk === 's_prc') continue;
     assert(
-      !(snap.polities || []).some((p) => p.title === '西藏（噶厦）'),
-      `${sk} must unify Tibet into 中华民国(main) rather than splitting 西藏（噶厦）`
+      !(snap.polities || []).some((p) => p.title === '西藏（噶廈）'),
+      `${sk} must unify Tibet into 中華民國(main) rather than splitting 西藏（噶廈）`
     );
     for (const [label, cx, cy] of complianceCheckPts) {
       const polHits = (snap.polities || []).filter((p) => pointInShape(cx, cy, p.shape));
@@ -2446,26 +2446,26 @@ function main() {
     's_sui_a2 (587–589 CE) must merge Jiangling ([112.241, 30.331]) into 隋 after Emperor Wen abolishes Western Liang'
   );
 
-  // 23i. Verify Ming Hexi Corridor (Jiayuguan & Xining) and contiguous Seven Guards West of Jiayuguan (哈密卫（关西七卫）)
+  // 23i. Verify Ming Hexi Corridor (Jiayuguan & Xining) and contiguous Seven Guards West of Jiayuguan (哈密衛（關西七衛）)
   for (const sk of ['s_ming_a0', 's_ming_a', 's_ming_a2', 's_ming_b', 's_ming_c']) {
     const mingPol = (snapshots[sk].polities || []).find((p) => p.title === '明');
     assert(
       mingPol && pointInShape(98.291, 39.771, mingPol.shape) && pointInShape(101.78, 36.62, mingPol.shape),
       `${sk}: 明 polygon must contain Jiayuguan ([98.291, 39.771]) and Xining ([101.78, 36.62])`
     );
-    const shanxiReg = (snapshots[sk].regions || []).find((r) => r.title === '陕西');
+    const shanxiReg = (snapshots[sk].regions || []).find((r) => r.title === '陝西');
     assert(
       shanxiReg &&
         shanxiReg.shape.type === 'Polygon' &&
         pointInShape(98.291, 39.771, shanxiReg.shape) &&
         pointInShape(101.78, 36.62, shanxiReg.shape),
-      `${sk}: 陕西 macro-region must be a single contiguous Polygon containing Jiayuguan ([98.291, 39.771]) and Xining ([101.78, 36.62])`
+      `${sk}: 陝西 macro-region must be a single contiguous Polygon containing Jiayuguan ([98.291, 39.771]) and Xining ([101.78, 36.62])`
     );
   }
   for (const sk of ['s_ming_a', 's_ming_a2']) {
     const mingPol = (snapshots[sk].polities || []).find((p) => p.title === '明');
-    const hamiPol = (snapshots[sk].polities || []).find((p) => p.title === '哈密卫（关西七卫）');
-    const mongolPol = (snapshots[sk].polities || []).find((p) => p.title === '蒙古诸部 · 东察合台');
+    const hamiPol = (snapshots[sk].polities || []).find((p) => p.title === '哈密衛（關西七衛）');
+    const mongolPol = (snapshots[sk].polities || []).find((p) => p.title === '蒙古諸部 · 東察合臺');
     assert(
       hamiPol &&
         hamiPol.role === 'protectorate' &&
@@ -2473,7 +2473,7 @@ function main() {
         pointInShape(93.86, 40.35, hamiPol.shape) &&
         pointInShape(94.06, 39.93, hamiPol.shape) &&
         pointInShape(95.45, 40.0, hamiPol.shape),
-      `${sk}: 哈密卫（关西七卫） must contain Hami ([93.511, 42.821]), Yumen Pass ([93.86, 40.35]), Yangguan ([94.06, 39.93]), and Handong ([95.45, 40.0])`
+      `${sk}: 哈密衛（關西七衛） must contain Hami ([93.511, 42.821]), Yumen Pass ([93.86, 40.35]), Yangguan ([94.06, 39.93]), and Handong ([95.45, 40.0])`
     );
     const mingVertSet = new Set(
       mingPol.shape.coordinates[0][0].map((pt) => `${pt[0].toFixed(2)},${pt[1].toFixed(2)}`)
@@ -2483,11 +2483,11 @@ function main() {
     );
     assert(
       sharedWithMing.length >= 8,
-      `${sk}: 哈密卫（关西七卫） must share at least 8 contiguous boundary vertices with 明 at Jiayuguan, found ${sharedWithMing.length}`
+      `${sk}: 哈密衛（關西七衛） must share at least 8 contiguous boundary vertices with 明 at Jiayuguan, found ${sharedWithMing.length}`
     );
     assert(
       mongolPol && !pointInShape(93.511, 42.821, mongolPol.shape),
-      `${sk}: 蒙古诸部 · 东察合台 must not overlap Hami ([93.511, 42.821])`
+      `${sk}: 蒙古諸部 · 東察合臺 must not overlap Hami ([93.511, 42.821])`
     );
   }
 
@@ -2498,8 +2498,8 @@ function main() {
     snapshots.s_zhanguo_a2.polities.some((p) => p.title === '巴·蜀') &&
       snapshots.s_zhanguo_a2.polities.some((p) => p.title === '越') &&
       snapshots.s_zhanguo_a2.polities.some((p) => p.title === '中山') &&
-      snapshots.s_zhanguo_a2.polities.some((p) => p.title === '义渠'),
-    's_zhanguo_a2 (-340..-317 BCE, including -323 Five-State Accord) must keep 巴·蜀, 越, 中山, and 义渠 independent'
+      snapshots.s_zhanguo_a2.polities.some((p) => p.title === '義渠'),
+    's_zhanguo_a2 (-340..-317 BCE, including -323 Five-State Accord) must keep 巴·蜀, 越, 中山, and 義渠 independent'
   );
   assert.strictEqual(ctrl._resolveSnapKey(zgDynRef, -316), 's_zhanguo_b0', 'zhanguo at -316 BCE must resolve to s_zhanguo_b0');
   assert(
@@ -2518,7 +2518,7 @@ function main() {
   assert(
     !snapshots.s_zhanguo_b2.polities.some((p) => p.title === '中山') &&
       pointInShape(112.201, 30.351, snapshots.s_zhanguo_b2.polities.find((p) => p.title === '楚').shape),
-    's_zhanguo_b2 (-296..-279 BCE) must annex 中山 into 赵 while keeping Yingdu ([112.201, 30.351]) inside 楚 prior to -278 BCE'
+    's_zhanguo_b2 (-296..-279 BCE) must annex 中山 into 趙 while keeping Yingdu ([112.201, 30.351]) inside 楚 prior to -278 BCE'
   );
 
   // 23k. Verify 100% pre-modern settlement remark coverage and curated CITY_LORE bilingual integrity
@@ -2564,14 +2564,14 @@ function main() {
   for (const sk of ['s_tang_a5', 's_tang_b0a', 's_tang_b0']) {
     const pols = snapshots[sk].polities;
     const findPol = (t) => pols.find((p) => p.title === t);
-    const anxi = findPol('安西都护府');
-    const beiting = findPol('北庭都护府');
+    const anxi = findPol('安西都護府');
+    const beiting = findPol('北庭都護府');
     const tubo = findPol('吐蕃');
-    const nanzhao = findPol('南诏');
+    const nanzhao = findPol('南詔');
     const tang = findPol('唐');
     assert(
       anxi && beiting && tubo && nanzhao && tang,
-      `${sk} must contain 安西都护府, 北庭都护府, 吐蕃, 南诏, and 唐`
+      `${sk} must contain 安西都護府, 北庭都護府, 吐蕃, 南詔, and 唐`
     );
     const ringOf = (p) =>
       p.shape.type === 'Polygon'
@@ -2591,11 +2591,11 @@ function main() {
     };
     assert(
       countShared(anxiKeys, beitingKeys) >= 40,
-      `${sk}: 安西都护府 and 北庭都护府 must share >= 40 curved Tianshan frontier vertices`
+      `${sk}: 安西都護府 and 北庭都護府 must share >= 40 curved Tianshan frontier vertices`
     );
     assert(
       countShared(anxiKeys, tuboKeys) >= 50,
-      `${sk}: 安西都护府 and 吐蕃 must share >= 50 curved Kunlun-Altun frontier vertices`
+      `${sk}: 安西都護府 and 吐蕃 must share >= 50 curved Kunlun-Altun frontier vertices`
     );
     assert(
       countShared(tangKeys, tuboKeys) >= 50,
@@ -2603,7 +2603,7 @@ function main() {
     );
     assert(
       countShared(tangKeys, nanzhaoKeys) >= 40,
-      `${sk}: 唐 and 南诏 must share >= 40 curved Yunnan-Guangxi-Annan frontier vertices`
+      `${sk}: 唐 and 南詔 must share >= 40 curved Yunnan-Guangxi-Annan frontier vertices`
     );
     for (const p of [anxi, beiting, tubo, nanzhao, tang]) {
       const r = ringOf(p);
@@ -2617,29 +2617,29 @@ function main() {
   // 23m. Verify bilingual (ZH / EN / Pinyin) resolvePlace and inspect() city lore
   const changanRes = ctrl.resolvePlace("Chang'an", 741);
   assert(
-    changanRes && changanRes.name.includes('长安'),
-    `Expected resolvePlace("Chang'an", 741) to match 长安, got ${changanRes && changanRes.name}`
+    changanRes && changanRes.name.includes('長安'),
+    `Expected resolvePlace("Chang'an", 741) to match 長安, got ${changanRes && changanRes.name}`
   );
   const changanUnspaced = ctrl.resolvePlace('Changan', 741);
   assert(
-    changanUnspaced && changanUnspaced.name.includes('长安'),
-    `Expected resolvePlace("Changan", 741) to match 长安, got ${changanUnspaced && changanUnspaced.name}`
+    changanUnspaced && changanUnspaced.name.includes('長安'),
+    `Expected resolvePlace("Changan", 741) to match 長安, got ${changanUnspaced && changanUnspaced.name}`
   );
   const jinanFujian = ctrl.resolvePlace("Jin'an", 589);
   const jinanShandong = ctrl.resolvePlace('Jinan', 589);
   assert(
-    jinanFujian && jinanFujian.name.includes('晋安') && jinanShandong && !jinanShandong.name.includes('晋安'),
+    jinanFujian && jinanFujian.name.includes('晉安') && jinanShandong && !jinanShandong.name.includes('晉安'),
     `Expected apostrophe-aware disambiguation between Jin'an (${jinanFujian && jinanFujian.name}) and Jinan (${jinanShandong && jinanShandong.name})`
   );
   const lantianRes = ctrl.resolvePlace('Lantian Pass', 819);
   assert(
-    lantianRes && lantianRes.name === '蓝田关',
-    `Expected resolvePlace("Lantian Pass", 819) to match 蓝田关, got ${lantianRes && lantianRes.name}`
+    lantianRes && lantianRes.name === '藍田關',
+    `Expected resolvePlace("Lantian Pass", 819) to match 藍田關, got ${lantianRes && lantianRes.name}`
   );
   const inspectChangan = ctrl.inspect({ year: 741, place: "Chang'an" });
   assert(
     inspectChangan &&
-      inspectChangan.resolvedName === '长安' &&
+      inspectChangan.resolvedName === '長安' &&
       inspectChangan.lore &&
       inspectChangan.lore.tagEn &&
       inspectChangan.nearestCity &&
@@ -2658,15 +2658,15 @@ function main() {
     );
   }
   assert(
-    !tangSettlementNames.has('沙县（宁化）') && !tangSettlementNames.has('龙岩（汀州）'),
-    'Tang settlements must not contain stitched county labels "沙县（宁化）" or "龙岩（汀州）"'
+    !tangSettlementNames.has('沙縣（寧化）') && !tangSettlementNames.has('龍巖（汀州）'),
+    'Tang settlements must not contain stitched county labels "沙縣（寧化）" or "龍巖（汀州）"'
   );
   for (const [dKey, expectedPrefs, bannedLabels] of [
-    ['beisong', ['汀州', '南剑州'], ['汀州（龙岩）', '南剑州（尤溪）']],
-    ['nansong', ['汀州', '南剑州'], ['汀州（龙岩）', '南剑州（尤溪）']],
-    ['yuan', ['汀州路', '延平路'], ['汀州路（龙岩）']],
-    ['ming', ['汀州府', '延平府'], ['汀州府（龙岩）', '沙县（永安）']],
-    ['qing', ['延平府', '龙岩州'], ['永安（沙县）']],
+    ['beisong', ['汀州', '南劍州'], ['汀州（龍巖）', '南劍州（尤溪）']],
+    ['nansong', ['汀州', '南劍州'], ['汀州（龍巖）', '南劍州（尤溪）']],
+    ['yuan', ['汀州路', '延平路'], ['汀州路（龍巖）']],
+    ['ming', ['汀州府', '延平府'], ['汀州府（龍巖）', '沙縣（永安）']],
+    ['qing', ['延平府', '龍巖州'], ['永安（沙縣）']],
   ]) {
     const names = new Set((dynasties.find((d) => d.key === dKey).settlements || []).map((s) => s.ancient));
     for (const ep of expectedPrefs) {
@@ -2714,11 +2714,11 @@ function main() {
 
   // 23p. Verify Republic of China Warlord Era (1916–1928) multi-faction snapshots (s_roc_a0, s_roc_w1..w4, s_roc_a)
   for (const [rk, expectedTitles] of [
-    ['s_roc_a0', ['中华民国', '外蒙古（自治/苏控）']],
-    ['s_roc_w1', ['北洋政府 · 皖系（段祺瑞）', '直系（冯国璋 · 曹锟）', '奉系（张作霖）', '护法军政府 · 西南各系', '晋系（阎锡山）', '西北诸马（甘宁青）', '新疆（杨增新）']],
-    ['s_roc_w2', ['北洋政府 · 直系（曹锟 · 吴佩孚）', '奉系（张作霖）', '皖系（卢永祥 · 浙江）', '广州政府（孙中山）', '西南川滇黔桂各系', '晋系（阎锡山）', '西北诸马（甘宁青）', '新疆（杨增新）']],
-    ['s_roc_w3', ['北洋政府 · 奉系（张作霖）', '五省联军（孙传芳）', '直系（吴佩孚）', '西北国民军（冯玉祥）', '广州国民政府（两广统一）', '川滇黔军阀（刘湘 · 唐继尧）', '晋系（阎锡山）', '新疆（杨增新）']],
-    ['s_roc_w4', ['国民政府（北伐军与冯阎集团）', '安国军政府 · 奉系（张作霖）', '新疆（杨增新）']],
+    ['s_roc_a0', ['中華民國', '外蒙古（自治/蘇控）']],
+    ['s_roc_w1', ['北洋政府 · 皖系（段祺瑞）', '直系（馮國璋 · 曹錕）', '奉系（張作霖）', '護法軍政府 · 西南各系', '晉系（閻錫山）', '西北諸馬（甘寧青）', '新疆（楊增新）']],
+    ['s_roc_w2', ['北洋政府 · 直系（曹錕 · 吳佩孚）', '奉系（張作霖）', '皖系（盧永祥 · 浙江）', '廣州政府（孫中山）', '西南川滇黔桂各系', '晉系（閻錫山）', '西北諸馬（甘寧青）', '新疆（楊增新）']],
+    ['s_roc_w3', ['北洋政府 · 奉系（張作霖）', '五省聯軍（孫傳芳）', '直系（吳佩孚）', '西北國民軍（馮玉祥）', '廣州國民政府（兩廣統一）', '川滇黔軍閥（劉湘 · 唐繼堯）', '晉系（閻錫山）', '新疆（楊增新）']],
+    ['s_roc_w4', ['國民政府（北伐軍與馮閻集團）', '安國軍政府 · 奉系（張作霖）', '新疆（楊增新）']],
   ]) {
     const rs = snapshots[rk];
     assert(rs, `Missing ROC warlord snapshot ${rk}`);
@@ -2836,12 +2836,12 @@ function main() {
       'Legacy _journeyKeyForMilestone helper must remain removed'
     );
     assert(
-      !/展阅行迹|View Route/.test(fs.readFileSync(path.join(ROOT, 'js', 'app.js'), 'utf8')),
-      'Legacy 展阅行迹 / View Route buttons must not exist in js/app.js'
+      !/展閱行跡|View Route/.test(fs.readFileSync(path.join(ROOT, 'js', 'app.js'), 'utf8')),
+      'Legacy 展閱行跡 / View Route buttons must not exist in js/app.js'
     );
   }
 
-  // 23r. Person Chronicle Search (点人溯事) Dataset, Bilingual Parity, Dedup & Round-Trip Guard
+  // 23r. Person Chronicle Search (點人溯事) Dataset, Bilingual Parity, Dedup & Round-Trip Guard
   {
     assert(
       Array.isArray(loreData.PERSON_PROFILES) && loreData.PERSON_PROFILES.length >= 100,
@@ -2890,8 +2890,8 @@ function main() {
       }
     }
     const aliasChecks = [
-      ['刘彻', 'hanwudi'],
-      ['汉武帝', 'hanwudi'],
+      ['劉徹', 'hanwudi'],
+      ['漢武帝', 'hanwudi'],
       ['曹操', 'caocao'],
       ['Cao Cao', 'caocao'],
       ['孟德', 'caocao'],
@@ -2899,7 +2899,7 @@ function main() {
       ['Kongming', 'zhugeliang'],
       ['杜甫', 'dufu'],
       ['子美', 'dufu'],
-      ['东坡', 'sushi'],
+      ['東坡', 'sushi'],
       ['Su Shi', 'sushi'],
       ['Su Dongpo', 'sushi'],
       ['Mencius', 'mengzi'],
@@ -2908,7 +2908,7 @@ function main() {
       ['Li Longji', 'tangxuanzong'],
       ['Koxinga', 'zhengchenggong'],
       ['Sun Yat-sen', 'sunzhongshan'],
-      ['稼轩', 'xinqiji'],
+      ['稼軒', 'xinqiji'],
       ['王守仁', 'wangyangming'],
     ];
     for (const [query, expectedKey] of aliasChecks) {
@@ -2950,34 +2950,34 @@ function main() {
         snapshots.s_dongjin_c.prefectures.length <= 115 &&
         snapshots.s_nanbei_b.prefectures.length >= 130 &&
         snapshots.s_nanbei_b.prefectures.length <= 150 &&
-        !snapshots.s_dongjin_c.prefectures.some((p) => p.title === '毗陵典农校尉'),
+        !snapshots.s_dongjin_c.prefectures.some((p) => p.title === '毗陵典農校尉'),
       'Expected deduplicated North+South commanderies without Three Kingdoms anachronisms'
     );
 
     const spotCases = [
-      [{ lng: 119.451, lat: 32.18, year: 383 }, '南徐州(侨州)', '南东海郡(侨郡)'],
-      [{ lng: 119.451, lat: 32.18, year: 494 }, '南徐州(侨州)', '南东海郡(侨郡)'],
-      [{ lng: 119.43, lat: 32.42, year: 494 }, '南兖州(侨州)', '广陵郡'],
-      [{ lng: 119.43, lat: 32.42, year: 560 }, '吴州', '广陵郡'],
-      [{ lng: 119.02, lat: 34.55, year: 494 }, '青冀二州(侨州)', '东海郡'],
-      [{ lng: 119.02, lat: 34.55, year: 560 }, '海州', '东海郡'],
-      [{ lng: 114.07, lat: 32.12, year: 494 }, '司州(侨州)', '义阳郡'],
-      [{ lng: 114.07, lat: 32.12, year: 560 }, '申州', '义阳郡'],
-      [{ lng: 112.121, lat: 32.011, year: 383 }, '雍州(侨州)', '襄阳郡'],
-      [{ lng: 112.121, lat: 32.011, year: 494 }, '雍州(侨州)', '襄阳郡'],
-      [{ lng: 112.121, lat: 32.011, year: 560 }, '襄州', '襄阳郡'],
+      [{ lng: 119.451, lat: 32.18, year: 383 }, '南徐州(僑州)', '南東海郡(僑郡)'],
+      [{ lng: 119.451, lat: 32.18, year: 494 }, '南徐州(僑州)', '南東海郡(僑郡)'],
+      [{ lng: 119.43, lat: 32.42, year: 494 }, '南兗州(僑州)', '廣陵郡'],
+      [{ lng: 119.43, lat: 32.42, year: 560 }, '吳州', '廣陵郡'],
+      [{ lng: 119.02, lat: 34.55, year: 494 }, '青冀二州(僑州)', '東海郡'],
+      [{ lng: 119.02, lat: 34.55, year: 560 }, '海州', '東海郡'],
+      [{ lng: 114.07, lat: 32.12, year: 494 }, '司州(僑州)', '義陽郡'],
+      [{ lng: 114.07, lat: 32.12, year: 560 }, '申州', '義陽郡'],
+      [{ lng: 112.121, lat: 32.011, year: 383 }, '雍州(僑州)', '襄陽郡'],
+      [{ lng: 112.121, lat: 32.011, year: 494 }, '雍州(僑州)', '襄陽郡'],
+      [{ lng: 112.121, lat: 32.011, year: 560 }, '襄州', '襄陽郡'],
       [{ lng: 114.311, lat: 30.591, year: 494 }, '郢州', '江夏郡'],
       [{ lng: 112.451, lat: 34.621, year: 494 }, '司州', '河南尹(郡)'],
       [{ lng: 112.451, lat: 34.621, year: 560 }, '洛州', '河南郡'],
       [{ lng: 114.391, lat: 36.101, year: 494 }, '相州', '魏郡'],
       [{ lng: 114.391, lat: 36.101, year: 560 }, '司州', '魏郡'],
-      [{ lng: 113.301, lat: 40.081, year: 494 }, '恒州', '代郡'],
-      [{ lng: 117.001, lat: 36.651, year: 494 }, '齐州', '济南郡'],
+      [{ lng: 113.301, lat: 40.081, year: 494 }, '恆州', '代郡'],
+      [{ lng: 117.001, lat: 36.651, year: 494 }, '齊州', '濟南郡'],
       [{ lng: 108.871, lat: 37.991, year: 383 }, '夏州', '朔方郡'],
       [{ lng: 108.871, lat: 37.991, year: 494 }, '夏州', '化政郡'],
       [{ lng: 110.29, lat: 25.27, year: 520 }, '桂州', '始安郡'],
-      [{ lng: 109.5, lat: 31.02, year: 520 }, '信州', '巴东郡'],
-      [{ lng: 119.3, lat: 26.08, year: 560 }, '闽州', '晋安郡'],
+      [{ lng: 109.5, lat: 31.02, year: 520 }, '信州', '巴東郡'],
+      [{ lng: 119.3, lat: 26.08, year: 560 }, '閩州', '晉安郡'],
     ];
     for (const [opts, expReg, expPref] of spotCases) {
       const info = ctrl.inspect(opts);
@@ -3063,14 +3063,14 @@ function main() {
       .filter((x) => x.attrs && String(x.attrs.class || '').includes('is-qiaozhou'))
       .map((x) => x.n.textContent);
     assert(
-      zhQiaoCaps.includes('南徐州·侨') && zhQiaoCaps.includes('雍州·侨') && zhQiaoCaps.includes('青冀二州·侨'),
-      `Expected on-map ·侨 badges in ZH at 494 CE, got ${JSON.stringify(zhQiaoCaps)}`
+      zhQiaoCaps.includes('南徐州·僑') && zhQiaoCaps.includes('雍州·僑') && zhQiaoCaps.includes('青冀二州·僑'),
+      `Expected on-map ·僑 badges in ZH at 494 CE, got ${JSON.stringify(zhQiaoCaps)}`
     );
-    ctrl.openGenealogyAt(112.121, 32.011, '襄阳');
+    ctrl.openGenealogyAt(112.121, 32.011, '襄陽');
     const zhGenHtml = ctrl._id('genealogy-timeline').children.map((c) => c.innerHTML).join('\n');
     assert(
-      zhGenHtml.includes('雍州（侨州）'),
-      `Expected 雍州（侨州） in ZH place genealogy at Xiangyang, got ${zhGenHtml.slice(0, 200)}`
+      zhGenHtml.includes('雍州（僑州）'),
+      `Expected 雍州（僑州） in ZH place genealogy at Xiangyang, got ${zhGenHtml.slice(0, 200)}`
     );
 
     ctrl.locale = 'en';
@@ -3098,42 +3098,42 @@ function main() {
   // CUJ 25: Curated Popular Historical Milestones, City Cultural/Battle Landmarks & Strengthened Hero Trajectories (Ancient/Imperial Eras)
   {
     const expectedPopularMilestones = [
-      ['zhanguo', -279, '火牛阵'],
-      ['zhanguo', -257, '窃符救赵'],
-      ['zhanguo', -246, '郑国渠'],
-      ['qin', -214, '灵渠'],
-      ['qin', -213, '焚书令'],
-      ['qin', -203, '鸿沟'],
+      ['zhanguo', -279, '火牛陣'],
+      ['zhanguo', -257, '竊符救趙'],
+      ['zhanguo', -246, '鄭國渠'],
+      ['qin', -214, '靈渠'],
+      ['qin', -213, '焚書令'],
+      ['qin', -203, '鴻溝'],
       ['xihan', -202, '垓下'],
-      ['xihan', -134, '独尊儒术'],
+      ['xihan', -134, '獨尊儒術'],
       ['xihan', -127, '推恩令'],
-      ['xihan', -91, '史记'],
-      ['donghan', 207, '三顾茅庐'],
-      ['donghan', 211, '潼关之战'],
-      ['donghan', 215, '逍遥津'],
+      ['xihan', -91, '史記'],
+      ['donghan', 207, '三顧茅廬'],
+      ['donghan', 211, '潼關之戰'],
+      ['donghan', 215, '逍遙津'],
       ['sanguo', 223, '白帝城'],
-      ['sanguo', 234, '司马懿'],
-      ['dongjin', 353, '兰亭集序'],
-      ['nanbei', 529, '陈庆之'],
-      ['nanbei', 546, '玉壁之战'],
+      ['sanguo', 234, '司馬懿'],
+      ['dongjin', 353, '蘭亭集序'],
+      ['nanbei', 529, '陳慶之'],
+      ['nanbei', 546, '玉壁之戰'],
       ['nanbei', 548, '梁武帝'],
-      ['sui', 605, '科举制'],
+      ['sui', 605, '科舉制'],
       ['tang', 645, '玄奘'],
       ['tang', 663, '白江口'],
       ['beisong', 1041, '好水川'],
-      ['beisong', 1121, '方腊'],
-      ['nansong', 1207, '开禧北伐'],
-      ['nansong', 1247, '凉州会盟'],
+      ['beisong', 1121, '方臘'],
+      ['nansong', 1207, '開禧北伐'],
+      ['nansong', 1247, '涼州會盟'],
       ['yuan', 1368, '大都'],
-      ['ming', 1393, '蓝玉案'],
-      ['ming', 1402, '靖难'],
-      ['ming', 1626, '宁远大捷'],
-      ['qing', 1669, '鳌拜'],
-      ['qing', 1793, '马戛尔尼'],
+      ['ming', 1393, '藍玉案'],
+      ['ming', 1402, '靖難'],
+      ['ming', 1626, '寧遠大捷'],
+      ['qing', 1669, '鰲拜'],
+      ['qing', 1793, '馬戛爾尼'],
       ['qing', 1799, '和珅'],
-      ['qing', 1856, '天京事变'],
-      ['qing', 1860, '圆明园'],
-      ['qing', 1894, '邓世昌'],
+      ['qing', 1856, '天京事變'],
+      ['qing', 1860, '圓明園'],
+      ['qing', 1894, '鄧世昌'],
     ];
     for (const [dynKey, yr, kw] of expectedPopularMilestones) {
       const d = dynasties.find((x) => x.key === dynKey);
@@ -3152,45 +3152,45 @@ function main() {
     }
 
     const expectedCityGems = [
-      ['邯郸', 'zhanguo', [114.48, 36.61], '负荆请罪', 'Lian Po'],
+      ['邯鄲', 'zhanguo', [114.48, 36.61], '負荊請罪', 'Lian Po'],
       ['易水', 'zhanguo', [115.50, 39.35], '易水寒', 'Jing Ke'],
-      ['北海', 'xihan', [107.30, 53.30], '苏武', 'Su Wu'],
-      ['洛阳(汉书)', 'donghan', [112.46, 34.63], '汉书', 'Ban Gu'],
-      ['汝南(说文)', 'donghan', [114.12, 33.57], '说文解字', 'Xu Shen'],
-      ['南阳(伤寒)', 'donghan', [112.53, 33.00], '伤寒杂病论', 'Zhang Zhongjing'],
-      ['合肥', 'donghan', [117.28, 31.86], '逍遥津', 'Xiaoyao Ford'],
-      ['洛阳(金谷)', 'xijin', [112.42, 34.66], '石崇', 'Golden Valley'],
-      ['上海(华亭)', 'xijin', [121.23, 31.03], '华亭鹤唳', 'Lu Ji'],
-      ['建康(祖冲之)', 'nanbei', [118.80, 32.05], '祖冲之', 'Zu Chongzhi'],
+      ['北海', 'xihan', [107.30, 53.30], '蘇武', 'Su Wu'],
+      ['洛陽(漢書)', 'donghan', [112.46, 34.63], '漢書', 'Ban Gu'],
+      ['汝南(說文)', 'donghan', [114.12, 33.57], '說文解字', 'Xu Shen'],
+      ['南陽(傷寒)', 'donghan', [112.53, 33.00], '傷寒雜病論', 'Zhang Zhongjing'],
+      ['合肥', 'donghan', [117.28, 31.86], '逍遙津', 'Xiaoyao Ford'],
+      ['洛陽(金谷)', 'xijin', [112.42, 34.66], '石崇', 'Golden Valley'],
+      ['上海(華亭)', 'xijin', [121.23, 31.03], '華亭鶴唳', 'Lu Ji'],
+      ['建康(祖沖之)', 'nanbei', [118.80, 32.05], '祖沖之', 'Zu Chongzhi'],
       ['建康(梁武帝)', 'nanbei', [118.80, 32.06], '梁武帝', 'Emperor Wu'],
-      ['青州', 'nanbei', [118.48, 36.69], '齐民要术', 'Qimin Yaoshu'],
-      ['洛阳(邙山)', 'nanbei', [112.60, 34.72], '兰陵王', 'Prince of Lanling'],
-      ['荥阳', 'sui', [113.38, 34.80], '瓦岗军', 'Wagang'],
+      ['青州', 'nanbei', [118.48, 36.69], '齊民要術', 'Qimin Yaoshu'],
+      ['洛陽(邙山)', 'nanbei', [112.60, 34.72], '蘭陵王', 'Prince of Lanling'],
+      ['滎陽', 'sui', [113.38, 34.80], '瓦崗軍', 'Wagang'],
       ['天山', 'tang', [88.13, 47.85], '三箭定天山', 'Xue Rengui'],
-      ['南昌', 'tang', [115.88, 28.68], '滕王阁序', 'Pavilion of Prince Teng'],
-      ['金陵(夜宴)', 'wudai', [118.79, 32.04], '韩熙载夜宴图', 'Gu Hongzhong'],
+      ['南昌', 'tang', [115.88, 28.68], '滕王閣序', 'Pavilion of Prince Teng'],
+      ['金陵(夜宴)', 'wudai', [118.79, 32.04], '韓熙載夜宴圖', 'Gu Hongzhong'],
       ['成都(花蕊)', 'beisong', [104.07, 30.67], '花蕊夫人', 'Consort Huarui'],
-      ['开封(活字)', 'beisong', [114.35, 34.79], '毕昇', 'Bi Sheng'],
-      ['开封(包拯)', 'beisong', [114.35, 34.79], '包拯', 'Bao Zheng'],
-      ['镇江', 'beisong', [119.46, 32.20], '梦溪笔谈', 'Shen Kuo'],
+      ['開封(活字)', 'beisong', [114.35, 34.79], '畢昇', 'Bi Sheng'],
+      ['開封(包拯)', 'beisong', [114.35, 34.79], '包拯', 'Bao Zheng'],
+      ['鎮江', 'beisong', [119.46, 32.20], '夢溪筆談', 'Shen Kuo'],
       ['梁山', 'beisong', [116.12, 35.76], '宋江', 'Song Jiang'],
-      ['庐山(白鹿洞)', 'nansong', [116.04, 29.52], '白鹿洞书院', 'White Deer Grotto'],
-      ['潭州(飞虎军)', 'nansong', [112.98, 28.20], '飞虎军', 'Flying Tiger'],
-      ['潭州(洗冤录)', 'nansong', [112.97, 28.20], '洗冤集录', 'Song Ci'],
-      ['元大都(窦娥)', 'yuan', [116.39, 39.92], '窦娥冤', 'Guan Hanqing'],
-      ['松江(黄道婆)', 'yuan', [121.44, 31.12], '黄道婆', 'Huang Daopo'],
-      ['富阳(富春)', 'yuan', [119.95, 30.05], '富春山居图', 'Huang Gongwang'],
-      ['蕲州', 'ming', [115.43, 30.22], '本草纲目', 'Li Shizhen'],
-      ['北京(1629)', 'ming', [116.37, 39.90], '广渠门', 'Yuan Chonghuan'],
+      ['廬山(白鹿洞)', 'nansong', [116.04, 29.52], '白鹿洞書院', 'White Deer Grotto'],
+      ['潭州(飛虎軍)', 'nansong', [112.98, 28.20], '飛虎軍', 'Flying Tiger'],
+      ['潭州(洗冤錄)', 'nansong', [112.97, 28.20], '洗冤集錄', 'Song Ci'],
+      ['元大都(竇娥)', 'yuan', [116.39, 39.92], '竇娥冤', 'Guan Hanqing'],
+      ['松江(黃道婆)', 'yuan', [121.44, 31.12], '黃道婆', 'Huang Daopo'],
+      ['富陽(富春)', 'yuan', [119.95, 30.05], '富春山居圖', 'Huang Gongwang'],
+      ['蘄州', 'ming', [115.43, 30.22], '本草綱目', 'Li Shizhen'],
+      ['北京(1629)', 'ming', [116.37, 39.90], '廣渠門', 'Yuan Chonghuan'],
       ['北京(1630)', 'ming', [116.37, 39.90], '西市', 'Yuan Chonghuan'],
-      ['北京(1763)', 'qing', [116.20, 39.99], '红楼梦', 'Cao Xueqin'],
-      ['大渡河', 'qing', [102.35, 29.26], '石达开', 'Shi Dakai'],
-      ['喀什', 'qing', [75.99, 39.47], '喀什噶尔', 'Kashgar'],
-      ['敦煌', 'qing', [94.81, 40.04], '藏经洞', 'Mogao'],
-      ['八达岭', 'qing', [116.02, 40.35], '詹天佑', 'Zhan Tianyou'],
-      ['福州(1884)', 'qing', [119.30, 26.08], '马江海战', 'Mawei'],
+      ['北京(1763)', 'qing', [116.20, 39.99], '紅樓夢', 'Cao Xueqin'],
+      ['大渡河', 'qing', [102.35, 29.26], '石達開', 'Shi Dakai'],
+      ['喀什', 'qing', [75.99, 39.47], '喀什噶爾', 'Kashgar'],
+      ['敦煌', 'qing', [94.81, 40.04], '藏經洞', 'Mogao'],
+      ['八達嶺', 'qing', [116.02, 40.35], '詹天佑', 'Zhan Tianyou'],
+      ['福州(1884)', 'qing', [119.30, 26.08], '馬江海戰', 'Mawei'],
       ['福州(1885)', 'qing', [119.30, 26.08], '左宗棠', 'Zuo Zongtang'],
-      ['广州', 'qing', [113.30, 23.14], '黄花岗', 'Huanghuagang'],
+      ['廣州', 'qing', [113.30, 23.14], '黃花崗', 'Huanghuagang'],
     ];
     for (const [label, dynKey, coord, zhKw, enKw] of expectedCityGems) {
       const d = dynasties.find((x) => x.key === dynKey);
@@ -3279,7 +3279,7 @@ function main() {
       'index.html and sitemap.xml must use canonical ?person= URLs rather than legacy ?journey='
     );
     assert(
-      !indexHtml.includes('秦灭东周王室') && !indexHtml.includes('（今江西南安府（今大余））'),
+      !indexHtml.includes('秦滅東周王室') && !indexHtml.includes('（今江西南安府（今大余））'),
       'index.html must not contain stale Warring States factual error or nested Nan’an double parentheses'
     );
     const ssrMilestoneLis = indexHtml.match(/<ul id="milestone-list">([\s\S]*?)<\/ul>/);
@@ -3301,7 +3301,7 @@ function main() {
     assert(maShanLinkMatch, 'Expected synchronous subsetted Ma Shan Zheng stylesheet <link> in index.html');
     const subsetChars = new Set(decodeURIComponent(maShanLinkMatch[2]));
     const requiredCalligraphyChars = [
-      '江山时序',
+      '江山時序',
       ...dynasties.map((d) => d.title || ''),
       ...dynasties.map((d) => (enLocale.dynasties[d.key] && enLocale.dynasties[d.key].name) || ''),
     ].join('');
@@ -3343,7 +3343,7 @@ function main() {
 
     const xssInspect = ctrl.inspect({
       year: 741,
-      place: '长安<img src=x onerror=alert(1)>,洛阳',
+      place: '長安<img src=x onerror=alert(1)>,洛陽',
     });
     assert(
       xssInspect.route &&
@@ -3402,7 +3402,7 @@ function main() {
       const sp = ctrl._resolveEraSpan(y, nanbei);
       assert(sp[1].startsWith('南朝'), `Reference era for ${y} must follow the Southern Dynasties, got ${sp[1]}`);
     }
-    assert.strictEqual(ctrl.formatEraLabel(479, nanbei), '南朝齐高帝·建元元年');
+    assert.strictEqual(ctrl.formatEraLabel(479, nanbei), '南朝齊高帝·建元元年');
     assert.strictEqual(ctrl.formatEraLabel(523, nanbei), '南朝梁武帝·普通四年');
 
     const snapPolityTitles = new Set();
@@ -3433,19 +3433,19 @@ function main() {
     }
 
     for (const [k, y, kw, expected] of [
-      ['nanbei', 523, '六镇之乱', '北魏孝明帝·正光四年'],
-      ['sanguo', 221, '刘备在成都称帝', '蜀汉昭烈帝·章武元年'],
-      ['sanguo', 222, '夷陵之战', '吴大帝·黄武元年'],
-      ['nanbei', 479, '萧道成', '南朝齐高帝·建元元年'],
-      ['nanbei', 553, '尉迟迥', '西魏废帝二年'],
-      ['nanbei', 546, '玉壁之战', '西魏文帝·大统十二年'],
-      ['wudai', 916, '耶律阿保机', '辽太祖·神册元年'],
-      ['beisong', 1038, '元昊', '西夏景宗·天授礼法延祚元年'],
-      ['beisong', 1115, '完颜阿骨打', '金太祖·收国元年'],
-      ['beisong', 1104, '河湟开边', '北宋徽宗·崇宁三年'],
-      ['nansong', 1127, '赵构即位', '南宋高宗·建炎元年'],
-      ['nansong', 1141, '绍兴和议', '南宋高宗·绍兴十一年'],
-      ['nansong', 1275, '马可·波罗', '元世祖·至元十二年'],
+      ['nanbei', 523, '六鎮之亂', '北魏孝明帝·正光四年'],
+      ['sanguo', 221, '劉備在成都稱帝', '蜀漢昭烈帝·章武元年'],
+      ['sanguo', 222, '夷陵之戰', '吳大帝·黃武元年'],
+      ['nanbei', 479, '蕭道成', '南朝齊高帝·建元元年'],
+      ['nanbei', 553, '尉遲迥', '西魏廢帝二年'],
+      ['nanbei', 546, '玉壁之戰', '西魏文帝·大統十二年'],
+      ['wudai', 916, '耶律阿保機', '遼太祖·神冊元年'],
+      ['beisong', 1038, '元昊', '西夏景宗·天授禮法延祚元年'],
+      ['beisong', 1115, '完顏阿骨打', '金太祖·收國元年'],
+      ['beisong', 1104, '河湟開邊', '北宋徽宗·崇寧三年'],
+      ['nansong', 1127, '趙構即位', '南宋高宗·建炎元年'],
+      ['nansong', 1141, '紹興和議', '南宋高宗·紹興十一年'],
+      ['nansong', 1275, '馬可·波羅', '元世祖·至元十二年'],
     ]) {
       assert.strictEqual(ctrl._eventEraLabel(dynByKey(k), milestoneOf(k, y, kw)), expected, `${k} ${y} ${kw}`);
     }
@@ -3454,10 +3454,10 @@ function main() {
     for (const [q, year, titleKw] of [
       ['太和十八年', 494, '北魏孝文帝'],
       ['正光四年', 523, '北魏孝明帝'],
-      ['章武元年', 221, '蜀汉昭烈帝'],
-      ['统和二十五年', 1007, '辽圣宗'],
-      ['天授礼法延祚元年', 1038, '西夏景宗'],
-      ['西魏废帝二年', 553, '西魏废帝'],
+      ['章武元年', 221, '蜀漢昭烈帝'],
+      ['統和二十五年', 1007, '遼聖宗'],
+      ['天授禮法延祚元年', 1038, '西夏景宗'],
+      ['西魏廢帝二年', 553, '西魏廢帝'],
       ['普通四年', 523, '南朝梁武帝'],
     ]) {
       const hit = ctrl._queryQuickSearch(q).find((h) => h.kind === 'era');
@@ -3472,7 +3472,7 @@ function main() {
       assert(!ctrl._queryQuickSearch(q).some((h) => h.kind === 'era'), `Bare regime "${q}" must not list era rows`);
     }
 
-    const frontier = loreData.PLACE_LANDMARK_EVENTS.find((lm) => lm.year === 523 && (lm.zh || '').includes('六镇乱起'));
+    const frontier = loreData.PLACE_LANDMARK_EVENTS.find((lm) => lm.year === 523 && (lm.zh || '').includes('六鎮亂起'));
     assert(frontier, 'Missing 523 Six Garrisons landmark event');
     assert.strictEqual(ctrl.formatEraLabel(523, nanbei, frontier.coord), '北魏孝明帝·正光四年');
     assert.strictEqual(ctrl.inspect({ year: 523, lng: 109.5, lat: 40.95 }).era, '北魏孝明帝·正光四年');
@@ -3699,11 +3699,11 @@ function main() {
       mobileChronicleOpen: true,
       activePerson: null,
       activeTrace: [108.94, 34.26],
-      activeTraceLabel: '长安',
+      activeTraceLabel: '長安',
       activeReturnPerson: null,
       activeCustomRoute: [
-        { lng: 108.94, lat: 34.26, coord: [108.94, 34.26], year: 755, name: '长安' },
-        { lng: 112.45, lat: 34.62, coord: [112.45, 34.62], year: 755, name: '洛阳' },
+        { lng: 108.94, lat: 34.26, coord: [108.94, 34.26], year: 755, name: '長安' },
+        { lng: 112.45, lat: 34.62, coord: [112.45, 34.62], year: 755, name: '洛陽' },
       ],
       customRouteStopIdx: 0,
       challenge: { variant: 'locate', deck: [], index: 0, score: 0, answered: false },
@@ -3841,15 +3841,15 @@ function main() {
       polityTitle: '扶南',
       polityRole: 'neighbor',
     });
-    const joseonPolNode = makeCaptionNode(['polity-caption', 'neighbor'], '朝鲜', cx, cy, {
-      polityTitle: '朝鲜',
+    const joseonPolNode = makeCaptionNode(['polity-caption', 'neighbor'], '朝鮮', cx, cy, {
+      polityTitle: '朝鮮',
       polityRole: 'neighbor',
     });
     const cambodiaWatermark = makeCaptionNode(['neighbor-caption'], '柬埔寨', kx, ky, {
       rawName: '柬埔寨',
     });
-    const joseonWatermark = makeCaptionNode(['neighbor-caption'], '朝鲜', cx, cy, {
-      rawName: '朝鲜',
+    const joseonWatermark = makeCaptionNode(['neighbor-caption'], '朝鮮', cx, cy, {
+      rawName: '朝鮮',
     });
 
     const mockCtrl = {
@@ -3893,10 +3893,10 @@ function main() {
         ) >= 9.0,
       `Modern watermark 柬埔寨 must dodge co-located ancient polity 扶南 (got dy=${(finalCambodiaY - finalFunanY).toFixed(1)})`
     );
-    // Same-named modern watermark 朝鲜 hides when historical polity 朝鲜 is active
+    // Same-named modern watermark 朝鮮 hides when historical polity 朝鮮 is active
     assert(
       joseonWatermark.classList.contains('is-crowded-hidden'),
-      'Modern watermark 朝鲜 must hide when an active historical polity with the identical name (朝鲜) is displayed'
+      'Modern watermark 朝鮮 must hide when an active historical polity with the identical name (朝鮮) is displayed'
     );
   }
 
@@ -4008,7 +4008,7 @@ function main() {
     // Verify Person Chronicle autoplay also respects playSpeed and live rescheduling
     ctrl.playing = false;
     ctrl.playInterval = null;
-    ctrl.activePerson = { name: '苏轼', events: [{ year: 1037 }, { year: 1082 }] };
+    ctrl.activePerson = { name: '蘇軾', events: [{ year: 1037 }, { year: 1082 }] };
     ctrl.activePersonEventIdx = 0;
     ctrl.personTimer = 77;
     proto.setPlaySpeed.call(ctrl, 2);

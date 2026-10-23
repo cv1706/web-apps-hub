@@ -752,7 +752,7 @@ window.ATLAS_LORE_DATA = {
     ],
     [
       275,
-      "西晉鹹寧",
+      "西晉咸寧",
       1,
       "西晉武帝",
       "Emp. Wu"
@@ -2425,7 +2425,7 @@ window.ATLAS_LORE_DATA = {
     ],
     [
       1851,
-      "清鹹豐",
+      "清咸豐",
       1,
       "清文宗",
       "Xianfeng Emp. (Wenzong)"
@@ -3793,9 +3793,9 @@ window.ATLAS_LORE_DATA = {
         108.71,
         34.33
       ],
-      "site": "鹹陽",
+      "site": "咸陽",
       "siteEn": "Xianyang",
-      "zh": "秦孝公與商鞅自櫟陽遷都鹹陽，廢井田、設縣制、統一度量衡",
+      "zh": "秦孝公與商鞅自櫟陽遷都咸陽，廢井田、設縣制、統一度量衡",
       "en": "Duke Xiao of Qin and Shang Yang move the capital to Xianyang and launch the Second Reform"
     },
     {
@@ -3805,9 +3805,9 @@ window.ATLAS_LORE_DATA = {
         108.71,
         34.33
       ],
-      "site": "鹹陽",
+      "site": "咸陽",
       "siteEn": "Xianyang",
-      "zh": "秦始皇統一六國定都鹹陽，收天下兵器鑄十二金人",
+      "zh": "秦始皇統一六國定都咸陽，收天下兵器鑄十二金人",
       "en": "Qin Shi Huang unifies China with Xianyang as imperial capital"
     },
     {
@@ -3817,9 +3817,9 @@ window.ATLAS_LORE_DATA = {
         109.21,
         34.37
       ],
-      "site": "鹹陽·鴻門",
+      "site": "咸陽·鴻門",
       "siteEn": "Xianyang / Hongmen",
-      "zh": "劉邦入關破鹹陽約法三章；項羽於鴻門設宴",
+      "zh": "劉邦入關破咸陽約法三章；項羽於鴻門設宴",
       "en": "Liu Bang enters Xianyang; Xiang Yu hosts the Feast at Hongmen",
       "month": 2
     },
@@ -4840,7 +4840,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "成都",
       "siteEn": "Chengdu",
-      "zh": "秦將司馬錯由石牛道滅蜀置蜀郡，前311年張儀按鹹陽規制築成都城",
+      "zh": "秦將司馬錯由石牛道滅蜀置蜀郡，前311年張儀按咸陽規制築成都城",
       "en": "Qin general Sima Cuo conquers Shu; Zhang Yi rebuilds Chengdu modeled on Xianyang"
     },
     {
@@ -7087,7 +7087,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "武關",
       "siteEn": "Wu Pass",
-      "zh": "屈原極諫無果，楚懷王赴武關之會為秦所扣留，客死鹹陽",
+      "zh": "屈原極諫無果，楚懷王赴武關之會為秦所扣留，客死咸陽",
       "en": "Despite Qu Yuan warning against it, King Huai of Chu enters Wu Pass and is detained by Qin"
     },
     {
@@ -7133,9 +7133,9 @@ window.ATLAS_LORE_DATA = {
         108.76,
         34.33
       ],
-      "site": "杜郵（鹹陽西）",
+      "site": "杜郵（咸陽西）",
       "siteEn": "Duyou (West of Xianyang)",
-      "zh": "白起拒帥秦軍攻邯鄲觸怒秦昭襄王，行至鹹陽西十里杜郵賜劍自盡",
+      "zh": "白起拒帥秦軍攻邯鄲觸怒秦昭襄王，行至咸陽西十里杜郵賜劍自盡",
       "en": "Bai Qi refuses to command the siege of Handan and is ordered to take his own life at Duyou"
     },
     {
@@ -7183,7 +7183,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "邯鄲",
       "siteEn": "Handan",
-      "zh": "秦異人質趙，嬴政生於邯鄲；前247年年十三歸鹹陽即秦王位",
+      "zh": "秦異人質趙，嬴政生於邯鄲；前247年年十三歸咸陽即秦王位",
       "en": "Ying Zheng (future Qin Shi Huang) is born in Handan as son of a Qin royal hostage"
     },
     {
@@ -7389,7 +7389,7 @@ window.ATLAS_LORE_DATA = {
         108.73,
         34.33
       ],
-      "site": "細柳營（鹹陽西南）",
+      "site": "細柳營（咸陽西南）",
       "siteEn": "Xiliu Camp (Near Chang'an)",
       "zh": "匈奴寇邊，漢文帝勞軍細柳營按轡徐行，贊周亞夫真將軍",
       "en": "Emperor Wen inspects Xiliu Camp at a walk, praising strict commander Zhou Yafu as a true general"
@@ -10059,7 +10059,7 @@ window.ATLAS_LORE_DATA = {
         108.58,
         34.34
       ],
-      "site": "茂陵（今陝西鹹陽興平）",
+      "site": "茂陵（今陝西咸陽興平）",
       "siteEn": "Maoling Mausoleum (Xingping, Shaanxi)",
       "zh": "二十四歲的冠軍侯霍去病病逝長安，武帝築祁連山冢陪葬茂陵",
       "en": "Young general Huo Qubing dies at twenty-four; Emperor Wu builds a Qilian-shaped mound beside Maoling"
@@ -10631,7 +10631,7 @@ window.ATLAS_LORE_DATA = {
         108.71,
         34.33
       ],
-      "site": "鹹陽（今陝西鹹陽）",
+      "site": "咸陽（今陝西咸陽）",
       "siteEn": "Xianyang (Shaanxi)",
       "zh": "秦下逐客令，李斯上《諫逐客書》“泰山不讓土壤”，秦王收回成命",
       "en": "When Qin expels foreign advisers, Li Si's memorial persuades the King to revoke the order"
@@ -10643,9 +10643,9 @@ window.ATLAS_LORE_DATA = {
         108.71,
         34.33
       ],
-      "site": "鹹陽（今陝西鹹陽）",
+      "site": "咸陽（今陝西咸陽）",
       "siteEn": "Xianyang (Shaanxi)",
-      "zh": "李斯遭趙高誣陷腰斬鹹陽，臨刑嘆“牽黃犬出上蔡東門”不可得",
+      "zh": "李斯遭趙高誣陷腰斬咸陽，臨刑嘆“牽黃犬出上蔡東門”不可得",
       "en": "Framed by Zhao Gao, Li Si is executed in Xianyang, longing to hunt hares with his son once more",
       "month": 7
     },
@@ -10761,8 +10761,8 @@ window.ATLAS_LORE_DATA = {
         {
           "year": -238,
           "eraZh": "秦王政九年",
-          "ancientZh": "鹹陽",
-          "modernZh": "陝西鹹陽",
+          "ancientZh": "咸陽",
+          "modernZh": "陝西咸陽",
           "ancientEn": "Xianyang",
           "modernEn": "Xianyang, Shaanxi",
           "coord": [
@@ -10900,7 +10900,7 @@ window.ATLAS_LORE_DATA = {
           "labelPos": "top",
           "titleZh": "圖窮匕見與易水破燕 · 攻拔薊城",
           "titleEn": "Battle of Yi River & Capture of Jicheng",
-          "descZh": "秦軍飲馬易水，燕太子丹於前227年遣荊軻歌「風蕭蕭兮易水寒」入鹹陽獻督亢地圖刺秦，圖窮匕見未果。秦王政震怒，命王翦、辛勝率主力北伐，於易水之西大破燕代聯軍，前226年十月攻拔燕都薊城。燕王喜斬太子丹首級獻秦求和未果，退保遼東襄平。",
+          "descZh": "秦軍飲馬易水，燕太子丹於前227年遣荊軻歌「風蕭蕭兮易水寒」入咸陽獻督亢地圖刺秦，圖窮匕見未果。秦王政震怒，命王翦、辛勝率主力北伐，於易水之西大破燕代聯軍，前226年十月攻拔燕都薊城。燕王喜斬太子丹首級獻秦求和未果，退保遼東襄平。",
           "descEn": "After Jing Ke’s failed assassination attempt in Xianyang (227 BCE), Wang Jian crushed the Yan-Dai army west of the Yi River and captured the Yan capital Jicheng in 226 BCE. King Xi of Yan fled east to Liaodong.",
           "quoteZh": "「風蕭蕭兮易水寒，壯士一去兮不復還！」——《戰國策·燕策三》",
           "quoteEn": "“The wind blows shrill and the Yi River is cold; once the hero departs, he shall never return!” — Intrigues of the Warring States"
@@ -12944,14 +12944,14 @@ window.ATLAS_LORE_DATA = {
       "descEn": "Cradled between the Wei River and the Qinling Mountains in the Guanzhong Basin, it served as imperial capital for over ten dynasties including Zhou, Qin, Western Han, Sui, and Tang, and as the eastern terminus of the Silk Road."
     },
     {
-      "modern": "鹹陽",
+      "modern": "咸陽",
       "coord": [
         108.71,
         34.33
       ],
       "tagZh": "畢陌渭北 · 大秦帝都",
       "tagEn": "North Bank of Wei River · Qin Imperial Capital",
-      "descZh": "南臨渭水、北依九嵕諸山，山水俱陽故名鹹陽。秦孝公十二年自櫟陽遷都於此，商鞅變法、秦始皇兼併六國皆以此為中樞，漢唐時為京畿渭北陵邑與絲路西出首驛。",
+      "descZh": "南臨渭水、北依九嵕諸山，山水俱陽故名咸陽。秦孝公十二年自櫟陽遷都於此，商鞅變法、秦始皇兼併六國皆以此為中樞，漢唐時為京畿渭北陵邑與絲路西出首驛。",
       "descEn": "Situated on the northern bank of the Wei River south of the Jiuzong hills, Xianyang became the Qin capital in 350 BCE under Duke Xiao and Shang Yang, serving as the command center for Qin Shi Huang's unification of China."
     },
     {
@@ -13842,7 +13842,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "tagZh": "韓江出海口 · 嶺東門戶",
       "tagEn": "Han River Delta Port · Gateway of Eastern Guangdong",
-      "descZh": "古屬潮州府揭陽、澄海境（沙汕頭），居韓江、榕江、練江三江入海匯流處，南控南澳島海防鎖鑰。元代稱廈嶺，明嘉靖間設沙汕頭銃臺，清康熙五十六年築沙汕頭炮臺，鹹豐十年開埠後成為潮汕百載商埠、華僑出入祖庭大港與經濟特區。",
+      "descZh": "古屬潮州府揭陽、澄海境（沙汕頭），居韓江、榕江、練江三江入海匯流處，南控南澳島海防鎖鑰。元代稱廈嶺，明嘉靖間設沙汕頭銃臺，清康熙五十六年築沙汕頭炮臺，咸豐十年開埠後成為潮汕百載商埠、華僑出入祖庭大港與經濟特區。",
       "descEn": "At the coastal confluence of the Han, Rong, and Lian rivers in eastern Guangdong, Shantou evolved from a Ming–Qing coastal artillery garrison under Chaozhou Prefecture into the primary treaty port and overseas Chinese gateway of Chaoshan."
     },
     {
@@ -13972,7 +13972,7 @@ window.ATLAS_LORE_DATA = {
         "maweiyi",
         "maweislope"
       ],
-      "modern": "陝西鹹陽興平",
+      "modern": "陝西咸陽興平",
       "coord": [
         108.35,
         34.28
@@ -14075,7 +14075,7 @@ window.ATLAS_LORE_DATA = {
         "redcliffs",
         "wulin"
       ],
-      "modern": "湖北鹹寧赤壁",
+      "modern": "湖北咸寧赤壁",
       "coord": [
         113.9,
         29.88
@@ -15218,14 +15218,14 @@ window.ATLAS_LORE_DATA = {
     {
       "name": "渭城",
       "aliases": [
-        "鹹陽",
-        "鹹陽古渡"
+        "咸陽",
+        "咸陽古渡"
       ],
       "asciiAliases": [
         "weicheng",
         "xianyang"
       ],
-      "modern": "陝西鹹陽",
+      "modern": "陝西咸陽",
       "coord": [
         108.71,
         34.33

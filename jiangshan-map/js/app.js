@@ -8963,6 +8963,9 @@
       // 繁體中文化相容支援：自動比對繁體與原始字形
 
       if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
       const raw = place.trim();
       if (!raw) return null;
 
