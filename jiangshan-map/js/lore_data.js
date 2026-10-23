@@ -8161,9 +8161,9 @@ window.ATLAS_LORE_DATA = {
         112.98,
         28.2
       ],
-      "site": "嶽陽→潭州湘江",
+      "site": "岳陽→潭州湘江",
       "siteEn": "Yueyang & Changsha",
-      "zh": "杜甫出峽登嶽陽樓憑軒涕泗，暮年漂泊湘江病逝舟中",
+      "zh": "杜甫出峽登岳陽樓憑軒涕泗，暮年漂泊湘江病逝舟中",
       "en": "Sailing past Yueyang Tower out of the gorges, Du Fu spends his final days drifting on the Xiang River"
     },
     {
@@ -8426,9 +8426,9 @@ window.ATLAS_LORE_DATA = {
         112.09,
         32.69
       ],
-      "site": "鄧州→巴陵嶽陽樓",
+      "site": "鄧州→巴陵岳陽樓",
       "siteEn": "Dengzhou & Yueyang Tower",
-      "zh": "范仲淹貶鄧州作《嶽陽樓記》，鑄就“先天下之憂而憂”名篇",
+      "zh": "范仲淹貶鄧州作《岳陽樓記》，鑄就“先天下之憂而憂”名篇",
       "en": "In Dengzhou, Fan Zhongyan writes Memorial to Yueyang Tower: “Worry before the world worries”"
     },
     {
@@ -9474,7 +9474,7 @@ window.ATLAS_LORE_DATA = {
         113.09,
         29.37
       ],
-      "site": "巴丘（嶽陽）",
+      "site": "巴丘（岳陽）",
       "siteEn": "Baqiu (Yueyang)",
       "zh": "東吳大都督周瑜西取巴蜀途中病逝巴丘，臨終薦魯肅自代",
       "en": "Eastern Wu commander Zhou Yu dies aged 36 at Baqiu on the march to Shu, recommending Lu Su"
@@ -13494,14 +13494,14 @@ window.ATLAS_LORE_DATA = {
       "descEn": "Centered on historic Shouchun along the middle Huai and Fei rivers, it served as the final capital of Warring States Chu and the battlefield where Eastern Jin defeated Former Qin at the Battle of Fei River in 383 CE."
     },
     {
-      "modern": "嶽陽",
+      "modern": "岳陽",
       "coord": [
         113.13,
         29.36
       ],
       "tagZh": "洞庭湖口 · 江湖鎖鑰",
       "tagEn": "Mouth of Dongting Lake · Middle Yangtze Water Gate",
-      "descZh": "古稱巴陵、嶽州，居洞庭湖匯入長江之城陵磯咽喉，西眺君山、北控荊江。三國魯肅築巴丘城屯水軍，西晉置巴陵縣，唐宋為荊湘水陸門戶，范仲淹《嶽陽樓記》“先天下之憂而憂，後天下之樂而樂”名傳千古。",
+      "descZh": "古稱巴陵、嶽州，居洞庭湖匯入長江之城陵磯咽喉，西眺君山、北控荊江。三國魯肅築巴丘城屯水軍，西晉置巴陵縣，唐宋為荊湘水陸門戶，范仲淹《岳陽樓記》“先天下之憂而憂，後天下之樂而樂”名傳千古。",
       "descEn": "Guarding the outlet where Dongting Lake meets the Yangtze River, Baling (Yuezhou / Yueyang) grew from Lu Su's Three Kingdoms naval garrison into the gateway of Hunan, immortalized by Fan Zhongyan's Memorial to Yueyang Tower."
     },
     {
@@ -13886,7 +13886,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "tagZh": "濠鏡澳口 · 中西交匯門戶",
       "tagEn": "Haojing Peninsula · East–West Maritime Crossroads",
-      "descZh": "古稱濠鏡澳、香山澳，屬廣東香山縣，居珠江口西側半島與離島。明嘉靖三十二年（1553年）葡萄牙人藉口舟觸風浪曝曬水漬貢物入居濠鏡，明清兩代設海防同知、前山寨與關閘嚴加管轄，為16—18世紀中西海上貿易與西學東漸第一樞紐；1999年12月20日迴歸祖國。",
+      "descZh": "古稱濠鏡澳、香山澳，屬廣東香山縣，居珠江口西側半島與離島。明嘉靖三十二年（1553年）葡萄牙人藉口舟觸風浪曝曬水漬貢物入居濠鏡，明清兩代設海防同知、前山寨與關閘嚴加管轄，為16—18世紀中西海上貿易與西學東漸第一樞紐；1999年12月20日回歸祖國。",
       "descEn": "Historically Haojing'ao of Xiangshan County at the western mouth of the Pearl River, Macao became the earliest permanent hub of Sino-European maritime trade and cultural exchange under the Ming before returning to Chinese sovereignty in 1999."
     }
   ],
@@ -14363,11 +14363,11 @@ window.ATLAS_LORE_DATA = {
       "zoom": 2.6
     },
     {
-      "name": "嶽陽樓",
+      "name": "岳陽樓",
       "aliases": [
         "巴陵",
         "嶽州",
-        "嶽陽",
+        "岳陽",
         "君山"
       ],
       "asciiAliases": [
@@ -14377,7 +14377,7 @@ window.ATLAS_LORE_DATA = {
         "baling",
         "yuezhou"
       ],
-      "modern": "湖南嶽陽",
+      "modern": "湖南岳陽",
       "coord": [
         113.09,
         29.38
@@ -18709,7 +18709,7 @@ window.ATLAS_LORE_DATA = {
         "鄧小平",
         "改革開放",
         "經濟特區",
-        "香港迴歸"
+        "香港回歸"
       ]
     },
     {

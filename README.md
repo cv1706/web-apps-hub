@@ -14,7 +14,8 @@
   * **吊車安全試算**：[https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/](https://web-apps-hub.cv1706yang.workers.dev/crane-calculator/)
   * **選擇權量化決策**：[https://web-apps-hub.cv1706yang.workers.dev/options-quant-app/](https://web-apps-hub.cv1706yang.workers.dev/options-quant-app/)
   * **台灣房產估價 & MCP**：[https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/](https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/)
-  * **江山時序歷史地圖**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/)
+  * **江山時序歷史地圖（互動主圖）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/)
+  * **江山時序專題考據總覽（靜態圖志）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
@@ -25,7 +26,8 @@
   * **吊車安全試算**：[https://cv1706.github.io/web-apps-hub/crane-calculator/](https://cv1706.github.io/web-apps-hub/crane-calculator/)
   * **選擇權量化決策**：[https://cv1706.github.io/web-apps-hub/options-quant-app/](https://cv1706.github.io/web-apps-hub/options-quant-app/)
   * **台灣房產估價 & MCP**：[https://cv1706.github.io/web-apps-hub/taiwan-real-estate/](https://cv1706.github.io/web-apps-hub/taiwan-real-estate/)
-  * **江山時序歷史地圖**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/](https://cv1706.github.io/web-apps-hub/jiangshan-map/)
+  * **江山時序歷史地圖（互動主圖）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/](https://cv1706.github.io/web-apps-hub/jiangshan-map/)
+  * **江山時序專題考據總覽（靜態圖志）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html](https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
@@ -98,12 +100,15 @@
   * **桃園環保車動態 GPS**：即時掌握垃圾車與資源回收車的行駛位置與即時路班資訊。
   * **內政部實價登錄圖層**：依縮放視野自動進行縣市/行政區聚合，並於放大後精準顯示各門牌買賣、預售屋與租賃成交紀錄。
 ### 8. 📜 江山時序 · 中國歷史地圖時間軸 (繁體中文版)
-* **路徑**：`/jiangshan-map/`
+* **路徑**：
+  * **互動主地圖**：`/jiangshan-map/`
+  * **靜態專題考據總覽**：`/jiangshan-map/topics/index.html`
 * **使用說明**：
   * **歷代疆域時間軸**：橫跨戰國周威烈王二十三年（前 403 年）至現代，涵蓋 18 朝代、167 階段疆域演變，拖動時間軸可直觀比對上一階段朱紅虛線「鬼影邊界（Ghost Boundary Diff）」。
   * **點地溯源古今地名**：點擊畫布上任意古邑名城、名關要塞或雙擊地圖，即刻展開該地 2,400 年建制變遷履歷與現場歷史事件。
   * **歷史先賢時空行跡**：收錄秦始皇滅六國、張騫鑿空西域、諸葛亮出山北伐、玄奘西行、李白壯遊、蘇軾貶謫與王陽明悟道生平路線。
   * **智慧雙向搜尋**：全域搜尋方塊原生支援繁體中文（如「諸葛亮」、「長安」、「函谷關」），並自動相容簡體輸入比對。
+  * **專題考據圖志（35 篇靜態專題）**：涵蓋 18 大歷史時期政區沿革表、杜甫《聞官軍收河南河北》、蘇軾貶謫嶺南、文天祥《過零丁洋》、長平之戰、赤壁之戰、淝水之戰等經典名篇與大戰考據圖志，字型完全在地化為台灣繁體標準並消除外部連結外洩。
 
 ---
 

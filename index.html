@@ -321,6 +321,32 @@
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
     }
 
+    .card-btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
+
+    .card-btn-group .launch-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 10px 12px;
+    }
+
+    .launch-btn.secondary-btn {
+      background: transparent;
+      border: 1px solid var(--btn-border);
+      color: var(--text-main);
+    }
+
+    .launch-btn.secondary-btn:hover {
+      background: rgba(79, 70, 229, 0.08);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: none;
+    }
+
     footer {
       text-align: center;
       font-size: 12.5px;
@@ -467,13 +493,17 @@
         <span class="ver-badge ver-gold">歷史地圖 Pro</span>
       </div>
       <h2 class="app-title">江山時序 · 中國歷史地圖時間軸（繁體中文版）</h2>
-      <p class="app-desc">純前端宣紙古風互動地圖。完整收錄自戰國至現代 2,400 餘年、18 朝代、167 階段疆域政區演變快照、歷代名城古今對照、天下名關與歷史人物時空行跡。</p>
+      <p class="app-desc">純前端宣紙古風互動地圖。完整收錄自戰國至現代 2,400 餘年、18 朝代、167 階段疆域政區演變快照、歷代名城古今對照、天下名關、歷史人物時空行跡與 35 篇朝代戰役靜態專題考據。</p>
       <ul class="features-list">
         <li>18 朝代 167 階段多邊形快照與鬼影邊界對照</li>
         <li>1,387 座名城關隘 2,400 年古今建制沿革溯源</li>
         <li>歷史先賢生平行跡路線與繁簡雙向搜尋支援</li>
+        <li>35 篇疆域、古詩詞路線與著名戰役專題考據</li>
       </ul>
-      <a href="./jiangshan-map/" class="launch-btn" id="btn-jiangshan">開啟江山時序 ➔</a>
+      <div class="card-btn-group">
+        <a href="./jiangshan-map/" class="launch-btn" id="btn-jiangshan">開啟互動主地圖 ➔</a>
+        <a href="./jiangshan-map/topics/index.html" class="launch-btn secondary-btn" id="btn-jiangshan-topics">專題考據總覽 📖</a>
+      </div>
     </article>
   </main>
 

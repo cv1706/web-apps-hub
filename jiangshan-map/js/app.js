@@ -944,7 +944,7 @@
             : '挑戰進行中 · 點選退出'
           : this.locale === 'en'
             ? 'Map Pinpoint · Ancient Place Quiz'
-            : '輿圖定址 · 古地名小試';
+            : '輿圖尋址 · 古地名小試';
       }
       const lblLoc = this._id('lbl-locale') || this._id('act-locale');
       lblLoc.textContent = this.locale === 'en' ? '中文' : 'EN';
@@ -1033,7 +1033,7 @@
         : this.uiStr('trace_kicker', '點地溯源 · 古今政區沿革');
       const chalKicker = this._id('txt-challenge-kicker');
       if (chalKicker) {
-        chalKicker.textContent = this.locale === 'en' ? 'Map Pinpoint' : '輿圖定址';
+        chalKicker.textContent = this.locale === 'en' ? 'Map Pinpoint' : '輿圖尋址';
       }
       const searchInp = this._id('inp-map-search');
       if (searchInp) {
@@ -2613,7 +2613,7 @@
     // ---------------- Chronicle Sidebar ----------------
     _syncDocumentSeoMeta() {
       if (typeof document === 'undefined') return;
-      const baseSiteUrl = 'https://deanchen.me/jiangshan-map/';
+      const baseSiteUrl = './';
       const isEn = this.locale === 'en';
       const cur = this.dynasties && this.dynasties[this.dynastyIdx];
       let pageTitle = isEn
@@ -2674,7 +2674,7 @@
         this._seoDirZhHtml = nav.innerHTML;
       }
       if (this.locale !== 'en') {
-        nav.setAttribute('aria-label', '中國曆代疆域、點人溯事與天下名關索引');
+        nav.setAttribute('aria-label', '中國歷代疆域、點人溯事與天下名關索引');
         if (nav.dataset.locale === 'en') {
           nav.innerHTML = this._seoDirZhHtml;
           nav.dataset.locale = 'zh';
@@ -2686,7 +2686,7 @@
         'aria-label',
         'Historical Dynasties, Person Chronicles & Strategic Passes Directory'
       );
-      const baseSiteUrl = 'https://deanchen.me/jiangshan-map/';
+      const baseSiteUrl = './';
       const dynItems = (this.dynasties || [])
         .map((d) => {
           const dName = this.dynastyName(d);
@@ -4137,7 +4137,7 @@
      * Resolve the modern place name a genealogy heading may assert as "今 X".
      * "今" claims identity, not proximity: only a gazetteer landmark's own `modern` field, or the
      * nearest settlement within the same 25 km "即此地" radius used by the per-dynasty rows, qualifies.
-     * A leading province already shown as the modern title is dropped ("湖南嶽陽" -> "嶽陽").
+     * A leading province already shown as the modern title is dropped ("湖南岳陽" -> "岳陽").
      */
     _resolveModernIdentity(lng, lat, traceLabel, modernTitle, closestOverall) {
       const IDENTITY_KM = 25;
@@ -6606,7 +6606,7 @@
       const lblChal = this._id('lbl-challenge') || actChal;
       if (lblChal) {
         lblChal.textContent =
-          this.locale === 'en' ? 'Map Pinpoint · Ancient Place Quiz' : '輿圖定址 · 古地名小試';
+          this.locale === 'en' ? 'Map Pinpoint · Ancient Place Quiz' : '輿圖尋址 · 古地名小試';
       }
       this.svg.classList.remove('is-crosshair');
       const chkSettle = this._id('chk-settlements');
@@ -7122,16 +7122,16 @@
         });
       }
 
-      // 0b. Map Pinpoint Quiz Mode (輿圖定址 · 古地名小試)
+      // 0b. Map Pinpoint Quiz Mode (輿圖尋址 · 古地名小試)
       entries.push({
         kind: 'quiz',
         dynasty: this.dynasties[2] || this.dynasties[0],
         year: null,
-        titleZh: '輿圖定址 · 古地名小試',
+        titleZh: '輿圖尋址 · 古地名小試',
         subZh: '盲圖落針標定歷代名城與雄關 · 10題計分',
         titleEn: 'Map Pinpoint · Ancient Place Quiz',
         subEn: 'Pinpoint 10 ancient cities & strategic passes on the map',
-        keywords: '輿圖定址 古地名小試 挑戰 猜地名 雅集 quiz pinpoint challenge game'.toLowerCase(),
+        keywords: '輿圖尋址 古地名小試 挑戰 猜地名 雅集 quiz pinpoint challenge game'.toLowerCase(),
       });
 
       // 0. Dynasties / Historical Periods
@@ -8953,6 +8953,30 @@
     }
 
     resolvePlace(place, year = this.year) {
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
+      if (!place || typeof place !== 'string') return null;
+      // 繁體中文化相容支援：自動比對繁體與原始字形
+
       if (!place || typeof place !== 'string') return null;
       // 繁體中文化相容支援：自動比對繁體與原始字形
 

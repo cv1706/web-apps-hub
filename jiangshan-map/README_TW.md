@@ -73,15 +73,15 @@
 
 ---
 
-### 玩法四：彩蛋 · 輿圖定址挑戰 —— 測測你在古代能當幾品官？
+### 玩法四：彩蛋 · 輿圖尋址挑戰 —— 測測你在古代能當幾品官？
 
-覺得自己歷史地理很熟？點開左上角 **搜尋框** 引導欄右下角的 **「古地名小試 ›」**（或直接搜 `小試` / `定址` 開啟 **「輿圖定址 · 古地名小試」**）試試身手：
+覺得自己歷史地理很熟？點開左上角 **搜尋框** 引導欄右下角的 **「古地名小試 ›」**（或直接搜 `小試` / `定址` 開啟 **「輿圖尋址 · 古地名小試」**）試試身手：
 - **當朝掌故線索 + 輿圖盲猜扎針**：地圖隱去所有城池標註，題目給出「西漢時期的武威（涼州）」「南宋時期的泉州」或「六朝古都建康」，並附上**當朝掌故與史事線索**（不劇透現代城市名），憑你的山河水系直覺在輿圖上扎針（手機端支援「先落針微調、再確認作答」防誤觸），系統按你的落點與真實古城的球面距離打分！
 - 十道題答完，系統會根據總分授予你 **「太史令 · 輿圖大家」「職方郎中」「州郡從事」** 等傳統官階封號。
 
-> [點選直達：西漢武帝元狩二年（前 121 年）· 開啟「輿圖定址」挑戰模式 →](https://deanchen.me/jiangshan-map/?year=-121&quiz=locate)
+> [點選直達：西漢武帝元狩二年（前 121 年）· 開啟「輿圖尋址」挑戰模式 →](https://deanchen.me/jiangshan-map/?year=-121&quiz=locate)
 
-![西漢前 121 年 · 輿圖定址挑戰模式預覽](assets/preview_quiz_challenge.webp)
+![西漢前 121 年 · 輿圖尋址挑戰模式預覽](assets/preview_quiz_challenge.webp)
 
 ---
 
@@ -106,7 +106,7 @@
 - **查某座古城或名勝的千年故事**：[`?year=741&place=長安`](https://deanchen.me/jiangshan-map/?year=741&place=長安)（長安/西安） / [`?year=1415&place=應天府`](https://deanchen.me/jiangshan-map/?year=1415&place=應天府)（建康/應天/南京） / [`?year=819&place=藍關`](https://deanchen.me/jiangshan-map/?year=819&place=藍關)（韓愈「雪擁藍關馬不前」）
 - **畫一條自定義詩詞/行軍路線**：[`?year=763&place=劍外,巴峽,巫峽,襄陽,洛陽`](https://deanchen.me/jiangshan-map/?year=763&place=劍外,巴峽,巫峽,襄陽,洛陽)（杜甫《聞官軍收河南河北》同年歸鄉路） / [`?year=1079,1080,1094,1097&place=湖州,黃州,惠州,儋州`](https://deanchen.me/jiangshan-map/?year=1079,1080,1094,1097&place=湖州,黃州,惠州,儋州)（蘇軾「黃州惠州儋州」跨年貶謫路）
 - **展閱歷史人物生平與行跡**：[`?person=qinshihuang`](https://deanchen.me/jiangshan-map/?person=qinshihuang)（秦始皇一統六國） / [`?person=zhangqian`](https://deanchen.me/jiangshan-map/?person=zhangqian)（張騫鑿空西域） / [`?person=zhugeliang`](https://deanchen.me/jiangshan-map/?person=zhugeliang)（諸葛亮出山北伐） / [`?person=xuanzang`](https://deanchen.me/jiangshan-map/?person=xuanzang)（玄奘西行求法） / [`?person=libai`](https://deanchen.me/jiangshan-map/?person=libai)（李白仗劍壯遊） / [`?person=sushi`](https://deanchen.me/jiangshan-map/?person=sushi)（蘇軾宦海貶謫） / [`?person=wangyangming`](https://deanchen.me/jiangshan-map/?person=wangyangming)（王陽明心學立功）
-- **直接開一局挑戰**：[`?year=-121&quiz=locate`](https://deanchen.me/jiangshan-map/?year=-121&quiz=locate)（輿圖定址挑戰）
+- **直接開一局挑戰**：[`?year=-121&quiz=locate`](https://deanchen.me/jiangshan-map/?year=-121&quiz=locate)（輿圖尋址挑戰）
 - **切換英文版介面**：[`?lang=en`](https://deanchen.me/jiangshan-map/?lang=en)
 
 ---
