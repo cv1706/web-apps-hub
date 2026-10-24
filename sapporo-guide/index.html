@@ -171,27 +171,36 @@
         </div>
       </div>
 
-      <!-- Category Filter Tabs -->
-      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+      <!-- Day Filter Tabs (Sorted Chronologically) -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 pb-3">
         <div>
-          <h3 class="text-lg font-bold text-slate-900">特選餐廳、咖啡廳與商場卡</h3>
-          <p class="text-xs text-slate-500 mt-0.5">點擊卡片按鈕可一鍵複製日語名稱地址，或出示司機導航卡</p>
+          <h3 class="text-lg font-bold text-slate-900">必吃美饌與商場卡（依天數時間排序）</h3>
+          <p class="text-xs text-slate-500 mt-0.5">自 Day 1 至 Day 7 順序排列，點擊天數按鈕可快速篩選當日動線</p>
         </div>
         <div class="flex gap-1 overflow-x-auto no-scrollbar">
-          <button type="button" id="food-filter-all" class="food-filter-btn rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white transition">
-            全部名單
+          <button type="button" data-food-day="all" class="food-day-btn shrink-0 rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white transition">
+            全部 7 天依序總覽
           </button>
-          <button type="button" id="food-filter-1" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
-            燒肉與成吉思汗
+          <button type="button" data-food-day="1" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 1
           </button>
-          <button type="button" id="food-filter-2" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
-            海鮮丼與炸雞
+          <button type="button" data-food-day="2" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 2
           </button>
-          <button type="button" id="food-filter-3" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
-            湯咖哩與豚丼
+          <button type="button" data-food-day="3" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 3
           </button>
-          <button type="button" id="food-filter-4" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
-            甜點麵包與商場
+          <button type="button" data-food-day="4" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 4
+          </button>
+          <button type="button" data-food-day="5" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 5
+          </button>
+          <button type="button" data-food-day="6" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 6
+          </button>
+          <button type="button" data-food-day="7" class="food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            Day 7
           </button>
         </div>
       </div>
@@ -882,11 +891,13 @@
     ];
 
     const FOOD_DATA = [
+      // Day 1
       {
         id: 'food-gaja',
-        cat: 1,
-        catLabel: '1. 燒肉與成吉思汗',
-        matchDay: 'Day 1 薄野（晚餐）',
+        day: 1,
+        time: '19:30',
+        dayLabel: 'Day 1 • 19:30 晚餐',
+        matchDay: '薄野 (すすきの)',
         name: 'ガヤ すすきの店 (炭火燒肉 GAJA Susukino)',
         jpName: 'ガヤ すすきの店 (炭火焼肉 GAJA)',
         address: '札幌市中央區南5條西3丁目 第23桂和大樓2F',
@@ -897,38 +908,58 @@
         badgeColor: 'bg-rose-100 text-rose-800'
       },
       {
-        id: 'food-hitsujiza',
-        cat: 1,
-        catLabel: '1. 燒肉與成吉思汗',
-        matchDay: 'Day 5 狸小路/薄野（晚餐）',
-        name: '札幌ジンギスカン 羊座 (成吉思汗烤羊肉 羊座)',
-        jpName: '札幌ジンギスカン 羊座 (ひつじざ)',
-        address: '札幌市中央區南3條西4丁目 南3西4大樓 B1F',
-        jpAddress: '北海道札幌市中央区南3条西4丁目 南3西4ビル B1F',
-        feature: '札幌在地極高評價的成吉思汗烤羊肉名店！嚴選絕佳品質的冷藏生羊肉，完全無羶味，鮮嫩多汁帶有甘甜肉香。在炭火燒紅的成吉思汗凸圓鐵盤上將羊肉與蔬菜烤得滋滋作響，沾特製甘口醬汁是一絕，記得提前於 Google Maps 預約訂位。',
-        mustOrder: '特選生羊肉里肌 (生ラム肩ロース)、頂級羊肋眼 (ヒレ)、特選羊舌 (ラムタン)、北海道洋蔥豆芽',
-        url: 'https://maps.app.goo.gl/3XgD2w2fT28oH5v37',
-        badgeColor: 'bg-rose-100 text-rose-800'
+        id: 'food-surugaya-tanuki',
+        day: 1,
+        time: '21:00',
+        dayLabel: 'Day 1 • 21:00 動漫藥妝採買',
+        matchDay: '薄野 / 狸小路',
+        name: '駿河屋薄野店 ＆ 狸小路商店街',
+        jpName: '駿河屋 札幌すすきの店 / 狸小路商店街',
+        address: '札幌市中央區南4條西4丁目1-1 (狸小路 3-4 丁目)',
+        jpAddress: '北海道札幌市中央区南4条西4丁目1-1',
+        feature: '薄野站旁駿河屋擁有海量二次元動漫周邊、模型公仔與中古電玩。緊鄰的狸小路商店街匯集 24 小時 MEGA 唐吉訶德、松本清、札幌藥妝，是第一晚採購防寒發熱衣物、日本藥妝與零食的最佳據點。',
+        mustOrder: '動漫公仔模型周邊、日本免稅藥妝、北海道限定零食、雪地發熱保暖衣物',
+        url: 'https://maps.app.goo.gl/RdsCroAyZHkTJe166?g_st=ic',
+        badgeColor: 'bg-indigo-100 text-indigo-800'
       },
+
+      // Day 2
       {
         id: 'food-takinami',
-        cat: 2,
-        catLabel: '2. 海鮮丼與炸雞',
-        matchDay: 'Day 2 小樽三角市場（早餐）',
+        day: 2,
+        time: '08:50',
+        dayLabel: 'Day 2 • 08:50 早餐',
+        matchDay: '小樽・三角市場',
         name: '北のどんぶり屋 滝波食堂 (小樽三角市場)',
         jpName: '北のどんぶり屋 滝波食堂 (たきなみしょくどう)',
         address: '小樽市稻穗3丁目10-16 三角市場內',
         jpAddress: '北海道小樽市稲穂3丁目10-16 三角市場内',
-        feature: '小樽車站出站即達的三角市場第一名店！招牌元祖「わがまま丼（任選自選丼）」可從生海膽、鮭魚卵、牡丹蝦、甜蝦、生干貝、帝王蟹肉、鮪魚中任選 3 至 4 種海味豪邁鋪滿碗面，份量極厚實且鮮度頂天，並隨附一碗超大鮮甜螃蟹味噌湯。',
+        feature: '小樽車站出站即達的三角市場第一名店！招牌元祖「わがまま丼（任選自選丼）」可從生海膽、鮭魚卵、牡丹蝦、甜蝦、生干貝、帝王蟹肉中任選 3 至 4 種海味豪邁鋪滿碗面，份量極厚實且鮮度頂天，並隨附一碗超大鮮甜螃蟹味噌湯。',
         mustOrder: '任選自選海鮮丼 (生海膽+鮭魚卵+牡丹蝦+生干貝)、炭烤花魚、毛蟹湯',
         url: 'https://otaru-takinami.net/',
         badgeColor: 'bg-cyan-100 text-cyan-800'
       },
       {
+        id: 'food-otaru-sweets',
+        day: 2,
+        time: '12:15',
+        dayLabel: 'Day 2 • 12:15 下午茶甜點',
+        matchDay: '小樽・堺町通',
+        name: '小樽堺町通甜點街 (北菓樓 / LeTAO / 六花亭)',
+        jpName: '小樽堺町通り / 北菓楼 小樽本館 / LeTAO 本店',
+        address: '小樽市堺町7-16 (LeTAO) / 堺町7-22 (北菓樓)',
+        jpAddress: '北海道小樽市堺町7-16',
+        feature: '小樽最具人氣的甜點散策大道！北菓樓必吃外皮酥脆內餡爆漿的「夢不思議大泡芙」；LeTAO 總店必嚐原創「雙層乳酪蛋糕（Double Fromage）」；六花亭可買蘭姆葡萄夾心餅乾，沿街品嚐北海道極品甜點。',
+        mustOrder: '北菓樓夢不思議泡芙、LeTAO 雙層乳酪蛋糕、妖精之森年輪蛋糕、六花亭霜淇淋',
+        url: 'https://www.letao.jp/',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
         id: 'food-naruto',
-        cat: 2,
-        catLabel: '2. 海鮮丼與炸雞',
-        matchDay: 'Day 2 小樽市區（晚餐）',
+        day: 2,
+        time: '16:30',
+        dayLabel: 'Day 2 • 16:30 晚餐',
+        matchDay: '小樽・市中心',
         name: '若雞時代本店 (若鶏時代なると 本店)',
         jpName: '若鶏時代なると 本店',
         address: '小樽市稻穗3丁目16-13',
@@ -936,14 +967,47 @@
         feature: '創立超過半世紀的小樽元祖級排隊名物！招牌「若鶏半身揚げ」將半隻全雞直接下鍋油炸，完全不裹厚重麵衣，外皮薄脆酥香、肉質鎖住飽滿肉汁且富有椒鹽香氣。可搭配壽司或拉麵組合成定食套餐，在地人從小吃到大的經典美味。',
         mustOrder: '招牌炸半雞 (若鶏半身揚げ)、若雞炸半雞定食、傳統生握壽司套餐',
         url: 'http://otaru-naruto.jp/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+
+      // Day 3
+      {
+        id: 'food-hanganouji',
+        day: 3,
+        time: '09:30',
+        dayLabel: 'Day 3 • 09:30 神社名物點心',
+        matchDay: '北海道神宮境內',
+        name: '六花亭 神宮茶屋「判官餅」 (神宮限定現烤)',
+        jpName: '六花亭 神宮茶屋店 / 判官さま (はんがんさま)',
+        address: '札幌市中央區宮丘474 北海道神宮境內',
+        jpAddress: '北海道札幌市中央区宮ケ丘474',
+        feature: '僅在北海道神宮茶屋限定現做的夢幻甜點！為紀念北海道開拓之父島義勇而命名，鐵板現點現烤，外皮微焦香脆、內部包覆軟糯蕎麥麻糬與甜而不膩的紅豆餡，帶有淡淡鹹味與玄米香，店內還免費招待熱茶。',
+        mustOrder: '現烤判官餅 (判官さま)、雪白巧克夾心、境內免費熱焙茶',
+        url: 'http://www.hokkaidojingu.or.jp/',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
+      },
+      {
+        id: 'food-jogai',
+        day: 3,
+        time: '11:30',
+        dayLabel: 'Day 3 • 11:30 午餐',
+        matchDay: '札幌場外市場',
+        name: '札幌場外市場 (現蒸活帝王蟹 ＆ 炭烤魚料理)',
+        jpName: '札幌場外市場 (さっぽろじょうがいいちば)',
+        address: '札幌市中央區北11條西21丁目2-3',
+        jpAddress: '北海道札幌市中央区北11条西21丁目2-3',
+        feature: '緊鄰札幌中央批發市場，擁有數十間活水產專門店！現場挑選活跳跳的帝王蟹、花咲蟹秤重現殺現蒸，肉質飽滿彈牙甘甜；搭配炭火直烤、油脂極其豐腴的北海道花魚定食（ほっけ定食）與厚切扇貝，產地直送最新鮮。',
+        mustOrder: '現蒸活帝王蟹/毛蟹、炭烤特大花魚定食 (ほっけ)、奶油烤活扇貝、海膽蟹肉丼',
+        url: 'https://www.jyogaiichiba.com/',
         badgeColor: 'bg-cyan-100 text-cyan-800'
       },
       {
         id: 'food-king',
-        cat: 3,
-        catLabel: '3. 湯咖哩與豚丼',
-        matchDay: 'Day 3 大通/薄野（晚餐）',
-        name: 'SOUP CURRY KING (中央店 / 總店)',
+        day: 3,
+        time: '20:00',
+        dayLabel: 'Day 3 • 20:00 晚餐',
+        matchDay: '大通 / 薄野',
+        name: 'SOUP CURRY KING (中央店 / 大通薄野)',
         jpName: 'SOUP CURRY KING セントラル店',
         address: '札幌市中央區南2條西3丁目13-4 片岡大樓B1F',
         jpAddress: '北海道札幌市中央区南2条西3丁目13-4 カタオカビルB1F',
@@ -952,25 +1016,44 @@
         url: 'https://www.soupcurry-king.shop/',
         badgeColor: 'bg-amber-100 text-amber-800'
       },
+
+      // Day 4
       {
-        id: 'food-okushiba',
-        cat: 3,
-        catLabel: '3. 湯咖哩與豚丼',
-        matchDay: 'Day 6 札幌站前（晚餐）',
-        name: 'スープカレー奥芝商店 駅前創成寺',
-        jpName: 'スープカレー奥芝商店 駅前創成寺',
-        address: '札幌市中央區北4條西1丁目 ホクレン大樓B1F',
-        jpAddress: '北海道札幌市中央区北4条西1丁目 ホクレンビルB1F',
-        feature: '以元祖「蝦高湯（おくしばーエビ出汁）」震撼日本美食界的名店！每日使用超過 2,000 隻甘蝦頭熬製深邃濃醇的蝦味咖哩精華，搭配現點現煎的手工鐵板漢堡排與產地直送的北海道時令野菜，香濃程度無可匹敵。',
-        mustOrder: '宗谷黑牛漢堡排蝦湯咖哩 (おくしばーハンバーグ)、龍蝦海鮮饗宴咖哩、炸花枝天婦羅',
-        url: 'https://okushiba.net/',
-        badgeColor: 'bg-amber-100 text-amber-800'
+        id: 'food-shiroikoibito-cafe',
+        day: 4,
+        time: '10:30',
+        dayLabel: 'Day 4 • 10:30 點心午茶',
+        matchDay: '宮之澤・白色戀人公園',
+        name: '白色戀人公園 甜點咖啡廳 (純生乳霜淇淋)',
+        jpName: '白い恋人パーク / カフェ・オックスフォード',
+        address: '札幌市西區宮之澤2條2丁目11-36 白色戀人公園內',
+        jpAddress: '北海道札幌市西区宮の沢2条2丁目11-36',
+        feature: '在充滿歐式古堡風情的白色戀人園區內，品嚐採用北海道優質純牛乳特製的「白色戀人霜淇淋（白黑綜合雙色）」，濃醇生乳結合白巧克力香氣。咖啡廳亦提供現烤年輪蛋糕與精緻可可下午茶套餐。',
+        mustOrder: '白色戀人純生乳霜淇淋、白色戀人限定巧克力蛋糕、經典熱可可',
+        url: 'https://www.shiroikoibitopark.jp/',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
+        id: 'food-beer-ario',
+        day: 4,
+        time: '13:30',
+        dayLabel: 'Day 4 • 13:30 啤酒試飲與商場',
+        matchDay: '苗穗・札幌啤酒園',
+        name: '札幌啤酒博物館 ＆ Ario 札幌大型商場',
+        jpName: 'サッポロビール博物館 / アリオ札幌 (Ario Sapporo)',
+        address: '札幌市東區北7條東9丁目1-1',
+        jpAddress: '北海道札幌市東区北7条東9丁目1-1',
+        feature: '在明治紅磚啤酒工廠參觀開拓史，試飲區可付費品嚐三款經典生啤酒組合（黑標、Classic、開拓使麥酒）。緊鄰的 Ario 大型商場擁有寬敞溫暖的伊藤洋華堂超市、阿卡將婦幼用品生活館，各類北海道伴手禮一次補足。',
+        mustOrder: '三種生啤酒試飲組合 (3種飲み比べ)、起司下酒點心、Ario 商場北海道特產',
+        url: 'https://sapporo.ario.jp/',
+        badgeColor: 'bg-blue-100 text-blue-800'
       },
       {
         id: 'food-ippin',
-        cat: 3,
-        catLabel: '3. 湯咖哩與豚丼',
-        matchDay: 'Day 4 札幌站 Stella Place（晚餐）',
+        day: 4,
+        time: '19:30',
+        dayLabel: 'Day 4 • 19:30 晚餐',
+        matchDay: '札幌站 Stella Place',
         name: '十勝豚丼 いっぴん (豚丼一品 札幌站店)',
         jpName: '十勝豚丼 いっぴん ステラプレイス店',
         address: '札幌市中央區北5條西2丁目 札幌Stellar Place 6F',
@@ -980,47 +1063,161 @@
         url: 'https://www.butadon-ippin.com/',
         badgeColor: 'bg-amber-100 text-amber-800'
       },
+
+      // Day 5
       {
-        id: 'food-whitecosy',
-        cat: 4,
-        catLabel: '4. 甜點麵包與商場',
-        matchDay: '札幌站地下街 PASEO / Pole Town',
-        name: '四葉牛乳咖啡廳 (Milk & Parfait Yotsuba White Cosy)',
-        jpName: 'よつ葉ホワイトコージ (White Cosy)',
-        address: '札幌市中央區地下街 Pole Town / 札幌站商圈',
-        jpAddress: '北海道札幌市中央区南2条西3丁目 地下街ポールタウン内',
-        feature: '北海道知名乳業品牌「四葉牛乳 (よつ葉乳業)」直營的甜點輕食名店！採用 100% 北海道十勝產高品質純生乳、發酵奶油與起司。必推午間限定焗烤烤飯/義大利麵套餐，餐後再來一份綿密無比的純生乳聖代或厚鬆餅，奶香爆棚。',
-        mustOrder: '四葉純牛乳霜淇淋聖代、十勝四葉草莓卡士達鬆餅、海鮮奶油焗烤通心麵 (午間超推)',
-        url: 'https://www.yotsuba.co.jp/whitecosy/',
-        badgeColor: 'bg-purple-100 text-purple-800'
+        id: 'food-hokudai-marche',
+        day: 5,
+        time: '11:30',
+        dayLabel: 'Day 5 • 11:30 校園午茶',
+        matchDay: '北海道大學校園',
+        name: '北大 Marche Cafe (北大マルシェ Cafe&Labo)',
+        jpName: '北大マルシェ Cafe&Labo' ,
+        address: '札幌市北區北9條西5丁目 北海道大學百年紀念會館1F',
+        jpAddress: '北海道札幌市北区北9条西5丁目 北海道大学百年記念会館1F',
+        feature: '北海道大學校園內最具質感的木造景觀咖啡廳！採用北大附屬農場自家放牧牛每日擠取的無調整純生乳，打造出全日本數一數二濃醇的生乳霜淇淋；搭配道產小麥吐司、手工起司、培根熱壓三明治與手沖滴濾咖啡。',
+        mustOrder: '北大農場純生乳牛奶霜淇淋、北海道起司熱壓吐司、手工戚風蛋糕、北大特調咖啡',
+        url: 'https://www.hokudaimarche.com/',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
       },
       {
         id: 'food-donguri',
-        cat: 4,
-        catLabel: '4. 甜點麵包與商場',
-        matchDay: '大通公園 Le Trois 1F / 札幌各分店',
-        name: 'DONGURI 麵包店 (どんぐり・北海道必買排隊麵包)',
-        jpName: '焼きたてパンの店 どんぐり (DONGURI)',
-        address: '札幌市中央區大通西1丁目13 Le Trois 1F (大通店)',
+        day: 5,
+        time: '14:30',
+        dayLabel: 'Day 5 • 14:30 排隊名物麵包',
+        matchDay: '大通公園 Le Trois',
+        name: 'DONGURI 麵包店 (どんぐり 大通店・竹輪麵包)',
+        jpName: '焼きたてパンの店 どんぐり (DONGURI 大通店)',
+        address: '札幌市中央區大通西1丁目13 Le Trois 1F',
         jpAddress: '北海道札幌市中央区大通西1丁目13 ル・トロワ1F',
         feature: '北海道在地人票選第一名的傳奇烘焙坊！發明並風靡全日本的超級名物「竹輪鮪魚沙拉麵包 (ちくわパン)」外層麵包香軟，裡面包裹一整根 Q 彈烤竹輪，竹輪內部塞滿現拌洋蔥鮪魚沙拉，鹹香濃郁無敵美味。店內還有炸咖哩麵包與各式現烤可頌。',
-        mustOrder: '招牌竹輪鮪魚麵包 (ちくわパン)、半熟蛋牛肉咖哩包、鹽味香濃可頌、草莓生乳可頌',
+        mustOrder: '招牌竹輪鮪魚沙拉麵包 (ちくわパン)、半熟蛋牛肉炸咖哩麵包、鹽味可頌、明太子法國麵包',
         url: 'https://www.donguri-bake.co.jp/',
         badgeColor: 'bg-purple-100 text-purple-800'
       },
       {
+        id: 'food-whitecosy',
+        day: 5,
+        time: '15:30',
+        dayLabel: 'Day 5 • 15:30 輕食甜點',
+        matchDay: 'Pole Town 地下街',
+        name: '四葉牛乳咖啡廳 (Milk & Parfait Yotsuba White Cosy)',
+        jpName: 'よつ葉ホワイトコージ (White Cosy Pole Town店)',
+        address: '札幌市中央區地下街 Pole Town (南2條西3丁目地下)',
+        jpAddress: '北海道札幌市中央区南2条西3丁目 地下街ポールタウン内',
+        feature: '北海道知名乳業品牌「四葉牛乳 (よつ葉乳業)」直營的甜點輕食名店！採用 100% 北海道十勝產高品質純生乳、發酵奶油與起司。必推午間限定焗烤烤飯/義大利麵套餐，餐後再來一份綿密無比的純生乳聖代或厚鬆餅，奶香爆棚。',
+        mustOrder: '四葉純生乳草莓聖代、十勝四葉草莓卡士達鬆餅、海鮮奶油焗烤通心麵 (午間套餐超推)',
+        url: 'https://www.yotsuba.co.jp/whitecosy/',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
         id: 'food-coconosusukino',
-        cat: 4,
-        catLabel: '4. 甜點麵包與商場',
-        matchDay: 'Day 5 薄野新地標商場',
+        day: 5,
+        time: '16:30',
+        dayLabel: 'Day 5 • 16:30 薄野新商場',
+        matchDay: '薄野 (すすきの)',
         name: 'COCONO SUSUKINO (薄野複合潮流新商場)',
         jpName: 'COCONO SUSUKINO (ココノ ススキノ)',
-        address: '札幌市中央區南4條西4丁目1-1',
-        jpAddress: '北海道札幌市中央区南4条西4丁目1-1 (地下鉄すすきの駅直結)',
+        address: '札幌市中央區南4條西4丁目1-1 (地鐵薄野站直結)',
+        jpAddress: '北海道札幌市中央区南4条西4丁目1-1',
         feature: '薄野十字路口正中心全新開幕的地標型大型商場！直通地鐵薄野站，匯集 TOHO CINEMAS 影城、SAPPORO STREAM 飯店、地下一樓大型生活超市與道產特產伴手禮街，以及樓上風格酒吧街，是入夜採買與漫步的絕佳場所。',
-        mustOrder: '地下一樓北海道特色熟食超市、在地設計雜貨、限定道產甜點伴手禮',
+        mustOrder: '地下一樓北海道特色熟食超市、在地設計選物雜貨、限定道產甜點伴手禮',
         url: 'https://cocono-susukino.jp/',
+        badgeColor: 'bg-indigo-100 text-indigo-800'
+      },
+      {
+        id: 'food-hitsujiza',
+        day: 5,
+        time: '18:00',
+        dayLabel: 'Day 5 • 18:00 晚餐',
+        matchDay: '狸小路 / 薄野',
+        name: '札幌ジンギスカン 羊座 (成吉思汗烤羊肉 羊座)',
+        jpName: '札幌ジンギスカン 羊座 (ひつじざ)',
+        address: '札幌市中央區南3條西4丁目 南3西4大樓 B1F',
+        jpAddress: '北海道札幌市中央区南3条西4丁目 南3西4ビル B1F',
+        feature: '札幌在地極高評價的成吉思汗烤羊肉名店！嚴選絕佳品質的冷藏生羊肉，完全無羶味，鮮嫩多汁帶有甘甜肉香。在炭火燒紅的成吉思汗凸圓鐵盤上將羊肉與蔬菜烤得滋滋作響，沾特製甘口醬汁是一絕，記得提前於 Google Maps 預約訂位。',
+        mustOrder: '特選生羊肉里肌 (生ラム肩ロース)、頂級羊肋眼 (ヒレ)、特選羊舌 (ラムタン)、北海道洋蔥豆芽',
+        url: 'https://maps.app.goo.gl/3XgD2w2fT28oH5v37',
+        badgeColor: 'bg-rose-100 text-rose-800'
+      },
+
+      // Day 6
+      {
+        id: 'food-asahiyama-lunch',
+        day: 6,
+        time: '11:30',
+        dayLabel: 'Day 6 • 11:30 動物園午餐',
+        matchDay: '旭川・旭山動物園內',
+        name: '旭山動物園 中央食堂 ＆ 熱食休憩館',
+        jpName: '旭山動物園 中央食堂 / あざらし館無料休憩所',
+        address: '旭川市東旭川町倉沼 旭山動物園內',
+        jpAddress: '北海道旭川市東旭川町倉沼',
+        feature: '一日遊在旭山動物園內的熱呼呼暖身午餐！提供熱騰騰的正宗旭川醬油拉麵、北海道炸雞排成吉思汗咖哩飯、現烤肉包以及動物造型主題餅乾點心，在雪地遊覽之際提供最及時的熱量補給。',
+        mustOrder: '旭川醬油叉燒拉麵、成吉思汗厚炸雞排咖哩飯、北極熊動物造型包子',
+        url: 'https://www.city.asahikawa.hokkaido.jp/asahiyamazoo/',
+        badgeColor: 'bg-cyan-100 text-cyan-800'
+      },
+      {
+        id: 'food-ningle-craft',
+        day: 6,
+        time: '16:50',
+        dayLabel: 'Day 6 • 16:50 精靈木屋與咖啡',
+        matchDay: '富良野・精靈露台',
+        name: '富良野 森林精靈露台 ＆ 森之時計咖啡',
+        jpName: 'ニングルテラス / 珈琲 森の時計',
+        address: '富良野市中御料 新富良野王子飯店境內',
+        jpAddress: '北海道富良野市中御料',
+        feature: '覆蓋白雪的 15 棟溫馨森林小木屋！每棟木屋均由富良野在地職人進駐，販售雪花結晶琉璃項鍊、原木雕刻夜燈、皮雕音樂盒與香氛蠟燭。林邊的「森之時計咖啡」還可讓客人親手轉動磨豆機研磨咖啡豆，度過極致浪漫的雪森午後。',
+        mustOrder: '雪花結晶純銀項鍊、木頭手工藝品、森之時計現磨手沖熱咖啡',
+        url: 'https://www.princehotels.co.jp/furano-area/ningle-terrace/',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
+      },
+      {
+        id: 'food-okushiba',
+        day: 6,
+        time: '20:00',
+        dayLabel: 'Day 6 • 20:00 晚餐',
+        matchDay: '札幌站前',
+        name: 'スープカレー奥芝商店 駅前創成寺 (甘蝦高湯湯咖哩)',
+        jpName: 'スープカレー奥芝商店 駅前創成寺',
+        address: '札幌市中央區北4條西1丁目 ホクレン大樓B1F',
+        jpAddress: '北海道札幌市中央区北4条西1丁目 ホクレンビルB1F',
+        feature: '以元祖「蝦高湯（おくしばーエビ出汁）」震撼日本美食界的名店！每日使用超過 2,000 隻甘蝦頭熬製深邃濃醇的蝦味咖哩精華，搭配現點現煎的手工鐵板漢堡排與產地直送的北海道時令野菜，香濃程度無可匹敵。',
+        mustOrder: '宗谷黑牛漢堡排蝦湯咖哩 (おくしばーハンバーグ)、龍蝦海鮮饗宴咖哩、炸花枝天婦羅',
+        url: 'https://okushiba.net/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+
+      // Day 7
+      {
+        id: 'food-chitose-market',
+        day: 7,
+        time: '10:30',
+        dayLabel: 'Day 7 • 10:30 機場特產大街',
+        matchDay: '新千歲機場國內線 2F',
+        name: '新千歲機場 國內線 2F 伴手禮大街 (美瑛選果 / KINOTOYA)',
+        jpName: '新千歳空港 国内線2F / 美瑛選果 / KINOTOYA',
+        address: '千歲市美美 新千歲機場國內線航廈2F',
+        jpAddress: '北海道千歳市美々 新千歳空港国内線ターミナル2F',
+        feature: '全日本最狂機場商場！務必將托運行李推至國內線 2F 伴手禮大街掃貨：美瑛選果「現烤純甜玉米麵包（コーンパン，不加一滴水、出爐即秒殺）」、KINOTOYA「極上純牛乳霜淇淋」、六花亭「蘭姆葡萄夾心餅乾」、北菓樓「開拓米果」、Royce「生巧克力」。',
+        mustOrder: '美瑛選果現烤玉米麵包 (コーンパン)、KINOTOYA 極上牛奶霜淇淋、Royce 生巧克力、六花亭蘭姆葡萄夾心餅',
+        url: 'https://www.new-chitose-airport.jp/tw/spend/shop/buy/',
         badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
+        id: 'food-ramen-dojo',
+        day: 7,
+        time: '12:00',
+        dayLabel: 'Day 7 • 12:00 機場拉麵道場',
+        matchDay: '新千歲機場國內線 3F',
+        name: '新千歲機場 3F 北海道拉麵道場 (一幻拉麵 / 白樺山莊)',
+        jpName: '新千歳空港 3F 北海道ラーメン道場',
+        address: '千歲市美美 新千歲機場國內線航廈3F',
+        jpAddress: '北海道千歳市美々 新千歳空港国内線ターミナル3F',
+        feature: '機場內的拉麵聖殿！匯集全北海道最具代表性的 10 家拉麵名店：總是大排長龍的「一幻拉麵（えびそば一幻，濃郁甜蝦高湯）」、經典味噌拉麵「白樺山莊（提供免費水煮蛋無限享用）」、旭川「梅光軒」、函館鹽味「あじさい」，搭機返台前的最後一碗完美拉麵。',
+        mustOrder: '一幻甜蝦味噌拉麵 (えびみそ)、白樺山莊特味噌拉麵、梅光軒醬油拉麵',
+        url: 'https://www.new-chitose-airport.jp/tw/spend/shop/eat/place/ramen.html',
+        badgeColor: 'bg-rose-100 text-rose-800'
       }
     ];
 
@@ -1353,14 +1550,14 @@
       });
     }
 
-    function renderFood(catFilter = 'all') {
+    function renderFood(dayFilter = 'all') {
       const container = document.getElementById('food-container');
       if (!container) return;
       container.innerHTML = '';
 
-      const filtered = (catFilter === 'all')
+      const filtered = (dayFilter === 'all')
         ? FOOD_DATA
-        : FOOD_DATA.filter(f => f.cat === parseInt(catFilter, 10));
+        : FOOD_DATA.filter(f => f.day === parseInt(dayFilter, 10));
 
       filtered.forEach(food => {
         const card = document.createElement('div');
@@ -1370,7 +1567,7 @@
           <div class="space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span class="inline-flex rounded-md ${food.badgeColor} px-2.5 py-0.5 text-xs font-bold">
-                ${food.catLabel}
+                ${food.dayLabel}
               </span>
               <span class="text-xs font-medium text-slate-400">${food.matchDay}</span>
             </div>
@@ -1515,25 +1712,15 @@
       });
     }
 
-    const foodFilterBtns = {
-      all: document.getElementById('food-filter-all'),
-      1: document.getElementById('food-filter-1'),
-      2: document.getElementById('food-filter-2'),
-      3: document.getElementById('food-filter-3'),
-      4: document.getElementById('food-filter-4')
-    };
-
-    Object.keys(foodFilterBtns).forEach(k => {
-      const btn = foodFilterBtns[k];
-      if (!btn) return;
+    const foodDayBtns = document.querySelectorAll('.food-day-btn');
+    foodDayBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        Object.values(foodFilterBtns).forEach(b => {
-          if (b) {
-            b.className = 'food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
-          }
+        const day = btn.getAttribute('data-food-day');
+        foodDayBtns.forEach(b => {
+          b.className = 'food-day-btn shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
         });
-        btn.className = 'food-filter-btn rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white transition';
-        renderFood(k);
+        btn.className = 'food-day-btn shrink-0 rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white transition';
+        renderFood(day);
       });
     });
 
