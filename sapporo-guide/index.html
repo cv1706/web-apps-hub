@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>北海道札幌 × 小樽 × 美瑛旭川 7天6夜雪季浪漫自由行隨身指南</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .fade-in {
+      animation: fadeIn 0.22s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl transition-all">
+    <svg class="h-4 w-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-msg">已複製到剪貼簿</span>
+  </div>
+
+  <!-- Japanese Driver / Navigation Modal -->
+  <div id="driver-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-900">
+          司機看這張 / 日本計程車與 Google 地圖導航
+        </span>
+        <button id="close-modal-btn" type="button" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="關閉視窗">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-3 text-center py-3">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-400">日語目的地名稱（司機對照）</p>
+        <h3 id="modal-place-title" class="text-2xl font-bold text-slate-900 leading-snug"></h3>
+        <div class="rounded-xl bg-slate-50 p-4 border border-slate-200 mt-2">
+          <p class="text-xs text-slate-400 mb-1">詳細日語地址</p>
+          <p id="modal-place-addr" class="text-base font-semibold text-slate-800 select-all"></p>
+        </div>
+        <p id="modal-place-note" class="text-xs text-slate-500 pt-1"></p>
+      </div>
+      <div class="mt-5 flex gap-2">
+        <button id="modal-copy-btn" type="button" class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 transition">
+          複製日文地址至 Google 地圖
+        </button>
+        <button id="modal-done-btn" type="button" class="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Header -->
+  <header class="bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 text-white shadow-lg">
+    <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full bg-sky-500/20 px-3 py-1 text-xs font-medium text-sky-200 border border-sky-400/30 mb-2">
+            <span>7天6夜初冬雪季行</span>
+            <span>•</span>
+            <span>札幌白色燈樹節</span>
+            <span>•</span>
+            <span>小樽運河與美瑛青池</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            北海道札幌 × 小樽 × 美瑛旭川 7天6夜隨身指南
+          </h1>
+          <p class="mt-1 text-sm text-slate-300">
+            電視塔夜景 • 藻岩山纜車 • 白色戀人公園 • 旭山動物園 • 森林精靈露台 • 湯咖哩與成吉思汗烤羊
+          </p>
+        </div>
+        <!-- Quick Progress Pill -->
+        <div class="flex items-center gap-3 self-start sm:self-center rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/15">
+          <div>
+            <p class="text-xs text-slate-300">行程與行前完成度</p>
+            <div class="flex items-baseline gap-2">
+              <span id="overall-progress-text" class="text-lg font-bold text-sky-300">0%</span>
+              <span id="overall-progress-count" class="text-xs text-slate-300">(0/0)</span>
+            </div>
+          </div>
+          <button id="reset-checks-btn" type="button" class="rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/20 transition" title="重置所有勾選狀態">
+            重置勾選
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="mt-6 flex gap-2 overflow-x-auto no-scrollbar border-b border-white/15 pb-3" aria-label="主要功能切換">
+        <button type="button" data-main-tab="itinerary" class="main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition">
+          每日行程與交通導覽
+        </button>
+        <button type="button" data-main-tab="food" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          必吃美饌與商場卡
+        </button>
+        <button type="button" data-main-tab="transport" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          交通攻略與一日遊
+        </button>
+        <button type="button" data-main-tab="tickets" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          景點門票與時刻表
+        </button>
+        <button type="button" data-main-tab="checklist" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          雪季行前準備清單
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+
+    <!-- SECTION 1: ITINERARY -->
+    <section id="tab-itinerary" class="space-y-6 fade-in">
+      <!-- Day Selector Bar -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+        <div id="day-buttons-container" class="flex gap-1.5 overflow-x-auto no-scrollbar">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+          <button id="expand-all-days-btn" type="button" class="w-full sm:w-auto rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
+            展開全部 7 天總覽
+          </button>
+        </div>
+      </div>
+
+      <!-- Itinerary Timeline Container -->
+      <div id="itinerary-content" class="space-y-6">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: FOOD & SHOPPING -->
+    <section id="tab-food" class="hidden space-y-6 fade-in">
+      <!-- Highlight Banner -->
+      <div class="rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-sky-500/10 p-5 border border-amber-300 shadow-sm">
+        <div class="flex items-start gap-3">
+          <div class="rounded-xl bg-amber-500/20 p-2.5 text-amber-900 font-bold text-sm">北海道美食榜</div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h2 class="text-base font-bold text-slate-900">札幌與小樽必吃特產全攻略</h2>
+              <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-0.5 text-xs font-bold text-amber-800">
+                名店訂位提醒與地標指引
+              </span>
+            </div>
+            <p class="mt-1 text-xs sm:text-sm text-slate-700 leading-relaxed">
+              涵蓋薄野 GAJA 燒肉、小樽滝波食堂爆量海鮮丼、小樽若雞時代炸半雞、札幌成吉思汗烤羊肉（羊座，記得 Google 地圖提前訂位）、SOUP CURRY KING 與奧芝商店雙派系湯咖哩、四葉牛乳 white cosy 舒芙蕾聖代以及 DONGURI 排隊竹輪麵包。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">特選餐廳、咖啡廳與商場卡</h3>
+          <p class="text-xs text-slate-500 mt-0.5">點擊卡片按鈕可一鍵複製日語名稱地址，或出示司機導航卡</p>
+        </div>
+        <div class="flex gap-1 overflow-x-auto no-scrollbar">
+          <button type="button" id="food-filter-all" class="food-filter-btn rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white transition">
+            全部名單
+          </button>
+          <button type="button" id="food-filter-1" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            燒肉與成吉思汗
+          </button>
+          <button type="button" id="food-filter-2" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            海鮮丼與炸雞
+          </button>
+          <button type="button" id="food-filter-3" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            湯咖哩與豚丼
+          </button>
+          <button type="button" id="food-filter-4" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            甜點麵包與商場
+          </button>
+        </div>
+      </div>
+
+      <!-- Food Cards Grid -->
+      <div id="food-container" class="grid gap-4 md:grid-cols-2">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 3: TRANSPORT & DAY TOURS -->
+    <section id="tab-transport" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900">北海道全境交通接駁與一日遊集結點</h2>
+        <p class="text-xs text-slate-500 mt-0.5">JR 快速 Airport 線、札幌地鐵路網與 11/27 美瑛旭山一日遊巴士指引</p>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">路線與區間</th>
+                <th class="py-3 px-3 font-semibold">搭乘工具</th>
+                <th class="py-3 px-3 font-semibold">時間與費用</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">實戰要點與轉乘注意事項</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">新千歲機場 往返 札幌車站</td>
+                <td class="py-3.5 px-3">JR 快速 Airport 線 (快速エアポート)</td>
+                <td class="py-3.5 px-3">約 37 至 40 分鐘<br>自由席 1,150 日圓 / u-Seat 指定席 +840 日圓</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  每小時約 5 至 6 班列車直達。攜帶大件行李箱強烈建議加購 u-Seat 指定席，座位更寬敞且有專屬行李架。支援 Suica / ICOCA / Kitaca 等 IC 卡感應進站。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">札幌車站 往返 小樽車站</td>
+                <td class="py-3.5 px-3">JR 函館本線 (區間快速 / 快速 Airport)</td>
+                <td class="py-3.5 px-3">約 32 至 35 分鐘<br>單程 750 日圓</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  去程往小樽方向「建議坐右側座位」，沿途途經朝里、錢函路段可緊鄰石狩灣海岸線欣賞壯闊雪海絕景。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">藻岩山夜景接駁動線</td>
+                <td class="py-3.5 px-3">札幌市電路面電車 + 免費接駁公車 + 纜車</td>
+                <td class="py-3.5 px-3">市電 200 日圓<br>纜車往返 2,100 日圓</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  從大通/薄野搭路面電車至「纜車入口（ロープウェイ入口）」站，下車過馬路在南 19 西 15 搭乘每 15 分鐘一班的免費 Shuttle Bus 直達山麓纜車站。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">11/27 美瑛旭川一日遊</td>
+                <td class="py-3.5 px-3">日歸觀光巴士專車 (Tour Bus)</td>
+                <td class="py-3.5 px-3">全日包車一日遊 (約 11 小時)</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  集合地點：<strong>大通地鐵站 31 號出口地面層</strong>，請務必於 <strong>07:30 提早抵達集合（07:40 準時發車不等人）</strong>。途經旭山動物園、Ken&Mary 之樹、白金青池、白須瀑布、森林精靈露台，入夜氣溫偏低請務必穿著防風雪大衣。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TICKETS & SHOWTIMES -->
+    <section id="tab-tickets" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900">景點開放時間、門票與預約細節</h2>
+        <p class="text-xs text-slate-500 mt-0.5">點燈時刻、蒸汽鐘報時與觀光工廠見學資訊</p>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">景點設施</th>
+                <th class="py-3 px-3 font-semibold">開放時刻</th>
+                <th class="py-3 px-3 font-semibold">門票參考</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">核心亮點與參觀守則</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  札幌白色燈樹節<br><span class="text-slate-400 font-normal">大通公園 1 至 6 丁目</span>
+                </td>
+                <td class="py-3.5 px-3">點燈 16:30 至 22:00</td>
+                <td class="py-3.5 px-3">免費自由參觀</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 日本燈飾發祥地，巨型璀璨光之森、光之水晶球與心形拱門造景。<br>
+                  • 2 丁目設有慕尼黑聖誕市集（販售熱紅酒、德式香腸與聖誕雜貨）。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  札幌電視塔展望台<br><span class="text-slate-400 font-normal">さっぽろテレビ塔</span>
+                </td>
+                <td class="py-3.5 px-3">09:00 至 22:00<br>(最終入場 21:50)</td>
+                <td class="py-3.5 px-3">大人 1,000 日圓<br>中小學生 500 日圓</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 標高 90.38 公尺觀景台，俯瞰大通公園 1.5 公里筆直延伸的雪地燈海全景，為捕捉白色燈樹節全景的最佳機位。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  小樽音樂盒堂本館 & 蒸汽鐘<br><span class="text-slate-400 font-normal">小樽オルゴール堂</span>
+                </td>
+                <td class="py-3.5 px-3">09:00 至 18:00</td>
+                <td class="py-3.5 px-3">免費入場參觀</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 門口蒸氣鐘由英國工程師打造，全電腦控制鍋爐，每隔 15 分鐘以蒸氣奏鳴 5 階旋律並冒出濃厚白煙。<br>
+                  • 館內展示超過 25,000 件精緻音樂盒。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  藻岩山纜車觀景台<br><span class="text-slate-400 font-normal">もいわ山ロープウェイ</span>
+                </td>
+                <td class="py-3.5 px-3">冬季 11:00 至 22:00<br>(最後上山 21:30)</td>
+                <td class="py-3.5 px-3">兩段式纜車往返<br>大人 2,100 日圓</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 名列「日本新三大夜景」，標高 531 公尺山頂觀景台，設有幸福之鐘。建議日落前 30 分鐘抵達山頂，可同攬魔幻藍調暮色與璀璨鑽石燈海。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  白色戀人公園<br><span class="text-slate-400 font-normal">白い恋人パーク</span>
+                </td>
+                <td class="py-3.5 px-3">10:00 至 17:00<br>(點燈至 19:00)</td>
+                <td class="py-3.5 px-3">收費館 大人 800 日圓<br>庭園區域免費</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 參觀白色戀人巧克力餅乾生產流水線、骨董巧克力杯收藏室。<br>
+                  • 戶外英式都鐸城堡庭園於入夜後有浪漫燈飾造景與整點音樂鐘遊行。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  北海道大學綜合博物館<br><span class="text-slate-400 font-normal">北大総合博物館</span>
+                </td>
+                <td class="py-3.5 px-3">10:00 至 17:00<br>(週一休館)</td>
+                <td class="py-3.5 px-3">免費入場 (無料)</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 擁有超過 400 萬件學術標本，展示日本龍古生物骨骼全幅復原模型、礦物地質與諾貝爾獎榮譽展區。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: PRE-TRIP CHECKLIST -->
+    <section id="tab-checklist" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">北海道初冬雪季行前準備清單</h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊項目即可打勾記錄，狀態會自動儲存於瀏覽器中</p>
+          </div>
+          <span id="checklist-sub-badge" class="inline-flex items-center rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800 border border-sky-200">
+            已完成 0 / 0
+          </span>
+        </div>
+
+        <div id="checklist-grid" class="mt-4 grid gap-4 md:grid-cols-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-500">
+    <div class="mx-auto max-w-5xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>北海道札幌 × 小樽 × 美瑛旭川 7天6夜隨身互動手帳 • 完整收錄每日動線、名店訂位與日語導航卡</p>
+      <p class="text-slate-400">所有景點與餐廳均附一鍵導航定位，點擊「司機看這張」可放大顯示</p>
+    </div>
+  </footer>
+
+  <script>
+    // ==========================================
+    // 1. DATA DEFINITIONS
+    // ==========================================
+    const ITINERARY_DAYS = [
+      {
+        day: 1,
+        date: 'Day 1',
+        title: '抵達札幌 ➔ 白色燈樹節 ➔ 電視塔展望台 ➔ GAJA燒肉 ➔ 駿河屋 & 狸小路採買',
+        cityTag: '台北桃園 ➔ 新千歲 ➔ 札幌市區',
+        hotelName: '札幌市區飯店 Check-in',
+        summary: '搭乘早班機飛抵新千歲機場，搭 JR 快速 Airport 線 37 分鐘直奔札幌車站飯店入住。傍晚漫步大通公園欣賞浪漫的札幌白色燈樹節，登上電視塔俯瞰全景，晚上享用薄野 GAJA 燒肉，順訪駿河屋模型店與狸小路藥妝採買。',
+        stops: [
+          {
+            id: 'd1-s1',
+            time: '08:35 – 13:20',
+            title: 'TPE 桃園機場 ➔ CTS 新千歲機場 抵達出關',
+            tag: '航班飛行',
+            desc: '搭乘早班直飛班機抵達新千歲機場國際線航廈（CTS），完成檢疫查驗、入境手續與領取行李。依指標步行至國內線地下 1 樓搭乘 JR 鐵路。',
+            linkText: '新千歲機場航廈平面圖',
+            linkUrl: 'https://www.new-chitose-airport.jp/tw/tmap/',
+            jpTitle: '新千歳空港 国際線ターミナル',
+            jpAddr: '北海道千歳市美々987-22',
+            jpNote: '出關後步行約 7 分鐘抵達 B1F「JR 新千歲空港站」'
+          },
+          {
+            id: 'd1-s2',
+            time: '14:00 – 14:45',
+            title: '搭乘 JR 快速 Airport 線 直達札幌車站 & 飯店辦理入住',
+            tag: 'JR 特快',
+            desc: '搭乘 JR 快速 Airport 號（快速エアポート，每 12 分鐘一班），約 37 分鐘直達「札幌站」。出站後前往預訂飯店辦理 Check-in 手續並放置大件行李箱。',
+            linkText: 'JR 北海道快速 Airport 列車時刻',
+            linkUrl: 'https://www.jrhokkaido.co.jp/global/chinese/train/index.html',
+            jpTitle: 'JR 札幌駅 (さっぽろえき)',
+            jpAddr: '北海道札幌市北区北6条西4丁目',
+            jpNote: '建議加購 u-Seat 指定席 (+840日圓) 享有專屬大件行李擺放空間'
+          },
+          {
+            id: 'd1-s3',
+            time: '16:30 – 17:45',
+            title: '大通公園漫步：欣賞「札幌白色燈樹節」夢幻造景',
+            tag: '冬季盛典',
+            desc: '傍晚 16:30 準時點燈！大通公園 1 至 6 丁目綿延數公里的璀璨光雕花園，包含光之森、心形雪拱門與巨型水晶造型燈飾。2 丁目同時舉辦慕尼黑聖誕市集，可喝一杯熱肉桂紅酒暖身。',
+            linkText: '札幌白色燈樹節官方時刻',
+            linkUrl: 'https://white-illumination.jp/',
+            jpTitle: '大通公園・さっぽろホワイトイルミネーション',
+            jpAddr: '北海道札幌市中央区大通西1丁目～6丁目',
+            jpNote: '點燈時間為每日 16:30 至 22:00'
+          },
+          {
+            id: 'd1-s4',
+            time: '18:00 – 19:00',
+            title: '登上「札幌電視塔展望台」俯瞰燈海全景',
+            tag: '高空夜景',
+            desc: '搭電梯登上 90.38 公尺高的電視塔展望台，由正東方向正西眺望，大通公園延伸數公里的光之大道盡收眼底，為札幌初冬最具代表性之明信片級全景視角。',
+            linkText: '札幌電視塔門票預約',
+            linkUrl: 'https://www.tv-tower.co.jp/',
+            jpTitle: 'さっぽろテレビ塔 (展望台入口)',
+            jpAddr: '北海道札幌市中央区大通西1丁目',
+            jpNote: '門票大人 1,000 日圓，持客路/KKday憑證可掃碼進場'
+          },
+          {
+            id: 'd1-s5',
+            time: '19:30 – 21:00',
+            title: '晚餐：ガヤ すすきの店（GAJA 燒肉店・記得提早訂位）',
+            tag: '炭火燒肉',
+            desc: '前往薄野超人氣炭火燒肉【ガヤ すすきの店 (GAJA)】。這家燒肉店以高 CP 值黑毛和牛、特選厚切牛舌、多汁牛橫膈膜（ハラミ）與豐盛韓式石鍋拌飯聞名，店內裝潢時尚且排煙佳，務必提前預約避免久候！',
+            linkText: 'GAJA すすきの店 菜單與資訊',
+            linkUrl: 'https://gaja.in/',
+            jpTitle: 'ガヤ すすきの店 (炭火焼肉 GAJA)',
+            jpAddr: '北海道札幌市中央区南5条西3丁目11番地 第23桂和ビル2F',
+            jpNote: '位於薄野心臟地帶，距地鐵薄野站步行約 3 分鐘'
+          },
+          {
+            id: 'd1-s6',
+            time: '21:00 – 22:30',
+            title: '駿河屋薄野店動漫挖寶 ＆ 狸小路商店街藥妝採買',
+            tag: '購物漫遊',
+            desc: '飯後步行至【駿河屋 札幌すすきの店】（南 4 條西 4 丁目），店內有海量動漫模型、公仔、周邊精品與電玩二手神作。接著漫步狸小路商店街（狸小路 3-4 丁目 MEGA 唐吉訶德、松本清、札幌藥妝）採購發熱衣與免稅伴手禮。',
+            linkText: '駿河屋札幌薄野店 Google Maps',
+            linkUrl: 'https://maps.app.goo.gl/RdsCroAyZHkTJe166?g_st=ic',
+            jpTitle: '駿河屋 札幌すすきの店 / 狸小路商店街',
+            jpAddr: '北海道札幌市中央区南4条西4丁目1-1',
+            jpNote: 'MEGA唐吉訶德狸小路店 24 小時營業'
+          }
+        ]
+      },
+      {
+        day: 2,
+        date: 'Day 2',
+        title: '浪漫小樽精華一日遊 ➔ 三角市場海鮮丼 ➔ 運河與堺町通 ➔ 若雞時代炸半雞',
+        cityTag: '札幌 ➔ 小樽 ➔ 札幌',
+        hotelName: '札幌市區飯店 連住',
+        summary: '早晨搭乘 JR 奔赴港都小樽，在小樽車站旁三角市場「滝波食堂」享用海膽鮭魚卵海鮮丼。漫步小樽運河與堺町通百年商街，打卡音樂盒堂每 15 分鐘鳴笛噴氣的古董蒸氣鐘，晚餐享用酥脆多汁的若雞時代炸半雞，傍晚搭車返抵札幌。',
+        stops: [
+          {
+            id: 'd2-s1',
+            time: '08:00 – 08:45',
+            title: '搭乘 JR 前往小樽車站（車程約 35 分鐘・建議坐右側）',
+            tag: '沿海鐵道',
+            desc: '從札幌站搭乘 JR 函館本線區間快速或快速 Airport 號前往小樽站。列車行駛經朝里至錢函區間，車窗右側即為浩瀚石狩灣雪海奇景，美不勝收。',
+            linkText: 'JR 小樽路線圖',
+            linkUrl: 'https://www.jrhokkaido.co.jp/global/chinese/index.html',
+            jpTitle: 'JR 小樽駅 (おたるえき)',
+            jpAddr: '北海道小樽市稲穂2丁目22-15',
+            jpNote: '小樽出站後左邊階梯即可看到三角市場招牌'
+          },
+          {
+            id: 'd2-s2',
+            time: '08:50 – 10:30',
+            title: '小樽車站旁「三角市場」：滝波食堂 現選爆量海鮮丼',
+            tag: '究極海味',
+            desc: '直奔三角市場內的第一名店【北のどんぶり屋 滝波食堂】。招牌「自選任選丼 (わがまま丼)」可任選生海膽、晶瑩鮭魚卵、生甜蝦、活牡丹蝦、干貝與帝王蟹肉，海味甘甜濃郁爆汁！建議一早抵達先抽號碼牌。',
+            linkText: '滝波食堂 菜單與排隊指南',
+            linkUrl: 'https://otaru-takinami.net/',
+            jpTitle: '三角市場・北のどんぶり屋 滝波食堂',
+            jpAddr: '北海道小樽市稲穂3丁目10-16 三角市場内',
+            jpNote: '營業時間自早晨 08:00 開始，常有排隊人潮'
+          },
+          {
+            id: 'd2-s3',
+            time: '10:45 – 12:00',
+            title: '漫步小樽運河拍照（昔日港都倉庫群與瓦斯燈）',
+            tag: '經典地標',
+            desc: '從中央通一路緩坡步行約 10 分鐘抵達「小樽運河」。在淺草橋拍照點取景，欣賞運河兩旁建於大正年間的紅磚石造倉庫群與典雅瓦斯燈，若逢飄雪更添北國靜謐風情。',
+            linkText: '小樽運河觀光導覽',
+            linkUrl: 'https://otaru.gr.jp/destination/otaru-canal',
+            jpTitle: '小樽運河 (浅草橋街園)',
+            jpAddr: '北海道小樽市港町5 (小樽運河浅草橋)',
+            jpNote: '淺草橋遊客中心可領取中文散步地圖'
+          },
+          {
+            id: 'd2-s4',
+            time: '12:15 – 15:45',
+            title: '漫步堺町通商店街、小樽音樂盒博物館與古董蒸汽鐘',
+            tag: '文創甜點',
+            desc: '沿堺町通一路前行，打卡北一硝子館、北菓樓（必吃夢不思議大泡芙）、六花亭以及 LeTAO 總店（雙層乳酪蛋糕）。抵達童話十字路口參觀【小樽音樂盒堂本館】，門口的英國製古董蒸氣鐘每 15 分鐘以蒸氣鳴笛吹奏 5 階和弦並吐出白煙，必停下拍照！',
+            linkText: '小樽音樂盒堂本館官網',
+            linkUrl: 'https://www.otaru-orgel.co.jp/',
+            jpTitle: '小樽オルゴール堂 本館 / 蒸気時計',
+            jpAddr: '北海道小樽市住吉町4-1',
+            jpNote: '蒸汽鐘每 15 分鐘鳴笛一次，整點會有長報時'
+          },
+          {
+            id: 'd2-s5',
+            time: '16:30 – 18:00',
+            title: '晚餐：若雞時代本店（若鶏時代なると・皮酥肉嫩招牌炸半雞）',
+            tag: '老字號名物',
+            desc: '步行或搭車至小樽在地人的靈魂名店【若鶏時代なると 本店】。招牌「若鶏半身揚げ」將半隻全雞以獨家調味炸至金黃酥香、外皮薄脆肉質鮮嫩爆汁，搭配白飯與味噌湯飽足感十足。',
+            linkText: '若雞時代本店 菜單與地圖',
+            linkUrl: 'http://otaru-naruto.jp/',
+            jpTitle: '若鶏時代なると 本店',
+            jpAddr: '北海道小樽市稲穂3丁目16-13',
+            jpNote: '可從小樽音樂盒堂搭計程車或漫步回小樽站方向'
+          },
+          {
+            id: 'd2-s6',
+            time: '18:30 – 19:15',
+            title: '搭乘 JR 列車返回札幌車站',
+            tag: '鐵道賦歸',
+            desc: '從小樽車站搭乘 JR 快速列車返回札幌車站（車程約 35 分鐘），回飯店卸下戰利品，休息迎接隔天北海道神宮與藻岩山百萬夜景。',
+            linkText: 'JR 北海道時刻查詢',
+            linkUrl: 'https://www.jrhokkaido.co.jp/global/chinese/',
+            jpTitle: 'JR 札幌駅',
+            jpAddr: '北海道札幌市北区北6条西4丁目',
+            jpNote: '回程自由席班次密集'
+          }
+        ]
+      },
+      {
+        day: 3,
+        date: 'Day 3',
+        title: '北海道神宮參拜(判官餅) ➔ 場外市場帝王蟹烤魚 ➔ 藻岩山新日本三大夜景',
+        cityTag: '札幌市區 ➔ 藻岩山',
+        hotelName: '札幌市區飯店 連住',
+        summary: '早晨前往雪中靜謐的北海道神宮參拜，品嚐神宮境內六花亭限定的現烤熱騰騰「判官餅」。午餐前往場外市場享用現蒸活帝王蟹與厚切烤魚定食。傍晚搭市電與兩段式登山纜車登上藻岩山山頂觀景台，盡收新日本三大百萬夜景。',
+        stops: [
+          {
+            id: 'd3-s1',
+            time: '09:00 – 11:00',
+            title: '北海道神宮參拜 ＆ 品嚐六花亭茶屋限定「判官餅」',
+            tag: '總鎮守參拜',
+            desc: '搭地鐵東西線至「圓山公園站」步行進入北海道總鎮守【北海道神宮】。在蒼翠古木與白雪掩映下洗手參拜，求取御守。參拜後前往神宮境內的【六花亭神宮茶屋】，品嚐僅此處限定販售的「判官餅」（現烤蕎麥紅豆年糕，外脆內軟帶微鹹米香，現場還附免費奉茶）。',
+            linkText: '北海道神宮官方指南',
+            linkUrl: 'http://www.hokkaidojingu.or.jp/',
+            jpTitle: '北海道神宮 / 六花亭 神宮茶屋店',
+            jpAddr: '北海道札幌市中央区宮ケ丘474',
+            jpNote: '判官餅為現點現鐵板熱烤，每顆約 130 日圓'
+          },
+          {
+            id: 'd3-s2',
+            time: '11:30 – 13:30',
+            title: '午餐：前往「場外市場」享用現蒸帝王蟹與炭烤魚料理',
+            tag: '產地海鮮',
+            desc: '搭乘計程車約 10 分鐘（或轉乘地鐵至二十四軒站）抵達札幌中央批發市場旁的【場外市場】。在活海鮮街挑选鮮活帝王蟹、花咲蟹秤重現蒸，品嚐炭烤油脂豐厚的北海道花魚（ほっけ定食）與現烤扇貝。',
+            linkText: '札幌場外市場官方店家一覽',
+            linkUrl: 'https://www.jyogaiichiba.com/',
+            jpTitle: '札幌場外市場 (さっぽろじょうがいいちば)',
+            jpAddr: '北海道札幌市中央区北11条西21丁目2-3',
+            jpNote: '店家多數提供中文服務與現場料理代工'
+          },
+          {
+            id: 'd3-s3',
+            time: '14:00 – 16:00',
+            title: '市區悠閒漫步（大通地下街散策 或 回飯店小憩）',
+            tag: '午後放鬆',
+            desc: '午後可搭車回到大通或薄野，逛逛 Pole Town 與 Aurora Town 地下街，避開戶外低溫寒風，儲備傍晚夜景體力。',
+            linkText: '札幌地下街平面圖',
+            linkUrl: 'https://www.sapporo-chikagai.jp/',
+            jpTitle: 'さっぽろ地下街 (ポールタウン/オーロラタウン)',
+            jpAddr: '北海道札幌市中央区大通西1～3丁目地下',
+            jpNote: '地下街四通八達直通地鐵站與各大百貨'
+          },
+          {
+            id: 'd3-s4',
+            time: '16:30 – 19:30',
+            title: '搭乘路面電車與纜車：登「藻岩山」欣賞新日本三大百萬夜景',
+            tag: '百萬夜景',
+            desc: '由薄野搭札幌市電至「纜車入口（ロープウェイ入口）」站，搭免費接駁巴士抵山麓站。乘坐大型空中纜車轉乘「Morris Car 森林迷你纜車」登上 531 公尺山頂觀景台！札幌平原棋盤狀燈火輝煌如鑽石鋪陳，並打卡山頂「幸福之鐘」。',
+            linkText: '藻岩山纜車即時運行狀況',
+            linkUrl: 'https://mt-moiwa.jp/',
+            jpTitle: '藻岩山ロープウェイ山麓駅',
+            jpAddr: '北海道札幌市中央区伏見5丁目3-7',
+            jpNote: '建議 16:30 前抵達山麓站上山，山頂體感溫度極低務必備妥帽子手套'
+          },
+          {
+            id: 'd3-s5',
+            time: '20:00 – 21:30',
+            title: '晚餐：Pole Town 地下街排隊湯咖哩【SOUP CURRY KING】',
+            tag: '札幌名物',
+            desc: '下山後搭路面電車返回薄野/大通，前往札幌湯咖哩名店【SOUP CURRY KING】。招牌豚骨與雞骨熬製的濃郁湯底加入大量海鮮與北海道在地新鮮根莖蔬菜，香氣四溢，微辣湯汁澆在越光米飯上暖身又過癮！',
+            linkText: 'SOUP CURRY KING 菜單介紹',
+            linkUrl: 'https://www.soupcurry-king.shop/',
+            jpTitle: 'SOUP CURRY KING セントラル店 (大通/薄野)',
+            jpAddr: '北海道札幌市中央区南2条西3丁目13-4 カタオカビルB1F',
+            jpNote: '辣度有 1 至 10 級可選，建議選 2 至 3 級微辣最適口'
+          }
+        ]
+      },
+      {
+        day: 4,
+        date: 'Day 4',
+        title: '童話城堡白色戀人公園 ➔ 札幌啤酒博物館 ➔ ARIO商場 ➔ 札幌站百貨血拼',
+        cityTag: '宮之澤 ➔ 苗穗 ➔ 札幌車站',
+        hotelName: '札幌市區飯店 連住',
+        summary: '上午搭地鐵前往白色戀人公園參觀英式城堡花園與巧克力觀光工廠見學。下午前往日本唯一啤酒博物館參觀開拓史紅磚建築與經典啤酒三得利試飲，順逛旁邊 ARIO 大型商場，晚上回到札幌車站大丸百貨與 Stella Place 購物。',
+        stops: [
+          {
+            id: 'd4-s1',
+            time: '09:30 – 12:30',
+            title: '白色戀人公園：英式歐風城堡、巧克力觀光工廠見學與甜點品嚐',
+            tag: '童話王國',
+            desc: '搭地鐵東西線至「宮之澤站」步行約 7 分鐘抵達【白色戀人公園】。參觀經典白色戀人貓舌餅乾生產流水線、骨董巧克力器具展，在玫瑰花園與歐式鐘樓前拍下童話般美照，並在咖啡廳品嚐白色戀人特製霜淇淋。',
+            linkText: '白色戀人公園官方營業時間',
+            linkUrl: 'https://www.shiroikoibitopark.jp/',
+            jpTitle: '白い恋人パーク',
+            jpAddr: '北海道札幌市西区宮の沢2条2丁目11-36',
+            jpNote: '戶外庭園免費參觀，工廠收費館門票大人 800 日圓'
+          },
+          {
+            id: 'd4-s2',
+            time: '13:30 – 15:30',
+            title: '札幌啤酒博物館：紅磚建築、北海道開拓史與經典三款啤酒試飲',
+            tag: '文化歷史',
+            desc: '搭地鐵轉乘或搭公車至【札幌啤酒博物館】（開拓使時代留存之明治紅磚歷史建築）。館內展示日本啤酒釀造歷史，參觀後可於試飲區付費 1,000 日圓品嚐三款經典生啤酒組合（黑標、Classic 與開拓使啤酒），搭配起司點心。',
+            linkText: '札幌啤酒博物館參觀預約',
+            linkUrl: 'https://www.sapporobeer.jp/brewery/s_museum/',
+            jpTitle: 'サッポロビール博物館 (サッポロガーデンパーク)',
+            jpAddr: '北海道札幌市東区北7条東9丁目1-1',
+            jpNote: '館內常設展免費自由參觀，未成年人可享用無酒精飲料'
+          },
+          {
+            id: 'd4-s3',
+            time: '15:30 – 17:30',
+            title: '順逛旁邊大型商場「ARIO 札幌」採購特產',
+            tag: '大型商場',
+            desc: '博物館步行 3 分鐘即可走進大型商場【Ario 札幌 (アリオ札幌)】。內部有大型伊藤洋華堂超市、玩具阿卡將（Akachan Honpo）、各類服飾生活雜貨，室內溫暖舒適極好逛。',
+            linkText: 'Ario 札幌樓層平面圖',
+            linkUrl: 'https://sapporo.ario.jp/',
+            jpTitle: 'アリオ札幌 (Ario Sapporo)',
+            jpAddr: '北海道札幌市東区北7条東9丁目2-20',
+            jpNote: '超市設有專屬免稅退稅服務櫃台'
+          },
+          {
+            id: 'd4-s4',
+            time: '18:00 – 21:30',
+            title: '札幌車站商圈（JR Tower、Stella Place、大丸百貨）血拼購物',
+            tag: '站前血拼',
+            desc: '返回札幌車站商圈，連續逛遍 JR Tower、Stella Place、大丸百貨（Daimaru）與 Bic Camera 電器行。晚餐可在車站地下街或樓上美食街品嚐名店【十勝豚丼 いっぴん】，享用備長炭現烤特製醬汁豬五花丼飯。',
+            linkText: 'JR Tower 購物指引',
+            linkUrl: 'https://www.jr-tower.com/',
+            jpTitle: 'JRタワー / 大丸札幌店 / 豚丼いっぴん ステラプレイス店',
+            jpAddr: '北海道札幌市中央区北5条西2丁目5',
+            jpNote: '大丸百貨與各大專櫃退稅手續請在營業結束前半小時辦理'
+          }
+        ]
+      },
+      {
+        day: 5,
+        date: 'Day 5',
+        title: '北海道大學漫步 ➔ 綜合博物館(恐龍化石) ➔ 北大Marche下午茶 ➔ 羊座成吉思汗烤羊',
+        cityTag: '北海道大學 ➔ 狸小路/薄野',
+        hotelName: '札幌市區飯店 連住',
+        summary: '早晨漫步於白雪皚皚的北海道大學校園，免費參觀館藏豐富的綜合博物館欣賞恐龍骨骼化石。午後在校園內的 Hokudai Marche Cafe 享用北海道純濃牛奶冰淇淋。晚上前往成吉思汗烤肉人氣名店「羊座」品嚐極品鮮嫩烤羊肉。',
+        stops: [
+          {
+            id: 'd5-s1',
+            time: '09:30 – 11:30',
+            title: '漫步北海道大學校園 ＆ 參觀「北海道大學綜合博物館」',
+            tag: '百年學府',
+            desc: '從札幌站北口步行約 7 分鐘走進北海道大學。穿過白楊木與銀杏林蔭道，參觀全日本首屈一指的【北海道大學綜合博物館】（免費入場）。館內展示珍貴的恐龍（日本龍原寸骨骼標本）、長毛象骨骼、各類古生物化石、礦石與開拓歷史文物。',
+            linkText: '北大綜合博物館官方介紹',
+            linkUrl: 'https://www.museum.hokudai.ac.jp/',
+            jpTitle: '北海道大学総合博物館',
+            jpAddr: '北海道札幌市北区北10条西8丁目',
+            jpNote: '免費參訪，館內設有古生物與諾貝爾獎得主展區'
+          },
+          {
+            id: 'd5-s2',
+            time: '11:30 – 13:00',
+            title: '北大校內午茶：北大 Marche Cafe 享用純濃牛奶冰淇淋',
+            tag: '校園名物',
+            desc: '前往位於百年紀念會館一樓的【北大マルシェ Cafe & Labo (Hokudai Marche Cafe)】。必點北大農場自產的純濃生乳霜淇淋、香濃起司熱壓吐司與手工戚風蛋糕，奶香極為濃醇回甘，在溫馨木質空間享受悠閒午後。',
+            linkText: 'Hokudai Marche Cafe 菜單與營業時間',
+            linkUrl: 'https://www.hokudaimarche.com/',
+            jpTitle: '北大マルシェ Cafe&Labo',
+            jpAddr: '北海道札幌市北区北9条西5丁目 北海道大学百年記念会館1F',
+            jpNote: '生乳霜淇淋採用北海道大學農場放牧牛生乳精製'
+          },
+          {
+            id: 'd5-s3',
+            time: '13:30 – 17:30',
+            title: '午後彈性漫步：COCONO SUSUKINO 新地標 ＆ 必買 DONGURI 麵包',
+            tag: '市區商場',
+            desc: '前往薄野最新大型複合商場【COCONO SUSUKINO】，逛逛樓內設計選物與北海道伴手禮專區。順道前往北海道超人氣排隊麵包店【DONGURI (どんぐり)】採買全日本銷售冠軍「竹輪鮪魚沙拉麵包（ちくわパン）」，剛出爐的香脆麵包夾入整條彈牙竹輪，令人驚艷！',
+            linkText: 'COCONO SUSUKINO 官網',
+            linkUrl: 'https://cocono-susukino.jp/',
+            jpTitle: 'COCONO SUSUKINO / どんぐり 大通店',
+            jpAddr: '北海道札幌市中央区南4条西4丁目1-1 / 大通西1丁目 ル・トロワ1F',
+            jpNote: 'DONGURI 竹輪麵包每日現烤出爐多次，排隊名物'
+          },
+          {
+            id: 'd5-s4',
+            time: '18:00 – 20:00',
+            title: '晚餐：札幌ジンギスカン 羊座（成吉思汗烤羊肉・記得 Google Maps 訂位）',
+            tag: '羊肉盛宴',
+            desc: '前往札幌老饕極力推薦的成吉思汗烤羊肉名店【札幌ジンギスカン 羊座 (Hitsujiza)】。嚴選極高品質澳洲與北海道冷藏生羊肉，完全無羊羶味！在炭火燒紅的成吉思汗圓頂鐵盤上鋪滿北海道洋蔥與豆芽菜，羊肉外焦內嫩搭配甘甜獨門醬汁，務必提前透過 Google Maps 預約！',
+            linkText: '札幌ジンギスカン 羊座 Google Maps',
+            linkUrl: 'https://maps.app.goo.gl/3XgD2w2fT28oH5v37',
+            jpTitle: '札幌ジンギスカン 羊座 (ひつじざ)',
+            jpAddr: '北海道札幌市中央区南3条西4丁目 南3西4ビル B1F',
+            jpNote: '成吉思汗排煙良好，記得提前於 Google Maps 或電話訂位'
+          }
+        ]
+      },
+      {
+        day: 6,
+        date: 'Day 6 (11/27)',
+        title: '旭山一日遊：旭山動物園 ➔ Ken&Mary之樹 ➔ 白金青池 ➔ 白須瀑布 ➔ 森林精靈露台',
+        cityTag: '札幌 ➔ 旭川 ➔ 美瑛 ➔ 富良野 ➔ 札幌',
+        hotelName: '札幌市區飯店 連住',
+        summary: '07:30 抵達大通地鐵站 31 號出口集合（07:40 發車）。專車奔赴旭山動物園觀賞北極熊與海豹，途經美瑛肯與瑪莉之樹，造訪夢幻藍白冰雪的白金青池與白須瀑布，傍晚漫步富良野白雪童話般的森林精靈露台，夜間滿載而歸返抵札幌。',
+        stops: [
+          {
+            id: 'd6-s1',
+            time: '07:30 – 07:40',
+            title: '大通地鐵站 31 號出口集合發車（07:40 準時出發！）',
+            tag: '一日遊集合',
+            desc: '早晨請務必於 07:30 提早抵達「大通地鐵站 31 號出口（地面層）」與一日遊中文導遊司機會合核對姓名憑證。專車於 07:40 準時發車出發，逾時不候！',
+            linkText: '大通站 31 號出口地圖定位',
+            linkUrl: 'https://maps.google.com/?q=Odori+Station+Exit+31',
+            jpTitle: '大通駅 31番出口 (地上集合場所)',
+            jpAddr: '北海道札幌市中央区大通西1丁目 (地下鉄大通駅31番出入口付近)',
+            jpNote: '建議提早 10 分鐘抵達，車上備有暖氣與舒適座椅'
+          },
+          {
+            id: 'd6-s2',
+            time: '10:30 – 12:45',
+            title: '旭川市「旭山動物園」暢玩（北極熊館、海豹館與企鵝）',
+            tag: '明星動物園',
+            desc: '全日本最知名動物園！以獨創的「行動展示」聞名，近距離觀賞北極熊在水中巨大玻璃躍下游泳、海豹在圓柱垂直水槽穿梭，以及國王企鵝在雪地上的超萌神態（冬季降雪足夠時會有企鵝雪中漫步），園內並設有熱食部午餐。',
+            linkText: '旭山動物園冬季開園情報',
+            linkUrl: 'https://www.city.asahikawa.hokkaido.jp/asahiyamazoo/',
+            jpTitle: '旭川市旭山動物園 正門',
+            jpAddr: '北海道旭川市東旭川町倉沼',
+            jpNote: '停留約 2 至 2.5 小時，園區坡道積雪行走請踩穩步伐'
+          },
+          {
+            id: 'd6-s3',
+            time: '13:30 – 14:00',
+            title: '美瑛拼布之路：Ken & Mary 之樹（ケンとメリーの木）',
+            tag: '冬雪名木',
+            desc: '因 1970 年代日產汽車廣告而名揚全日本的巨大白楊木「Ken & Mary 之樹」。矗立於美瑛無垠的白雪丘陵之上，傲視遠方雪山，是美瑛最具代表性之冬季銀白畫卷視角。',
+            linkText: '美瑛觀光協會介紹',
+            linkUrl: 'https://www.biei-hokkaido.jp/',
+            jpTitle: 'ケンとメリーの木 (Ken & Mary Tree)',
+            jpAddr: '北海道上川郡美瑛町大久保協生',
+            jpNote: '短暫停留拍照約 20 至 30 分鐘'
+          },
+          {
+            id: 'd6-s4',
+            time: '14:30 – 15:15',
+            title: '白金青池（青い池）：白雪與薄冰掩映下的夢幻琉璃藍水潭',
+            tag: '夢幻仙境',
+            desc: '造訪被蘋果 Mac 設為桌布而享譽全球的「白金青池」。湖水因含有天然氫氧化鋁微粒折射出 Tiffany 藍，在初冬白雪初覆、水面薄冰與落葉松枯木倒影映襯下，散發空靈純淨氛圍。',
+            linkText: '白金青池冬季點燈時刻',
+            linkUrl: 'https://www.biei-hokkaido.jp/zh_TW/spot/shirogane-blue-pond',
+            jpTitle: '白金青い池 (しろがねあおいけ)',
+            jpAddr: '北海道上川郡美瑛町白金',
+            jpNote: '沿木棧步道行走，請注意步道結冰防滑'
+          },
+          {
+            id: 'd6-s5',
+            time: '15:25 – 16:00',
+            title: '白須瀑布（白ひげの滝）：十勝岳地下水與湛藍美瑛川',
+            tag: '冰瀑湧泉',
+            desc: '距青池僅 5 分鐘車程，站在鐵橋上俯瞰。由十勝岳火山熔岩斷層裂縫湧出之地下水傾瀉而下，藍寶石色澤的美瑛川（別名青色河川）蒸騰出繚繞水霧，兩側岩壁結成壯麗冰柱冰瀑，景致極度震撼。',
+            linkText: '白須瀑布介紹',
+            linkUrl: 'https://www.biei-hokkaido.jp/zh_TW/spot/shirahige-waterfall',
+            jpTitle: '白ひげの滝 (白金温泉 ブルーリバー橋)',
+            jpAddr: '北海道上川郡美瑛町白金 白金温泉',
+            jpNote: '橋面風大氣溫低，請拉緊圍巾與手套'
+          },
+          {
+            id: 'd6-s6',
+            time: '16:50 – 18:00',
+            title: '富良野「森林精靈露台」（ニングルテラス・雪中童話小木屋點燈）',
+            tag: '精靈童話',
+            desc: '位於新富良野王子飯店旁的黑森林之中。15 棟覆蓋厚厚積雪的木屋手工藝品工作坊，木棧道兩旁點亮溫暖的黃色串燈，如同置身白雪森林中的精靈王國。每棟木屋均販售富良野獨家手作木雕、蠟燭、皮雕與雪花飾品。',
+            linkText: '森林精靈露台店鋪一覽',
+            linkUrl: 'https://www.princehotels.co.jp/furano-area/ningle-terrace/',
+            jpTitle: 'ニングルテラス (新富良野プリンスホテル敷地内)',
+            jpAddr: '北海道富良野市中御料 (新富良野プリンスホテル)',
+            jpNote: '傍晚點燈後氣氛最為夢幻，漫步拍照約 1 小時'
+          },
+          {
+            id: 'd6-s7',
+            time: '18:00 – 20:30',
+            title: '搭專車返回札幌大通站 ＆ 晚餐享用奧芝商店濃郁蝦湯咖哩',
+            tag: '專車返程',
+            desc: '一日遊專車返抵札幌大通站。晚餐前往【スープカレー奥芝商店 駅前創成寺】，這家以一整隻大蝦與甜蝦頭細火熬煮的濃醇蝦高湯為基底，搭配產地現炸蔬菜與漢堡排，極度溫暖飽腹。',
+            linkText: '奧芝商店駅前創成寺 菜單',
+            linkUrl: 'https://okushiba.net/',
+            jpTitle: 'スープカレー奥芝商店 駅前創成寺',
+            jpAddr: '北海道札幌市中央区北4条西1丁目 ホクレンビルB1F',
+            jpNote: '位於札幌站旁ホクレン大樓 B1F，蝦高湯濃醇絕讚'
+          }
+        ]
+      },
+      {
+        day: 7,
+        date: 'Day 7',
+        title: '飯店退房 ➔ JR赴新千歲機場 ➔ 開逛全日本最好買國內線航廈 ➔ CTS 14:40-TPE 18:15',
+        cityTag: '札幌 ➔ 新千歲 ➔ 台北桃園',
+        hotelName: '已退房 (返台日)',
+        summary: '早晨享用早餐後退房，搭乘 JR 快速 Airport 線直奔新千歲機場。預留 2.5 至 3 小時大逛號稱全日本最好逛的新千歲機場國內線 2F 伴手禮街，補齊現烤玉米麵包、生巧克力與各式限定甜點，搭乘 14:40 班機平安返抵台北。',
+        stops: [
+          {
+            id: 'd7-s1',
+            time: '09:30 – 10:30',
+            title: '飯店辦理 Check-out 退房 ➔ 札幌站搭 JR 赴新千歲機場',
+            tag: 'JR 移動',
+            desc: '在飯店享用完早餐後辦理退房手續，推行李步行至札幌站，搭乘 JR 快速 Airport 號（快速エアポート）前往新千歲機場站（約 37 分鐘），直接抵達國內線 B1F 樓層。',
+            linkText: 'JR 新千歲機場時刻表',
+            linkUrl: 'https://www.jrhokkaido.co.jp/global/chinese/',
+            jpTitle: 'JR 新千歳空港駅',
+            jpAddr: '北海道千歳市美々 新千歳空港B1F',
+            jpNote: '班次密集，每小時約 5 至 6 班'
+          },
+          {
+            id: 'd7-s2',
+            time: '10:30 – 13:00',
+            title: '新千歲機場「國內線 2F/3F 伴手禮特產大街」大巡禮！',
+            tag: '終極採買',
+            desc: '全日本最狂機場商場！務必把托運行李推至國內線 2F 伴手禮大街掃貨：【美瑛選果】現烤純甜玉米麵包（コーンパン）、【KINOTOYA】極上牛乳霜淇淋與現烤半熟起司塔、【六花亭】蘭姆葡萄夾心餅乾、【北菓樓】開拓おかき米果、【Royce\'】生巧克力與生巧麵包，並可於 3F 拉麵道場品嚐一碗道地拉麵。',
+            linkText: '新千歲機場商場伴手禮排行榜',
+            linkUrl: 'https://www.new-chitose-airport.jp/tw/spend/shop/buy/',
+            jpTitle: '新千歳空港 国内線ターミナルビル 2F出発ロビー',
+            jpAddr: '北海道千歳市美々 新千歳空港国内線ターミナル2F',
+            jpNote: '美瑛選果玉米麵包每出爐一梯次即秒殺，看準時間排隊'
+          },
+          {
+            id: 'd7-s3',
+            time: '13:00 – 14:40',
+            title: '步行至國際線航廈報到托運、安檢出境 ＆ 免稅店最後補貨',
+            tag: '登機出境',
+            desc: '經由聯絡通道推行李走至國際線 3F 出發大廳（步行約 5-8 分鐘）。前往航空公司櫃台辦理報到托運行李，通過安檢與移民官查驗。候機室免稅店可做最後菸酒與免稅品補買。',
+            linkText: '新千歲機場國際線出發資訊',
+            linkUrl: 'https://www.new-chitose-airport.jp/tw/airport/international/',
+            jpTitle: '新千歳空港 国際線ターミナル 3F出発ロビー',
+            jpAddr: '北海道千歳市美々 新千歳空港国際線ターミナル3F',
+            jpNote: '起飛前 30 分鐘開始登機，請留意登機門廣播'
+          },
+          {
+            id: 'd7-s4',
+            time: '14:40 – 18:15',
+            title: 'CTS 14:40 起飛 ➔ 18:15 平安降落 TPE 台北桃園機場',
+            tag: '平安歸國',
+            desc: '班機自新千歲機場起飛，經過約 4 小時航程，預計於台灣時間 18:15 平安返抵台北桃園機場，提領行李出關，滿載美好雪國回憶返家。',
+            linkText: '桃園國際機場到站航班',
+            linkUrl: 'https://www.taoyuan-airport.com/',
+            jpTitle: '台湾 桃園国際空港 (TPE)',
+            jpAddr: 'Taiwan Taoyuan International Airport',
+            jpNote: '平安抵達台北，結束精彩豐富的北海道 7 天 6 夜浪漫之旅'
+          }
+        ]
+      }
+    ];
+
+    const FOOD_DATA = [
+      {
+        id: 'food-gaja',
+        cat: 1,
+        catLabel: '1. 燒肉與成吉思汗',
+        matchDay: 'Day 1 薄野（晚餐）',
+        name: 'ガヤ すすきの店 (炭火燒肉 GAJA Susukino)',
+        jpName: 'ガヤ すすきの店 (炭火焼肉 GAJA)',
+        address: '札幌市中央區南5條西3丁目 第23桂和大樓2F',
+        jpAddress: '北海道札幌市中央区南5条西3丁目11番地 第23桂和ビル2F',
+        feature: '薄野超熱門的高 CP 值炭火和牛燒肉店！店內裝潢現代昏暗有情調，採用無煙炭火烤爐。特選黑毛和牛、蔥花牛舌、多汁牛五花與冷麵備受推崇，價格平實親民，出發前強烈建議提前預約訂位。',
+        mustOrder: '特選黑毛和牛拼盤、厚切鹽烤牛舌、極上牛橫膈膜 (ハラミ)、韓式石鍋拌飯',
+        url: 'https://gaja.in/',
+        badgeColor: 'bg-rose-100 text-rose-800'
+      },
+      {
+        id: 'food-hitsujiza',
+        cat: 1,
+        catLabel: '1. 燒肉與成吉思汗',
+        matchDay: 'Day 5 狸小路/薄野（晚餐）',
+        name: '札幌ジンギスカン 羊座 (成吉思汗烤羊肉 羊座)',
+        jpName: '札幌ジンギスカン 羊座 (ひつじざ)',
+        address: '札幌市中央區南3條西4丁目 南3西4大樓 B1F',
+        jpAddress: '北海道札幌市中央区南3条西4丁目 南3西4ビル B1F',
+        feature: '札幌在地極高評價的成吉思汗烤羊肉名店！嚴選絕佳品質的冷藏生羊肉，完全無羶味，鮮嫩多汁帶有甘甜肉香。在炭火燒紅的成吉思汗凸圓鐵盤上將羊肉與蔬菜烤得滋滋作響，沾特製甘口醬汁是一絕，記得提前於 Google Maps 預約訂位。',
+        mustOrder: '特選生羊肉里肌 (生ラム肩ロース)、頂級羊肋眼 (ヒレ)、特選羊舌 (ラムタン)、北海道洋蔥豆芽',
+        url: 'https://maps.app.goo.gl/3XgD2w2fT28oH5v37',
+        badgeColor: 'bg-rose-100 text-rose-800'
+      },
+      {
+        id: 'food-takinami',
+        cat: 2,
+        catLabel: '2. 海鮮丼與炸雞',
+        matchDay: 'Day 2 小樽三角市場（早餐）',
+        name: '北のどんぶり屋 滝波食堂 (小樽三角市場)',
+        jpName: '北のどんぶり屋 滝波食堂 (たきなみしょくどう)',
+        address: '小樽市稻穗3丁目10-16 三角市場內',
+        jpAddress: '北海道小樽市稲穂3丁目10-16 三角市場内',
+        feature: '小樽車站出站即達的三角市場第一名店！招牌元祖「わがまま丼（任選自選丼）」可從生海膽、鮭魚卵、牡丹蝦、甜蝦、生干貝、帝王蟹肉、鮪魚中任選 3 至 4 種海味豪邁鋪滿碗面，份量極厚實且鮮度頂天，並隨附一碗超大鮮甜螃蟹味噌湯。',
+        mustOrder: '任選自選海鮮丼 (生海膽+鮭魚卵+牡丹蝦+生干貝)、炭烤花魚、毛蟹湯',
+        url: 'https://otaru-takinami.net/',
+        badgeColor: 'bg-cyan-100 text-cyan-800'
+      },
+      {
+        id: 'food-naruto',
+        cat: 2,
+        catLabel: '2. 海鮮丼與炸雞',
+        matchDay: 'Day 2 小樽市區（晚餐）',
+        name: '若雞時代本店 (若鶏時代なると 本店)',
+        jpName: '若鶏時代なると 本店',
+        address: '小樽市稻穗3丁目16-13',
+        jpAddress: '北海道小樽市稲穂3丁目16-13',
+        feature: '創立超過半世紀的小樽元祖級排隊名物！招牌「若鶏半身揚げ」將半隻全雞直接下鍋油炸，完全不裹厚重麵衣，外皮薄脆酥香、肉質鎖住飽滿肉汁且富有椒鹽香氣。可搭配壽司或拉麵組合成定食套餐，在地人從小吃到大的經典美味。',
+        mustOrder: '招牌炸半雞 (若鶏半身揚げ)、若雞炸半雞定食、傳統生握壽司套餐',
+        url: 'http://otaru-naruto.jp/',
+        badgeColor: 'bg-cyan-100 text-cyan-800'
+      },
+      {
+        id: 'food-king',
+        cat: 3,
+        catLabel: '3. 湯咖哩與豚丼',
+        matchDay: 'Day 3 大通/薄野（晚餐）',
+        name: 'SOUP CURRY KING (中央店 / 總店)',
+        jpName: 'SOUP CURRY KING セントラル店',
+        address: '札幌市中央區南2條西3丁目13-4 片岡大樓B1F',
+        jpAddress: '北海道札幌市中央区南2条西3丁目13-4 カタオカビルB1F',
+        feature: '札幌湯咖哩界無人不知的重量級霸主！湯頭創新結合了長時間慢火熬煮的「濃郁豚骨白湯」與「昆布海鮮高湯」，甘甜回甘又富有深層香料層次。鮮嫩雞腿輕輕一撥即骨肉分離，搭配炸得脆甜的北海道蓮藕、南瓜、秋葵與青椒，極致滿足。',
+        mustOrder: '雞腿野菜湯咖哩 (チキン野菜カリー)、海鮮湯咖哩、納豆肉味噌湯咖哩、特製拉西乳酸飲料 (Lassi)',
+        url: 'https://www.soupcurry-king.shop/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'food-okushiba',
+        cat: 3,
+        catLabel: '3. 湯咖哩與豚丼',
+        matchDay: 'Day 6 札幌站前（晚餐）',
+        name: 'スープカレー奥芝商店 駅前創成寺',
+        jpName: 'スープカレー奥芝商店 駅前創成寺',
+        address: '札幌市中央區北4條西1丁目 ホクレン大樓B1F',
+        jpAddress: '北海道札幌市中央区北4条西1丁目 ホクレンビルB1F',
+        feature: '以元祖「蝦高湯（おくしばーエビ出汁）」震撼日本美食界的名店！每日使用超過 2,000 隻甘蝦頭熬製深邃濃醇的蝦味咖哩精華，搭配現點現煎的手工鐵板漢堡排與產地直送的北海道時令野菜，香濃程度無可匹敵。',
+        mustOrder: '宗谷黑牛漢堡排蝦湯咖哩 (おくしばーハンバーグ)、龍蝦海鮮饗宴咖哩、炸花枝天婦羅',
+        url: 'https://okushiba.net/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'food-ippin',
+        cat: 3,
+        catLabel: '3. 湯咖哩與豚丼',
+        matchDay: 'Day 4 札幌站 Stella Place（晚餐）',
+        name: '十勝豚丼 いっぴん (豚丼一品 札幌站店)',
+        jpName: '十勝豚丼 いっぴん ステラプレイス店',
+        address: '札幌市中央區北5條西2丁目 札幌Stellar Place 6F',
+        jpAddress: '北海道札幌市中央区北5条西2丁目 札幌ステラプレイス6F',
+        feature: '來自十勝帶廣正宗豚丼專門店！精選特級國產豬肉，以高溫備長炭反覆刷上特製甘辛秘傳醬汁現烤，肉質微帶炭烤焦香、油脂軟嫩化口。店家貼心提供「肉的切塊大小」與「醬汁多寡」客製化選擇，淋滿肉汁的白飯讓人停不下筷子。',
+        mustOrder: '特選炭火烤豬五花丼 (豚丼)、特盛肉增量豚丼、白蔥豚丼、豚汁 (豚肉味噌湯)',
+        url: 'https://www.butadon-ippin.com/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'food-whitecosy',
+        cat: 4,
+        catLabel: '4. 甜點麵包與商場',
+        matchDay: '札幌站地下街 PASEO / Pole Town',
+        name: '四葉牛乳咖啡廳 (Milk & Parfait Yotsuba White Cosy)',
+        jpName: 'よつ葉ホワイトコージ (White Cosy)',
+        address: '札幌市中央區地下街 Pole Town / 札幌站商圈',
+        jpAddress: '北海道札幌市中央区南2条西3丁目 地下街ポールタウン内',
+        feature: '北海道知名乳業品牌「四葉牛乳 (よつ葉乳業)」直營的甜點輕食名店！採用 100% 北海道十勝產高品質純生乳、發酵奶油與起司。必推午間限定焗烤烤飯/義大利麵套餐，餐後再來一份綿密無比的純生乳聖代或厚鬆餅，奶香爆棚。',
+        mustOrder: '四葉純牛乳霜淇淋聖代、十勝四葉草莓卡士達鬆餅、海鮮奶油焗烤通心麵 (午間超推)',
+        url: 'https://www.yotsuba.co.jp/whitecosy/',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
+        id: 'food-donguri',
+        cat: 4,
+        catLabel: '4. 甜點麵包與商場',
+        matchDay: '大通公園 Le Trois 1F / 札幌各分店',
+        name: 'DONGURI 麵包店 (どんぐり・北海道必買排隊麵包)',
+        jpName: '焼きたてパンの店 どんぐり (DONGURI)',
+        address: '札幌市中央區大通西1丁目13 Le Trois 1F (大通店)',
+        jpAddress: '北海道札幌市中央区大通西1丁目13 ル・トロワ1F',
+        feature: '北海道在地人票選第一名的傳奇烘焙坊！發明並風靡全日本的超級名物「竹輪鮪魚沙拉麵包 (ちくわパン)」外層麵包香軟，裡面包裹一整根 Q 彈烤竹輪，竹輪內部塞滿現拌洋蔥鮪魚沙拉，鹹香濃郁無敵美味。店內還有炸咖哩麵包與各式現烤可頌。',
+        mustOrder: '招牌竹輪鮪魚麵包 (ちくわパン)、半熟蛋牛肉咖哩包、鹽味香濃可頌、草莓生乳可頌',
+        url: 'https://www.donguri-bake.co.jp/',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
+        id: 'food-coconosusukino',
+        cat: 4,
+        catLabel: '4. 甜點麵包與商場',
+        matchDay: 'Day 5 薄野新地標商場',
+        name: 'COCONO SUSUKINO (薄野複合潮流新商場)',
+        jpName: 'COCONO SUSUKINO (ココノ ススキノ)',
+        address: '札幌市中央區南4條西4丁目1-1',
+        jpAddress: '北海道札幌市中央区南4条西4丁目1-1 (地下鉄すすきの駅直結)',
+        feature: '薄野十字路口正中心全新開幕的地標型大型商場！直通地鐵薄野站，匯集 TOHO CINEMAS 影城、SAPPORO STREAM 飯店、地下一樓大型生活超市與道產特產伴手禮街，以及樓上風格酒吧街，是入夜採買與漫步的絕佳場所。',
+        mustOrder: '地下一樓北海道特色熟食超市、在地設計雜貨、限定道產甜點伴手禮',
+        url: 'https://cocono-susukino.jp/',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      }
+    ];
+
+    const CHECKLIST_DATA = [
+      {
+        category: '入境手續、機票憑證與交通卡',
+        items: [
+          { id: 'c1', label: '出發日前 3 天填寫完成「Visit Japan Web」入境手續與海關申報，截圖 QR Code' },
+          { id: 'c2', label: '確認護照效期大於 6 個月以上，並列印或手機儲存來回機票電子行程單 (TPE-CTS)' },
+          { id: 'c3', label: '準備日本交通 IC 卡（Suica / ICOCA / iPhone 內建交通卡），儲值 5,000 日圓供地鐵與 JR 使用' },
+          { id: 'c4', label: '準備至少兩張海外高回饋信用卡（如吉鶴卡、玉山熊本熊卡等 JCB/VISA 卡）' }
+        ]
+      },
+      {
+        category: '名店預約與一日遊憑證',
+        items: [
+          { id: 'c5', label: '確認「ガヤ (GAJA) すすきの店」第一天晚餐預約憑證與時間' },
+          { id: 'c6', label: '確認「札幌ジンギスカン 羊座」第五天成吉思汗烤羊肉 Google Maps 預約訂位' },
+          { id: 'c7', label: '確認 11/27 美瑛旭川一日遊確認單（07:40 大通地鐵站 31 號出口準時出發，07:30 集合）' },
+          { id: 'c8', label: '預先安裝 Google Maps 離線地圖與日本乘換案內 (NAVITIME/Yahoo!乗換案内) App' }
+        ]
+      },
+      {
+        category: '初冬雪季穿著與防滑裝備',
+        items: [
+          { id: 'c9', label: '穿著防滑底鞋或雪靴（鞋底刻紋深、橡膠抓地力佳，可備簡易鞋底冰爪）' },
+          { id: 'c10', label: '採「洋蔥/玉米式穿法」：吸濕排汗內層 + 保暖中層 + 防風防水厚羽絨外層（室內暖氣強方便穿脫）' },
+          { id: 'c11', label: '防寒三寶：毛線防風帽（遮住耳朵）、觸控式保暖防水手套、羊毛保暖圍巾' },
+          { id: 'c12', label: '準備加厚羊毛長襪 2-3 雙（雪地行走雙腳保暖關鍵）' }
+        ]
+      },
+      {
+        category: '通訊網路、個人藥品與日常補給',
+        items: [
+          { id: 'c13', label: '準備日本上網吃到飽 eSIM 或實體 SIM 卡（Docomo / Softbank 雙網最穩）' },
+          { id: 'c14', label: '攜帶大容量行動電源（低溫雪地手機耗電極快，隨身帶暖暖包保暖手機）' },
+          { id: 'c15', label: '個人常備藥品：綜合感冒藥、止瀉腸胃藥、止痛藥、高保濕乳液、護唇膏（乾燥雪地必備）' },
+          { id: 'c16', label: '投保涵蓋海外突發疾病醫療與班機行李不便險之旅遊平安保險' }
+        ]
+      }
+    ];
+
+    // ==========================================
+    // 2. STATE MANAGEMENT & STORAGE
+    // ==========================================
+    const STORAGE_KEY_ITINERARY = 'sapporo_itinerary_checks_v1';
+    const STORAGE_KEY_CHECKLIST = 'sapporo_checklist_checks_v1';
+
+    let itineraryChecks = {};
+    let checklistChecks = {};
+    let currentActiveDay = 1; // 1 to 7 or 'all'
+
+    function loadState() {
+      try {
+        const itSaved = localStorage.getItem(STORAGE_KEY_ITINERARY);
+        if (itSaved) itineraryChecks = JSON.parse(itSaved);
+      } catch (e) {
+        console.warn('Failed to parse itinerary checks', e);
+      }
+      try {
+        const clSaved = localStorage.getItem(STORAGE_KEY_CHECKLIST);
+        if (clSaved) checklistChecks = JSON.parse(clSaved);
+      } catch (e) {
+        console.warn('Failed to parse checklist checks', e);
+      }
+    }
+
+    function saveItineraryState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_ITINERARY, JSON.stringify(itineraryChecks));
+      } catch (e) {}
+    }
+
+    function saveChecklistState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_CHECKLIST, JSON.stringify(checklistChecks));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      if (!toast || !toastMsg) return;
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2500);
+    }
+
+    function copyToClipboard(text, customMsg = '已複製到剪貼簿') {
+      if (!text) return;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(customMsg);
+        }).catch(() => fallbackCopy(text, customMsg));
+      } else {
+        fallbackCopy(text, customMsg);
+      }
+    }
+
+    function fallbackCopy(text, customMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(customMsg);
+      } catch (err) {
+        alert('複製失敗，請手動選取複製');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // Modal Controller
+    const driverModal = document.getElementById('driver-modal');
+    const modalTitle = document.getElementById('modal-place-title');
+    const modalAddr = document.getElementById('modal-place-addr');
+    const modalNote = document.getElementById('modal-place-note');
+    const modalCopyBtn = document.getElementById('modal-copy-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalDoneBtn = document.getElementById('modal-done-btn');
+
+    let currentModalAddrText = '';
+
+    function openDriverModal(title, addr, note) {
+      if (!driverModal) return;
+      modalTitle.textContent = title || '';
+      modalAddr.textContent = addr || '';
+      modalNote.textContent = note || '';
+      currentModalAddrText = addr || '';
+      driverModal.classList.remove('hidden');
+      driverModal.classList.add('flex');
+    }
+
+    function closeDriverModal() {
+      if (!driverModal) return;
+      driverModal.classList.add('hidden');
+      driverModal.classList.remove('flex');
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeDriverModal);
+    if (modalDoneBtn) modalDoneBtn.addEventListener('click', closeDriverModal);
+    if (modalCopyBtn) {
+      modalCopyBtn.addEventListener('click', () => {
+        copyToClipboard(currentModalAddrText, '已複製日文地址！可直接貼上至 Google Maps 或向司機出示');
+      });
+    }
+
+    // ==========================================
+    // 3. RENDER FUNCTIONS
+    // ==========================================
+    function updateProgressBadges() {
+      let itTotal = 0;
+      let itChecked = 0;
+      ITINERARY_DAYS.forEach(d => {
+        d.stops.forEach(s => {
+          itTotal++;
+          if (itineraryChecks[s.id]) itChecked++;
+        });
+      });
+
+      let clTotal = 0;
+      let clChecked = 0;
+      CHECKLIST_DATA.forEach(cat => {
+        cat.items.forEach(item => {
+          clTotal++;
+          if (checklistChecks[item.id]) clChecked++;
+        });
+      });
+
+      const totalItems = itTotal + clTotal;
+      const totalChecked = itChecked + clChecked;
+      const pct = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+
+      const progressText = document.getElementById('overall-progress-text');
+      const progressCount = document.getElementById('overall-progress-count');
+      const checklistBadge = document.getElementById('checklist-sub-badge');
+
+      if (progressText) progressText.textContent = `${pct}%`;
+      if (progressCount) progressCount.textContent = `(${totalChecked}/${totalItems})`;
+      if (checklistBadge) checklistBadge.textContent = `已完成 ${clChecked} / ${clTotal}`;
+    }
+
+    function renderDayButtons() {
+      const container = document.getElementById('day-buttons-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      ITINERARY_DAYS.forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isActive = (currentActiveDay === d.day);
+        btn.className = `day-tab-btn shrink-0 rounded-xl px-3 py-2 text-xs font-bold transition ${
+          isActive 
+            ? 'bg-sky-700 text-white shadow-sm' 
+            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+        }`;
+        btn.textContent = `Day ${d.day} (${d.cityTag.split(' ➔ ')[1] || d.cityTag.split(' ➔ ')[0]})`;
+        btn.addEventListener('click', () => {
+          currentActiveDay = d.day;
+          renderDayButtons();
+          renderItinerary();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-content');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const daysToRender = (currentActiveDay === 'all')
+        ? ITINERARY_DAYS
+        : ITINERARY_DAYS.filter(d => d.day === currentActiveDay);
+
+      daysToRender.forEach(dayData => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-4';
+
+        // Day header
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white">
+                  ${dayData.date}
+                </span>
+                <span class="text-xs font-semibold text-slate-500">${dayData.cityTag}</span>
+              </div>
+              <h2 class="mt-1 text-lg font-bold text-slate-900">${dayData.title}</h2>
+            </div>
+            <div class="text-left sm:text-right">
+              <span class="text-xs text-slate-400">當日住宿：</span>
+              <p class="text-xs font-semibold text-sky-800">${dayData.hotelName}</p>
+            </div>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+            ${dayData.summary}
+          </p>
+        `;
+
+        // Timeline Stops
+        const timelineList = document.createElement('div');
+        timelineList.className = 'space-y-4 pt-2';
+
+        dayData.stops.forEach(stop => {
+          const isChecked = !!itineraryChecks[stop.id];
+          const item = document.createElement('div');
+          item.className = `group relative rounded-xl border p-4 transition-all ${
+            isChecked 
+              ? 'bg-slate-50/70 border-slate-200 opacity-75' 
+              : 'bg-white border-slate-200 hover:border-sky-300 hover:shadow-xs'
+          }`;
+
+          item.innerHTML = `
+            <div class="flex items-start gap-3">
+              <input type="checkbox" id="chk-${stop.id}" class="mt-1 h-4 w-4 rounded border-slate-300 text-sky-700 focus:ring-sky-600 shrink-0 cursor-pointer" ${isChecked ? 'checked' : ''}>
+              <div class="flex-1 space-y-1.5">
+                <div class="flex flex-wrap items-center justify-between gap-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-700">
+                      ${stop.time}
+                    </span>
+                    <span class="inline-flex rounded-md bg-sky-50 px-2 py-0.5 text-xs font-semibold text-sky-800 border border-sky-200/60">
+                      ${stop.tag}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" class="driver-modal-trigger rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-800 hover:bg-sky-100 transition" title="向司機出示日文地址或導航">
+                      司機看這張
+                    </button>
+                    <button type="button" class="copy-addr-trigger rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 transition" title="複製日文地址">
+                      複製地址
+                    </button>
+                  </div>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 ${isChecked ? 'line-through text-slate-400' : ''}">
+                  ${stop.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  ${stop.desc}
+                </p>
+                <div class="pt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="text-slate-400">日文地名：<span class="text-slate-600 font-medium">${stop.jpTitle}</span></span>
+                  ${stop.linkUrl ? `
+                    <a href="${stop.linkUrl}" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-700 hover:underline">
+                      ${stop.linkText} &nearr;
+                    </a>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Checkbox event
+          const chk = item.querySelector(`#chk-${stop.id}`);
+          chk.addEventListener('change', (e) => {
+            itineraryChecks[stop.id] = e.target.checked;
+            saveItineraryState();
+            updateProgressBadges();
+            renderItinerary();
+          });
+
+          // Driver Modal Trigger
+          const driverBtn = item.querySelector('.driver-modal-trigger');
+          driverBtn.addEventListener('click', () => {
+            openDriverModal(stop.jpTitle, stop.jpAddr, stop.jpNote);
+          });
+
+          // Copy Trigger
+          const copyBtn = item.querySelector('.copy-addr-trigger');
+          copyBtn.addEventListener('click', () => {
+            copyToClipboard(stop.jpAddr, `已複製日語地址：${stop.jpTitle}`);
+          });
+
+          timelineList.appendChild(item);
+        });
+
+        card.appendChild(timelineList);
+        container.appendChild(card);
+      });
+    }
+
+    function renderFood(catFilter = 'all') {
+      const container = document.getElementById('food-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const filtered = (catFilter === 'all')
+        ? FOOD_DATA
+        : FOOD_DATA.filter(f => f.cat === parseInt(catFilter, 10));
+
+      filtered.forEach(food => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-3 flex flex-col justify-between';
+
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex rounded-md ${food.badgeColor} px-2.5 py-0.5 text-xs font-bold">
+                ${food.catLabel}
+              </span>
+              <span class="text-xs font-medium text-slate-400">${food.matchDay}</span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">${food.name}</h3>
+              <p class="text-xs text-sky-800 font-medium">${food.jpName}</p>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">${food.feature}</p>
+            <div class="rounded-xl bg-slate-50 p-3 border border-slate-100 text-xs">
+              <span class="font-bold text-slate-700">必點名物：</span>
+              <span class="text-slate-600">${food.mustOrder}</span>
+            </div>
+            <div class="text-xs text-slate-500">
+              <p><span class="font-medium">地址：</span>${food.jpAddress}</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div class="flex gap-2">
+              <button type="button" class="food-driver-btn rounded-xl bg-sky-700 text-white px-3 py-1.5 text-xs font-bold hover:bg-sky-800 transition">
+                司機看這張
+              </button>
+              <button type="button" class="food-copy-btn rounded-xl bg-slate-100 text-slate-700 px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition">
+                複製地址
+              </button>
+            </div>
+            ${food.url ? `
+              <a href="${food.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-sky-700 hover:underline">
+                官網/地圖 &nearr;
+              </a>
+            ` : ''}
+          </div>
+        `;
+
+        const driverBtn = card.querySelector('.food-driver-btn');
+        driverBtn.addEventListener('click', () => {
+          openDriverModal(food.jpName, food.jpAddress, '日本計程車或 Google 地圖導航定位');
+        });
+
+        const copyBtn = card.querySelector('.food-copy-btn');
+        copyBtn.addEventListener('click', () => {
+          copyToClipboard(food.jpAddress, `已複製日文地址：${food.jpName}`);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById('checklist-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      CHECKLIST_DATA.forEach(group => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl border border-slate-200 bg-white p-4 space-y-3';
+
+        let itemsHtml = '';
+        group.items.forEach(it => {
+          const isChecked = !!checklistChecks[it.id];
+          itemsHtml += `
+            <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" id="chk-${it.id}" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-700 focus:ring-sky-600 cursor-pointer shrink-0" ${isChecked ? 'checked' : ''}>
+              <span class="text-xs sm:text-sm ${isChecked ? 'line-through text-slate-400' : 'text-slate-700'}">
+                ${it.label}
+              </span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+            ${group.category}
+          </h3>
+          <div class="space-y-1">
+            ${itemsHtml}
+          </div>
+        `;
+
+        // Bind events
+        group.items.forEach(it => {
+          const chk = card.querySelector(`#chk-${it.id}`);
+          if (chk) {
+            chk.addEventListener('change', (e) => {
+              checklistChecks[it.id] = e.target.checked;
+              saveChecklistState();
+              updateProgressBadges();
+              renderChecklist();
+            });
+          }
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // 4. EVENT LISTENERS & TAB CONTROLS
+    // ==========================================
+    const mainTabButtons = document.querySelectorAll('.main-tab-btn');
+    const sections = {
+      itinerary: document.getElementById('tab-itinerary'),
+      food: document.getElementById('tab-food'),
+      transport: document.getElementById('tab-transport'),
+      tickets: document.getElementById('tab-tickets'),
+      checklist: document.getElementById('tab-checklist')
+    };
+
+    mainTabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabKey = btn.getAttribute('data-main-tab');
+
+        mainTabButtons.forEach(b => {
+          b.className = 'main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition';
+        });
+        btn.className = 'main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition';
+
+        Object.keys(sections).forEach(k => {
+          if (sections[k]) {
+            if (k === tabKey) {
+              sections[k].classList.remove('hidden');
+              sections[k].classList.add('fade-in');
+            } else {
+              sections[k].classList.add('hidden');
+            }
+          }
+        });
+      });
+    });
+
+    const expandAllBtn = document.getElementById('expand-all-days-btn');
+    if (expandAllBtn) {
+      expandAllBtn.addEventListener('click', () => {
+        if (currentActiveDay === 'all') {
+          currentActiveDay = 1;
+          expandAllBtn.textContent = '展開全部 7 天總覽';
+        } else {
+          currentActiveDay = 'all';
+          expandAllBtn.textContent = '收合為單日瀏覽';
+        }
+        renderDayButtons();
+        renderItinerary();
+      });
+    }
+
+    const foodFilterBtns = {
+      all: document.getElementById('food-filter-all'),
+      1: document.getElementById('food-filter-1'),
+      2: document.getElementById('food-filter-2'),
+      3: document.getElementById('food-filter-3'),
+      4: document.getElementById('food-filter-4')
+    };
+
+    Object.keys(foodFilterBtns).forEach(k => {
+      const btn = foodFilterBtns[k];
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        Object.values(foodFilterBtns).forEach(b => {
+          if (b) {
+            b.className = 'food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
+          }
+        });
+        btn.className = 'food-filter-btn rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white transition';
+        renderFood(k);
+      });
+    });
+
+    const resetBtn = document.getElementById('reset-checks-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('確定要重置所有行程與行前清單的勾選進度嗎？')) {
+          itineraryChecks = {};
+          checklistChecks = {};
+          saveItineraryState();
+          saveChecklistState();
+          updateProgressBadges();
+          renderItinerary();
+          renderChecklist();
+          showToast('已重置所有勾選紀錄');
+        }
+      });
+    }
+
+    // ==========================================
+    // 5. INITIALIZATION
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderDayButtons();
+      renderItinerary();
+      renderFood('all');
+      renderChecklist();
+      updateProgressBadges();
+    });
+  </script>
+</body>
+</html>

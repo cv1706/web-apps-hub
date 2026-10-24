@@ -18,6 +18,7 @@
   * **江山時序專題考據總覽（靜態圖志）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html)
   * **無錫上海親子自由行手帳**：[https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/](https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/)
   * **富國島海島度假隨身指南**：[https://web-apps-hub.cv1706yang.workers.dev/phu-quoc-guide/](https://web-apps-hub.cv1706yang.workers.dev/phu-quoc-guide/)
+  * **北海道雪季浪漫隨身指南**：[https://web-apps-hub.cv1706yang.workers.dev/sapporo-guide/](https://web-apps-hub.cv1706yang.workers.dev/sapporo-guide/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
@@ -32,6 +33,7 @@
   * **江山時序專題考據總覽（靜態圖志）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html](https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html)
   * **無錫上海親子自由行手帳**：[https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/](https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/)
   * **富國島海島度假隨身指南**：[https://cv1706.github.io/web-apps-hub/phu-quoc-guide/](https://cv1706.github.io/web-apps-hub/phu-quoc-guide/)
+  * **北海道雪季浪漫隨身指南**：[https://cv1706.github.io/web-apps-hub/sapporo-guide/](https://cv1706.github.io/web-apps-hub/sapporo-guide/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
@@ -122,6 +124,15 @@
   * **景點與演出時刻精準掌握**：收錄珍珠水陸樂園（VinWonders）世界最大巨龜水族館美人魚秀、18:30 壓軸 ONCE 水幕光影秀；富國大世界 21:45 威尼斯色彩水舞秀。
   * **在地美饌與伴手禮定位**：收錄富國島傳統跳跳蝦米粉（Bún quậy）、MYLA SEAFOOD 現撈海鮮、金剛超市胡椒鹽腰果採買指南與 Sonasea 夜市。
   * **司機越文定位卡**：支援一鍵開啟越語目的地與詳細地址大字卡，專為包車與 Grab 司機定位設計。
+
+### 10. 北海道札幌 × 小樽 × 美瑛旭川 · 7天6夜雪季浪漫隨身指南
+* **路徑**：`/sapporo-guide/`
+* **使用說明**：
+  * **冬夜浪漫景點全掌握**：收錄大通公園白色燈樹節點燈、電視塔展望台俯瞰、小樽運河與音樂盒堂每 15 分鐘噴氣蒸汽鐘、藻岩山新日本三大百萬夜景纜車、白色戀人公園童話城堡。
+  * **美瑛旭川經典一日遊**：完整規劃 11/27 大通站 31 號出口發車一日遊動線（旭山動物園企鵝北極熊、Ken&Mary 之樹、白金青池、白須瀑布冰瀑與森林精靈露台小木屋點燈）。
+  * **產地美饌與名店預約提醒**：薄野 GAJA 和牛燒肉、成吉思汗烤羊肉「羊座」、小樽三角市場滝波食堂爆量海鮮丼、若雞時代炸半雞、SOUP CURRY KING 與奧芝商店雙派系湯咖哩、十勝豚丼、四葉牛乳 white cosy 午餐下午茶與 DONGURI 招牌竹輪麵包。
+  * **新千歲機場國內線 2F 終極巡禮**：收錄美瑛選果現烤玉米麵包、KINOTOYA 極上牛奶冰淇淋、Royce 巧克力與六花亭特產採買清單。
+  * **日語司機導航卡**：內建一鍵開啟日文目的地、詳細地址與導航備註大字卡，便於日本計程車司機與 Google 地圖精準指引。
 
 ---
 
