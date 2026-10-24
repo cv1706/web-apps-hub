@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>富國島4天3夜海島自由行隨身互動指南</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .fade-in {
+      animation: fadeIn 0.22s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl transition-all">
+    <svg class="h-4 w-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-msg">已複製到剪貼簿</span>
+  </div>
+
+  <!-- Driver / Fullscreen Address Modal -->
+  <div id="driver-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-900">
+          司機看這張 / Grab 叫車定位卡
+        </span>
+        <button id="close-modal-btn" type="button" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="關閉視窗">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-3 text-center py-3">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-400">越南語目的地名稱（司機對照）</p>
+        <h3 id="modal-place-title" class="text-2xl font-bold text-slate-900 leading-snug"></h3>
+        <div class="rounded-xl bg-slate-50 p-4 border border-slate-200 mt-2">
+          <p class="text-xs text-slate-400 mb-1">詳細越語地址</p>
+          <p id="modal-place-addr" class="text-base font-semibold text-slate-800 select-all"></p>
+        </div>
+        <p id="modal-place-note" class="text-xs text-slate-500 pt-1"></p>
+      </div>
+      <div class="mt-5 flex gap-2">
+        <button id="modal-copy-btn" type="button" class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 transition">
+          複製越文地址貼至 Grab
+        </button>
+        <button id="modal-done-btn" type="button" class="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Header -->
+  <header class="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white shadow-lg">
+    <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full bg-teal-500/20 px-3 py-1 text-xs font-medium text-teal-200 border border-teal-400/30 mb-2">
+            <span>2024/11/06 至 11/09</span>
+            <span>•</span>
+            <span>4天3夜度假自由行</span>
+            <span>•</span>
+            <span>台灣直飛免簽證</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            富國島海島度假 4天3夜隨身互動指南
+          </h1>
+          <p class="mt-1 text-sm text-slate-300">
+            瑞享度假酒店 • 珍珠水陸樂園 • 富國大世界 • 金剛超市 • Sonasea夜市 • 包車與Grab接駁
+          </p>
+        </div>
+        <!-- Quick Progress Pill -->
+        <div class="flex items-center gap-3 self-start sm:self-center rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/15">
+          <div>
+            <p class="text-xs text-slate-300">行程與行前完成度</p>
+            <div class="flex items-baseline gap-2">
+              <span id="overall-progress-text" class="text-lg font-bold text-emerald-300">0%</span>
+              <span id="overall-progress-count" class="text-xs text-slate-300">(0/0)</span>
+            </div>
+          </div>
+          <button id="reset-checks-btn" type="button" class="rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/20 transition" title="重置所有勾選狀態">
+            重置勾選
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="mt-6 flex gap-2 overflow-x-auto no-scrollbar border-b border-white/15 pb-3" aria-label="主要功能切換">
+        <button type="button" data-main-tab="itinerary" class="main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition">
+          每日行程與叫車卡
+        </button>
+        <button type="button" data-main-tab="food" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          精選美食與夜市卡
+        </button>
+        <button type="button" data-main-tab="hotel" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          住宿與交通攻略
+        </button>
+        <button type="button" data-main-tab="tickets" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          門票演出與景點時刻
+        </button>
+        <button type="button" data-main-tab="checklist" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          行前準備檢核清單
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+
+    <!-- SECTION 1: ITINERARY -->
+    <section id="tab-itinerary" class="space-y-6 fade-in">
+      <!-- Day Selector Bar -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+        <div id="day-buttons-container" class="flex gap-1.5 overflow-x-auto no-scrollbar">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+          <button id="expand-all-days-btn" type="button" class="w-full sm:w-auto rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
+            展開全部 4 天總覽
+          </button>
+        </div>
+      </div>
+
+      <!-- Itinerary Timeline Container -->
+      <div id="itinerary-content" class="space-y-6">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: FOOD & NIGHT MARKETS -->
+    <section id="tab-food" class="hidden space-y-6 fade-in">
+      <!-- Highlight Card -->
+      <div class="rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-teal-500/10 p-5 border border-amber-300 shadow-sm">
+        <div class="flex items-start gap-3">
+          <div class="rounded-xl bg-amber-500/20 p-2.5 text-amber-900 font-bold text-sm">美食指南</div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h2 class="text-base font-bold text-slate-900">富國島美食與夜市品嚐重點</h2>
+              <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-0.5 text-xs font-bold text-amber-800">
+                現撈海鮮與在地傳統小吃
+              </span>
+            </div>
+            <p class="mt-1 text-xs sm:text-sm text-slate-700 leading-relaxed">
+              富國島特產包含自攪海鮮跳跳米粉（Bún Quậy）、蔥油烤海膽、胡椒炒花蟹與熱帶水果炒冰。夜市海鮮點餐時建議挑選活水缸海鮮，並在秤重前先確認計價單位為公斤（kg）並談妥料理方式。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">行程相關餐廳與夜市卡</h3>
+          <p class="text-xs text-slate-500 mt-0.5">點擊卡片按鈕可一鍵複製越語定位詞，或開啟司機定位大字卡</p>
+        </div>
+        <div class="flex gap-1 overflow-x-auto no-scrollbar">
+          <button type="button" id="food-filter-all" class="food-filter-btn rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-bold text-white transition">
+            全部美食
+          </button>
+          <button type="button" id="food-filter-1" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            海鮮大排檔
+          </button>
+          <button type="button" id="food-filter-2" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            特色小吃
+          </button>
+          <button type="button" id="food-filter-3" class="food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            觀光夜市
+          </button>
+        </div>
+      </div>
+
+      <!-- Food Cards Grid -->
+      <div id="food-container" class="grid gap-4 md:grid-cols-2">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 3: HOTEL & TRANSPORT -->
+    <section id="tab-hotel" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">住宿飯店定位與設施卡</h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊「複製越文地址」或「司機看這張」即可直接用於 Grab 或包車司機定位</p>
+          </div>
+          <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
+            全度假村海景與私人海灘
+          </span>
+        </div>
+
+        <div id="hotels-grid" class="mt-4 grid gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Island Transport Guide -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900">富國島交通接駁與實用攻略</h2>
+        <p class="text-xs text-slate-500 mt-0.5">包車、Grab 叫車與免費 VinBus 電動公車比較分析</p>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">交通方式</th>
+                <th class="py-3 px-3 font-semibold">適用場景</th>
+                <th class="py-3 px-3 font-semibold">計費參考</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">實戰要點與注意事項</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">包車接送 (預訂專車)</td>
+                <td class="py-3.5 px-3">機場接送機、北部樂園全日遊、超市夜市接駁</td>
+                <td class="py-3.5 px-3">機場單程約 25萬至35萬 VND；全日包車約 90萬至120萬 VND</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  提前透過 KKday、Klook 或旅行社預訂，司機會舉牌接機或在約定時間於飯店大廳等候。需事先確認超時費用與停車費是否包含在報價內。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">Grab 叫車 App</td>
+                <td class="py-3.5 px-3">臨時移動、夜市往返、市區短程穿梭</td>
+                <td class="py-3.5 px-3">起步價約 2.5萬 VND，每公里約 1.2萬至1.6萬 VND</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  出發前在台灣先下載好 App 並綁定海外信用卡，抵達富國島即可隨叫隨到。介面清楚顯示金額，免去路邊計程車繞路或找零爭議。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">VinBus 免費電動公車</td>
+                <td class="py-3.5 px-3">往返富國大世界與北部珍珠度假區</td>
+                <td class="py-3.5 px-3">免費搭乘（綠能巴士）</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  珍珠集團營運的電動環島公車（如 17 號、19 號線），全車配有冷氣與 WiFi。車班可下載 VinBus App 即時查詢到站時刻。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TICKETS & SHOWTIMES -->
+    <section id="tab-tickets" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900">必去景點門票與關鍵表演時刻表</h2>
+        <p class="text-xs text-slate-500 mt-0.5">掌握珍珠水陸樂園與富國大世界的演出時刻，遊園不撲空</p>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">景點園區</th>
+                <th class="py-3 px-3 font-semibold">開放時間</th>
+                <th class="py-3 px-3 font-semibold">參考門票</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">核心表演時刻與遊園重點</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  珍珠水陸樂園<br><span class="text-slate-400 font-normal">VinWonders Phú Quốc</span>
+                </td>
+                <td class="py-3.5 px-3">09:00 至 19:30</td>
+                <td class="py-3.5 px-3">成人約 95萬 VND<br>兒童/長者約 71萬 VND</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 巨型海龜水族館（The Sea Shell）：美人魚表演（11:00、14:00）、餵魚秀（15:00）。<br>
+                  • 奇幻城堡水幕光影秀《ONCE Show》：每日 18:30 至 18:50，於火鳳凰廣場演出，為樂園閉幕壓軸大秀，必看！<br>
+                  • 建議攜帶泳衣、毛巾與防水手機袋，水上樂園設有置物櫃租借。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  富國大世界<br><span class="text-slate-400 font-normal">Grand World Phú Quốc</span>
+                </td>
+                <td class="py-3.5 px-3">園區24小時開放<br>商家至深夜</td>
+                <td class="py-3.5 px-3">園區免費入場<br>(遊船與博物館另計)</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 威尼斯色彩水舞秀（Colors of Venice）：每日 21:45 至 22:15 於大運河湖畔免費上演，融合水幕投影、雷射與真人舞蹈。<br>
+                  • 威尼斯貢多拉遊船：約 20萬 VND / 人。<br>
+                  • 泰迪熊博物館（Teddy Bear Museum）：開放至 21:00，門票約 20萬 VND。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  金剛超市<br><span class="text-slate-400 font-normal">Kingkong Mart</span>
+                </td>
+                <td class="py-3.5 px-3">08:00 至 22:30</td>
+                <td class="py-3.5 px-3">免費入場</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 全富國島品項最齊全之特產超市。<br>
+                  • 必買清單：富國島特級白胡椒粒、大蒜胡椒鹽、帶皮鹽焗腰果、越南滴漏咖啡、椰子糖、芒果乾。<br>
+                  • 支援信用卡結帳，入內需將個人大包包寄放或封口。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  Sonasea 夜市<br><span class="text-slate-400 font-normal">Chợ Đêm Sonasea</span>
+                </td>
+                <td class="py-3.5 px-3">18:00 至 23:30</td>
+                <td class="py-3.5 px-3">免費入場</td>
+                <td class="py-3.5 px-3 leading-relaxed">
+                  • 位於中部 Sonasea 度假商圈，環境比陽東夜市更整齊寬敞，歐美度假氛圍濃厚。<br>
+                  • 現烤龍蝦、烤海膽、各類海鮮熱炒與鮮榨果汁冰沙林立，有多間附設戶外音樂駐唱的啤酒吧。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: PRE-TRIP CHECKLIST -->
+    <section id="tab-checklist" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">富國島海島度假行前準備檢核清單</h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊項目即可打勾記錄，狀態會自動儲存於瀏覽器中</p>
+          </div>
+          <span id="checklist-sub-badge" class="inline-flex items-center rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 border border-teal-200">
+            已完成 0 / 0
+          </span>
+        </div>
+
+        <div id="checklist-grid" class="mt-4 grid gap-4 md:grid-cols-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-500">
+    <div class="mx-auto max-w-5xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>富國島 4天3夜度假自由行隨身手帳 • 完整收錄每日動線、演出時刻與越文定位卡</p>
+      <p class="text-slate-400">所有景點與餐廳均附一鍵叫車定位，點擊「司機看這張」可放大顯示</p>
+    </div>
+  </footer>
+
+  <script>
+    // ==========================================
+    // 1. DATA DEFINITIONS
+    // ==========================================
+    const ITINERARY_DAYS = [
+      {
+        day: 1,
+        date: '11/6 (週三)',
+        title: '班機抵達富國島 ➔ 機場換匯 ➔ 包車接機 ➔ 晚餐與夜市 ➔ 入住瑞享度假酒店',
+        cityTag: '台北 ➔ 富國國際機場 ➔ 翁蘭海灘',
+        hotelName: '富國島瑞享度假酒店 (Mövenpick Resort Waverly Phú Quốc)',
+        hotelUrl: 'https://movenpickresortwaverlyphuquoc.com/',
+        summary: '搭乘班機直飛富國國際機場，出關後於海關右手邊小哥換匯，包車接機前往品嚐鮮美海鮮，接著前往西北部入住五星級海景瑞享度假酒店。',
+        stops: [
+          {
+            id: 'd1-s1',
+            time: '17:25 – 20:20',
+            title: 'TPE 台北桃園機場 ➔ PQC 富國國際機場',
+            tag: '航班飛行',
+            desc: '直飛航班飛往越南富國國際機場（PQC）。台灣直飛富國島享免簽證入境待遇，通關時備妥 6 個月以上效期護照與回程電子機票。',
+            linkText: '富國國際機場官方資訊',
+            linkUrl: 'https://phuquocairport.vn/',
+            vietTitle: 'Cảng hàng không Quốc tế Phú Quốc (Sân bay Phú Quốc)',
+            vietAddr: 'Xã Dương Tơ, Thành phố Phú Quốc, Tỉnh Kiên Giang',
+            vietNote: '海關出口處請留意包車司機姓名接機牌'
+          },
+          {
+            id: 'd1-s2',
+            time: '20:20 – 20:50',
+            title: '海關出來右手邊小哥換匯 & 領取行李',
+            tag: '換匯補給',
+            desc: '步出海關檢查區後，右手邊即有專門換匯櫃台（小哥攤位）。建議使用新版百元美鈔（無摺痕無破損）可換得最佳匯率，亦可使用新台幣直接兌換。兌換後請現場數清鈔票面額，特別注意多個零的區別（如 500,000 與 50,000）。',
+            linkText: '越南盾面額與防偽重點',
+            linkUrl: 'https://www.sbv.gov.vn/',
+            vietTitle: 'Quầy đổi ngoại tệ Sân bay Phú Quốc',
+            vietAddr: 'Khu vực sảnh đến, Cảng hàng không Quốc tế Phú Quốc',
+            vietNote: '準備大面額美金換匯匯率最優'
+          },
+          {
+            id: 'd1-s3',
+            time: '20:50 – 21:15',
+            title: '包車接機集合上車',
+            tag: '包車接送',
+            desc: '與事先預約好的包車司機會合，上車啟程。第一站可依照體力與時間選擇前往鄰近飯店的知名海鮮餐廳 MYLA SEAFOOD，或前往市中心熱鬧的富國島夜市（陽東夜市）。',
+            linkText: '富國島包車指南',
+            linkUrl: 'https://vinpearl.com/en/phu-quoc-car-rental',
+            vietTitle: 'Bãi đỗ xe Đón khách Sân bay Phú Quốc',
+            vietAddr: 'Cảng hàng không Quốc tế Phú Quốc, Xã Dương Tơ, Phú Quốc',
+            vietNote: '司機會合後請先對照車牌號碼'
+          },
+          {
+            id: 'd1-s4',
+            time: '21:30 – 23:00',
+            title: '晚餐方案雙選：MYLA SEAFOOD 或 富國島夜市',
+            tag: '宵夜海鮮',
+            desc: '方案 A（推薦）：MYLA SEAFOOD 鄰近瑞享酒店，現撈鮮活龍蝦、烤海膽、黑胡椒炒蟹，環境舒適免於市區擁擠。方案 B：富國島夜市（陽東夜市），熱鬧繁華，攤位營業至深夜，可吃炒冰、烤米紙蛋餅與海鮮大排檔。',
+            linkText: '富國島夜市地圖與介紹',
+            linkUrl: 'https://vinpearl.com/en/phu-quoc-night-market',
+            vietTitle: 'Myla Seafood Phú Quốc / Chợ Đêm Phú Quốc',
+            vietAddr: 'Ấp Ông Lang, Cửa Dương, Phú Quốc / Đường Bạch Đằng, Dương Đông, Phú Quốc',
+            vietNote: 'MYLA SEAFOOD 營業至晚間 23:00；富國夜市營業至深夜 24:00'
+          },
+          {
+            id: 'd1-s5',
+            time: '23:15 – 23:45',
+            title: '抵達富國島瑞享度假酒店辦理入住',
+            tag: '飯店入住',
+            desc: '抵達位於翁蘭海灘北側的富國島瑞享度假酒店（Mövenpick Resort Waverly Phú Quốc）。辦理 Check-in 手續，進入海景客房休息，儲備隔天珍珠水陸樂園充沛活力。',
+            linkText: '瑞享度假酒店官網',
+            linkUrl: 'https://movenpickresortwaverlyphuquoc.com/',
+            vietTitle: 'Mövenpick Resort Waverly Phú Quốc',
+            vietAddr: 'Tổ 01, Ấp Ông Lang, Xã Cửa Dương, Thành phố Phú Quốc, Kiên Giang',
+            vietNote: '飯店大門門禁接待區，車輛可直接駛入大廳迴車道'
+          }
+        ]
+      },
+      {
+        day: 2,
+        date: '11/7 (週四)',
+        title: '飯店早餐 ➔ 11:30包車直奔珍珠水陸樂園 ➔ 富國大世界 ➔ 晚餐Bún quậy跳跳米粉',
+        cityTag: '富國島北部樂園全日遊',
+        hotelName: '富國島瑞享度假酒店 (Mövenpick Resort Waverly Phú Quốc)',
+        hotelUrl: 'https://movenpickresortwaverlyphuquoc.com/',
+        summary: '上午悠閒享受飯店五星早餐，11:30 包車直奔北部珍珠水陸樂園，參觀世界級巨龜水族館與各項水陸設施，晚間漫步富國大世界威尼斯不夜城，品嚐傳統特色米粉並觀賞運河水舞大秀。',
+        stops: [
+          {
+            id: 'd2-s1',
+            time: '08:30 – 10:30',
+            title: '瑞享度假酒店自助早餐 & 園區漫步',
+            tag: '美饌晨光',
+            desc: '在 The Islander 餐廳享用豐盛的越式與國際自助早餐，品嚐現煮熱騰騰的越式牛肉河粉與香濃滴漏咖啡。餐後可在飯店私人沙灘與棕櫚花園散步。',
+            linkText: '瑞享美饌介紹',
+            linkUrl: 'https://movenpickresortwaverlyphuquoc.com/restaurants-bars/',
+            vietTitle: 'Nhà hàng The Islander - Mövenpick Resort Phú Quốc',
+            vietAddr: 'Tổ 01, Ấp Ông Lang, Xã Cửa Dương, Phú Quốc',
+            vietNote: '早餐供應時間至 10:30'
+          },
+          {
+            id: 'd2-s2',
+            time: '11:30 – 12:15',
+            title: '11:30 包車出發前往珍珠水陸樂園',
+            tag: '包車專車',
+            desc: '搭乘包車由瑞享酒店出發往北行駛，車程約 35 至 40 分鐘直達珍珠水陸樂園（VinWonders Phú Quốc）正門迎賓處。建議提前在網路購票掃 QR Code 入園節省排隊時間。',
+            linkText: 'VinWonders 官方資訊與購票',
+            linkUrl: 'https://vinwonders.com/en/vinwonders-phu-quoc/',
+            vietTitle: 'Công viên chủ đề VinWonders Phú Quốc',
+            vietAddr: 'Bãi Dài, Xã Gành Dầu, Thành phố Phú Quốc, Tỉnh Kiên Giang',
+            vietNote: '包車司機下車點在樂園大門售票廣場'
+          },
+          {
+            id: 'd2-s3',
+            time: '12:15 – 18:50',
+            title: '暢玩珍珠水陸樂園（巨龜水族館、水上樂園與18:30 ONCE秀）',
+            tag: '主題樂園',
+            desc: '亮點必玩：The Sea Shell 巨型海龜造型水族館（內有冷氣，觀賞巨大透明觀景窗、鯊魚與魟魚群、美人魚秀）、龍捲風水上樂園 Typhoon World（各類大型刺激滑水道）、童話世界與陸上雲霄飛車。每日 18:30 至 18:50 於火鳳凰城堡廣場上演壓軸水幕光影秀《ONCE Show》。',
+            linkText: '巨型海龜水族館介紹',
+            linkUrl: 'https://vinwonders.com/en/vinwonders-phu-quoc/the-sea-shell-aquarium/',
+            vietTitle: 'Thủy cung Cung Điện Hải Vương (The Sea Shell)',
+            vietAddr: 'VinWonders Phú Quốc, Bãi Dài, Gành Dầu, Phú Quốc',
+            vietNote: '觀賞完 18:50 閉幕秀後步行或搭免費接駁車前往富國大世界'
+          },
+          {
+            id: 'd2-s4',
+            time: '19:15 – 20:30',
+            title: '富國大世界（晚餐：Bún quậy số 1 Phú Quốc）',
+            tag: '在地名店',
+            desc: '前往被譽為越南不夜城的「富國大世界」（Grand World）。晚餐直奔當地第一傳統代表麵食【Bún quậy số 1 Phú Quốc】（或名店 Kiến-Xây 分店），這道「自攪海鮮跳跳米粉」以新鮮生米粉現煮、手打蝦泥花枝魚漿高湯沖熟，並依照個人口味自行調配金桔辣椒糖魚露沾醬，鮮甜無比！',
+            linkText: '富國島自攪米粉特色介紹',
+            linkUrl: 'https://vinpearl.com/en/bun-quay-phu-quoc',
+            vietTitle: 'Quán Bún Quậy Kiến-Xây (hoặc Bún Quậy số 1) Grand World',
+            vietAddr: 'Khu phố thương mại Grand World, Bãi Dài, Gành Dầu, Phú Quốc',
+            vietNote: '店內採自助調醬，現壓現煮手工米粉極具在地特色'
+          },
+          {
+            id: 'd2-s5',
+            time: '20:30 – 22:30',
+            title: '富國大世界漫步（21:45 威尼斯水舞燈光秀）➔ 包車回飯店',
+            tag: '夜間盛典',
+            desc: '餐後漫步充滿歐風色彩的威尼斯運河兩岸，可打卡巨大的竹子傳奇建築（Bamboo Legend）與泰迪熊博物館。每日 21:45 至 22:15 於大運河上演華麗壯觀的《威尼斯色彩水舞秀》（Colors of Venice），演出結束後與包車司機會合返回瑞享度假酒店。',
+            linkText: '富國大世界夜間演出時刻',
+            linkUrl: 'https://vinpearl.com/en/grand-world-phu-quoc',
+            vietTitle: 'Grand World Phú Quốc - Hồ Tình Yêu (Show Sắc Màu Venice)',
+            vietAddr: 'Grand World Phú Quốc, Bãi Dài, Gành Dầu, Phú Quốc',
+            vietNote: '水舞秀免費於湖畔階梯觀看，建議 21:30 提早卡位'
+          }
+        ]
+      },
+      {
+        day: 3,
+        date: '11/8 (週五)',
+        title: '飯店享受設施與沙灘 ➔ 16:00包車去金剛超市 ➔ Sonasea 夜市 ➔ 回飯店',
+        cityTag: '悠活度假 ➔ 中部採買 ➔ Sonasea',
+        hotelName: '富國島瑞享度假酒店 (Mövenpick Resort Waverly Phú Quốc)',
+        hotelUrl: 'https://movenpickresortwaverlyphuquoc.com/',
+        summary: '早晨睡到自然醒，盡情徜徉在飯店無邊際泳池與私人沙灘，品嚐招牌巧克力歡樂時光。16:00 搭包車前往富國島最大金剛超市掃貨伴手禮，晚間於高雅乾淨的 Sonasea 夜市品嚐現烤海鮮。',
+        stops: [
+          {
+            id: 'd3-s1',
+            time: '09:00 – 12:00',
+            title: '早晨晨光、私人沙灘玩水、椰林無邊際泳池',
+            tag: '海島度假',
+            desc: '在飯店享用早餐後，換上泳裝漫步至私人海灘享受溫暖陽光與細白沙灘。飯店提供獨木舟、立槳衝浪（SUP）與躺椅服務，或在多個戶外潟湖泳池暢游放鬆。',
+            linkText: '瑞享海灘休閒設施',
+            linkUrl: 'https://movenpickresortwaverlyphuquoc.com/wellness-activities/',
+            vietTitle: 'Bãi biển riêng Mövenpick Resort Waverly Phú Quốc',
+            vietAddr: 'Ấp Ông Lang, Cửa Dương, Phú Quốc',
+            vietNote: '泳池畔免費借用海灘大毛巾'
+          },
+          {
+            id: 'd3-s2',
+            time: '15:30 – 16:00',
+            title: '瑞享招牌：每日巧克力歡樂時光 (Chocolate Hour)',
+            tag: '甜蜜時光',
+            desc: '瑞享酒店全球知名的經典傳統！每日下午 15:30 至 16:30 於大廳酒廊免費提供各式精緻巧克力甜品、蛋糕、水果沾巧克力噴泉，住宿房客可無限享用。',
+            linkText: 'Mövenpick Chocolate Hour 介紹',
+            linkUrl: 'https://movenpickresortwaverlyphuquoc.com/restaurants-bars/waverly-lounge/',
+            vietTitle: 'Waverly Lounge - Mövenpick Resort Phú Quốc',
+            vietAddr: 'Sảnh chính Mövenpick Resort, Ấp Ông Lang, Cửa Dương, Phú Quốc',
+            vietNote: '免費供應時間為 15:30 至 16:30，請準時前往大廳'
+          },
+          {
+            id: 'd3-s3',
+            time: '16:00 – 17:30',
+            title: '16:00 包車出發前往金剛超市 (Kingkong Mart)',
+            tag: '購物伴手禮',
+            desc: '16:00 與包車司機會合前往富國島最著名特產大本營「金剛超市」（車程約 25 分鐘）。必買清單：富國島特產高品質白胡椒與黑胡椒粒、大蒜胡椒鹽、帶皮鹽焗腰果、越南滴漏咖啡粉、椰子酥糖、芒果乾與熱帶特色零食。',
+            linkText: '金剛超市購物推薦',
+            linkUrl: 'https://vinpearl.com/en/king-kong-mart-phu-quoc',
+            vietTitle: 'Siêu thị Kingkong Mart Phú Quốc',
+            vietAddr: '141A Đường Trần Hưng Đạo, Dương Tơ, Phú Quốc, Kiên Giang',
+            vietNote: '超市入口需將隨身大提袋寄放或用束線帶封口'
+          },
+          {
+            id: 'd3-s4',
+            time: '18:00 – 21:00',
+            title: 'Sonasea 夜市（海鮮大餐、水果冰沙與逛街）',
+            tag: '夜市饗宴',
+            desc: '由金剛超市搭車往南約 10 分鐘抵達 Sonasea 夜市（Chợ đêm Sonasea）。此夜市座落於國際度假村林立的步行街，走道寬敞乾淨，聚集數十家海鮮熱炒攤、現烤龍蝦、烤生蠔海膽、熱帶水果冰沙與現做越式小吃，亦有現場音樂表演。',
+            linkText: 'Sonasea 夜市街景指南',
+            linkUrl: 'https://vinpearl.com/en/sonasea-night-market-phu-quoc',
+            vietTitle: 'Chợ Đêm Sonasea Phú Quốc (Sonasea Shopping Center)',
+            vietAddr: 'Khu phức hợp Bãi Trường, Dương Tơ, Phú Quốc, Kiên Giang',
+            vietNote: '海鮮點餐時建議挑選活海鮮並確認以公斤為計價單位'
+          },
+          {
+            id: 'd3-s5',
+            time: '21:00 – 21:40',
+            title: '包車返回瑞享度假酒店 & 整理行李',
+            tag: '包車賦歸',
+            desc: '與包車司機會合返回瑞享酒店（車程約 30 分鐘）。回房後打包行李與戰利品，準備隔日早晨退房與搭機回台。',
+            linkText: '瑞享酒店房內設施',
+            linkUrl: 'https://movenpickresortwaverlyphuquoc.com/',
+            vietTitle: 'Mövenpick Resort Waverly Phú Quốc',
+            vietAddr: 'Tổ 01, Ấp Ông Lang, Xã Cửa Dương, Phú Quốc',
+            vietNote: '可提前向飯店櫃台確認隔日退房帳單'
+          }
+        ]
+      },
+      {
+        day: 4,
+        date: '11/9 (週六)',
+        title: '晨光早餐 ➔ 辦理退房 ➔ 包車赴機場 ➔ 11:20 PQC-16:00 TPE 抵達台北',
+        cityTag: '富國島 ➔ 機場 ➔ 台北桃園',
+        hotelName: '已退房 (返台日)',
+        hotelUrl: '',
+        summary: '享用豐富早餐後辦理退房手續，搭包車前往富國國際機場，辦理登機與托運，搭乘 11:20 班機直飛返抵台北桃園機場，圓滿結束充實海島假期。',
+        stops: [
+          {
+            id: 'd4-s1',
+            time: '07:30 – 08:45',
+            title: '悠閒早餐 & 辦理 Check-out 退房手續',
+            tag: '晨光退房',
+            desc: '享用最後一次熱騰騰的現煮牛肉河粉早餐，回房檢查證件與隨身行李，辦理退房手續並結清房內消費。',
+            linkText: '瑞享退房指南',
+            linkUrl: 'https://movenpickresortwaverlyphuquoc.com/',
+            vietTitle: 'Quầy Lễ tân Mövenpick Resort Phú Quốc',
+            vietAddr: 'Tổ 01, Ấp Ông Lang, Xã Cửa Dương, Phú Quốc',
+            vietNote: '退房時交回房卡並確認行李件數'
+          },
+          {
+            id: 'd4-s2',
+            time: '08:50 – 09:20',
+            title: '包車接送前往富國國際機場 (PQC)',
+            tag: '包車送機',
+            desc: '包車司機於飯店大廳接送直奔富國國際機場出境大廳（車程約 30 分鐘）。國際航班建議於起飛前 2 小時至 2.5 小時抵達機場。',
+            linkText: '富國機場航空公司報到櫃台',
+            linkUrl: 'https://phuquocairport.vn/',
+            vietTitle: 'Cảng hàng không Quốc tế Phú Quốc - Ga Đi Quốc Tế',
+            vietAddr: 'Xã Dương Tơ, Thành phố Phú Quốc, Tỉnh Kiên Giang',
+            vietNote: '請司機停靠在國際出發（International Departure）下車處'
+          },
+          {
+            id: 'd4-s3',
+            time: '09:20 – 11:20',
+            title: '航空公司櫃台報到、行李托運、安檢出境 & 免稅店逛街',
+            tag: '出境登機',
+            desc: '前往航空公司櫃台辦理報到手續與托運行李，通過證照查驗與隨身行李安全檢查。候機區設有免稅商店與特產伴手禮店，可做最後採買。',
+            linkText: '富國機場免稅店資訊',
+            linkUrl: 'https://phuquocairport.vn/',
+            vietTitle: 'Khu vực Cửa Lên Máy Bay Quốc Tế Phú Quốc',
+            vietAddr: 'Sân bay Quốc tế Phú Quốc',
+            vietNote: '請依登機證標示提早 30 分鐘抵達登機門'
+          },
+          {
+            id: 'd4-s4',
+            time: '11:20 – 16:00',
+            title: '11:20 PQC 出發 ➔ 16:00 平安抵達 TPE 台北桃園機場',
+            tag: '平安返台',
+            desc: '搭乘 11:20 班機由富國島起飛，經過約 3.5 小時航程，預計於台灣時間 16:00 平安降落台北桃園國際機場，提領行李出關返家。',
+            linkText: '桃園國際機場即時航班',
+            linkUrl: 'https://www.taoyuan-airport.com/',
+            vietTitle: 'Sân bay Quốc tế Đào Viên Đài Loan (TPE)',
+            vietAddr: 'Taiwan Taoyuan International Airport',
+            vietNote: '平安抵達台北，結束精彩的富國島 4 天 3 夜旅程'
+          }
+        ]
+      }
+    ];
+
+    const FOOD_DATA = [
+      {
+        id: 'food-myla',
+        cat: 1,
+        catLabel: '1. 現撈海鮮大排檔',
+        matchDay: 'Day 1 翁蘭海灘 / 瑞享周邊',
+        name: 'MYLA SEAFOOD（富國島現撈海鮮餐廳）',
+        vietName: 'Nhà hàng Hải Sản Myla Phú Quốc',
+        address: '富國島翁蘭區（近瑞享度假酒店）',
+        vietAddress: 'Ấp Ông Lang, Xã Cửa Dương, Thành phố Phú Quốc, Kiên Giang',
+        feature: '富國島北部至翁蘭區口碑極佳之現撈海鮮餐廳，店內活水池展示各類活龍蝦、海膽、花蟹與大蝦。蒜蓉牛油烤龍蝦、蔥油烤海膽與胡椒炒花蟹鮮度絕佳，距瑞享酒店車程僅需 5 至 8 分鐘。',
+        mustOrder: '蒜蓉奶油烤龍蝦、蔥油花生烤海膽、胡椒炒螃蟹、蒜炒空心菜',
+        url: 'https://www.tripadvisor.com.tw/Restaurant_Review-d26982928',
+        badgeColor: 'bg-teal-100 text-teal-800'
+      },
+      {
+        id: 'food-bunquay',
+        cat: 2,
+        catLabel: '2. 傳統特色小吃',
+        matchDay: 'Day 2 富國大世界（晚餐）',
+        name: 'Bún quậy số 1 Phú Quốc（自攪跳跳蝦海鮮米粉）',
+        vietName: 'Quán Bún Quậy Kiến-Xây / Bún Quậy Số 1 (Grand World)',
+        address: '富國大世界商業街區',
+        vietAddress: 'Khu phố ẩm thực Grand World, Bãi Dài, Gành Dầu, Phú Quốc',
+        feature: '富國島最具代表性的非物質文化遺產級傳統美食！現場以新鮮米漿擠壓現燙生米粉，將新鮮打製的蝦泥與花枝魚漿抹在碗底，沖入滾燙高湯攪拌燙熟。客人需自己到醬料台用金桔汁、小辣椒、白糖與富國島特產魚露調配專屬沾醬，鮮甜微酸帶辣！',
+        mustOrder: '招牌特製跳跳蝦海鮮米粉（Bún Quậy Đặc Biệt）、自調金桔魚露醬、現榨甘蔗汁',
+        url: 'https://vinpearl.com/en/bun-quay-phu-quoc',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'food-phuquoc-nightmarket',
+        cat: 3,
+        catLabel: '3. 觀光夜市',
+        matchDay: 'Day 1 陽東市區（晚餐方案B）',
+        name: '富國島夜市（陽東夜市 / Chợ Đêm Phú Quốc）',
+        vietName: 'Chợ Đêm Phú Quốc (Dương Đông)',
+        address: '富國島陽東市中心白藤街',
+        vietAddress: '54 Đường Nguyễn Trãi, Khu 1, Dương Đông, Phú Quốc, Kiên Giang',
+        feature: '全島規模最大的夜市，道路兩側匯集上百間現烤海鮮攤、熱帶水果炒冰、越南法棍麵包、現煎香蕉煎餅以及炒花生攤。夜晚氣氛喧囂熱鬧，適合喜愛逛街體驗熱絡夜生活者。',
+        mustOrder: '現烤海膽（加蔥花與碎花生）、熱帶水果炒冰、椰子冰淇淋、法式長棍麵包（Bánh Mì）',
+        url: 'https://vinpearl.com/en/phu-quoc-night-market',
+        badgeColor: 'bg-rose-100 text-rose-800'
+      },
+      {
+        id: 'food-sonasea-nightmarket',
+        cat: 3,
+        catLabel: '3. 觀光夜市',
+        matchDay: 'Day 3 中南部度假區（晚餐）',
+        name: 'Sonasea 夜市（Chợ đêm Sonasea）',
+        vietName: 'Chợ Đêm Sonasea Phú Quốc (Sonasea Shopping Center)',
+        address: '富國島中南部長灘 Sonasea 度假商圈',
+        vietAddress: 'Khu tổ hợp Sonasea Villas & Resort, Bãi Trường, Dương Tơ, Phú Quốc',
+        feature: '座落於大型國際度假飯店聚集的步行商圈，走道平坦整潔、衛生條件佳，比起陽東夜市更具歐美度假休閒風情。多數海鮮攤位標價清楚透明，露天啤酒酒吧經常有駐唱歌手表演，適合放慢步調享受海島夜晚。',
+        mustOrder: '現烤大頭蝦、BBQ碳烤海鮮拼盤、現剖椰子水、鮮榨芒果百香果冰沙',
+        url: 'https://vinpearl.com/en/sonasea-night-market-phu-quoc',
+        badgeColor: 'bg-purple-100 text-purple-800'
+      },
+      {
+        id: 'food-kingkong',
+        cat: 2,
+        catLabel: '2. 特色超市與伴手禮',
+        matchDay: 'Day 3 下午 16:00 採買',
+        name: '金剛超市（Kingkong Mart - 富國島特產旗艦店）',
+        vietName: 'Siêu thị Kingkong Mart Phú Quốc',
+        address: '富國島陽東陳興道大道141A號',
+        vietAddress: '141A Đường Trần Hưng Đạo, Dương Tơ, Phú Quốc, Kiên Giang',
+        feature: '全島品項最齊全的大型觀光生活超市！冷氣充足且明碼標價，專設富國島特產專區，從黑白胡椒粒、大蒜胡椒鹽、帶皮腰果、越南滴漏咖啡到椰子糖一應俱全，是採買伴手禮回台灣的首選聖地。',
+        mustOrder: '富國島粒粒飽滿黑白胡椒、特製大蒜胡椒鹽、特級帶皮鹽焗腰果、Archcafé 椰子卡布奇諾咖啡',
+        url: 'https://vinpearl.com/en/king-kong-mart-phu-quoc',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
+      }
+    ];
+
+    const HOTELS_DATA = [
+      {
+        id: 'hotel-movenpick',
+        dates: '11/6 至 11/9（連住3晚）',
+        city: '富國島西北部・翁蘭海灘 (Ong Lang / Cửa Dương)',
+        name: '富國島瑞享度假酒店 (Mövenpick Resort Waverly Phú Quốc)',
+        vietName: 'Mövenpick Resort Waverly Phú Quốc',
+        address: '富國島門陽社翁蘭邑第1組',
+        vietAddress: 'Tổ 01, Ấp Ông Lang, Xã Cửa Dương, Thành phố Phú Quốc, Tỉnh Kiên Giang',
+        metro: '包車至富國國際機場約 30 分鐘；至北部珍珠水陸樂園與富國大世界約 25 至 30 分鐘；至金剛超市約 20 分鐘',
+        url: 'https://movenpickresortwaverlyphuquoc.com/',
+        badgeColor: 'bg-teal-100 text-teal-800',
+        features: [
+          '五星級雅高 Accor 集團直營，坐擁整片私人無瑕沙灘與絕美日落夕陽景觀。',
+          '每日下午 15:30 至 16:30 免費招待房客享用「Chocolate Hour 巧克力歡樂時光」。',
+          '設有多個大型戶外潟湖泳池、專屬海灘躺椅、全日制海景餐廳與健身水療中心。'
+        ]
+      }
+    ];
+
+    const CHECKLIST_DATA = [
+      {
+        category: '證件、免簽與機票憑證',
+        items: [
+          { id: 'c1', label: '確認護照效期大於 6 個月以上（從返國日起算）' },
+          { id: 'c2', label: '確認台灣直飛富國島免簽證（不轉機越南本土城市享 30 天免簽）' },
+          { id: 'c3', label: '列印或截圖儲存「來回英文電子機票憑證」以備海關查驗' },
+          { id: 'c4', label: '預訂富國島瑞享度假酒店英文訂房確認信並截圖備份' }
+        ]
+      },
+      {
+        category: '換匯、支付與日常花費',
+        items: [
+          { id: 'c5', label: '準備新版百元美鈔（無破損、無摺痕、無污漬）以換取最高匯率' },
+          { id: 'c6', label: '出關右手邊找小哥換匯，當場數清面額並區分 50萬 與 5萬 越幣' },
+          { id: 'c7', label: '準備至少一張海外消費高現金回饋之信用卡（支援金剛超市與飯店消費）' },
+          { id: 'c8', label: '預先開通信用卡海外交易與 3D 驗證簡訊/信箱功能' }
+        ]
+      },
+      {
+        category: '通訊網路與必備手機 APP',
+        items: [
+          { id: 'c9', label: '預先購買並安裝越南 eSIM 或上網實體 SIM 卡（Viettel 或 Vinaphone）' },
+          { id: 'c10', label: '在台灣先下載好 Grab 叫車 App 並完成手機驗證與信用卡綁定' },
+          { id: 'c11', label: '下載 Google 翻譯 App 並預先下載「越語離線翻譯字典包」' },
+          { id: 'c12', label: '預訂 11/6 機場接機包車與 11/7 北部樂園包車，取得司機聯繫方式' }
+        ]
+      },
+      {
+        category: '海島防曬、衣物與個人藥品',
+        items: [
+          { id: 'c13', label: '攜帶海洋友善高係數防曬乳、遮陽帽、太陽眼鏡與薄防曬外套' },
+          { id: 'c14', label: '準備至少 2 套泳裝、水母衣、海灘拖鞋與手機防水袋（珍珠樂園必用）' },
+          { id: 'c15', label: '準備個人常備藥品：止瀉腸胃藥、暈車藥、綜合感冒藥、防蚊液' },
+          { id: 'c16', label: '投保涵蓋海外突發疾病醫療之完整旅遊平安險與不便險' }
+        ]
+      }
+    ];
+
+    // ==========================================
+    // 2. STATE MANAGEMENT & STORAGE
+    // ==========================================
+    const STORAGE_KEY_ITINERARY = 'phuquoc_itinerary_checks_v1';
+    const STORAGE_KEY_CHECKLIST = 'phuquoc_checklist_checks_v1';
+
+    let itineraryChecks = {};
+    let checklistChecks = {};
+    let currentActiveDay = 1; // 1, 2, 3, 4, or 'all'
+
+    function loadState() {
+      try {
+        const itSaved = localStorage.getItem(STORAGE_KEY_ITINERARY);
+        if (itSaved) itineraryChecks = JSON.parse(itSaved);
+      } catch (e) {
+        console.warn('Failed to parse itinerary checks', e);
+      }
+      try {
+        const clSaved = localStorage.getItem(STORAGE_KEY_CHECKLIST);
+        if (clSaved) checklistChecks = JSON.parse(clSaved);
+      } catch (e) {
+        console.warn('Failed to parse checklist checks', e);
+      }
+    }
+
+    function saveItineraryState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_ITINERARY, JSON.stringify(itineraryChecks));
+      } catch (e) {}
+    }
+
+    function saveChecklistState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_CHECKLIST, JSON.stringify(checklistChecks));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      if (!toast || !toastMsg) return;
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2500);
+    }
+
+    function copyToClipboard(text, customMsg = '已複製到剪貼簿') {
+      if (!text) return;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(customMsg);
+        }).catch(() => fallbackCopy(text, customMsg));
+      } else {
+        fallbackCopy(text, customMsg);
+      }
+    }
+
+    function fallbackCopy(text, customMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(customMsg);
+      } catch (err) {
+        alert('複製失敗，請手動選取複製');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // Modal Controller
+    const driverModal = document.getElementById('driver-modal');
+    const modalTitle = document.getElementById('modal-place-title');
+    const modalAddr = document.getElementById('modal-place-addr');
+    const modalNote = document.getElementById('modal-place-note');
+    const modalCopyBtn = document.getElementById('modal-copy-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalDoneBtn = document.getElementById('modal-done-btn');
+
+    let currentModalAddrText = '';
+
+    function openDriverModal(title, addr, note) {
+      if (!driverModal) return;
+      modalTitle.textContent = title || '';
+      modalAddr.textContent = addr || '';
+      modalNote.textContent = note || '';
+      currentModalAddrText = addr || '';
+      driverModal.classList.remove('hidden');
+      driverModal.classList.add('flex');
+    }
+
+    function closeDriverModal() {
+      if (!driverModal) return;
+      driverModal.classList.add('hidden');
+      driverModal.classList.remove('flex');
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeDriverModal);
+    if (modalDoneBtn) modalDoneBtn.addEventListener('click', closeDriverModal);
+    if (modalCopyBtn) {
+      modalCopyBtn.addEventListener('click', () => {
+        copyToClipboard(currentModalAddrText, '已複製越語地址！可直接貼上至 Grab 或傳給包車司機');
+      });
+    }
+
+    // ==========================================
+    // 3. RENDER FUNCTIONS
+    // ==========================================
+    function updateProgressBadges() {
+      // Itinerary calculation
+      let itTotal = 0;
+      let itChecked = 0;
+      ITINERARY_DAYS.forEach(d => {
+        d.stops.forEach(s => {
+          itTotal++;
+          if (itineraryChecks[s.id]) itChecked++;
+        });
+      });
+
+      // Checklist calculation
+      let clTotal = 0;
+      let clChecked = 0;
+      CHECKLIST_DATA.forEach(cat => {
+        cat.items.forEach(item => {
+          clTotal++;
+          if (checklistChecks[item.id]) clChecked++;
+        });
+      });
+
+      const totalItems = itTotal + clTotal;
+      const totalChecked = itChecked + clChecked;
+      const pct = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+
+      const progressText = document.getElementById('overall-progress-text');
+      const progressCount = document.getElementById('overall-progress-count');
+      const checklistBadge = document.getElementById('checklist-sub-badge');
+
+      if (progressText) progressText.textContent = `${pct}%`;
+      if (progressCount) progressCount.textContent = `(${totalChecked}/${totalItems})`;
+      if (checklistBadge) checklistBadge.textContent = `已完成 ${clChecked} / ${clTotal}`;
+    }
+
+    function renderDayButtons() {
+      const container = document.getElementById('day-buttons-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      ITINERARY_DAYS.forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isActive = (currentActiveDay === d.day);
+        btn.className = `day-tab-btn shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
+          isActive 
+            ? 'bg-teal-700 text-white shadow-sm' 
+            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+        }`;
+        btn.textContent = `Day ${d.day} (${d.date.split(' ')[0]})`;
+        btn.addEventListener('click', () => {
+          currentActiveDay = d.day;
+          renderDayButtons();
+          renderItinerary();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-content');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const daysToRender = (currentActiveDay === 'all')
+        ? ITINERARY_DAYS
+        : ITINERARY_DAYS.filter(d => d.day === currentActiveDay);
+
+      daysToRender.forEach(dayData => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-4';
+
+        // Day header
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex rounded-lg bg-teal-700 px-2.5 py-1 text-xs font-bold text-white">
+                  Day ${dayData.day} • ${dayData.date}
+                </span>
+                <span class="text-xs font-semibold text-slate-500">${dayData.cityTag}</span>
+              </div>
+              <h2 class="mt-1 text-lg font-bold text-slate-900">${dayData.title}</h2>
+            </div>
+            <div class="text-left sm:text-right">
+              <span class="text-xs text-slate-400">當日住宿：</span>
+              <p class="text-xs font-semibold text-teal-800">${dayData.hotelName}</p>
+            </div>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+            ${dayData.summary}
+          </p>
+        `;
+
+        // Timeline Stops
+        const timelineList = document.createElement('div');
+        timelineList.className = 'space-y-4 pt-2';
+
+        dayData.stops.forEach(stop => {
+          const isChecked = !!itineraryChecks[stop.id];
+          const item = document.createElement('div');
+          item.className = `group relative rounded-xl border p-4 transition-all ${
+            isChecked 
+              ? 'bg-slate-50/70 border-slate-200 opacity-75' 
+              : 'bg-white border-slate-200 hover:border-teal-300 hover:shadow-xs'
+          }`;
+
+          item.innerHTML = `
+            <div class="flex items-start gap-3">
+              <input type="checkbox" id="chk-${stop.id}" class="mt-1 h-4 w-4 rounded border-slate-300 text-teal-700 focus:ring-teal-600 shrink-0 cursor-pointer" ${isChecked ? 'checked' : ''}>
+              <div class="flex-1 space-y-1.5">
+                <div class="flex flex-wrap items-center justify-between gap-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-700">
+                      ${stop.time}
+                    </span>
+                    <span class="inline-flex rounded-md bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-800 border border-teal-200/60">
+                      ${stop.tag}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" class="driver-modal-trigger rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 hover:bg-teal-100 transition" title="向司機出示越文地址">
+                      司機看這張
+                    </button>
+                    <button type="button" class="copy-addr-trigger rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 transition" title="複製越文地址">
+                      複製地址
+                    </button>
+                  </div>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 ${isChecked ? 'line-through text-slate-400' : ''}">
+                  ${stop.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  ${stop.desc}
+                </p>
+                <div class="pt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="text-slate-400">越文定位：<span class="text-slate-600 font-medium">${stop.vietTitle}</span></span>
+                  ${stop.linkUrl ? `
+                    <a href="${stop.linkUrl}" target="_blank" rel="noopener noreferrer" class="font-medium text-teal-700 hover:underline">
+                      ${stop.linkText} &nearr;
+                    </a>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Checkbox event
+          const chk = item.querySelector(`#chk-${stop.id}`);
+          chk.addEventListener('change', (e) => {
+            itineraryChecks[stop.id] = e.target.checked;
+            saveItineraryState();
+            updateProgressBadges();
+            renderItinerary();
+          });
+
+          // Driver Modal Trigger
+          const driverBtn = item.querySelector('.driver-modal-trigger');
+          driverBtn.addEventListener('click', () => {
+            openDriverModal(stop.vietTitle, stop.vietAddr, stop.vietNote);
+          });
+
+          // Copy Trigger
+          const copyBtn = item.querySelector('.copy-addr-trigger');
+          copyBtn.addEventListener('click', () => {
+            copyToClipboard(stop.vietAddr, `已複製越語地址：${stop.vietTitle}`);
+          });
+
+          timelineList.appendChild(item);
+        });
+
+        card.appendChild(timelineList);
+        container.appendChild(card);
+      });
+    }
+
+    function renderFood(catFilter = 'all') {
+      const container = document.getElementById('food-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const filtered = (catFilter === 'all')
+        ? FOOD_DATA
+        : FOOD_DATA.filter(f => f.cat === parseInt(catFilter, 10));
+
+      filtered.forEach(food => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-3 flex flex-col justify-between';
+
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex rounded-md ${food.badgeColor} px-2.5 py-0.5 text-xs font-bold">
+                ${food.catLabel}
+              </span>
+              <span class="text-xs font-medium text-slate-400">${food.matchDay}</span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">${food.name}</h3>
+              <p class="text-xs text-teal-800 font-medium">${food.vietName}</p>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">${food.feature}</p>
+            <div class="rounded-xl bg-slate-50 p-3 border border-slate-100 text-xs">
+              <span class="font-bold text-slate-700">必點推薦：</span>
+              <span class="text-slate-600">${food.mustOrder}</span>
+            </div>
+            <div class="text-xs text-slate-500">
+              <p><span class="font-medium">地址：</span>${food.vietAddress}</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div class="flex gap-2">
+              <button type="button" class="food-driver-btn rounded-xl bg-teal-700 text-white px-3 py-1.5 text-xs font-bold hover:bg-teal-800 transition">
+                司機看這張
+              </button>
+              <button type="button" class="food-copy-btn rounded-xl bg-slate-100 text-slate-700 px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition">
+                複製地址
+              </button>
+            </div>
+            ${food.url ? `
+              <a href="${food.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-teal-700 hover:underline">
+                詳細評價 &nearr;
+              </a>
+            ` : ''}
+          </div>
+        `;
+
+        const driverBtn = card.querySelector('.food-driver-btn');
+        driverBtn.addEventListener('click', () => {
+          openDriverModal(food.vietName, food.vietAddress, '請使用 Grab 或向計程車司機出示此卡');
+        });
+
+        const copyBtn = card.querySelector('.food-copy-btn');
+        copyBtn.addEventListener('click', () => {
+          copyToClipboard(food.vietAddress, `已複製越語地址：${food.vietName}`);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderHotels() {
+      const container = document.getElementById('hotels-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      HOTELS_DATA.forEach(h => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl border border-slate-200 bg-slate-50/50 p-5 space-y-4';
+
+        const featureList = h.features.map(f => `<li class="flex items-start gap-1.5 text-xs text-slate-600"><span class="text-teal-600 font-bold">•</span><span>${f}</span></li>`).join('');
+
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <span class="inline-flex rounded-md ${h.badgeColor} px-2.5 py-0.5 text-xs font-bold">
+                ${h.dates}
+              </span>
+              <h3 class="mt-1 text-lg font-bold text-slate-900">${h.name}</h3>
+              <p class="text-xs text-teal-800 font-medium">${h.vietName}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" class="hotel-driver-btn rounded-xl bg-teal-700 text-white px-3.5 py-2 text-xs font-bold hover:bg-teal-800 transition">
+                司機看這張
+              </button>
+              <button type="button" class="hotel-copy-btn rounded-xl bg-white border border-slate-200 text-slate-700 px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 transition">
+                複製越文地址
+              </button>
+            </div>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2 text-xs">
+            <div class="rounded-xl bg-white p-3.5 border border-slate-100 space-y-1">
+              <p class="font-bold text-slate-700">飯店越語地址：</p>
+              <p class="text-slate-600 select-all">${h.vietAddress}</p>
+              <p class="text-slate-400 text-xxs pt-1">所在分區：${h.city}</p>
+            </div>
+            <div class="rounded-xl bg-white p-3.5 border border-slate-100 space-y-1">
+              <p class="font-bold text-slate-700">交通動線與車程參考：</p>
+              <p class="text-slate-600">${h.metro}</p>
+            </div>
+          </div>
+          <div class="rounded-xl bg-white p-3.5 border border-slate-100">
+            <p class="text-xs font-bold text-slate-800 mb-2">度假村頂級亮點與服務：</p>
+            <ul class="space-y-1.5">
+              ${featureList}
+            </ul>
+          </div>
+        `;
+
+        const driverBtn = card.querySelector('.hotel-driver-btn');
+        driverBtn.addEventListener('click', () => {
+          openDriverModal(h.vietName, h.vietAddress, '富國島瑞享度假酒店正門大廳');
+        });
+
+        const copyBtn = card.querySelector('.hotel-copy-btn');
+        copyBtn.addEventListener('click', () => {
+          copyToClipboard(h.vietAddress, `已複製越語地址：${h.name}`);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById('checklist-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      CHECKLIST_DATA.forEach(group => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl border border-slate-200 bg-white p-4 space-y-3';
+
+        let itemsHtml = '';
+        group.items.forEach(it => {
+          const isChecked = !!checklistChecks[it.id];
+          itemsHtml += `
+            <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" id="chk-${it.id}" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-teal-700 focus:ring-teal-600 cursor-pointer shrink-0" ${isChecked ? 'checked' : ''}>
+              <span class="text-xs sm:text-sm ${isChecked ? 'line-through text-slate-400' : 'text-slate-700'}">
+                ${it.label}
+              </span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+            ${group.category}
+          </h3>
+          <div class="space-y-1">
+            ${itemsHtml}
+          </div>
+        `;
+
+        // Bind events
+        group.items.forEach(it => {
+          const chk = card.querySelector(`#chk-${it.id}`);
+          if (chk) {
+            chk.addEventListener('change', (e) => {
+              checklistChecks[it.id] = e.target.checked;
+              saveChecklistState();
+              updateProgressBadges();
+              renderChecklist();
+            });
+          }
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // 4. EVENT LISTENERS & TAB CONTROLS
+    // ==========================================
+    const mainTabButtons = document.querySelectorAll('.main-tab-btn');
+    const sections = {
+      itinerary: document.getElementById('tab-itinerary'),
+      food: document.getElementById('tab-food'),
+      hotel: document.getElementById('tab-hotel'),
+      tickets: document.getElementById('tab-tickets'),
+      checklist: document.getElementById('tab-checklist')
+    };
+
+    mainTabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabKey = btn.getAttribute('data-main-tab');
+
+        // Update button styles
+        mainTabButtons.forEach(b => {
+          b.className = 'main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition';
+        });
+        btn.className = 'main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition';
+
+        // Switch active section
+        Object.keys(sections).forEach(k => {
+          if (sections[k]) {
+            if (k === tabKey) {
+              sections[k].classList.remove('hidden');
+              sections[k].classList.add('fade-in');
+            } else {
+              sections[k].classList.add('hidden');
+            }
+          }
+        });
+      });
+    });
+
+    // Expand all days button
+    const expandAllBtn = document.getElementById('expand-all-days-btn');
+    if (expandAllBtn) {
+      expandAllBtn.addEventListener('click', () => {
+        if (currentActiveDay === 'all') {
+          currentActiveDay = 1;
+          expandAllBtn.textContent = '展開全部 4 天總覽';
+        } else {
+          currentActiveDay = 'all';
+          expandAllBtn.textContent = '收合為單日瀏覽';
+        }
+        renderDayButtons();
+        renderItinerary();
+      });
+    }
+
+    // Food filters
+    const foodFilterBtns = {
+      all: document.getElementById('food-filter-all'),
+      1: document.getElementById('food-filter-1'),
+      2: document.getElementById('food-filter-2'),
+      3: document.getElementById('food-filter-3')
+    };
+
+    Object.keys(foodFilterBtns).forEach(k => {
+      const btn = foodFilterBtns[k];
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        Object.values(foodFilterBtns).forEach(b => {
+          if (b) {
+            b.className = 'food-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
+          }
+        });
+        btn.className = 'food-filter-btn rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-bold text-white transition';
+        renderFood(k);
+      });
+    });
+
+    // Reset All Checks
+    const resetBtn = document.getElementById('reset-checks-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('確定要重置所有行程與行前清單的勾選進度嗎？')) {
+          itineraryChecks = {};
+          checklistChecks = {};
+          saveItineraryState();
+          saveChecklistState();
+          updateProgressBadges();
+          renderItinerary();
+          renderChecklist();
+          showToast('已重置所有勾選紀錄');
+        }
+      });
+    }
+
+    // ==========================================
+    // 5. INITIALIZATION
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderDayButtons();
+      renderItinerary();
+      renderFood('all');
+      renderHotels();
+      renderChecklist();
+      updateProgressBadges();
+    });
+  </script>
+</body>
+</html>

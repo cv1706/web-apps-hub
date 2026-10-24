@@ -17,6 +17,7 @@
   * **江山時序歷史地圖（互動主圖）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/)
   * **江山時序專題考據總覽（靜態圖志）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html)
   * **無錫上海親子自由行手帳**：[https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/](https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/)
+  * **富國島海島度假隨身指南**：[https://web-apps-hub.cv1706yang.workers.dev/phu-quoc-guide/](https://web-apps-hub.cv1706yang.workers.dev/phu-quoc-guide/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
@@ -30,6 +31,7 @@
   * **江山時序歷史地圖（互動主圖）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/](https://cv1706.github.io/web-apps-hub/jiangshan-map/)
   * **江山時序專題考據總覽（靜態圖志）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html](https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html)
   * **無錫上海親子自由行手帳**：[https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/](https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/)
+  * **富國島海島度假隨身指南**：[https://cv1706.github.io/web-apps-hub/phu-quoc-guide/](https://cv1706.github.io/web-apps-hub/phu-quoc-guide/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
@@ -111,6 +113,15 @@
   * **歷史先賢時空行跡**：收錄秦始皇滅六國、張騫鑿空西域、諸葛亮出山北伐、玄奘西行、李白壯遊、蘇軾貶謫與王陽明悟道生平路線。
   * **智慧雙向搜尋**：全域搜尋方塊原生支援繁體中文（如「諸葛亮」、「長安」、「函谷關」），並自動相容簡體輸入比對。
   * **專題考據圖志（35 篇靜態專題）**：涵蓋 18 大歷史時期政區沿革表、杜甫《聞官軍收河南河北》、蘇軾貶謫嶺南、文天祥《過零丁洋》、長平之戰、赤壁之戰、淝水之戰等經典名篇與大戰考據圖志，字型完全在地化為台灣繁體標準並消除外部連結外洩。
+
+### 9. 富國島 · 4天3夜海島自由行隨身指南
+* **路徑**：`/phu-quoc-guide/`
+* **使用說明**：
+  * **直飛免簽與機場換匯**：收錄台灣直飛 30 天免簽證規定、出關右手邊小哥換匯與大額面額防偽注意事項。
+  * **瑞享五星度假村設施**：提供翁蘭海灘私人沙灘活動、無邊際泳池與每日 15:30 至 16:30 免費巧克力歡樂時光（Chocolate Hour）。
+  * **景點與演出時刻精準掌握**：收錄珍珠水陸樂園（VinWonders）世界最大巨龜水族館美人魚秀、18:30 壓軸 ONCE 水幕光影秀；富國大世界 21:45 威尼斯色彩水舞秀。
+  * **在地美饌與伴手禮定位**：收錄富國島傳統跳跳蝦米粉（Bún quậy）、MYLA SEAFOOD 現撈海鮮、金剛超市胡椒鹽腰果採買指南與 Sonasea 夜市。
+  * **司機越文定位卡**：支援一鍵開啟越語目的地與詳細地址大字卡，專為包車與 Grab 司機定位設計。
 
 ---
 
