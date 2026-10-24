@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>無錫 × 上海 6天5夜親子旅遊手帳 (2/1 - 2/6)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .fade-in {
+      animation: fadeIn 0.22s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl transition-all">
+    <svg class="h-4 w-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-msg">已複製到剪貼簿</span>
+  </div>
+
+  <!-- Driver / Fullscreen Address Modal -->
+  <div id="driver-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+          🚕 司機看這張 / 滴滴打車定位
+        </span>
+        <button id="close-modal-btn" type="button" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="關閉視窗">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-3 text-center py-3">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-400">目的地名稱（簡體/通用）</p>
+        <h3 id="modal-place-title" class="text-2xl font-bold text-slate-900 leading-snug"></h3>
+        <div class="rounded-xl bg-slate-50 p-4 border border-slate-200 mt-2">
+          <p class="text-xs text-slate-400 mb-1">詳細地址</p>
+          <p id="modal-place-addr" class="text-base font-semibold text-slate-800 select-all"></p>
+        </div>
+        <p id="modal-place-note" class="text-xs text-slate-500 pt-1"></p>
+      </div>
+      <div class="mt-5 flex gap-2">
+        <button id="modal-copy-btn" type="button" class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition">
+          📋 複製地址貼到滴滴
+        </button>
+        <button id="modal-done-btn" type="button" class="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Header -->
+  <header class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg">
+    <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-200 border border-indigo-400/30 mb-2">
+            <span>✈️ 2027/02/01 – 02/06</span>
+            <span>•</span>
+            <span>👨‍👩‍👦 2大1小（12歲）親子自由行</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            無錫江南古韻 × 上海奇幻演藝 6天5夜隨身指南
+          </h1>
+          <p class="mt-1 text-sm text-slate-300">
+            惠山古鎮 • 三國水滸景區 • 上海千古情景區 • 2月吃蟹名店打車定位 • 滴滴與地鐵無縫接駁
+          </p>
+        </div>
+        <!-- Quick Progress Pill -->
+        <div class="flex items-center gap-3 self-start sm:self-center rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/15">
+          <div>
+            <p class="text-xs text-slate-300">行前與行程完成度</p>
+            <div class="flex items-baseline gap-2">
+              <span id="overall-progress-text" class="text-lg font-bold text-emerald-300">0%</span>
+              <span id="overall-progress-count" class="text-xs text-slate-300">(0/0)</span>
+            </div>
+          </div>
+          <button id="reset-checks-btn" type="button" class="rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/20 transition" title="重置所有勾選狀態">
+            重置勾選
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="mt-6 flex gap-2 overflow-x-auto no-scrollbar border-b border-white/15 pb-3" aria-label="主要功能切換">
+        <button type="button" data-main-tab="itinerary" class="main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition">
+          🗓️ 每日行程與打車卡
+        </button>
+        <button type="button" data-main-tab="crabs" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          🦀 2月必吃蟹名店卡
+        </button>
+        <button type="button" data-main-tab="hotels" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          🏨 住宿與交通樞紐
+        </button>
+        <button type="button" data-main-tab="tickets" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          🎟️ 門票演出與12歲優惠
+        </button>
+        <button type="button" data-main-tab="checklist" class="main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition">
+          🧳 行前準備清單
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+
+    <!-- SECTION 1: ITINERARY -->
+    <section id="tab-itinerary" class="space-y-6 fade-in">
+      <!-- Day Selector Bar -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+        <div id="day-buttons-container" class="flex gap-1.5 overflow-x-auto no-scrollbar">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+          <button id="expand-all-days-btn" type="button" class="w-full sm:w-auto rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
+            展開全部 6 天總覽
+          </button>
+        </div>
+      </div>
+
+      <!-- Day 5 Option Switcher (Only visible when Day 5 or All Days is active) -->
+      <div id="day5-switcher-banner" class="hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-sky-50 to-emerald-50 p-4 border border-indigo-200/80 shadow-sm">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <span class="inline-flex items-center gap-1 rounded-md bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white">Day 5 (2/5) 彈性二選一</span>
+            <h3 class="mt-1 text-sm font-bold text-slate-900">根據 12 歲小朋友喜好切換當日主題路線：</h3>
+          </div>
+          <div class="inline-flex rounded-xl bg-white p-1 shadow-sm border border-slate-200 self-start sm:self-center">
+            <button type="button" id="opt-a-btn" class="rounded-lg px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white transition">
+              🦖 方案 A：自然博物館＋LV巨輪＋豫園外灘
+            </button>
+            <button type="button" id="opt-b-btn" class="rounded-lg px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+              🏰 方案 B：上海迪士尼狂歡一日
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itinerary Timeline Container -->
+      <div id="itinerary-content" class="space-y-6">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: CRAB RESTAURANTS (NEW FEATURE) -->
+    <section id="tab-crabs" class="hidden space-y-6 fade-in">
+      <!-- Family Ordering Tips Highlight Card -->
+      <div class="rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-rose-500/10 p-5 border border-amber-300 shadow-sm">
+        <div class="flex items-start gap-3">
+          <div class="rounded-xl bg-amber-500/20 p-2.5 text-2xl">🦀</div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h2 class="text-base font-bold text-slate-900">2 月無錫與上海吃蟹策略：給一家三口的點餐秘訣</h2>
+              <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-0.5 text-xs font-bold text-amber-800">
+                2大1小專屬建議
+              </span>
+            </div>
+            <p class="mt-1 text-xs sm:text-sm text-slate-700 leading-relaxed">
+              2 月雖已過秋季活河蟹高峰，但<strong>「免剝殼蟹粉老字號」全年現拆</strong>、<strong>頂級名店的「花雕熟醉大閘蟹」</strong>與<strong>農曆年前後最肥美的東海「冬蟹/膏蟹」</strong>正是絕佳賞味期！
+            </p>
+            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-xl bg-white/90 p-3.5 border border-amber-200 shadow-xs">
+                <span class="inline-flex rounded-md bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">無錫站・Day 2 實戰</span>
+                <h4 class="mt-1 text-xs font-bold text-slate-900">惠山古鎮 / 南長街嚐鮮對比</h4>
+                <p class="mt-1 text-xs text-slate-600 leading-relaxed">
+                  逛古鎮時直接點「<strong>1 籠蟹粉小籠包 ＋ 1 籠傳統鮮肉小籠包</strong>」對比品嚐，再加一碗開洋餛飩，鮮甜不膩，孩子免剝殼吃得最開心。
+                </p>
+              </div>
+              <div class="rounded-xl bg-white/90 p-3.5 border border-amber-200 shadow-xs">
+                <span class="inline-flex rounded-md bg-rose-500 px-2 py-0.5 text-xs font-bold text-white">上海站・Day 5 實戰</span>
+                <h4 class="mt-1 text-xs font-bold text-slate-900">外灘與南京路盛宴黃金組合</h4>
+                <p class="mt-1 text-xs text-slate-600 leading-relaxed">
+                  推薦「<strong>2 份蟹黃撈麵/小籠 ＋ 1 道冬季膏蟹炒年糕（或熟醉蟹）</strong>」，店家皆附贈溫熱紅糖薑茶暖胃驅寒，大人小孩吃得過癮又不怕寒涼！
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">三大推薦吃法與順路名店定位卡</h3>
+          <p class="text-xs text-slate-500 mt-0.5">點擊卡片按鈕可一鍵複製滴滴打車搜尋詞，或開啟大字司機定位卡</p>
+        </div>
+        <div class="flex gap-1 overflow-x-auto no-scrollbar">
+          <button type="button" id="crab-filter-all" class="crab-filter-btn rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white transition">
+            全部名店
+          </button>
+          <button type="button" id="crab-filter-1" class="crab-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            1. 蟹粉小籠/麵
+          </button>
+          <button type="button" id="crab-filter-2" class="crab-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            2. 全蟹宴熟醉蟹
+          </button>
+          <button type="button" id="crab-filter-3" class="crab-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            3. 冬季海蟹炒年糕
+          </button>
+        </div>
+      </div>
+
+      <!-- Crab Restaurants Cards Grid -->
+      <div id="crabs-container" class="grid gap-4 md:grid-cols-2">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 3: HOTELS & TRANSPORT -->
+    <section id="tab-hotels" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">🏨 全程 3 間入住飯店與一鍵叫車卡</h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊「複製滴滴地址」或「司機看這張」即可直接用於叫車定位</p>
+          </div>
+          <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
+            已確認分店地址
+          </span>
+        </div>
+
+        <div id="hotels-grid" class="mt-4 grid gap-4 md:grid-cols-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Cross-city Transport Matrix -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900">🚄 跨城與關鍵接駁交通攻略</h2>
+        <p class="text-xs text-slate-500 mt-0.5">針對 2 大 1 小（12 歲）加行李箱的最省力動線設計</p>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">日期 / 路段</th>
+                <th class="py-3 px-3 font-semibold">推薦方式</th>
+                <th class="py-3 px-3 font-semibold">預估時間</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">實戰要點與連結</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">2/1 (日) 18:10 抵達<br><span class="text-xs font-normal text-slate-500">浦東機場 ➔ 無錫諾富特</span></td>
+                <td class="py-3.5 px-3">
+                  <span class="inline-flex rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">首選：機場聯絡線＋高鐵＋地鐵3號線</span>
+                  <br><span class="inline-flex mt-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">備選：跨城包車/專車直達</span>
+                </td>
+                <td class="py-3.5 px-3">
+                  大眾運輸約 3.2 小時<br><span class="text-xs text-slate-500">專車約 2–2.5 小時</span>
+                </td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • <strong>方案 A（極速公共運輸・首選）</strong>：18:10 降落 <a href="https://gochina.com.tw/shanghai-pudong-airport-transportation-guide/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline font-medium">浦東機場</a>，19:00 出關搭乘「市域機場聯絡線」直達虹橋 2 號航站樓（40分，¥26），轉高鐵至無錫火車站（約35-42分，二等座約¥50-60，12歲半價），出站搭無錫地鐵 3 號線 4 站直達「太湖花園站」3號口（10分，¥2）步行 430 米抵達飯店。每人約 ¥83–101。<br>
+                  • <strong>方案 B（免轉乘專車）</strong>：出關直接搭跨城專車走高速直達新吳區飯店（全程約 165 公里，整車約 ¥450–600）。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">2/3 (二) 13:30<br><span class="text-xs font-normal text-slate-500">無錫 ➔ 上海浦東喜來登</span></td>
+                <td class="py-3.5 px-3"><span class="inline-flex rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">高鐵 + 滴滴/地鐵4號線</span></td>
+                <td class="py-3.5 px-3">高鐵 27–45 分鐘</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  由無錫站或無錫新區站搭 <a href="https://tw.trip.com/trains/china/route/wuxi-to-shanghai/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline font-medium">無錫至上海高鐵</a>（12歲可買半價兒童票），抵上海站後轉地鐵4號線至「塘橋站」3號口或打車直達飯店。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">2/4 (三) 10:00 & 17:00<br><span class="text-xs font-normal text-slate-500">喜來登 ➔ 千古情 ➔ 博雅</span></td>
+                <td class="py-3.5 px-3"><span class="inline-flex rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800">行李寄放喜來登 + 滴滴</span></td>
+                <td class="py-3.5 px-3">車程各約 15–20 分鐘</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  早上退房先將大行李寄放喜來登禮賓部，輕裝打車 15 分鐘玩 <a href="https://hk.trip.com/travel-guide/attraction/shanghai/shanghai-songcheng-show-park-140068129/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline font-medium">上海千古情景區</a>（或搭地鐵13號線至世博大道站），傍晚回飯店取行李打車 20 分鐘赴張江博雅。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold text-slate-900">2/6 (五) 09:00<br><span class="text-xs font-normal text-slate-500">上海博雅 ➔ 浦東機場</span></td>
+                <td class="py-3.5 px-3"><span class="inline-flex rounded-md bg-sky-50 px-2 py-0.5 text-xs font-semibold text-sky-700">滴滴專車 / 磁浮列車</span></td>
+                <td class="py-3.5 px-3">打車約 30 分鐘</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  12:00 起飛建議 09:30 抵機場。從張江走迎賓高速打車 30 分鐘即達；或打車 5 分鐘至龍陽路站體驗時速300km <a href="https://my.trip.com/guide/transport/%E4%B8%8A%E6%B5%B7%E7%A3%81%E6%82%AC%E6%B5%AE%E5%88%97%E8%BD%A6.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline font-medium">上海磁浮列車</a>（8分鐘直達航廈）。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TICKETS, SHOWTIMES & 12YO DISCOUNTS -->
+    <section id="tab-tickets" class="hidden space-y-6 fade-in">
+      <!-- 12-Year-Old Discount Highlight Card -->
+      <div class="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 p-5 border border-amber-200 shadow-sm">
+        <div class="flex items-start gap-3">
+          <div class="rounded-xl bg-amber-500/15 p-2.5 text-2xl">🪪</div>
+          <div>
+            <h2 class="text-base font-bold text-amber-950">12 歲小朋友（2大1小）購票與證件優惠專區</h2>
+            <p class="mt-1 text-xs text-amber-900 leading-relaxed">
+              中國大陸高鐵與多數 5A 景區對 <strong>12 歲未成年人（6–14歲或6–18歲）</strong> 皆有半價或兒童優惠。請務必隨身攜帶小朋友的<strong>台胞證正本</strong>！
+            </p>
+            <div class="mt-3 grid gap-2.5 sm:grid-cols-3">
+              <div class="rounded-xl bg-white/80 p-3 border border-amber-200/70">
+                <p class="text-xs font-bold text-slate-900">🚄 中國高鐵（無錫➔上海）</p>
+                <p class="mt-1 text-xs text-slate-600">年滿 6 週歲且未滿 14 週歲可買<strong>實名制兒童票（約成人 5 折）</strong>，刷台胞證進站。</p>
+              </div>
+              <div class="rounded-xl bg-white/80 p-3 border border-amber-200/70">
+                <p class="text-xs font-bold text-slate-900">🏯 無錫三大景區</p>
+                <p class="mt-1 text-xs text-slate-600">三國水滸、惠山古鎮、黿頭渚對 6–18 歲未成年人或身高 1.4m 以下提供<strong>半價學生/兒童票</strong>。</p>
+              </div>
+              <div class="rounded-xl bg-white/80 p-3 border border-amber-200/70">
+                <p class="text-xs font-bold text-slate-900">🎭 上海千古情 & 自然館</p>
+                <p class="mt-1 text-xs text-slate-600">上海自然博物館 18 歲以下學生票 ¥12；千古情可買<strong>2大1小家庭套票</strong>或依身高享優待。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Attractions & Showtimes Table -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900">🎭 必看演出場次與門票預約總表</h2>
+        <p class="text-xs text-slate-500 mt-0.5">點擊景點名稱可直接前往官方或旅遊平台查看最新票價與預訂</p>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">景點名稱</th>
+                <th class="py-3 px-3 font-semibold">開放時間 (2月)</th>
+                <th class="py-3 px-3 font-semibold">參考門票</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">核心演出時刻與預約重點</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="https://hk.trip.com/travel-guide/attraction/wuxi/cctv-wuxi-movie-and-tv-production-base-136483346/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">無錫三國水滸景區 ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">08:00–17:30</td>
+                <td class="py-3.5 px-3 text-xs">三國+水滸聯票約 ¥150</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • <strong>《三英戰呂布》</strong>：每日 <strong>10:00</strong>、15:30（三國城跑馬場，必看！）<br>
+                  • <strong>《鬥殺西門慶》</strong>：每日 <strong>11:15</strong>、14:30（水滸城翠雲樓）<br>
+                  • 建議加購太湖古戰船體驗。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="https://tw.trip.com/moments/poi-huishan-ancient-town-jichang-garden-86784/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">無錫惠山古鎮・寄暢園 ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">古蹟區 08:30–17:00<br>(街區全天開放)</td>
+                <td class="py-3.5 px-3 text-xs">街區免費；<br>文物古蹟聯票 ¥70</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • 聯票含江南名園 <a href="https://vacation.eztravel.com.tw/sight/PLC0000092147" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">寄暢園</a>、天下第二泉、惠山寺。<br>
+                  • 必吃：<a href="https://hk.trip.com/moments/poi-yi-qin-yuan-xiaolongbao-31023621/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">憶秦園小籠包（蟹粉鮮肉）</a>、惠山油酥餅。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="https://zh.meet99.com/jingdian-guyunhe-84887.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">清名橋古運河 (南長街) ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">街區全天；<br>遊船約 13:00–20:30</td>
+                <td class="py-3.5 px-3 text-xs">街區免費；<br>古運河遊船約 ¥80</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • 傍晚點燈後最美，推薦搭乘 <a href="https://tw.trip.com/moments/detail/wuxi-10-146106325/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">古運河夜航遊船</a>。<br>
+                  • 必吃：<a href="https://you.ctrip.com/food/wuxi10/435591.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">熙盛源蟹粉小籠包/開洋餛飩</a>、<a href="https://tw.trip.com/restaurant/china/wuxi/detail/mu-gui-ying-11269560/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">穆桂英美食玉蘭餅</a>。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="http://www.ytz.com.cn/tickets.html" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">無錫太湖黿頭渚 ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">08:30–17:00</td>
+                <td class="py-3.5 px-3 text-xs">約 ¥90 (含往返渡輪)</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • 2月正值 <a href="https://travelnews.qunar.com/qa_strategy/wuxi-yuantouzhu-february-march-travel-guide" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">西伯利亞紅嘴鷗觀賞季</a>，搭渡輪去太湖仙島時可在甲板互動餵食。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="https://hk.trip.com/travel-guide/attraction/shanghai/shanghai-songcheng-show-park-140068129/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">上海千古情景區 ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">10:30–19:00</td>
+                <td class="py-3.5 px-3 text-xs">含大秀門票約 HK$151–¥318</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • 核心大秀<strong>《上海千古情》</strong>通常於 <strong>14:00</strong> 等時段演出（預訂時選場次，時長 60 分鐘）。<br>
+                  • 全立體室內街區（世博大道1750號），不受冬日寒風影響。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="https://hk.trip.com/travel-guide/attraction/shanghai/shanghai-natural-history-museum-76790/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">上海自然博物館 ↗</a> / <a href="https://tw.trip.com/travel-guide/attraction/shanghai/shanghai-disney-resort-13412802/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">迪士尼 ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">自然館 09:00–17:00<br>迪士尼 08:30–21:30</td>
+                <td class="py-3.5 px-3 text-xs">自然館成人¥30/學生¥12<br>迪士尼依日期浮動</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • 自然館須提前 7 天於 <a href="https://www.snhm.org.cn/cgfw/wssp.htm" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">上海自然博物館官網/小程式</a> 預約。<br>
+                  • <a href="https://hk.trip.com/travel-guide/attraction/shanghai/yu-garden-75615/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 underline">上海豫園</a> 開放至 21:50（21:00 停止入場）。
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-3 font-semibold">
+                  <a href="https://gochina.com.tw/louis-vuitton-voyager/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">LV巨輪（The Louis路易號） ↗</a>
+                </td>
+                <td class="py-3.5 px-3 text-xs">10:00–22:00</td>
+                <td class="py-3.5 px-3 text-xs">入內與1F展覽免費（需預約）；<br>2F精品店免預約</td>
+                <td class="py-3.5 px-3 text-xs leading-relaxed">
+                  • 全球唯一巨型郵輪造型概念地標（南京西路789號興業太古匯南廣場）。<br>
+                  • 1F「非凡之旅」展覽（80只古董行李箱Trunkscape光影隧道）與3F餐廳需於微信小程式「My LV」預約。<br>
+                  • 地鐵 2/12/13 號線「南京西路站」5號出口直達。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: PRE-TRIP CHECKLIST -->
+    <section id="tab-checklist" class="hidden space-y-6 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">🧳 2月江南與上海親子行前準備清單</h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊項目即可打勾記錄，狀態會自動保存在瀏覽器中</p>
+          </div>
+          <span id="checklist-sub-badge" class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+            已完成 0 / 0
+          </span>
+        </div>
+
+        <div id="checklist-grid" class="mt-4 grid gap-4 md:grid-cols-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-500">
+    <div class="mx-auto max-w-5xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>無錫 × 上海 6天5夜親子自由行互動手帳 • 專為 2大1小（12歲）量身規劃</p>
+      <p class="text-slate-400">所有景點、飯店與蟹料理名店均附一鍵滴滴定位，點擊「司機看這張」可放大顯示</p>
+    </div>
+  </footer>
+
+  <script>
+    // ==========================================
+    // 1. DATA DEFINITIONS
+    // ==========================================
+    const CRAB_RESTAURANTS_DATA = [
+      {
+        id: 'crab-yiqinyuan',
+        cat: 1,
+        catLabel: '1. 蟹粉小籠包 & 麵飯',
+        matchDay: 'Day 2 無錫・惠山古鎮',
+        name: '憶秦園小籠包（惠山古鎮店）',
+        cnName: '忆秦园小笼包(惠山古镇绣嶂街店)',
+        address: '江蘇省無錫市梁溪區惠山古鎮繡嶂街18號（近寄暢園）',
+        cnAddress: '江苏省无锡市梁溪区惠山古镇绣嶂街18号',
+        feature: '《舌尖上的中國》推薦老字號！每日手工現拆蟹粉，招牌「蟹粉鮮肉小籠包」皮薄爆汁、鮮美濃郁，帶孩子逛完寄暢園出門即可品嚐。',
+        mustOrder: '招牌蟹粉小籠包、鮮肉小籠包、蟹黃餛飩',
+        url: 'https://hk.trip.com/moments/poi-yi-qin-yuan-xiaolongbao-31023621/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'crab-xishengyuan',
+        cat: 1,
+        catLabel: '1. 蟹粉小籠包 & 麵飯',
+        matchDay: 'Day 2 無錫・南長街古運河',
+        name: '熙盛源（南長街店）',
+        cnName: '熙盛源(南长街店)',
+        address: '江蘇省無錫市梁溪區南長街108-1號（近清名橋）',
+        cnAddress: '江苏省无锡市梁溪区南长街108-1号',
+        feature: '無錫在地人口碑第一的傳統小籠名店！蟹粉小籠包肉餡飽滿，湯汁金黃微甜帶濃烈蟹香，搭配一碗開洋餛飩湯最暖胃。',
+        mustOrder: '蟹粉小籠包、紅湯開洋餛飩、白湯小餛飩',
+        url: 'https://you.ctrip.com/food/wuxi10/435591.html',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'crab-yuxingji',
+        cat: 1,
+        catLabel: '1. 蟹粉小籠包 & 麵飯',
+        matchDay: 'Day 3–5 上海・南京東路/人民廣場',
+        name: '裕興記・蟹黃麵館（湖北路店）',
+        cnName: '裕兴记面馆(湖北路店)',
+        address: '上海市黃浦區湖北路151號（距南京東路步行街約300米）',
+        cnAddress: '上海市黄浦区湖北路151号',
+        feature: '百年老字號！招牌「蟹黃金撈麵」由十多隻螃蟹純手工現拆蟹黃蟹膏炒製，金黃厚實淋在麵上，免動手剝殼就能享用整碗膏黃盛宴。',
+        mustOrder: '招牌蟹黃金撈麵、蟹粉蝦仁拌麵、禿黃油撈飯',
+        url: 'https://tw.trip.com/moments/poi-city-142996672/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'crab-lailai',
+        cat: 1,
+        catLabel: '1. 蟹粉小籠包 & 麵飯',
+        matchDay: 'Day 3–5 上海・人民廣場/南京路',
+        name: '萊萊小籠・喬艾（天津路總店）',
+        cnName: '莱莱小笼·乔艾(天津路店)',
+        address: '上海市黃浦區天津路504號（地鐵人民廣場站19號口步行4分鐘）',
+        cnAddress: '上海市黄浦区天津路504号',
+        feature: '米其林必比登連續多年推介！上海小籠包天花板之一，全透明廚房現點現包，皮薄透光、蟹粉鮮肉餡爆出金黃色湯汁，沾薑絲黑醋一絕。',
+        mustOrder: '蟹粉鮮肉小籠、純蟹膏小籠、薑絲醋、蟹粉小餛飩',
+        url: 'https://hk.trip.com/restaurant/china/shanghai/detail/qiao-ai-lai-lai-xiao-long-15768041/',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      },
+      {
+        id: 'crab-chenglonghang',
+        cat: 2,
+        catLabel: '2. 全蟹宴 & 花雕熟醉蟹',
+        matchDay: 'Day 5 上海・南京東路/外灘',
+        name: '成隆行・蟹王府（九江路店）',
+        cnName: '成隆行蟹王府(九江路店)',
+        address: '上海市黃浦區九江路216號（距地鐵南京東路站步行僅2分鐘）',
+        cnAddress: '上海市黄浦区九江路216号',
+        feature: '米其林一星級蟹宴殿堂！擁有自家生態養殖基地，2月依然供應高品質母蟹與公蟹，古色古香環境還有專人桌邊拆蟹服務，優雅品蟹首選。',
+        mustOrder: '花雕熟醉大閘蟹、清蒸大閘蟹、蟹粉豆腐、禿黃油撈飯',
+        url: 'https://jp.trip.com/restaurant/china/shanghai/detail/cheng-long-hang-340902/',
+        badgeColor: 'bg-rose-100 text-rose-800'
+      },
+      {
+        id: 'crab-laojishi',
+        cat: 3,
+        catLabel: '3. 冬季海蟹（梭子蟹/青蟹）',
+        matchDay: 'Day 3 陸家嘴 / Day 5 豫園老城廂',
+        name: '老吉士酒家 / 上海老飯店（本幫菜）',
+        cnName: '老吉士酒家(国金中心ifc商场店) / 上海老饭店(豫园店)',
+        address: '上海市浦東新區世紀大道8號國金中心LG2 / 黃浦區福佑路242號',
+        cnAddress: '上海市浦东新区世纪大道8号国金中心LG2 / 上海市黄浦区福佑路242号',
+        feature: '2 月農曆年前後東海紅膏梭子蟹（冬蟹）與膏蟹最肥美！老牌本幫菜將整隻紅膏蟹與水磨年糕爆炒，年糕吸飽濃稠蟹汁，鮮甜彈牙肉厚過癮。',
+        mustOrder: '膏蟹炒年糕、蔥薑炒梭子蟹、熟醉梭子蟹、本幫紅燒肉',
+        url: 'https://hk.trip.com/travel-guide/attraction/shanghai/yu-garden-75615/',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
+      }
+    ];
+
+    const HOTELS_DATA = [
+      {
+        id: 'hotel-wuxi',
+        dates: '2/1 – 2/3（2晚）',
+        city: '無錫・新吳區（近古運河）',
+        name: '無錫諾富特酒店 (Novotel Wuxi)',
+        cnName: '无锡诺富特酒店（新吴区金城东路店）',
+        address: '江蘇省無錫市新吳區江溪街道金城東路7號',
+        cnAddress: '无锡市新吴区江溪街道金城东路7号',
+        metro: '無錫地鐵 3 號線「太湖花園站」3號口步行約 430 米（直達無錫火車站 4 站 10 分鐘）；打車去南長街約 10–15 分鐘',
+        url: 'https://www.wingontravel.com/hotel/detail-wuxi-120460338/novotel-wuxi/',
+        badgeColor: 'bg-indigo-100 text-indigo-800'
+      },
+      {
+        id: 'hotel-sheraton',
+        dates: '2/3 – 2/4（1晚）',
+        city: '上海・浦東新區（塘橋站）',
+        name: '上海浦東喜來登由由大酒店',
+        cnName: '上海浦东喜来登由由大酒店',
+        address: '上海市浦東新區浦建路38號',
+        cnAddress: '上海市浦东新区浦建路38号（近地铁4号线塘桥站3号口）',
+        metro: '地鐵 4 號線「塘橋站」步行即達；打車至陸家嘴或上海千古情景區均僅需約 12–15 分鐘',
+        url: 'https://www.booking.com/hotel/cn/sheraton-shanghai.zh-tw.html',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
+      },
+      {
+        id: 'hotel-parkyard',
+        dates: '2/4 – 2/6（2晚）',
+        city: '上海・浦東張江高科園區',
+        name: '上海博雅酒店 (Parkyard Hotel Shanghai)',
+        cnName: '上海博雅酒店（张江碧波路店）',
+        address: '上海市浦東新區碧波路699號',
+        cnAddress: '上海市浦东新区碧波路699号（近地铁2号线张江高科站）',
+        metro: '地鐵 2 號線「張江高科站」步行約 8–10 分鐘；打車至迪士尼約 20 分鐘、至浦東機場約 30 分鐘',
+        url: 'https://www.parkyardshanghai.cn/pc',
+        badgeColor: 'bg-amber-100 text-amber-800'
+      }
+    ];
+
+    const ITINERARY_DAYS = [
+      {
+        day: 1,
+        date: '2/1 (週日)',
+        title: '抵達浦東機場 ➔ 機場聯絡線＋高鐵＋地鐵3號線極速抵達無錫',
+        cityTag: '上海浦東 ➔ 虹橋 ➔ 無錫',
+        hotelName: '無錫諾富特酒店（新吳區金城東路7號）',
+        hotelUrl: 'https://www.wingontravel.com/hotel/detail-wuxi-120460338/novotel-wuxi/',
+        summary: '2/1 18:10 班機抵達浦東機場，採「方案 A：極速公共運輸」串聯市域機場聯絡線、京滬高鐵與無錫地鐵 3 號線，避開夜間公路塞車風險，約 21:30 順利入住新吳區諾富特酒店（亦備有專車直達方案）。',
+        stops: [
+          {
+            id: 'd1-s1',
+            time: '18:10 – 19:00',
+            title: '班機降落上海浦東機場 & 入境提領行李',
+            tag: '✈️ 機場落地',
+            desc: '班機預計 18:10 降落浦東機場（PVG），進行證照查驗並提領行李。出關後依指標前往「機場聯絡線」月台（步行約 10–15 分鐘）。',
+            linkText: '浦東機場交通全攻略',
+            linkUrl: 'https://gochina.com.tw/shanghai-pudong-airport-transportation-guide/',
+            didiTitle: '上海浦东国际机场',
+            didiAddr: '上海市浦东新区迎宾大道6000号',
+            didiNote: '若選方案 B 專車直達，請與司機確認 T1 或 T2 停車場上車點'
+          },
+          {
+            id: 'd1-s2',
+            time: '19:15 – 19:55',
+            title: '浦東機場搭乘「機場聯絡線」直達上海虹橋站',
+            tag: '🚄 市域鐵路',
+            desc: '搭乘全新開通的上海市域鐵路「機場聯絡線」（浦東 1 號 2 號航站樓站 ➔ 虹橋 2 號航站樓站），時速 160 公里直達僅需 40 分鐘，票價 26 元人民幣，約 15 分鐘一班。比傳統地鐵 2 號線省下近 50 分鐘！',
+            linkText: '上海機場聯絡線最新資訊',
+            linkUrl: 'https://zh.wikipedia.org/zh-tw/%E4%B8%8A%E6%B5%B7%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E5%B8%82%E5%9F%9F%E7%BA%BF%E6%9C%BA%E5%9C%BA%E8%81%94%E7%BB%9C%E7%BA%BF',
+            didiTitle: '虹桥2号航站楼站(市域铁路)',
+            didiAddr: '上海市闵行区虹桥综合交通枢纽',
+            didiNote: '出站後依「高鐵/鐵路出發」指標步行 5–8 分鐘即可抵達上海虹橋高鐵站候車大廳'
+          },
+          {
+            id: 'd1-s3',
+            time: '20:25 – 21:10',
+            title: '上海虹橋站搭乘高鐵直達無錫火車站',
+            tag: '⚡ 京滬高鐵',
+            desc: '虹橋站安檢進站後，搭乘約 20:25–20:45 開往「無錫站」之高鐵列車（車程約 35–42 分鐘，二等座約 ¥50–60，12 歲小朋友可買兒童半價票）。建議出關後於 12306 App 即時購票。',
+            linkText: '上海至無錫高鐵時刻與購票',
+            linkUrl: 'https://tw.trip.com/trains/china/route/shanghai-to-wuxi/',
+            didiTitle: '上海虹桥站',
+            didiAddr: '上海市闵行区申贵路1500号',
+            didiNote: '務必確認車票終點為「無錫站」（市中心主站），非郊區的無錫東站'
+          },
+          {
+            id: 'd1-s4',
+            time: '21:15 – 21:35',
+            title: '無錫站轉地鐵3號線直達「太湖花園站」抵達飯店',
+            tag: '🚇 末端接駁',
+            desc: '抵達無錫站後，站內轉乘無錫地鐵 3 號線（往碩放機場方向，末班車 23:02），乘車 4 站僅 10 分鐘（票價 ¥2）即抵「太湖花園站」，從 3 號口出站步行約 430 米（6分鐘）即達飯店大廳！若行李多亦可直接於無錫站打車（約 12–15 分鐘，¥18–22）。',
+            linkText: '無錫諾富特酒店資訊',
+            linkUrl: 'https://www.wingontravel.com/hotel/detail-wuxi-120460338/novotel-wuxi/',
+            didiTitle: '无锡诺富特酒店(金城东路店)',
+            didiAddr: '江苏省无锡市新吴区江溪街道金城东路7号',
+            didiNote: '詳細地址：新吳區江溪街道金城東路7號（近地鐵3號線太湖花園站3號口）'
+          },
+          {
+            id: 'd1-s5',
+            time: '21:35 – 22:30',
+            title: '辦理入住 & 飯店周邊暖胃宵夜',
+            tag: '🍜 暖胃放鬆',
+            desc: '順利入住無錫諾富特酒店，可在房內叫熱騰騰的無錫開洋餛飩外賣，或於周邊超商採買補給，早點休息迎接隔天三國水滸景區與惠山古鎮精彩行程！',
+            linkText: '查看飯店設施與評價',
+            linkUrl: 'https://www.booking.com/hotel/cn/novotel-wuxi.zh-tw.html',
+            didiTitle: '无锡诺富特酒店',
+            didiAddr: '无锡市新吴区金城东路7号',
+            didiNote: '飯店大廳可代收外賣'
+          }
+        ]
+      },
+      {
+        day: 2,
+        date: '2/2 (週一)',
+        title: '三國水滸景區看大秀 ➔ 惠山古鎮(憶秦園蟹粉) ➔ 南長街(熙盛源)',
+        cityTag: '無錫核心一日遊',
+        hotelName: '無錫諾富特酒店（新吳區金城東路7號）',
+        hotelUrl: 'https://www.wingontravel.com/hotel/detail-wuxi-120460338/novotel-wuxi/',
+        summary: '一次收齊無錫兩大必去景點（三國水滸景區、惠山古鎮），沿途順路品嚐「憶秦園」與「熙盛源」兩大蟹粉小籠包老字號！',
+        stops: [
+          {
+            id: 'd2-s1',
+            time: '08:45 – 11:30',
+            title: '三國水滸景區：三國城（必看10:00《三英戰呂布》＋古戰船）',
+            tag: '⚔️ 指定必去',
+            desc: '從飯店搭滴滴約 30 分鐘抵達三國城大門，購買「三國城+水滸城聯票」(約¥150)。10:00 先到跑馬場看真人真馬實景演出《三英戰呂布》，接著逛吳王宮、火燒赤壁棧道，並到碼頭搭乘仿古戰船遊覽太湖。',
+            linkText: '三國水滸景區門票與攻略',
+            linkUrl: 'https://hk.trip.com/travel-guide/attraction/wuxi/cctv-wuxi-movie-and-tv-production-base-136483346/',
+            didiTitle: '三国城-正门(东南门)',
+            didiAddr: '江苏省无锡市滨湖区山水西路128号',
+            didiNote: '建議先從三國城大門進，趕 10:00 跑馬場《三英戰呂布》演出'
+          },
+          {
+            id: 'd2-s2',
+            time: '11:30 – 13:30',
+            title: '三國水滸景區：水滸城（紫石街、梁山泊、翠雲樓演出）',
+            tag: '🏯 指定必去',
+            desc: '由三國城內部通道（可搭園區觀光車）進入水滸城，漫步大相國寺、紫石街（武大郎炊餅）、清明上河街與梁山泊。翠雲樓於 11:15 與 14:30 有《鬥殺西門慶》實景演出，中午於園區或周邊用餐。',
+            linkText: '水滸城參觀指南與演出時刻',
+            linkUrl: 'https://www.wingontravel.com/discovery/scenic-water-margin-theme-park-91464',
+            didiTitle: '水浒城',
+            didiAddr: '江苏省无锡市滨湖区山水西路(三国城北侧)',
+            didiNote: '離開時從水滸城大門叫滴滴前往惠山古鎮最順路'
+          },
+          {
+            id: 'd2-s3',
+            time: '14:00 – 17:00',
+            title: '惠山古鎮 & 江南名園「寄暢園」尋幽（必吃憶秦園蟹粉小籠包）',
+            tag: '🏮 指定必去',
+            desc: '從水滸城搭滴滴約 25 分鐘抵達惠山古鎮。古鎮歷史街區免費，建議買文物古蹟區聯票（¥70）參觀乾隆下江南必訪的「寄暢園」與天下第二泉；順道在繡嶂街品嚐《舌尖上的中國》推薦的【憶秦園蟹粉鮮肉小籠包】與惠山油酥餅。',
+            linkText: '惠山古鎮・寄暢園指南',
+            linkUrl: 'https://tw.trip.com/moments/poi-huishan-ancient-town-jichang-garden-86784/',
+            didiTitle: '惠山古镇景区(古华山门/秦园街入口)',
+            didiAddr: '江苏省无锡市梁溪区宝善街18号',
+            didiNote: '憶秦園位於繡嶂街18號，寄暢園於17:00閉園，建議先逛園林再品嚐小籠包'
+          },
+          {
+            id: 'd2-s4',
+            time: '17:30 – 20:30',
+            title: '清名橋古運河景區（南長街熙盛源蟹粉小籠 & 穆桂英玉蘭餅）',
+            tag: '🏮 江南夜遊',
+            desc: '打車約 20 分鐘前往南長街。晚餐直奔無錫第一口碑【熙盛源】點一籠爆汁蟹粉小籠包配紅湯餛飩，再買穆桂英現煎玉蘭餅。飯後沿古運河散步至清名橋看夜景，打車 10–15 分鐘即回無錫諾富特酒店。',
+            linkText: '清名橋古運河一日遊攻略',
+            linkUrl: 'https://tw.trip.com/moments/detail/wuxi-10-146106325/',
+            didiTitle: '清名桥历史文化街区(南长街)',
+            didiAddr: '江苏省无锡市梁溪区南长街120号',
+            didiNote: '熙盛源位於南長街108-1號，距清名橋碼頭僅需步行數分鐘'
+          }
+        ]
+      },
+      {
+        day: 3,
+        date: '2/3 (週二)',
+        title: '太湖黿頭渚冬季紅嘴鷗 ➔ 高鐵赴上海 ➔ 浦東喜來登 & 陸家嘴',
+        cityTag: '無錫 ➔ 上海浦東',
+        hotelName: '上海浦東喜來登由由大酒店（塘橋站）',
+        hotelUrl: 'https://www.booking.com/hotel/cn/sheraton-shanghai.zh-tw.html',
+        summary: '上午把握 2 月限定西伯利亞紅嘴鷗季遊覽太湖黿頭渚，午後搭高鐵 35 分鐘直達上海，入住浦東喜來登並夜遊陸家嘴東方明珠（晚餐可於國金中心品嚐老吉士本幫蟹料理）。',
+        stops: [
+          {
+            id: 'd3-s1',
+            time: '09:00 – 12:00',
+            title: '無錫太湖黿頭渚：乘船賞冬季限定「西伯利亞紅嘴鷗」',
+            tag: '🕊️ 季節限定',
+            desc: '2 月正是成千上萬隻紅嘴鷗聚集太湖的季節！退房後寄放行李，打車至黿頭渚充山大門，搭乘太湖渡輪前往太湖仙島時，紅嘴鷗會追隨渡輪飛翔，12 歲小朋友在甲板上體驗餵食拍照超級出片。',
+            linkText: '黿頭渚2月賞紅嘴鷗攻略',
+            linkUrl: 'https://travelnews.qunar.com/qa_strategy/wuxi-yuantouzhu-february-march-travel-guide',
+            didiTitle: '鼋头渚风景区-充山大门',
+            didiAddr: '江苏省无锡市滨湖区鼋渚路1号',
+            didiNote: '門票已含往返渡輪船票與園內公車'
+          },
+          {
+            id: 'd3-s2',
+            time: '13:30 – 15:30',
+            title: '搭乘高鐵從無錫返回上海',
+            tag: '🚄 高鐵接駁',
+            desc: '回飯店取行李前往「無錫站」或「無錫新區站」，搭高鐵至「上海站」或「上海虹橋站」（最快僅需 27–45 分鐘，12 歲小朋友可買半價兒童票）。',
+            linkText: '無錫至上海高鐵時刻與訂票',
+            linkUrl: 'https://tw.trip.com/trains/china/route/wuxi-to-shanghai/',
+            didiTitle: '无锡站(高铁站) / 无锡新区站',
+            didiAddr: '江苏省无锡市梁溪区兴源北路 / 新吴区新华路',
+            didiNote: '請依實際訂到的車票站點（無錫站或無錫新區站）叫車'
+          },
+          {
+            id: 'd3-s3',
+            time: '16:00 – 17:00',
+            title: '入住上海浦東喜來登由由大酒店（塘橋站旁）',
+            tag: '🏨 飯店入住',
+            desc: '抵滬後搭地鐵 4 號線至「塘橋站」3 號口步行即達，或直接叫滴滴前往浦建路 38 號辦理入住。',
+            linkText: '上海浦東喜來登由由大酒店詳情',
+            linkUrl: 'https://gochina.com.tw/hotel/sheraton-grand-shanghai-pudong-hotel-and-residences/',
+            didiTitle: '上海浦东喜来登由由大酒店',
+            didiAddr: '上海市浦东新区浦建路38号',
+            didiNote: '靠近地鐵4號線塘橋站3號出口'
+          },
+          {
+            id: 'd3-s4',
+            time: '17:30 – 21:00',
+            title: '陸家嘴摩天大樓群 & 東方明珠塔（晚餐推薦國金中心老吉士膏蟹）',
+            tag: '🌃 外灘對岸夜景',
+            desc: '從喜來登打車約 12 分鐘即達陸家嘴。帶孩子登上東方明珠塔體驗 259 米懸空玻璃廊；晚餐可前往國金中心 ifc 的【老吉士酒家】品嚐 2 月當令「紅膏蟹炒年糕」或在正大廣場用餐，漫步濱江大道。',
+            linkText: '東方明珠塔門票與資訊',
+            linkUrl: 'https://sg.trip.com/travel-guide/attraction/shanghai/oriental-pearl-radio-and-television-tower-75627?locale=zh-TW',
+            didiTitle: '东方明珠广播电视塔(1号门)',
+            didiAddr: '上海市浦东新区世纪大道1号',
+            didiNote: '國金中心ifc商場在東方明珠對面，回程打車回浦建路喜來登約 12–15 分鐘'
+          }
+        ]
+      },
+      {
+        day: 4,
+        date: '2/4 (週三)',
+        title: '上海千古情景區穿越看秀 ➔ 入住張江上海博雅酒店',
+        cityTag: '上海世博園 ➔ 張江',
+        hotelName: '上海博雅酒店（張江碧波路699號）',
+        hotelUrl: 'https://www.parkyardshanghai.cn/pc',
+        summary: '浦東喜來登距離「上海千古情景區」車程僅 15 分鐘！早上退房先將行李寄放喜來登，輕裝去千古情玩大半天，傍晚順路回喜來登拿行李再轉往張江博雅酒店。',
+        stops: [
+          {
+            id: 'd4-s1',
+            time: '09:30 – 10:15',
+            title: '喜來登退房寄放行李 ➔ 前往上海千古情景區',
+            tag: '🚕 順路動線',
+            desc: '在喜來登吃完早餐退房後，將大件行李寄存在喜來登禮賓部。搭乘滴滴約 15 分鐘（或地鐵 4 號線轉 13 號線至「世博大道站」4號口步行幾分鐘）直達上海千古情景區。',
+            linkText: '上海千古情交通與演出指南',
+            linkUrl: 'https://tw.trip.com/moments/theme/poi-shanghai-songcheng-show-park-140068129-performances-990135/',
+            didiTitle: '上海千古情景区',
+            didiAddr: '上海市浦东新区世博大道1750号',
+            didiNote: '地鐵13號線「世博大道站」出站即達'
+          },
+          {
+            id: 'd4-s2',
+            time: '10:30 – 16:30',
+            title: '暢玩上海千古情景區（必看《上海千古情》王牌大秀）',
+            tag: '🎭 指定必去',
+            desc: '景區為多層立體室內穿越街區（穿越街、時空街、千古情街、天上街市），完全不怕 2 月寒冷天氣！核心大秀《上海千古情》（建議訂 14:00 場次，長約 1 小時）結合 3000 噸江水傾瀉與萬套舞台機械；園區還有《戰上海》實景體驗劇、光影秀與年代互動快閃，12 歲孩子能玩得非常盡興。',
+            linkText: '上海千古情門票與介紹',
+            linkUrl: 'https://hk.trip.com/travel-guide/attraction/shanghai/shanghai-songcheng-show-park-140068129/',
+            didiTitle: '上海千古情景区-游客中心',
+            didiAddr: '上海市浦东新区世博大道1750号',
+            didiNote: '入園時請先拍下當日各劇院演出時間表'
+          },
+          {
+            id: 'd4-s3',
+            time: '17:00 – 18:30',
+            title: '回喜來登取行李 ➔ 入住張江「上海博雅酒店」& 長泰廣場晚餐',
+            tag: '🏨 轉換飯店',
+            desc: '從千古情打車 15 分鐘回喜來登取行李，接著直接打車約 20 分鐘前往張江碧波路 699 號「上海博雅酒店」入住（連住兩晚）。晚上可至附近的長泰廣場商圈享用各國美食。',
+            linkText: '上海博雅酒店官方網站',
+            linkUrl: 'https://www.parkyardshanghai.cn/pc',
+            didiTitle: '上海博雅酒店',
+            didiAddr: '上海市浦东新区碧波路699号',
+            didiNote: '鄰近地鐵2號線張江高科站'
+          }
+        ]
+      },
+      {
+        day: 5,
+        date: '2/5 (週四)',
+        title: '上海全日探索（方案A：自然館＋LV巨輪＋豫園外灘 ／ 方案B：迪士尼）',
+        cityTag: '上海精選二選一',
+        hotelName: '上海博雅酒店（張江碧波路699號）',
+        hotelUrl: 'https://www.parkyardshanghai.cn/pc',
+        summary: '上海博雅酒店旁就是地鐵 2 號線，且距離迪士尼僅 20 分鐘車程！若選方案 A，可順道打卡全球唯一的 LV 巨輪「The Louis 路易號」，並品嚐成隆行蟹王府或裕興記蟹黃撈麵。',
+        stopsOptionA: [
+          {
+            id: 'd5-a1',
+            time: '09:30 – 12:30',
+            title: '【方案A】上海自然博物館（12歲青少年最愛巨型恐龍與標本館）',
+            tag: '🦖 科普首選',
+            desc: '從張江高科站搭地鐵 2 號線轉 13 號線至「自然博物館站」（或打車約 30 分鐘）。館內展有震撼的馬門溪龍骨架與上萬件珍稀動植物標本，互動體驗豐富（務必提前 7 天於官網或微信小程式實名預約）。',
+            linkText: '上海自然博物館門票與預約',
+            linkUrl: 'https://hk.trip.com/travel-guide/attraction/shanghai/shanghai-natural-history-museum-76790/',
+            didiTitle: '上海自然博物馆(山海关路)',
+            didiAddr: '上海市静安区北京西路510号(静安雕塑公园内)',
+            didiNote: '地鐵13號線自然博物館站1號口出站即達'
+          },
+          {
+            id: 'd5-a2',
+            time: '12:45 – 14:15',
+            title: '【方案A】LV巨輪「The Louis路易號」全球唯一地標（興業太古匯南廣場）',
+            tag: '🚢 全球唯一',
+            desc: '從自然博物館漫步約 10 分鐘（或搭地鐵 13 號線 1 站直達「南京西路站」5 號口）。長達 114.5 公尺、高 30 公尺的巨型銀紅 Monogram 郵輪外觀震撼奪目！1F「非凡之旅」由 OMA 重松象平設計，以 80 只古董行李箱打造超壯觀「Trunkscape」光影隧道（免費入內，需透過微信小程式「My LV」提前預約）；2F 精品旗艦店免預約，提供上海限定紀念印章熱燙印服務；3F 更有露台甲板餐廳 Le Café Louis Vuitton。中午可於太古匯商場或隔壁吳江路休閒美食街用餐。',
+            linkText: 'LV巨輪路易號完整攻略',
+            linkUrl: 'https://gochina.com.tw/louis-vuitton-voyager/',
+            didiTitle: '兴业太古汇-南广场(The Louis路易号)',
+            didiAddr: '上海市静安区南京西路789号(近吴江路口)',
+            didiNote: '地鐵2、12、13號線「南京西路站」5號口直達'
+          },
+          {
+            id: 'd5-a3',
+            time: '14:45 – 17:45',
+            title: '【方案A】豫園古典園林 & 城隍廟商圈（可順訪上海老飯店蟹炒年糕）',
+            tag: '🏮 老城廂風情',
+            desc: '從南京西路站搭地鐵 2 號線至南京東路站轉 10 號線至「豫園站」（或直接打車約 15 分鐘）。走訪明代古典園林「豫園」，走九曲橋看早春燈彩；商圈內的【上海老飯店】可品嚐經典本幫膏蟹炒年糕，亦可嚐南翔饅頭店蟹粉湯包。',
+            linkText: '上海豫園門票與開放時間',
+            linkUrl: 'https://hk.trip.com/travel-guide/attraction/shanghai/yu-garden-75615/',
+            didiTitle: '上海豫园商城',
+            didiAddr: '上海市黄浦区方浜中路265号',
+            didiNote: '地鐵10號線/14號線「豫園站」步行可達'
+          },
+          {
+            id: 'd5-a4',
+            time: '18:15 – 21:00',
+            title: '【方案A】外灘萬國建築群 & 南京東路（晚餐吃成隆行蟹王府全蟹宴）',
+            tag: '🦀 頂級蟹宴',
+            desc: '傍晚步行至南京東路九江路的米其林一星【成隆行・蟹王府】享用極致全蟹宴（花雕熟醉蟹、清蒸大閘蟹與禿黃油撈飯，有專人拆蟹服務！）；飯後漫步外灘欣賞黃浦江夜景，再由南京東路站搭地鐵 2 號線直達張江博雅酒店。',
+            linkText: '成隆行蟹王府九江路店詳情',
+            linkUrl: 'https://jp.trip.com/restaurant/china/shanghai/detail/cheng-long-hang-340902/',
+            didiTitle: '成隆行蟹王府(九江路店)',
+            didiAddr: '上海市黄浦区九江路216号',
+            didiNote: '距地鐵南京東路站步行僅 2 分鐘，外灘步行 5 分鐘'
+          }
+        ],
+        stopsOptionB: [
+          {
+            id: 'd5-b1',
+            time: '08:00 – 21:00',
+            title: '【方案B】上海迪士尼度假區全日暢玩（瘋狂動物城＋創極速光輪）',
+            tag: '🏰 樂園狂歡',
+            desc: '從上海博雅酒店搭滴滴前往上海迪士尼車程僅約 20 分鐘！必玩全球唯一「瘋狂動物城：熱力追蹤」、12 歲孩子最愛的「創極速光輪」與「加勒比海盜—沉落寶藏之戰」，看完晚間奇夢之光幻影秀後打車 20 分鐘輕鬆回飯店。',
+            linkText: '上海迪士尼樂園門票與攻略',
+            linkUrl: 'https://tw.trip.com/travel-guide/attraction/shanghai/shanghai-disney-resort-13412802/',
+            didiTitle: '上海迪士尼度假区(西公交枢纽/出租车下客点)',
+            didiAddr: '上海市浦东新区川沙新镇黄赵路310号',
+            didiNote: '從張江博雅酒店打車至迪士尼約 18–25 分鐘，非常近！'
+          }
+        ]
+      },
+      {
+        day: 6,
+        date: '2/6 (週五)',
+        title: '從容退房 ➔ 浦東機場搭乘 12:00 班機返台',
+        cityTag: '上海張江 ➔ 返台',
+        hotelName: '溫暖的家',
+        hotelUrl: 'https://gochina.com.tw/shanghai-pudong-airport-transportation-guide/',
+        summary: '上海博雅酒店距離浦東國際機場僅約 30 分鐘車程，早上吃完早餐再從容出發即可。',
+        stops: [
+          {
+            id: 'd6-s1',
+            time: '08:00 – 09:00',
+            title: '上海博雅酒店早餐 & 辦理退房',
+            tag: '☕ 悠閒早晨',
+            desc: '檢查隨身證件（台胞證、護照）、行動電源（須隨身攜帶不可託運）與伴手禮，於 09:00 前完成退房。',
+            linkText: '上海博雅酒店交通位置',
+            linkUrl: 'https://www.colatour.com.tw/C10F_HotelBooking/C10F_Q02_HotelInformation.aspx?HotelNo=19250',
+            didiTitle: '上海博雅酒店',
+            didiAddr: '上海市浦东新区碧波路699号',
+            didiNote: '請禮賓部協助確認叫車上車位置'
+          },
+          {
+            id: 'd6-s2',
+            time: '09:00 – 09:40',
+            title: '前往上海浦東國際機場（打車30分鐘 或 體驗磁浮列車）',
+            tag: '🚖 機場接駁',
+            desc: '12:00 起飛的航班建議於 09:30–09:45 抵達機場。直接叫滴滴專車走迎賓高速約 30 分鐘直達航廈；若想帶 12 歲孩子體驗時速 300 公里的磁浮列車，可打車 5 分鐘至龍陽路站，轉乘磁浮列車 8 分鐘抵達浦東機場。',
+            linkText: '上海磁浮列車時刻與票價攻略',
+            linkUrl: 'https://my.trip.com/guide/transport/%E4%B8%8A%E6%B5%B7%E7%A3%81%E6%82%AC%E6%B5%AE%E5%88%97%E8%BD%A6.html',
+            didiTitle: '上海浦东国际机场(出发层)',
+            didiAddr: '上海市浦东新区迎宾大道6000号',
+            didiNote: '出發前請確認航空公司位於 T1 還是 T2 航站樓'
+          },
+          {
+            id: 'd6-s3',
+            time: '12:00',
+            title: '搭乘班機平安返回台灣',
+            tag: '🛫 平安返台',
+            desc: '辦理登機託運、通過安檢與海關，逛逛免稅店後開心賦歸！',
+            linkText: '浦東機場航站樓指南',
+            linkUrl: 'https://zh.wikipedia.org/zh-tw/%E6%B5%A6%E4%B8%9C1%E5%8F%B72%E5%8F%B7%E8%88%AA%E7%AB%99%E6%A5%BC%E7%AB%99',
+            didiTitle: '上海浦东国际机场',
+            didiAddr: '上海市浦东新区迎宾大道6000号',
+            didiNote: '祝旅途平安愉快！'
+          }
+        ]
+      }
+    ];
+
+    const CHECKLIST_CATEGORIES = [
+      {
+        category: '🪪 證件與票務預約',
+        items: [
+          { id: 'chk-1', text: '大人與 12 歲小朋友的「台胞證」與「護照」效期確認（隨身攜帶享兒童/學生票優惠）' },
+          { id: 'chk-2', text: '2/1 交通確認：方案 A 備妥支付寶「上海公共交通乘車碼」與「無錫地鐵碼」、鐵路 12306 帳號（或預約方案 B 跨城專車）' },
+          { id: 'chk-3', text: '預訂 2/3 下午「無錫 ➔ 上海」高鐵票（2張成人票 + 1張實名制兒童票）' },
+          { id: 'chk-4', text: '預訂 2/4《上海千古情》門票與演出場次（推薦 14:00 場次）' },
+          { id: 'chk-5', text: '若 Day 5 選方案 A：提前 7 天於微信小程式預約「上海自然博物館」門票' },
+          { id: 'chk-lv', text: '若 Day 5 選方案 A：於微信小程式「My LV」預約「The Louis 路易號」1F 免費展覽（若欲於 3F 咖啡廳用餐亦須提前預約）' }
+        ]
+      },
+      {
+        category: '📱 支付、叫車與網路',
+        items: [
+          { id: 'chk-6', text: '微信 (WeChat) 與支付寶 (Alipay) 完成實名認證並綁定台灣信用卡' },
+          { id: 'chk-7', text: '確認支付寶/微信內的「滴滴出行」小程式可正常開啟定位' },
+          { id: 'chk-8', text: '在支付寶領取「上海公共交通乘車碼」與「無錫地鐵乘車碼」' },
+          { id: 'chk-9', text: '準備中港澳漫遊或免翻牆 eSIM，並下載「高德地圖」或「百度地圖」App' }
+        ]
+      },
+      {
+        category: '🧥 2月初江南保暖穿搭（2°C–10°C）',
+        items: [
+          { id: 'chk-10', text: '防風保暖羽絨外套（太湖邊三國城、黿頭渚甲板與黃浦江畔風大）' },
+          { id: 'chk-11', text: '發熱衣、毛帽、圍巾、手套與暖暖包（早晚溫差大必備）' },
+          { id: 'chk-12', text: '好走防滑的運動鞋（三國水滸景區與惠山古鎮步行量較大）' },
+          { id: 'chk-13', text: '保溫瓶、隨身護手霜與護唇膏（冬季氣候較乾燥）' }
+        ]
+      },
+      {
+        category: '🔋 隨身電子與常備品',
+        items: [
+          { id: 'chk-14', text: '行動電源（額定容量標示清晰，回程搭機與搭高鐵皆須隨身攜帶、不可託運）' },
+          { id: 'chk-15', text: '常備腸胃藥、感冒藥、OK繃與個人隨身藥品' }
+        ]
+      }
+    ];
+
+    // ==========================================
+    // 2. STATE MANAGEMENT
+    // ==========================================
+    const STORAGE_KEY = 'wuxi_shanghai_trip_2027_state_v2';
+    let state = {
+      activeMainTab: 'itinerary', // 'itinerary' | 'crabs' | 'hotels' | 'tickets' | 'checklist'
+      activeDay: 1,              // 1..6 or 'all'
+      day5Option: 'A',           // 'A' | 'B'
+      activeCrabCategory: 'all', // 'all' | 1 | 2 | 3
+      checkedItems: {}           // { [id]: true }
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            state.checkedItems = parsed.checkedItems || {};
+            if (parsed.day5Option === 'A' || parsed.day5Option === 'B') {
+              state.day5Option = parsed.day5Option;
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore storage errors in sandboxed environments
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          checkedItems: state.checkedItems,
+          day5Option: state.day5Option
+        }));
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    // ==========================================
+    // 3. HELPER FUNCTIONS (CLIPBOARD, TOAST, MODAL)
+    // ==========================================
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      msgEl.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2400);
+    }
+
+    function copyTextToClipboard(text, label) {
+      const done = () => showToast('已複製：' + (label || text));
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+      } else {
+        fallbackCopy(text, done);
+      }
+    }
+
+    function fallbackCopy(text, callback) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        if (callback) callback();
+      } catch (e) {
+        showToast('請手動選取複製');
+      }
+      document.body.removeChild(ta);
+    }
+
+    let currentModalAddress = '';
+    function openDriverModal(title, addr, note) {
+      currentModalAddress = title + ' (' + addr + ')';
+      document.getElementById('modal-place-title').textContent = title;
+      document.getElementById('modal-place-addr').textContent = addr;
+      document.getElementById('modal-place-note').textContent = note || '';
+      const modal = document.getElementById('driver-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDriverModal() {
+      const modal = document.getElementById('driver-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // ==========================================
+    // 4. RENDERING FUNCTIONS
+    // ==========================================
+    function getAllCheckableIds() {
+      const ids = [];
+      ITINERARY_DAYS.forEach(d => {
+        if (d.day === 5) {
+          const stops = state.day5Option === 'A' ? d.stopsOptionA : d.stopsOptionB;
+          stops.forEach(s => ids.push(s.id));
+        } else {
+          d.stops.forEach(s => ids.push(s.id));
+        }
+      });
+      CHECKLIST_CATEGORIES.forEach(cat => {
+        cat.items.forEach(item => ids.push(item.id));
+      });
+      return ids;
+    }
+
+    function updateProgressBadges() {
+      const allIds = getAllCheckableIds();
+      const total = allIds.length;
+      const done = allIds.filter(id => !!state.checkedItems[id]).length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      document.getElementById('overall-progress-text').textContent = pct + '%';
+      document.getElementById('overall-progress-count').textContent = '(' + done + '/' + total + ')';
+
+      // Checklist tab badge
+      const chkIds = [];
+      CHECKLIST_CATEGORIES.forEach(c => c.items.forEach(i => chkIds.push(i.id)));
+      const chkDone = chkIds.filter(id => !!state.checkedItems[id]).length;
+      const subBadge = document.getElementById('checklist-sub-badge');
+      if (subBadge) {
+        subBadge.textContent = '已完成 ' + chkDone + ' / ' + chkIds.length;
+      }
+    }
+
+    function renderMainTabs() {
+      const tabButtons = document.querySelectorAll('.main-tab-btn');
+      tabButtons.forEach(btn => {
+        const tab = btn.getAttribute('data-main-tab');
+        if (tab === state.activeMainTab) {
+          btn.className = 'main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition';
+        } else {
+          btn.className = 'main-tab-btn shrink-0 rounded-xl bg-white/10 text-slate-200 hover:bg-white/20 px-4 py-2 text-sm font-semibold transition';
+        }
+      });
+
+      const sections = ['itinerary', 'crabs', 'hotels', 'tickets', 'checklist'];
+      sections.forEach(sec => {
+        const el = document.getElementById('tab-' + sec);
+        if (sec === state.activeMainTab) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+    }
+
+    function renderDaySelector() {
+      const container = document.getElementById('day-buttons-container');
+      container.innerHTML = '';
+
+      ITINERARY_DAYS.forEach(d => {
+        const isActive = state.activeDay === d.day;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = isActive
+          ? 'shrink-0 rounded-xl bg-indigo-600 text-white px-3.5 py-2 text-xs font-bold shadow-sm transition'
+          : 'shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-2 text-xs font-semibold transition';
+        btn.innerHTML = `<span>Day ${d.day}</span> <span class="opacity-80 font-normal ml-0.5">${d.date.split(' ')[0]}</span>`;
+        btn.addEventListener('click', () => {
+          state.activeDay = d.day;
+          renderItinerarySection();
+        });
+        container.appendChild(btn);
+      });
+
+      const expandBtn = document.getElementById('expand-all-days-btn');
+      if (state.activeDay === 'all') {
+        expandBtn.className = 'w-full sm:w-auto rounded-xl bg-indigo-600 text-white px-3 py-1.5 text-xs font-semibold shadow-sm transition';
+        expandBtn.textContent = '✓ 已展開全部 6 天';
+      } else {
+        expandBtn.className = 'w-full sm:w-auto rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition';
+        expandBtn.textContent = '展開全部 6 天總覽';
+      }
+    }
+
+    function renderDay5Switcher() {
+      const banner = document.getElementById('day5-switcher-banner');
+      if (state.activeDay === 5 || state.activeDay === 'all') {
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      const btnA = document.getElementById('opt-a-btn');
+      const btnB = document.getElementById('opt-b-btn');
+      if (state.day5Option === 'A') {
+        btnA.className = 'rounded-lg px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white transition';
+        btnB.className = 'rounded-lg px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+      } else {
+        btnB.className = 'rounded-lg px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white transition';
+        btnA.className = 'rounded-lg px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+      }
+    }
+
+    function renderItineraryCards() {
+      const container = document.getElementById('itinerary-content');
+      container.innerHTML = '';
+
+      const daysToShow = state.activeDay === 'all'
+        ? ITINERARY_DAYS
+        : ITINERARY_DAYS.filter(d => d.day === state.activeDay);
+
+      daysToShow.forEach(dayObj => {
+        const stops = dayObj.day === 5
+          ? (state.day5Option === 'A' ? dayObj.stopsOptionA : dayObj.stopsOptionB)
+          : dayObj.stops;
+
+        const dayCard = document.createElement('div');
+        dayCard.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 fade-in';
+
+        // Header of Day Card
+        const headerHtml = `
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center rounded-lg bg-indigo-600 px-2.5 py-1 text-xs font-bold text-white">
+                  Day ${dayObj.day} • ${dayObj.date}
+                </span>
+                <span class="inline-flex items-center rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                  📍 ${dayObj.cityTag}
+                </span>
+              </div>
+              <h2 class="mt-2 text-lg sm:text-xl font-bold text-slate-900">${dayObj.title}</h2>
+              <p class="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">${dayObj.summary}</p>
+            </div>
+            <div class="shrink-0 sm:text-right mt-2 sm:mt-0">
+              <p class="text-xs text-slate-400">當晚住宿</p>
+              <a href="${dayObj.hotelUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:underline mt-0.5">
+                🏨 ${dayObj.hotelName} ↗
+              </a>
+            </div>
+          </div>
+        `;
+
+        // Timeline stops
+        const timelineList = document.createElement('div');
+        timelineList.className = 'mt-5 space-y-4';
+
+        stops.forEach((stop) => {
+          const isChecked = !!state.checkedItems[stop.id];
+          const stopEl = document.createElement('div');
+          stopEl.className = `rounded-xl border p-4 transition ${
+            isChecked ? 'bg-slate-50/80 border-emerald-200' : 'bg-white border-slate-200 hover:border-indigo-200'
+          }`;
+
+          stopEl.innerHTML = `
+            <div class="flex items-start gap-3">
+              <button type="button" data-check-id="${stop.id}" class="stop-check-btn mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${
+                isChecked
+                  ? 'bg-emerald-600 border-emerald-600 text-white'
+                  : 'border-slate-300 bg-white hover:border-indigo-500'
+              }" aria-label="標記完成">
+                ${isChecked ? '<svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+              </button>
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">${stop.time}</span>
+                  <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">${stop.tag}</span>
+                </div>
+                <h3 class="mt-1.5 text-base font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-900'}">
+                  ${stop.title}
+                </h3>
+                <p class="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  ${stop.desc}
+                </p>
+
+                <!-- Action Bar: Official Link + Didi Copy + Driver Card -->
+                <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                  <a href="${stop.linkUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 hover:underline">
+                    🔗 ${stop.linkText} ↗
+                  </a>
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" class="copy-didi-btn inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
+                      📋 複製打車定位
+                    </button>
+                    <button type="button" class="show-driver-btn inline-flex items-center gap-1 rounded-lg bg-amber-50 border border-amber-200 px-2.5 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition">
+                      🚕 司機看這張
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Attach event listeners
+          const checkBtn = stopEl.querySelector('.stop-check-btn');
+          checkBtn.addEventListener('click', () => {
+            state.checkedItems[stop.id] = !state.checkedItems[stop.id];
+            saveState();
+            renderItineraryCards();
+            updateProgressBadges();
+          });
+
+          const copyBtn = stopEl.querySelector('.copy-didi-btn');
+          copyBtn.addEventListener('click', () => {
+            copyTextToClipboard(stop.didiTitle + ' ' + stop.didiAddr, stop.didiTitle);
+          });
+
+          const driverBtn = stopEl.querySelector('.show-driver-btn');
+          driverBtn.addEventListener('click', () => {
+            openDriverModal(stop.didiTitle, stop.didiAddr, stop.didiNote);
+          });
+
+          timelineList.appendChild(stopEl);
+        });
+
+        dayCard.innerHTML = headerHtml;
+        dayCard.appendChild(timelineList);
+        container.appendChild(dayCard);
+      });
+    }
+
+    function renderItinerarySection() {
+      renderDaySelector();
+      renderDay5Switcher();
+      renderItineraryCards();
+      updateProgressBadges();
+    }
+
+    // ==========================================
+    // CRAB SECTION RENDERING
+    // ==========================================
+    function renderCrabSection() {
+      const container = document.getElementById('crabs-container');
+      container.innerHTML = '';
+
+      const filtered = state.activeCrabCategory === 'all'
+        ? CRAB_RESTAURANTS_DATA
+        : CRAB_RESTAURANTS_DATA.filter(r => r.cat === state.activeCrabCategory);
+
+      filtered.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-amber-300 hover:shadow-md transition';
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex rounded-md px-2.5 py-0.5 text-xs font-bold ${r.badgeColor}">${r.catLabel}</span>
+              <span class="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">${r.matchDay}</span>
+            </div>
+            <h3 class="mt-2.5 text-base sm:text-lg font-bold text-slate-900">
+              <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-700 hover:underline">
+                ${r.name} ↗
+              </a>
+            </h3>
+            <p class="mt-1 text-xs text-slate-600 leading-relaxed">
+              ${r.feature}
+            </p>
+            <div class="mt-2.5 rounded-xl bg-amber-50/60 p-2.5 border border-amber-200/80">
+              <p class="text-xs font-bold text-amber-900">🥢 必點招牌：</p>
+              <p class="text-xs text-amber-800 mt-0.5">${r.mustOrder}</p>
+            </div>
+            <div class="mt-2 rounded-xl bg-slate-50 p-2.5 border border-slate-200/80">
+              <p class="text-xs text-slate-400">定位地址</p>
+              <p class="text-xs font-semibold text-slate-800 mt-0.5 select-all">${r.address}</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-indigo-600 hover:underline">
+              🔗 平台評價/指南 ↗
+            </a>
+            <div class="flex gap-1.5">
+              <button type="button" class="crab-copy-btn rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
+                📋 複製滴滴地址
+              </button>
+              <button type="button" class="crab-driver-btn rounded-xl bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-200 transition">
+                🚕 司機卡
+              </button>
+            </div>
+          </div>
+        `;
+
+        card.querySelector('.crab-copy-btn').addEventListener('click', () => {
+          copyTextToClipboard(r.cnName + ' ' + r.cnAddress, r.name);
+        });
+        card.querySelector('.crab-driver-btn').addEventListener('click', () => {
+          openDriverModal(r.cnName, r.cnAddress, r.feature);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function setupCrabFilterButtons() {
+      const filters = [
+        { id: 'crab-filter-all', val: 'all' },
+        { id: 'crab-filter-1', val: 1 },
+        { id: 'crab-filter-2', val: 2 },
+        { id: 'crab-filter-3', val: 3 }
+      ];
+
+      filters.forEach(f => {
+        const btn = document.getElementById(f.id);
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+          state.activeCrabCategory = f.val;
+          filters.forEach(other => {
+            const ob = document.getElementById(other.id);
+            if (other.val === f.val) {
+              ob.className = 'crab-filter-btn rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white transition';
+            } else {
+              ob.className = 'crab-filter-btn rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
+            }
+          });
+          renderCrabSection();
+        });
+      });
+    }
+
+    function renderHotelsSection() {
+      const grid = document.getElementById('hotels-grid');
+      grid.innerHTML = '';
+
+      HOTELS_DATA.forEach(h => {
+        const card = document.createElement('div');
+        card.className = 'flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/50 p-4 hover:border-indigo-200 transition';
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex rounded-lg px-2.5 py-0.5 text-xs font-bold ${h.badgeColor}">${h.dates}</span>
+              <span class="text-xs font-medium text-slate-500">${h.city}</span>
+            </div>
+            <h3 class="mt-2.5 text-base font-bold text-slate-900">
+              <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 hover:underline">
+                ${h.name} ↗
+              </a>
+            </h3>
+            <div class="mt-2 rounded-xl bg-white p-3 border border-slate-200/80">
+              <p class="text-xs text-slate-400">打車/導航地址</p>
+              <p class="text-xs font-semibold text-slate-800 mt-0.5 select-all">${h.address}</p>
+            </div>
+            <p class="mt-2.5 text-xs text-slate-600 leading-relaxed">
+              🚇 <strong>周邊與交通：</strong>${h.metro}
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200/70 flex gap-2">
+            <button type="button" class="hotel-copy-btn flex-1 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 transition">
+              📋 複製滴滴地址
+            </button>
+            <button type="button" class="hotel-driver-btn rounded-xl bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 hover:bg-amber-200 transition">
+              🚕 司機卡
+            </button>
+          </div>
+        `;
+
+        card.querySelector('.hotel-copy-btn').addEventListener('click', () => {
+          copyTextToClipboard(h.cnName + ' ' + h.cnAddress, h.name);
+        });
+        card.querySelector('.hotel-driver-btn').addEventListener('click', () => {
+          openDriverModal(h.cnName, h.cnAddress, h.metro);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderChecklistSection() {
+      const grid = document.getElementById('checklist-grid');
+      grid.innerHTML = '';
+
+      CHECKLIST_CATEGORIES.forEach(cat => {
+        const box = document.createElement('div');
+        box.className = 'rounded-2xl border border-slate-200 bg-slate-50/50 p-4';
+
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'text-sm font-bold text-slate-900 pb-2.5 border-b border-slate-200/80';
+        titleEl.textContent = cat.category;
+        box.appendChild(titleEl);
+
+        const listEl = document.createElement('div');
+        listEl.className = 'mt-3 space-y-2.5';
+
+        cat.items.forEach(item => {
+          const isChecked = !!state.checkedItems[item.id];
+          const row = document.createElement('button');
+          row.type = 'button';
+          row.className = `w-full text-left flex items-start gap-2.5 rounded-xl p-2.5 border transition ${
+            isChecked
+              ? 'bg-emerald-50/60 border-emerald-200 text-slate-400'
+              : 'bg-white border-slate-200/80 hover:border-indigo-300 text-slate-800'
+          }`;
+          row.innerHTML = `
+            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
+              isChecked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'
+            }">
+              ${isChecked ? '<svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+            </span>
+            <span class="text-xs sm:text-sm font-medium leading-relaxed ${isChecked ? 'line-through' : ''}">
+              ${item.text}
+            </span>
+          `;
+
+          row.addEventListener('click', () => {
+            state.checkedItems[item.id] = !state.checkedItems[item.id];
+            saveState();
+            renderChecklistSection();
+            updateProgressBadges();
+          });
+
+          listEl.appendChild(row);
+        });
+
+        box.appendChild(listEl);
+        grid.appendChild(box);
+      });
+    }
+
+    // ==========================================
+    // 5. INITIALIZATION & GLOBAL LISTENERS
+    // ==========================================
+    function initApp() {
+      loadState();
+
+      // Main Navigation Tabs
+      document.querySelectorAll('.main-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.activeMainTab = btn.getAttribute('data-main-tab');
+          renderMainTabs();
+        });
+      });
+
+      // Expand All Days toggle
+      document.getElementById('expand-all-days-btn').addEventListener('click', () => {
+        state.activeDay = state.activeDay === 'all' ? 1 : 'all';
+        renderItinerarySection();
+      });
+
+      // Day 5 Option A / B buttons
+      document.getElementById('opt-a-btn').addEventListener('click', () => {
+        state.day5Option = 'A';
+        saveState();
+        renderItinerarySection();
+        showToast('已切換 Day 5 為：方案 A（自然館＋LV巨輪＋豫園外灘）');
+      });
+      document.getElementById('opt-b-btn').addEventListener('click', () => {
+        state.day5Option = 'B';
+        saveState();
+        renderItinerarySection();
+        showToast('已切換 Day 5 為：方案 B（上海迪士尼狂歡一日）');
+      });
+
+      // Reset all checks button
+      document.getElementById('reset-checks-btn').addEventListener('click', () => {
+        state.checkedItems = {};
+        saveState();
+        renderItinerarySection();
+        renderChecklistSection();
+        updateProgressBadges();
+        showToast('已重置所有勾選進度');
+      });
+
+      // Driver Modal controls
+      document.getElementById('close-modal-btn').addEventListener('click', closeDriverModal);
+      document.getElementById('modal-done-btn').addEventListener('click', closeDriverModal);
+      document.getElementById('driver-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'driver-modal') closeDriverModal();
+      });
+      document.getElementById('modal-copy-btn').addEventListener('click', () => {
+        copyTextToClipboard(currentModalAddress, currentModalAddress);
+      });
+
+      // Setup Crab Filters
+      setupCrabFilterButtons();
+
+      // Initial render
+      renderMainTabs();
+      renderItinerarySection();
+      renderCrabSection();
+      renderHotelsSection();
+      renderChecklistSection();
+      updateProgressBadges();
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>

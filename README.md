@@ -16,6 +16,7 @@
   * **台灣房產估價 & MCP**：[https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/](https://web-apps-hub.cv1706yang.workers.dev/taiwan-real-estate/)
   * **江山時序歷史地圖（互動主圖）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/)
   * **江山時序專題考據總覽（靜態圖志）**：[https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html](https://web-apps-hub.cv1706yang.workers.dev/jiangshan-map/topics/index.html)
+  * **無錫上海親子自由行手帳**：[https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/](https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
@@ -28,6 +29,7 @@
   * **台灣房產估價 & MCP**：[https://cv1706.github.io/web-apps-hub/taiwan-real-estate/](https://cv1706.github.io/web-apps-hub/taiwan-real-estate/)
   * **江山時序歷史地圖（互動主圖）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/](https://cv1706.github.io/web-apps-hub/jiangshan-map/)
   * **江山時序專題考據總覽（靜態圖志）**：[https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html](https://cv1706.github.io/web-apps-hub/jiangshan-map/topics/index.html)
+  * **無錫上海親子自由行手帳**：[https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/](https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
