@@ -56,17 +56,25 @@
       <div class="space-y-3 text-center py-3">
         <p class="text-xs font-medium uppercase tracking-wider text-slate-400">越南語目的地名稱（司機對照）</p>
         <h3 id="modal-place-title" class="text-2xl font-bold text-slate-900 leading-snug"></h3>
-        <div class="rounded-xl bg-slate-50 p-4 border border-slate-200 mt-2">
-          <p class="text-xs text-slate-400 mb-1">詳細越語地址</p>
-          <p id="modal-place-addr" class="text-base font-semibold text-slate-800 select-all"></p>
-        </div>
+        <a id="modal-addr-link" href="#" target="_blank" rel="noopener noreferrer" class="group block rounded-xl bg-slate-50 p-4 border border-slate-200 mt-2 hover:border-cyan-400 hover:bg-cyan-50/50 transition cursor-pointer text-left" title="點擊直接以 Google 地圖開啟導航">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-slate-400 font-medium">詳細越語地址</span>
+            <span class="inline-flex items-center gap-1 text-xs font-bold text-cyan-700 group-hover:underline">
+              Google 地圖開啟 &nearr;
+            </span>
+          </div>
+          <p id="modal-place-addr" class="text-base font-semibold text-slate-800 select-all group-hover:text-cyan-900 leading-relaxed"></p>
+        </a>
         <p id="modal-place-note" class="text-xs text-slate-500 pt-1"></p>
       </div>
-      <div class="mt-5 flex gap-2">
-        <button id="modal-copy-btn" type="button" class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 transition">
-          複製越文地址貼至 Grab
+      <div class="mt-5 grid grid-cols-3 gap-2">
+        <a id="modal-maps-btn" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-xl bg-cyan-700 px-3 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-cyan-800 shadow-sm transition">
+          地圖導航 &nearr;
+        </a>
+        <button id="modal-copy-btn" type="button" class="inline-flex items-center justify-center rounded-xl bg-slate-100 px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+          複製地址
         </button>
-        <button id="modal-done-btn" type="button" class="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+        <button id="modal-done-btn" type="button" class="rounded-xl bg-slate-900 px-3 py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-slate-800 transition">
           關閉
         </button>
       </div>
@@ -869,6 +877,14 @@
       modalAddr.textContent = addr || '';
       modalNote.textContent = note || '';
       currentModalAddrText = addr || '';
+
+      const query = encodeURIComponent((addr || '') + ' ' + (title || ''));
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      const addrLink = document.getElementById('modal-addr-link');
+      if (addrLink) addrLink.href = mapsUrl;
+      const mapsBtn = document.getElementById('modal-maps-btn');
+      if (mapsBtn) mapsBtn.href = mapsUrl;
+
       driverModal.classList.remove('hidden');
       driverModal.classList.add('flex');
     }
