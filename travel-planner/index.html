@@ -47,6 +47,10 @@
               <!-- Dynamically populated from localStorage -->
             </optgroup>
           </select>
+          <!-- Delete Custom Trip Button -->
+          <button id="delete-custom-trip-btn" type="button" class="hidden absolute -bottom-7 left-0 whitespace-nowrap text-[11px] font-bold text-rose-600 hover:text-rose-700 hover:underline transition" title="刪除當前自訂行程">
+            &times; 刪除此自訂行程
+          </button>
         </div>
 
         <!-- Import Button -->
@@ -926,6 +930,19 @@
       renderTransport();
       renderTickets();
       renderChecklist();
+      updateDeleteButtonVisibility();
+    }
+
+    function updateDeleteButtonVisibility() {
+      const deleteBtn = document.getElementById('delete-custom-trip-btn');
+      const customTrips = getCustomTrips();
+      if (deleteBtn) {
+        if (customTrips[currentTripKey]) {
+          deleteBtn.classList.remove('hidden');
+        } else {
+          deleteBtn.classList.add('hidden');
+        }
+      }
     }
 
     // UPDATE SELECTOR OPTIONS
@@ -1383,6 +1400,26 @@
         switchTrip(slug);
         showToast(`已成功匯入【${parsed.meta.title}】！`);
       };
+
+      // Delete custom trip
+      const deleteBtn = document.getElementById('delete-custom-trip-btn');
+      if (deleteBtn) {
+        deleteBtn.onclick = () => {
+          const customTrips = getCustomTrips();
+          if (!customTrips[currentTripKey]) return;
+          const tripTitle = customTrips[currentTripKey].meta.title || currentTripKey;
+          if (confirm(`確定要刪除自訂行程【${tripTitle}】嗎？此動作將從瀏覽器中清除該行程資料。`)) {
+            delete customTrips[currentTripKey];
+            localStorage.setItem('user_custom_trips', JSON.stringify(customTrips));
+            localStorage.removeItem(`itin_checks_${currentTripKey}`);
+            localStorage.removeItem(`chk_checks_${currentTripKey}`);
+            updateTripSelectorOptions();
+            document.getElementById('trip-selector').value = 'sapporo';
+            switchTrip('sapporo');
+            showToast(`已成功刪除【${tripTitle}】`);
+          }
+        };
+      }
     });
   </script>
 </body>
