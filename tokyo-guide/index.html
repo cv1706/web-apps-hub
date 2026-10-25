@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日本東京 5天4夜都會時尚與美食自由行隨身指南</title>
+  <meta name="description" content="日本東京 5天4夜都會時尚與美食自由行隨身指南 - 互動式自由行隨身手冊，離線支援司機卡、時間軸與行前檢核">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased selection:bg-rose-700/20">
+
+  <!-- TOP STICKY BAR -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2 min-w-0">
+        <a href="../index.html" class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-sm font-bold shrink-0" title="返回總廳">
+          &larr;
+        </a>
+        <div class="truncate">
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 truncate">日本東京 5天4夜都會時尚與美食自由行隨身指南</h1>
+          <p class="text-xs text-slate-500 truncate">2026-12-10 至 2026-12-14 &bull; 晴朗冬日，氣溫約 6°C 至 13°C，早晚溫差大請備大衣</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="quick-driver-btn" type="button" class="inline-flex items-center gap-1.5 rounded-xl bg-rose-700 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-rose-800 transition">
+          <span>司機卡</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN TABS NAVIGATION -->
+    <div class="max-w-5xl mx-auto px-4 pb-2 flex gap-1.5 overflow-x-auto no-scrollbar text-xs sm:text-sm font-semibold">
+      <button type="button" data-main-tab="itinerary" class="main-tab-btn shrink-0 rounded-xl bg-slate-900 text-white px-3.5 py-1.5 shadow-sm transition">
+        行程總覽
+      </button>
+      <button type="button" data-main-tab="food" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        必吃美饌與商場
+      </button>
+      <button type="button" data-main-tab="transport" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        交通接駁
+      </button>
+      <button type="button" data-main-tab="tickets" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        門票開放時間
+      </button>
+      <button type="button" data-main-tab="checklist" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        行前檢查清單
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-5xl mx-auto px-4 py-5 space-y-6">
+
+    <!-- TAB 1: ITINERARY -->
+    <section id="tab-itinerary" class="space-y-4 fade-in">
+      <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
+        <div class="flex gap-1.5 overflow-x-auto no-scrollbar" id="itinerary-day-buttons">
+          <!-- Populated by JS -->
+        </div>
+        <button id="expand-all-days-btn" type="button" class="shrink-0 text-xs font-bold text-rose-700 hover:underline">
+          展開全部總覽
+        </button>
+      </div>
+      <div id="itinerary-timeline-container" class="space-y-4">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 2: FOOD & SHOPPING -->
+    <section id="tab-food" class="hidden space-y-4 fade-in">
+      <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
+        <h2 class="text-base font-bold text-slate-900">必吃美食與特色商圈</h2>
+        <div class="flex gap-1 overflow-x-auto no-scrollbar" id="food-day-filters">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div id="food-grid-container" class="grid gap-4 md:grid-cols-2">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 3: TRANSPORT -->
+    <section id="tab-transport" class="hidden space-y-4 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-base font-bold text-slate-900 mb-3">各區間交通與乘車指南</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                <th class="py-2.5 px-3 font-semibold rounded-tl-xl">移動區間</th>
+                <th class="py-2.5 px-3 font-semibold">搭乘工具</th>
+                <th class="py-2.5 px-3 font-semibold">預估費用</th>
+                <th class="py-2.5 px-3 font-semibold rounded-tr-xl">注意事項</th>
+              </tr>
+            </thead>
+            <tbody id="transport-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: TICKETS -->
+    <section id="tab-tickets" class="hidden space-y-4 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-base font-bold text-slate-900 mb-3">景點門票與開放時刻</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                <th class="py-2.5 px-3 font-semibold rounded-tl-xl">景點名稱</th>
+                <th class="py-2.5 px-3 font-semibold">開放時刻</th>
+                <th class="py-2.5 px-3 font-semibold">門票參考</th>
+                <th class="py-2.5 px-3 font-semibold rounded-tr-xl">參觀要點</th>
+              </tr>
+            </thead>
+            <tbody id="tickets-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: CHECKLIST -->
+    <section id="tab-checklist" class="hidden space-y-4 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">行前準備與隨身檢核清單</h2>
+            <p class="text-xs text-slate-500">點擊項目可打勾記錄，狀態自動儲存於瀏覽器</p>
+          </div>
+          <span id="checklist-progress-badge" class="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">
+            已完成 0 / 0
+          </span>
+        </div>
+        <div id="checklist-container" class="mt-4 grid gap-4 md:grid-cols-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- DRIVER MODAL (司機看這張) -->
+  <div id="driver-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm p-4 flex items-center justify-center fade-in">
+    <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl space-y-5 text-center">
+      <div class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+        司機指路 / 導航定位卡
+      </div>
+      <div>
+        <p class="text-xs text-slate-400 font-medium">目的地 Destination</p>
+        <h2 id="modal-jp-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1"></h2>
+      </div>
+      <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200 text-left">
+        <p class="text-xs text-slate-400 font-medium">當地詳細地址 Address</p>
+        <p id="modal-jp-addr" class="text-sm sm:text-base font-semibold text-slate-800 mt-1 select-all leading-relaxed"></p>
+      </div>
+      <p id="modal-jp-note" class="text-xs text-slate-500"></p>
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button id="modal-copy-btn" type="button" class="rounded-xl bg-slate-100 text-slate-700 py-3 text-sm font-bold hover:bg-slate-200 transition">
+          複製地址
+        </button>
+        <button id="modal-close-btn" type="button" class="rounded-xl bg-slate-900 text-white py-3 text-sm font-bold hover:bg-slate-800 transition">
+          關閉返回
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden rounded-2xl bg-slate-900/90 text-white px-4 py-2.5 text-xs font-semibold shadow-lg backdrop-blur fade-in"></div>
+
+  <!-- EMBEDDED TRIP DATA -->
+  <script id="raw-trip-data" type="application/json">
+{
+  "meta": {
+    "title": "日本東京 5天4夜都會時尚與美食自由行隨身指南",
+    "slug": "tokyo-guide",
+    "themeColor": "rose",
+    "dates": "2026-12-10 至 2026-12-14",
+    "hotel": "新宿燦路都廣場大飯店 (Hotel Sunroute Plaza Shinjuku)",
+    "flight": "",
+    "weather": "晴朗冬日，氣溫約 6°C 至 13°C，早晚溫差大請備大衣",
+    "currency": {
+      "code": "JPY",
+      "rate": 0.21
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date": "Day 1",
+      "title": "Day 1",
+      "cityTag": "",
+      "hotelName": "新宿燦路都廣場大飯店 (Hotel Sunroute Plaza Shinjuku)",
+      "summary": "",
+      "stops": [
+        {
+          "id": "d1-s1",
+          "time": "08:30 - 12:45",
+          "title": "TPE 桃園機場 ➔ NRT 成田機場 抵達出關",
+          "tag": "國際航班",
+          "desc": "出關後步行至 B1F 購買 Skyliner 或 JR N'EX 車票",
+          "jpTitle": "成田國際空港 第2ターミナル",
+          "jpAddr": "千葉県成田市古込字込前1-1",
+          "jpNote": "出關後步行至 B1F 購買 Skyliner 或 JR N'EX 車票",
+          "linkText": "官方資訊與導航",
+          "linkUrl": "https://www.narita-airport.jp/ch2/"
+        },
+        {
+          "id": "d1-s2",
+          "time": "13:30 - 14:45",
+          "title": "搭乘京成 Skyliner 直達日暮里 ➔ 轉乘山手線抵達新宿飯店 Check-in",
+          "tag": "機場快線",
+          "desc": "Skyliner 車程約 36 分鐘，支援 Suica 感應進站",
+          "jpTitle": "新宿サンルートプラザホテル",
+          "jpAddr": "東京都渋谷区代々木2-3-1",
+          "jpNote": "Skyliner 車程約 36 分鐘，支援 Suica 感應進站",
+          "linkText": "官方資訊與導航",
+          "linkUrl": "https://www.keisei.co.jp/keisei/tetudou/skyliner/tc/"
+        },
+        {
+          "id": "d1-s3",
+          "time": "18:00 - 20:00",
+          "title": "晚餐：新宿思い出橫丁（炭火燒鳥串燒巡禮）",
+          "tag": "在地美食",
+          "desc": "懷舊昭和風情居酒屋小巷，推薦燒鳥盛合與烤牛舌",
+          "jpTitle": "新宿西口思い出横丁",
+          "jpAddr": "東京都新宿区西新宿1-2",
+          "jpNote": "懷舊昭和風情居酒屋小巷，推薦燒鳥盛合與烤牛舌",
+          "linkText": "",
+          "linkUrl": ""
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date": "Day 2",
+      "title": "Day 2",
+      "cityTag": "",
+      "hotelName": "新宿燦路都廣場大飯店 (Hotel Sunroute Plaza Shinjuku)",
+      "summary": "",
+      "stops": [
+        {
+          "id": "d2-s1",
+          "time": "09:00 - 11:30",
+          "title": "明治神宮祈福散策 ＆ 原宿竹下通潮流漫步",
+          "tag": "都會綠洲",
+          "desc": "參道碎石路兩側林蔭悠靜，正殿祈願繪馬",
+          "jpTitle": "明治神宮 (Meiji Jingu)",
+          "jpAddr": "東京都渋谷区代々木神園町1-1",
+          "jpNote": "參道碎石路兩側林蔭悠靜，正殿祈願繪馬",
+          "linkText": "",
+          "linkUrl": ""
+        },
+        {
+          "id": "d2-s2",
+          "time": "12:30 - 14:00",
+          "title": "午餐：SHAKE SHACK 外苑前店 或 原宿人氣龍蝦堡",
+          "tag": "美味輕食",
+          "desc": "銀杏林蔭大道旁景觀餐廳",
+          "jpTitle": "Shake Shack Gaien Ginkgo Namiki",
+          "jpAddr": "東京都港区北青山2-1-15",
+          "jpNote": "銀杏林蔭大道旁景觀餐廳",
+          "linkText": "",
+          "linkUrl": ""
+        },
+        {
+          "id": "d2-s3",
+          "time": "15:00 - 18:00",
+          "title": "澀谷 SHIBUYA SKY 展望台 360 度俯瞰東京大都會十字路口",
+          "tag": "高空夜景",
+          "desc": "建議預約日落前 1 小時場次，可同時收穫黃昏金色夕陽與繁華夜景",
+          "jpTitle": "渋谷スクランブルスクエア (SHIBUYA SKY)",
+          "jpAddr": "東京都渋谷区渋谷2-24-12",
+          "jpNote": "建議預約日落前 1 小時場次，可同時收穫黃昏金色夕陽與繁華夜景",
+          "linkText": "官方資訊與導航",
+          "linkUrl": "https://www.shibuya-scramble-square.com/sky/"
+        }
+      ]
+    }
+  ],
+  "food": [
+    {
+      "id": "f-1",
+      "name": "新宿回憶橫丁 炭火燒鳥 瀧元",
+      "jpName": "新宿西口 思い出横丁",
+      "day": 1,
+      "time": "18:30",
+      "dayLabel": "Day 1 • 18:30",
+      "matchDay": "自由行程",
+      "catLabel": "居酒屋炭火燒鳥",
+      "badgeColor": "bg-amber-100 text-amber-800",
+      "feature": "昭和氛圍老店，現烤炭香雞肉串與冰涼生啤酒。",
+      "mustOrder": "鹽烤雞腿蔥串、醬燒雞肝、烤明太子山藥。",
+      "jpAddress": "東京都新宿区西新宿1-2-7",
+      "url": "https://shinjuku-omoide.com/"
+    },
+    {
+      "id": "f-2",
+      "name": "HARBS 新宿 LUMINE EST 店",
+      "jpName": "ハーブス ルミネエスト新宿店",
+      "day": 2,
+      "time": "16:30",
+      "dayLabel": "Day 2 • 16:30",
+      "matchDay": "自由行程",
+      "catLabel": "水果千層蛋糕",
+      "badgeColor": "bg-amber-100 text-amber-800",
+      "feature": "日本殿堂級水果千層蛋糕，滿滿新鮮水果與特製不甜膩鮮奶油。",
+      "mustOrder": "招牌水果千層蛋糕（Mille Crepes）、皇家奶茶。",
+      "jpAddress": "東京都新宿区新宿3-38-1 ルミネエスト新宿B2F",
+      "url": "https://www.harbs.co.jp/"
+    }
+  ],
+  "transport": [
+    {
+      "route": "成田機場 往返 新宿市區",
+      "tool": "京成 Skyliner 特急列車 或 JR 成田特快 N'EX",
+      "price": "單程約 2,570 至 3,250 日圓",
+      "note": "Skyliner 需於日暮里站同台轉乘山手線；N'EX 直達新宿無須轉車但車程約 75 分鐘。"
+    },
+    {
+      "route": "東京市區地鐵各線",
+      "tool": "東京地鐵 Tokyo Subway Ticket (24/48/72 小時券)",
+      "price": "72 小時券 1,500 日圓",
+      "note": "可無限次搭乘東京 Metro 9 條路線與都營地鐵 4 條路線，性價比極高。"
+    }
+  ],
+  "tickets": [
+    {
+      "spot": "SHIBUYA SKY 高空展望台",
+      "time": "10:00 至 22:30 (最後入場 21:20)",
+      "price": "成人約 2,200 至 2,500 日圓",
+      "note": "必須提前 2 至 4 週於官網或 Klook/KKday 預訂黃昏熱門時段。"
+    },
+    {
+      "spot": "明治神宮",
+      "time": "日出至日落 (冬季約 06:00 至 16:30)",
+      "price": "境內免費自由參觀 (神宮御苑 500 日圓)",
+      "note": "清晨參觀人潮最少，空氣清新且莊嚴肅穆。"
+    }
+  ],
+  "checklist": [
+    {
+      "category": "必備證件與數位憑證",
+      "items": [
+        {
+          "id": "chk-1-1",
+          "label": "護照正本（有效期限需在 6 個月以上）"
+        },
+        {
+          "id": "chk-1-2",
+          "label": "Visit Japan Web 入境手續與海關申報 QR Code 截圖"
+        },
+        {
+          "id": "chk-1-3",
+          "label": "機票電子行程單列印紙本或手機 PDF 存檔"
+        },
+        {
+          "id": "chk-1-4",
+          "label": "飯店入住確認信憑證"
+        }
+      ]
+    },
+    {
+      "category": "網路與外幣支付",
+      "items": [
+        {
+          "id": "chk-2-1",
+          "label": "日本 eSIM 或實體上網 SIM 卡開通確認"
+        },
+        {
+          "id": "chk-2-2",
+          "label": "雙幣信用卡或高海外回饋信用卡 2 張（注意海外刷卡額度）"
+        },
+        {
+          "id": "chk-2-3",
+          "label": "換發日圓現鈔（建議隨身準備 3 至 5 萬日圓零錢）"
+        },
+        {
+          "id": "chk-2-4",
+          "label": "iPhone 加入 Suica / PASMO 交通卡並綁定 Apple Pay 儲值"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <script>
+    const TRIP = JSON.parse(document.getElementById('raw-trip-data').textContent);
+    const TRIP_SLUG = TRIP.meta.slug || 'guide';
+    let activeDay = 1;
+    let itineraryChecks = {};
+    let checklistChecks = {};
+
+    function loadState() {
+      try {
+        const it = localStorage.getItem(`itin_checks_${TRIP_SLUG}`);
+        if (it) itineraryChecks = JSON.parse(it);
+        const chk = localStorage.getItem(`chk_checks_${TRIP_SLUG}`);
+        if (chk) checklistChecks = JSON.parse(chk);
+      } catch (e) {}
+    }
+
+    function saveItineraryState() {
+      try { localStorage.setItem(`itin_checks_${TRIP_SLUG}`, JSON.stringify(itineraryChecks)); } catch(e) {}
+    }
+    function saveChecklistState() {
+      try { localStorage.setItem(`chk_checks_${TRIP_SLUG}`, JSON.stringify(checklistChecks)); } catch(e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2200);
+    }
+
+    function copyToClipboard(text, msg = '已複製至剪貼簿') {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showToast(msg));
+      } else {
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showToast(msg);
+      }
+    }
+
+    function openDriverModal(title, addr, note = '') {
+      document.getElementById('modal-jp-title').textContent = title;
+      document.getElementById('modal-jp-addr').textContent = addr;
+      document.getElementById('modal-jp-note').textContent = note;
+      const modal = document.getElementById('driver-modal');
+      modal.classList.remove('hidden');
+      document.getElementById('modal-copy-btn').onclick = () => copyToClipboard(addr, '已複製地址！');
+    }
+    document.getElementById('modal-close-btn').addEventListener('click', () => {
+      document.getElementById('driver-modal').classList.add('hidden');
+    });
+
+    // TAB CONTROLS
+    const tabBtns = document.querySelectorAll('.main-tab-btn');
+    const sections = {
+      itinerary: document.getElementById('tab-itinerary'),
+      food: document.getElementById('tab-food'),
+      transport: document.getElementById('tab-transport'),
+      tickets: document.getElementById('tab-tickets'),
+      checklist: document.getElementById('tab-checklist')
+    };
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-main-tab');
+        tabBtns.forEach(b => {
+          b.className = 'main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition';
+        });
+        btn.className = 'main-tab-btn shrink-0 rounded-xl bg-slate-900 text-white px-3.5 py-1.5 shadow-sm transition';
+        Object.keys(sections).forEach(k => {
+          if (sections[k]) {
+            if (k === tab) {
+              sections[k].classList.remove('hidden');
+            } else {
+              sections[k].classList.add('hidden');
+            }
+          }
+        });
+      });
+    });
+
+    // RENDER ITINERARY
+    function renderItineraryDayButtons() {
+      const container = document.getElementById('itinerary-day-buttons');
+      container.innerHTML = '';
+      TRIP.itinerary.forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = (activeDay === d.day)
+          ? 'shrink-0 rounded-lg bg-rose-700 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition'
+          : 'shrink-0 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
+        btn.textContent = d.date || `Day ${d.day}`;
+        btn.onclick = () => {
+          activeDay = d.day;
+          renderItineraryDayButtons();
+          renderItineraryList();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function renderItineraryList() {
+      const container = document.getElementById('itinerary-timeline-container');
+      container.innerHTML = '';
+      const days = (activeDay === 'all')
+        ? TRIP.itinerary
+        : TRIP.itinerary.filter(d => d.day === activeDay);
+
+      days.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-3';
+        let stopsHtml = '';
+        d.stops.forEach(s => {
+          const isDone = !!itineraryChecks[s.id];
+          stopsHtml += `
+            <div class="relative pl-6 pb-4 border-l-2 border-slate-200 last:border-none last:pb-0">
+              <span class="absolute -left-[9px] top-0.5 h-4 w-4 rounded-full border-2 border-white ${isDone ? 'bg-emerald-500' : 'bg-slate-300'}"></span>
+              <div class="flex items-start justify-between gap-2">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="rounded bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-700">${s.time}</span>
+                    <span class="rounded bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-800">${s.tag || '景點'}</span>
+                  </div>
+                  <h4 class="text-sm font-bold ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}">${s.title}</h4>
+                  ${s.desc ? `<p class="text-xs text-slate-600 leading-relaxed">${s.desc}</p>` : ''}
+                </div>
+                <label class="cursor-pointer shrink-0">
+                  <input type="checkbox" class="stop-chk h-4 w-4 rounded border-slate-300 text-sky-700" data-id="${s.id}" ${isDone ? 'checked' : ''}>
+                </label>
+              </div>
+              <div class="mt-2.5 flex items-center gap-2">
+                ${s.jpAddr ? `
+                  <button type="button" class="driver-trigger rounded-lg bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1 text-xs font-bold hover:bg-sky-100 transition" data-title="${s.jpTitle || s.title}" data-addr="${s.jpAddr}" data-note="${s.jpNote || ''}">
+                    司機卡
+                  </button>
+                  <button type="button" class="copy-trigger rounded-lg bg-slate-100 text-slate-700 px-2.5 py-1 text-xs font-semibold hover:bg-slate-200 transition" data-addr="${s.jpAddr}">
+                    複製地址
+                  </button>
+                ` : ''}
+                ${s.linkUrl ? `
+                  <a href="${s.linkUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-sky-700 hover:underline">
+                    ${s.linkText || '官網地圖'} &nearr;
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold text-rose-700 uppercase tracking-wider">${d.date}</span>
+              <h3 class="text-base font-bold text-slate-900">${d.title}</h3>
+            </div>
+          </div>
+          <div class="pt-2">${stopsHtml}</div>
+        `;
+
+        card.querySelectorAll('.stop-chk').forEach(chk => {
+          chk.addEventListener('change', (e) => {
+            const id = e.target.getAttribute('data-id');
+            itineraryChecks[id] = e.target.checked;
+            saveItineraryState();
+            renderItineraryList();
+          });
+        });
+
+        card.querySelectorAll('.driver-trigger').forEach(b => {
+          b.addEventListener('click', () => {
+            openDriverModal(b.getAttribute('data-title'), b.getAttribute('data-addr'), b.getAttribute('data-note'));
+          });
+        });
+
+        card.querySelectorAll('.copy-trigger').forEach(b => {
+          b.addEventListener('click', () => {
+            copyToClipboard(b.getAttribute('data-addr'));
+          });
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('expand-all-days-btn').addEventListener('click', (e) => {
+      if (activeDay === 'all') {
+        activeDay = 1;
+        e.target.textContent = '展開全部總覽';
+      } else {
+        activeDay = 'all';
+        e.target.textContent = '收合單日瀏覽';
+      }
+      renderItineraryDayButtons();
+      renderItineraryList();
+    });
+
+    // RENDER FOOD
+    function renderFood(filterDay = 'all') {
+      const container = document.getElementById('food-grid-container');
+      container.innerHTML = '';
+      const list = (filterDay === 'all')
+        ? TRIP.food
+        : TRIP.food.filter(f => f.day === parseInt(filterDay, 10));
+
+      list.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 flex flex-col justify-between space-y-3';
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="rounded-md bg-amber-100 text-amber-800 px-2 py-0.5 text-xs font-bold">${f.dayLabel || `Day ${f.day}`}</span>
+              <span class="text-xs text-slate-400 font-medium">${f.catLabel || '特色美食'}</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">${f.name}</h3>
+            ${f.jpName ? `<p class="text-xs text-sky-800 font-medium">${f.jpName}</p>` : ''}
+            ${f.feature ? `<p class="text-xs text-slate-600 leading-relaxed">${f.feature}</p>` : ''}
+            ${f.mustOrder ? `
+              <div class="rounded-xl bg-slate-50 p-2.5 border border-slate-100 text-xs">
+                <span class="font-bold text-slate-700">必點名物：</span>
+                <span class="text-slate-600">${f.mustOrder}</span>
+              </div>
+            ` : ''}
+            ${f.jpAddress ? `<p class="text-xs text-slate-500"><span class="font-medium">地址：</span>${f.jpAddress}</p>` : ''}
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div class="flex gap-2">
+              ${f.jpAddress ? `
+                <button type="button" class="food-driver-btn rounded-xl bg-sky-700 text-white px-3 py-1.5 text-xs font-bold hover:bg-sky-800 transition">
+                  司機卡
+                </button>
+                <button type="button" class="food-copy-btn rounded-xl bg-slate-100 text-slate-700 px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition">
+                  複製地址
+                </button>
+              ` : ''}
+            </div>
+            ${f.url ? `<a href="${f.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-sky-700 hover:underline">地圖官網 &nearr;</a>` : ''}
+          </div>
+        `;
+
+        const driverBtn = card.querySelector('.food-driver-btn');
+        if (driverBtn) {
+          driverBtn.onclick = () => openDriverModal(f.jpName || f.name, f.jpAddress, '定位導航');
+        }
+        const copyBtn = card.querySelector('.food-copy-btn');
+        if (copyBtn) {
+          copyBtn.onclick = () => copyToClipboard(f.jpAddress);
+        }
+        container.appendChild(card);
+      });
+    }
+
+    function renderFoodFilters() {
+      const container = document.getElementById('food-day-filters');
+      container.innerHTML = '';
+      const days = [...new Set(TRIP.food.map(f => f.day))].sort((a,b)=>a-b);
+      const allBtn = document.createElement('button');
+      allBtn.className = 'food-day-filter shrink-0 rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white';
+      allBtn.textContent = '全部';
+      allBtn.onclick = () => {
+        document.querySelectorAll('.food-day-filter').forEach(b => b.className = 'food-day-filter shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200');
+        allBtn.className = 'food-day-filter shrink-0 rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white';
+        renderFood('all');
+      };
+      container.appendChild(allBtn);
+
+      days.forEach(d => {
+        const b = document.createElement('button');
+        b.className = 'food-day-filter shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200';
+        b.textContent = `D${d}`;
+        b.onclick = () => {
+          document.querySelectorAll('.food-day-filter').forEach(x => x.className = 'food-day-filter shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200');
+          b.className = 'food-day-filter shrink-0 rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white';
+          renderFood(d);
+        };
+        container.appendChild(b);
+      });
+    }
+
+    // RENDER TRANSPORT & TICKETS
+    function renderTransport() {
+      const tbody = document.getElementById('transport-table-body');
+      tbody.innerHTML = '';
+      TRIP.transport.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-3 px-3 font-semibold text-slate-900">${t.route}</td>
+          <td class="py-3 px-3">${t.tool}</td>
+          <td class="py-3 px-3 text-sky-800 font-semibold">${t.price}</td>
+          <td class="py-3 px-3 leading-relaxed">${t.note}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTickets() {
+      const tbody = document.getElementById('tickets-table-body');
+      tbody.innerHTML = '';
+      TRIP.tickets.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-3 px-3 font-semibold text-slate-900">${t.spot}</td>
+          <td class="py-3 px-3">${t.time}</td>
+          <td class="py-3 px-3 text-sky-800 font-semibold">${t.price}</td>
+          <td class="py-3 px-3 leading-relaxed">${t.note}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // RENDER CHECKLIST
+    function renderChecklist() {
+      const container = document.getElementById('checklist-container');
+      container.innerHTML = '';
+      let total = 0;
+      let done = 0;
+
+      TRIP.checklist.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl border border-slate-200 bg-white p-4 space-y-3';
+        let itemsHtml = '';
+        g.items.forEach(it => {
+          total++;
+          const isChecked = !!checklistChecks[it.id];
+          if (isChecked) done++;
+          itemsHtml += `
+            <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" class="chk-item mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-700" data-id="${it.id}" ${isChecked ? 'checked' : ''}>
+              <span class="text-xs sm:text-sm ${isChecked ? 'line-through text-slate-400' : 'text-slate-700'}">
+                ${it.label}
+              </span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">${g.category}</h3>
+          <div class="space-y-1">${itemsHtml}</div>
+        `;
+
+        card.querySelectorAll('.chk-item').forEach(chk => {
+          chk.addEventListener('change', (e) => {
+            const id = e.target.getAttribute('data-id');
+            checklistChecks[id] = e.target.checked;
+            saveChecklistState();
+            renderChecklist();
+          });
+        });
+
+        container.appendChild(card);
+      });
+
+      document.getElementById('checklist-progress-badge').textContent = `已完成 ${done} / ${total}`;
+    }
+
+    document.getElementById('quick-driver-btn').onclick = () => {
+      if (TRIP.itinerary[0] && TRIP.itinerary[0].stops[0]) {
+        const s = TRIP.itinerary[0].stops[0];
+        openDriverModal(s.jpTitle || s.title, s.jpAddr || '目的地詳細地址', s.jpNote || '');
+      } else {
+        showToast('暫無司機資訊');
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderItineraryDayButtons();
+      renderItineraryList();
+      renderFoodFilters();
+      renderFood('all');
+      renderTransport();
+      renderTickets();
+      renderChecklist();
+    });
+  </script>
+</body>
+</html>

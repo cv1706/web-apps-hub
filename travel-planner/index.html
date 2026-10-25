@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全球自由行智慧導航平台 - Travel Planner Hub</title>
+  <meta name="description" content="多國城市行程切換、Markdown 筆記一鍵匯入解析、五大分頁互動手冊與離線獨立 HTML 隨身匯出">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased selection:bg-sky-700/20">
+
+  <!-- TOP STICKY BAR -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Title & Back -->
+      <div class="flex items-center gap-2 min-w-0">
+        <a href="../index.html" class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition text-sm font-bold shrink-0" title="返回總廳">
+          &larr;
+        </a>
+        <div class="truncate">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center rounded-md bg-sky-100 px-2 py-0.5 text-xs font-bold text-sky-800">Travel Hub</span>
+            <h1 id="header-trip-title" class="text-base sm:text-lg font-bold text-slate-900 truncate">北海道札幌雪季 7D6N</h1>
+          </div>
+          <p id="header-trip-meta" class="text-xs text-slate-500 truncate">7天6夜 &bull; 札幌、小樽、美瑛旭川 &bull; 雪季 -3°C ~ 5°C</p>
+        </div>
+      </div>
+
+      <!-- Actions & Trip Switcher -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Trip Selector Dropdown -->
+        <div class="relative">
+          <select id="trip-selector" class="rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-3 pr-8 text-xs font-bold text-slate-800 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer">
+            <optgroup label="官方精選行程">
+              <option value="sapporo" selected>北海道札幌 7天6夜</option>
+              <option value="phu-quoc">越南富國島 4天3夜</option>
+              <option value="wuxi-shanghai">江南無錫上海 4天3夜</option>
+              <option value="tokyo">日本東京 5天4夜</option>
+            </optgroup>
+            <optgroup id="custom-trips-group" label="我的自訂行程">
+              <!-- Dynamically populated from localStorage -->
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Import Button -->
+        <button id="open-import-modal-btn" type="button" class="inline-flex items-center gap-1 rounded-xl bg-slate-900 text-white px-3 py-1.5 text-xs font-bold hover:bg-slate-800 shadow-sm transition">
+          <span>＋ 匯入行程筆記</span>
+        </button>
+
+        <!-- Export HTML Button -->
+        <button id="export-html-btn" type="button" class="inline-flex items-center gap-1 rounded-xl bg-emerald-700 text-white px-3 py-1.5 text-xs font-bold hover:bg-emerald-800 shadow-sm transition" title="打包下載為離線單檔 HTML">
+          <span>&darr; 匯出單檔 HTML</span>
+        </button>
+
+        <!-- Driver Card Trigger -->
+        <button id="quick-driver-btn" type="button" class="inline-flex items-center gap-1 rounded-xl bg-sky-700 text-white px-3 py-1.5 text-xs font-bold hover:bg-sky-800 shadow-sm transition">
+          <span>司機卡</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN TABS NAVIGATION -->
+    <div class="max-w-6xl mx-auto px-4 pb-2 flex gap-1.5 overflow-x-auto no-scrollbar text-xs sm:text-sm font-semibold">
+      <button type="button" data-main-tab="itinerary" class="main-tab-btn shrink-0 rounded-xl bg-slate-900 text-white px-3.5 py-1.5 shadow-sm transition">
+        行程總覽
+      </button>
+      <button type="button" data-main-tab="food" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        必吃美饌與商場
+      </button>
+      <button type="button" data-main-tab="transport" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        交通接駁
+      </button>
+      <button type="button" data-main-tab="tickets" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        門票開放時間
+      </button>
+      <button type="button" data-main-tab="checklist" class="main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition">
+        行前檢查清單
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 py-5 space-y-6">
+
+    <!-- TAB 1: ITINERARY -->
+    <section id="tab-itinerary" class="space-y-4 fade-in">
+      <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
+        <div class="flex gap-1.5 overflow-x-auto no-scrollbar" id="itinerary-day-buttons">
+          <!-- Populated by JS -->
+        </div>
+        <button id="expand-all-days-btn" type="button" class="shrink-0 text-xs font-bold text-sky-700 hover:underline">
+          展開全部總覽
+        </button>
+      </div>
+      <div id="itinerary-timeline-container" class="space-y-4">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 2: FOOD & SHOPPING -->
+    <section id="tab-food" class="hidden space-y-4 fade-in">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-200 pb-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">必吃美食與商場卡（依天數時間排序）</h2>
+          <p class="text-xs text-slate-500">自 Day 1 起順序排列，點擊天數按鈕可快速篩選</p>
+        </div>
+        <div class="flex gap-1 overflow-x-auto no-scrollbar" id="food-day-filters">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div id="food-grid-container" class="grid gap-4 md:grid-cols-2">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 3: TRANSPORT -->
+    <section id="tab-transport" class="hidden space-y-4 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-base font-bold text-slate-900 mb-1">各區間接駁與交通工具一覽</h2>
+        <p class="text-xs text-slate-500 mb-4">掌握機場接駁、長途鐵路、巴士與市區交通方案</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">移動區間</th>
+                <th class="py-3 px-3 font-semibold">搭乘工具</th>
+                <th class="py-3 px-3 font-semibold">時間與費用</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">注意事項與乘車守則</th>
+              </tr>
+            </thead>
+            <tbody id="transport-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: TICKETS -->
+    <section id="tab-tickets" class="hidden space-y-4 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <h2 class="text-base font-bold text-slate-900 mb-1">景點門票、預約與表演時刻</h2>
+        <p class="text-xs text-slate-500 mb-4">核心打卡點營業時間、收費與行前購票注意事項</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                <th class="py-3 px-3 font-semibold rounded-tl-xl">設施/景點</th>
+                <th class="py-3 px-3 font-semibold">開放時刻</th>
+                <th class="py-3 px-3 font-semibold">門票參考</th>
+                <th class="py-3 px-3 font-semibold rounded-tr-xl">參觀要點與核心亮點</th>
+              </tr>
+            </thead>
+            <tbody id="tickets-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: CHECKLIST -->
+    <section id="tab-checklist" class="hidden space-y-4 fade-in">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">行前準備與隨身檢核清單</h2>
+            <p class="text-xs text-slate-500">點擊項目可打勾記錄，狀態自動儲存於瀏覽器 LocalStorage 中</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="checklist-progress-badge" class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-800 border border-sky-200">
+              已完成 0 / 0
+            </span>
+            <button id="reset-checks-btn" type="button" class="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+              重置勾選
+            </button>
+          </div>
+        </div>
+        <div id="checklist-container" class="mt-4 grid gap-4 md:grid-cols-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- IMPORT MARKDOWN MODAL -->
+  <div id="import-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm p-4 flex items-center justify-center fade-in">
+    <div class="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col justify-between">
+      <div class="space-y-1">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-900">匯入行程 Markdown 筆記</h2>
+          <button id="import-modal-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
+        </div>
+        <p class="text-xs text-slate-500">直接貼上符合標準規格之 Markdown 文本，系統將即時解析為五大分頁互動式導覽</p>
+      </div>
+
+      <div class="flex-1 min-h-[260px] flex flex-col space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-500 font-medium">請貼上 Markdown 內容：</span>
+          <button id="load-sample-md-btn" type="button" class="text-sky-700 font-bold hover:underline">
+            載入標準示範範本
+          </button>
+        </div>
+        <textarea id="import-markdown-textarea" class="w-full flex-1 rounded-2xl border border-slate-300 p-3 text-xs font-mono leading-relaxed focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="# 旅遊基本資訊&#10;- 標題: 日本京都 4天3夜古都漫步&#10;- 代碼: kyoto-guide&#10;..."></textarea>
+      </div>
+
+      <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+        <span class="text-xs text-slate-400">解析完成後將自動儲存於自訂行程庫</span>
+        <div class="flex gap-2">
+          <button id="cancel-import-btn" type="button" class="rounded-xl bg-slate-100 text-slate-700 px-4 py-2 text-xs font-bold hover:bg-slate-200 transition">
+            取消
+          </button>
+          <button id="parse-and-load-btn" type="button" class="rounded-xl bg-sky-700 text-white px-4 py-2 text-xs font-bold hover:bg-sky-800 transition">
+            解析並立即載入
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRIVER MODAL (司機看這張) -->
+  <div id="driver-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm p-4 flex items-center justify-center fade-in">
+    <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl space-y-5 text-center">
+      <div class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+        司機指路 / 導航定位卡
+      </div>
+      <div>
+        <p class="text-xs text-slate-400 font-medium">目的地 Destination</p>
+        <h2 id="modal-jp-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1"></h2>
+      </div>
+      <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200 text-left">
+        <p class="text-xs text-slate-400 font-medium">當地詳細地址 Address</p>
+        <p id="modal-jp-addr" class="text-sm sm:text-base font-semibold text-slate-800 mt-1 select-all leading-relaxed"></p>
+      </div>
+      <p id="modal-jp-note" class="text-xs text-slate-500"></p>
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button id="modal-copy-btn" type="button" class="rounded-xl bg-slate-100 text-slate-700 py-3 text-sm font-bold hover:bg-slate-200 transition">
+          複製地址
+        </button>
+        <button id="modal-close-btn" type="button" class="rounded-xl bg-slate-900 text-white py-3 text-sm font-bold hover:bg-slate-800 transition">
+          關閉返回
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden rounded-2xl bg-slate-900/90 text-white px-4 py-2.5 text-xs font-semibold shadow-lg backdrop-blur fade-in"></div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // =========================================================================
+    // 1. PRELOADED OFFICIAL TRIPS DATA STORE
+    // =========================================================================
+    const BUILTIN_TRIPS = {
+      'sapporo': {
+        meta: {
+          title: '北海道札幌雪季 7D6N',
+          slug: 'sapporo',
+          themeColor: 'sky',
+          dates: '7天6夜 • 冬季',
+          weather: '初冬雪季 -3°C ~ 5°C',
+          hotel: '札幌市區飯店 連住'
+        },
+        itinerary: [
+          {
+            day: 1,
+            date: 'Day 1',
+            title: '抵達札幌 ➔ 燈樹節與電視塔夜景 ➔ 薄野燒肉動漫挖寶',
+            stops: [
+              { id: 'd1-s1', time: '13:20', title: 'TPE 桃園機場 ➔ CTS 新千歲機場 抵達出關', tag: '航班', jpTitle: '新千歳空港 国際線ターミナル', jpAddr: '北海道千歳市美々987-22', jpNote: '出關後步行約 7 分鐘抵達 B1F「JR 新千歲空港站」', linkUrl: 'https://www.new-chitose-airport.jp/tw/tmap/' },
+              { id: 'd1-s2', time: '14:30', title: '搭乘 JR 快速 Airport 線直達札幌車站 & 辦理入住', tag: 'JR 特快', jpTitle: 'JR 札幌駅 (さっぽろえき)', jpAddr: '北海道札幌市北区北6条西4丁目', jpNote: '建議加購 u-Seat 指定席 (+840日圓)' },
+              { id: 'd1-s3', time: '16:30', title: '大通公園漫步：欣賞「札幌白色燈樹節」夢幻造景', tag: '冬季盛典', jpTitle: '大通公園・さっぽろホワイトイルミネーション', jpAddr: '北海道札幌市中央区大通西1丁目～6丁目', jpNote: '每日 16:30 準時點燈至 22:00' },
+              { id: 'd1-s4', time: '18:00', title: '登上「札幌電視塔展望台」俯瞰燈海全景', tag: '高空夜景', jpTitle: 'さっぽろテレビ塔 (展望台入口)', jpAddr: '北海道札幌市中央区大通西1丁目', jpNote: '大通公園延伸數公里的光之大道盡收眼底' },
+              { id: 'd1-s5', time: '19:30', title: '晚餐：ガヤ すすきの店（GAJA 燒肉店・記得訂位）', tag: '炭火燒肉', jpTitle: 'ガヤ すすきの店 (炭火焼肉 GAJA)', jpAddr: '北海道札幌市中央区南5条西3丁目11番地 第23桂和ビル2F', jpNote: '特選黑毛和牛與厚切牛舌，極致美味', linkUrl: 'https://gaja.in/' },
+              { id: 'd1-s6', time: '21:00', title: '駿河屋薄野店動漫挖寶 ＆ 狸小路商店街藥妝採買', tag: '購物漫遊', jpTitle: '駿河屋 札幌すすきの店 / 狸小路商店街', jpAddr: '北海道札幌市中央区南4条西4丁目1-1', jpNote: 'MEGA唐吉訶德狸小路店 24 小時營業' }
+            ]
+          },
+          {
+            day: 2,
+            date: 'Day 2',
+            title: '浪漫小樽精華一日遊 ➔ 三角市場海鮮丼 ➔ 運河與堺町通',
+            stops: [
+              { id: 'd2-s1', time: '08:45', title: '搭乘 JR 函館本線（快速 Airport 號）前往小樽', tag: '鐵路沿海', jpTitle: 'JR 小樽駅 (おたるえき)', jpAddr: '北海道小樽市稲穂2丁目22-1', jpNote: '去程請坐「右側靠窗」座位欣賞石狩灣雪海' },
+              { id: 'd2-s2', time: '09:30', title: '三角市場【滝波食堂】爆量自選海鮮丼早午餐', tag: '爆量海鮮', jpTitle: '小樽三角市場・北のどんぶり屋 滝波食堂', jpAddr: '北海道小樽市稲穂3丁目10-16 三角市場内', jpNote: '極品馬糞海膽、鮭魚卵、牡丹蝦與生干貝' },
+              { id: 'd2-s3', time: '11:00', title: '漫步小樽運河拍照、淺草橋遊客中心', tag: '港都地標', jpTitle: '小樽運河・浅草橋街園 (あさくさばし)', jpAddr: '北海道小樽市港町5 小樽運河沿岸', jpNote: '石造倉庫群與瓦斯路燈雪景' },
+              { id: 'd2-s4', time: '13:00', title: '堺町通商店街散策、小樽音樂盒堂本館（蒸汽鐘報時）', tag: '夢幻工藝', jpTitle: '小樽オルゴール堂 本館 / 蒸気時計', jpAddr: '北海道小樽市住吉町4-1', jpNote: '每 15 分鐘鳴笛噴吐蒸氣一次' },
+              { id: 'd2-s5', time: '17:00', title: '晚餐：若雞時代 鳴門總店（酥脆黃金炸半雞）', tag: '小樽靈魂名物', jpTitle: '若鶏時代なると 本店', jpAddr: '北海道小樽市稲穂3丁目16-13', jpNote: '若雞半身揚外酥內嫩，肉汁豐沛' }
+            ]
+          }
+        ],
+        food: [
+          { name: 'ガヤ すすきの店 (GAJA)', jpName: 'ガヤ すすきの店', day: 1, time: '19:30', dayLabel: 'Day 1 • 19:30', catLabel: '炭火燒肉', feature: '薄野超人氣炭火燒肉，肉質極佳排煙優良。', mustOrder: '特選黑毛和牛、厚切牛舌、韓式石鍋拌飯', jpAddress: '北海道札幌市中央区南5条西3丁目11番地 第23桂和ビル2F', url: 'https://gaja.in/' },
+          { name: '三角市場 滝波食堂', jpName: '小樽三角市場 滝波食堂', day: 2, time: '09:30', dayLabel: 'Day 2 • 09:30', catLabel: '爆量海鮮丼', feature: '小樽車站旁爆滿排隊名店，海味極品鮮度第一。', mustOrder: '元祖波之自選海鮮丼（海膽、鮭魚卵、牡丹蝦）', jpAddress: '北海道小樽市稲穂3丁目10-16 三角市場内' },
+          { name: '若雞時代 鳴門總店', jpName: '若鶏時代なると 本店', day: 2, time: '17:00', dayLabel: 'Day 2 • 17:00', catLabel: '黃金炸半雞', feature: '昭和40年創業的小樽靈魂美食，半身炸雞酥脆多汁。', mustOrder: '若雞半身揚定食、炸雞塊（ざんぎ）', jpAddress: '北海道小樽市稲穂3丁目16-13' }
+        ],
+        transport: [
+          { route: '新千歲機場 往返 札幌車站', tool: 'JR 快速 Airport 線', price: '自由席 1,150 日圓 / 指定席 +840 日圓', note: '每小時 5~6 班直達，車程約 37 分鐘，建議加購 u-Seat 指定席。' },
+          { route: '札幌車站 往返 小樽車站', tool: 'JR 函館本線 (快速 Airport)', price: '單程 750 日圓', note: '車程約 35 分鐘，去程建議坐右側靠窗欣賞石狩灣雪海。' }
+        ],
+        tickets: [
+          { spot: '札幌白色燈樹節 (大通公園)', time: '每日 16:30 至 22:00', price: '免費自由參觀', note: '大通公園 1 至 6 丁目璀璨光雕花園，2 丁目有聖誕市集。' },
+          { spot: '札幌電視塔展望台', time: '09:00 至 22:00', price: '成人約 1,000 日圓', note: '登高俯瞰大通公園延伸數公里燈海全景。' }
+        ],
+        checklist: [
+          {
+            category: '必備證件與入境手續',
+            items: [
+              { id: 'sap-c1', label: '護照正本（效期需在 6 個月以上）' },
+              { id: 'sap-c2', label: 'Visit Japan Web 申報 QR Code 截圖存檔' }
+            ]
+          },
+          {
+            category: '雪季防寒衣物',
+            items: [
+              { id: 'sap-c3', label: '保暖防風防雪長版羽絨大衣' },
+              { id: 'sap-c4', label: '防滑防水雪靴或冰爪套' }
+            ]
+          }
+        ]
+      },
+
+      'phu-quoc': {
+        meta: {
+          title: '越南富國島海島渡假 4D3N',
+          slug: 'phu-quoc',
+          themeColor: 'emerald',
+          dates: '4天3夜 • 海島',
+          weather: '熱帶晴朗 26°C ~ 31°C',
+          hotel: '富國島莫凡彼 Waverly 度假酒店'
+        },
+        itinerary: [
+          {
+            day: 1,
+            date: 'Day 1',
+            title: '抵達富國島 ➔ 換匯與專車接機 ➔ 海鮮大餐與度假村入住',
+            stops: [
+              { id: 'pq-d1-s1', time: '20:20', title: 'TPE 17:25 ➔ PQC 20:20 班機抵達富國島國際機場', tag: '航班降落', jpTitle: 'Cảng hàng không quốc tế Phú Quốc (PQC)', jpAddr: 'Tổ 2, Ấp Dương Tơ, Phú Quốc, Kiên Giang', jpNote: '出海關大廳右手邊小哥換匯櫃檯，匯率最優' },
+              { id: 'pq-d1-s2', time: '21:00', title: '包車司機接機 ➔ 前往 MYLA SEAFOOD 享用海鮮晚餐', tag: '現撈海鮮', jpTitle: 'MYLA SEAFOOD Phú Quốc', jpAddr: 'Đường Trần Hưng Đạo, Dương Tơ, Phú Quốc', jpNote: '炭烤生蠔佐蔥油花生、奶油大蒜炒花蟹' },
+              { id: 'pq-d1-s3', time: '22:30', title: '入住：富國島 Waverly 瑞享度假酒店（Mövenpick）', tag: '海景渡假村', jpTitle: 'Mövenpick Resort Waverly Phu Quoc', jpAddr: 'Tổ 1, Ấp Ông Lang, Cửa Dương, Phú Quốc', jpNote: '每日 15:30-16:30 免費瑞士巧克力時光' }
+            ]
+          },
+          {
+            day: 2,
+            date: 'Day 2',
+            title: '珍珠水陸樂園水族館 ➔ 富國大世界威尼斯水舞 ➔ 招牌跳跳魚米線',
+            stops: [
+              { id: 'pq-d2-s1', time: '11:30', title: '包車前往「珍珠奇幻水陸樂園」（VinWonders）', tag: '主題樂園', jpTitle: 'VinWonders Phú Quốc (Khu Bãi Dài)', jpAddr: 'Khu Bãi Dài, Gành Dầu, Phú Quốc', jpNote: '巨型海龜水族館、美人魚秀、18:30 ONCE 城堡光影大秀' },
+              { id: 'pq-d2-s2', time: '19:15', title: '富國大世界 ＆ 晚餐：Bún quậy số 1 Phú Quốc', tag: '必吃米線', jpTitle: 'Bún Quậy Kiến Xây / Bún quậy số 1 Grand World', jpAddr: 'Khu phố Grand World, Gành Dầu, Phú Quốc', jpNote: '現打新鮮蝦滑、魚漿，特調金桔辣椒沾醬' },
+              { id: 'pq-d2-s3', time: '21:45', title: '欣賞富國大世界「威尼斯色彩水舞燈光秀」', tag: '夜間盛典', jpTitle: 'Grand World Phú Quốc (Hồ Tình Yêu)', jpAddr: 'Khu Grand World, Gành Dầu, Phú Quốc', jpNote: '大運河湖畔免費上演，水幕投影與雷射舞蹈' }
+            ]
+          }
+        ],
+        food: [
+          { name: 'Bún quậy số 1 Phú Quốc (跳跳魚米線)', jpName: 'Bún Quậy Phú Quốc', day: 2, time: '19:30', dayLabel: 'Day 2 • 19:30', catLabel: '特色米線', feature: '富國島最知名之傳統現做手打米線，新鮮蝦滑與魚漿鮮甜無比。', mustOrder: '招牌綜合海鮮跳跳魚米線、現榨甘蔗汁', jpAddress: 'Grand World Phú Quốc, Gành Dầu' },
+          { name: 'MYLA SEAFOOD 現撈海鮮餐廳', jpName: 'MYLA SEAFOOD Restaurant', day: 1, time: '21:00', dayLabel: 'Day 1 • 21:00', catLabel: '現撈海鮮', feature: '富國島高評價海鮮餐廳，食材新鮮透明計價。', mustOrder: '炭烤生蠔、奶油蒜蓉大明蝦、椒鹽烤魷魚', jpAddress: 'Trần Hưng Đạo, Dương Tơ, Phú Quốc' }
+        ],
+        transport: [
+          { route: '機場接機 / 日常景點包車', tool: '專屬冷氣休旅車包車 (Grab 或包車預訂)', price: '單趟接送約 25萬-40萬 VND / 全日包車約 120萬 VND', note: '司機親切守時，上車前確認好行程與景點停靠順序。' }
+        ],
+        tickets: [
+          { spot: '珍珠水陸樂園 (VinWonders)', time: '09:00 至 19:30', price: '成人約 95萬 VND', note: '奇幻城堡 ONCE 水幕光影秀每日 18:30 壓軸演出必看。' },
+          { spot: '富國大世界 (Grand World)', time: '全天開放 (水舞秀 21:45)', price: '免費入場 (貢多拉遊船另計)', note: '21:45 威尼斯色彩水舞燈光秀於愛之湖免費演出。' }
+        ],
+        checklist: [
+          {
+            category: '海島度假必備',
+            items: [
+              { id: 'pq-c1', label: '護照正本（富國島直飛免簽 30 天）' },
+              { id: 'pq-c2', label: '泳衣、泳褲、水母衣與防水手機袋' },
+              { id: 'pq-c3', label: '防曬乳（海洋友善）、防蚊液與暈車藥' }
+            ]
+          }
+        ]
+      },
+
+      'wuxi-shanghai': {
+        meta: {
+          title: '江南無錫上海雙城 4D3N',
+          slug: 'wuxi-shanghai',
+          themeColor: 'indigo',
+          dates: '4天3夜 • 雙城漫遊',
+          weather: '冬末初春 4°C ~ 12°C',
+          hotel: '無錫君來洲際酒店 / 上海浦東喜來登'
+        },
+        itinerary: [
+          {
+            day: 1,
+            date: 'Day 1',
+            title: '抵達上海浦東 ➔ 高鐵直奔無錫 ➔ 清名橋古運河夜遊',
+            stops: [
+              { id: 'wx-d1-s1', time: '11:45', title: 'TPE 桃園機場 ➔ PVG 上海浦東機場 抵達出關', tag: '航班飛行', jpTitle: '上海浦东国际机场 (PVG)', jpAddr: '上海市浦东新区迎宾大道6000号', jpNote: '出關後步行至磁浮線/地鐵2號線轉乘高鐵' },
+              { id: 'wx-d1-s2', time: '14:30', title: '上海虹橋火車站 ➔ 搭乘高鐵直達無錫火車站', tag: '高速鐵路', jpTitle: '无锡火车站', jpAddr: '江苏省无锡市梁溪区车站路1号', jpNote: '高鐵車程僅需 45 分鐘，刷台胞證進站' },
+              { id: 'wx-d1-s3', time: '17:30', title: '清名橋古運河景區漫步 ＆ 晚餐：熙盛源蟹粉小籠', tag: '江南古街', jpTitle: '清名桥古运河景区 / 熙盛源', jpAddr: '江苏省无锡市梁溪区南长街', jpNote: '運河點燈倒影絕美，必吃無錫小籠包與開洋餛飩' }
+            ]
+          }
+        ],
+        food: [
+          { name: '熙盛源 蟹粉小籠包 (南長街店)', jpName: '熙盛源 (南长街店)', day: 1, time: '18:00', dayLabel: 'Day 1 • 18:00', catLabel: '無錫小籠', feature: '無錫老字號小籠包與餛飩專賣店，湯汁清甜豐盈。', mustOrder: '招牌蟹粉小籠包、紅湯辣餛飩、開洋餛飩', jpAddress: '江苏省无锡市梁溪区南长街112号' }
+        ],
+        transport: [
+          { route: '上海虹橋火車站 往返 無錫火車站', tool: '中國高鐵 G/D 字頭列車', price: '二等座約 ¥59.5', note: '車程約 45 分鐘，班次密集，憑台胞證感應進出閘門。' }
+        ],
+        tickets: [
+          { spot: '無錫清名橋古運河景區', time: '街區全日開放 (遊船至 20:30)', price: '街區免費 / 遊船約 ¥80', note: '傍晚點燈後最具水鄉風情，推薦搭乘遊船欣賞古橋倒影。' }
+        ],
+        checklist: [
+          {
+            category: '證件與支付工具',
+            items: [
+              { id: 'wx-c1', label: '台胞證正本（檢驗有效期限）' },
+              { id: 'wx-c2', label: '微信支付與支付寶綁定海外信用卡實名認證' }
+            ]
+          }
+        ]
+      },
+
+      'tokyo': {
+        meta: {
+          title: '日本東京精選 5D4N',
+          slug: 'tokyo',
+          themeColor: 'rose',
+          dates: '5天4夜 • 都會漫遊',
+          weather: '晴朗冬日 6°C ~ 13°C',
+          hotel: '新宿燦路都廣場大飯店'
+        },
+        itinerary: [
+          {
+            day: 1,
+            date: 'Day 1',
+            title: '抵達東京 ➔ 新宿飯店 Check-in ➔ 回憶橫丁居酒屋燒鳥',
+            stops: [
+              { id: 'tk-d1-s1', time: '12:45', title: 'TPE 桃園機場 ➔ NRT 成田機場 抵達出關', tag: '航班飛行', jpTitle: '成田国際空港 第2ターミナル', jpAddr: '千葉県成田市古込字込前1-1', jpNote: '出關後至 B1F 搭乘京成 Skyliner' },
+              { id: 'tk-d1-s2', time: '14:30', title: '搭乘京成 Skyliner 直達日暮里轉乘至新宿飯店', tag: '機場特快', jpTitle: '新宿サンルートプラザホテル', jpAddr: '東京都渋谷区代々木2-3-1', jpNote: 'Skyliner 僅需 36 分鐘，極速直達' },
+              { id: 'tk-d1-s3', time: '18:30', title: '晚餐：新宿思い出橫丁（昭和炭火燒鳥串燒巡禮）', tag: '居酒屋', jpTitle: '新宿西口 思い出横丁', jpAddr: '東京都新宿区西新宿1-2', jpNote: '現烤炭香雞肉蔥串佐冰涼生啤酒' }
+            ]
+          },
+          {
+            day: 2,
+            date: 'Day 2',
+            title: '明治神宮祈福 ➔ 原宿潮流漫步 ➔ 澀谷 SHIBUYA SKY 高空夕陽夜景',
+            stops: [
+              { id: 'tk-d2-s1', time: '09:00', title: '明治神宮森呼吸散策 ＆ 正殿祈願', tag: '都會綠洲', jpTitle: '明治神宮 (Meiji Jingu)', jpAddr: '東京都渋谷区代々木神園町1-1', jpNote: '古木參天碎石參道，感受莊嚴清幽' },
+              { id: 'tk-d2-s2', time: '15:30', title: '登上「SHIBUYA SKY」360 度俯瞰東京十字路口夕陽夜景', tag: '絕美高空', jpTitle: 'SHIBUYA SKY (渋谷スクランブルスクエア)', jpAddr: '東京都渋谷区渋谷2-24-12', jpNote: '需提前上網預約黃昏時段場次' }
+            ]
+          }
+        ],
+        food: [
+          { name: 'HARBS 新宿 LUMINE EST 店', jpName: 'ハーブス ルミネエスト新宿店', day: 2, time: '14:00', dayLabel: 'Day 2 • 14:00', catLabel: '水果千層', feature: '日本殿堂級千層蛋糕，新鮮水果與特製生乳鮮奶油。', mustOrder: '招牌水果千層蛋糕（Mille Crepes）', jpAddress: '東京都新宿区新宿3-38-1 ルミネエスト新宿B2F' }
+        ],
+        transport: [
+          { route: '成田機場 往返 新宿市區', tool: '京成 Skyliner 或 JR N\'EX 成田特快', price: '約 2,570 - 3,250 日圓', note: 'Skyliner 轉山手線最快，N\'EX 直達免換車。' }
+        ],
+        tickets: [
+          { spot: 'SHIBUYA SKY 展望台', time: '10:00 至 22:30', price: '約 2,200 - 2,500 日圓', note: '必須提前 2 至 4 週預約黃昏前 1 小時熱門場次。' }
+        ],
+        checklist: [
+          {
+            category: '證件與電子票券',
+            items: [
+              { id: 'tk-c1', label: '護照正本（效期需在 6 個月以上）' },
+              { id: 'tk-c2', label: 'Visit Japan Web 申報 QR Code 截圖' },
+              { id: 'tk-c3', label: 'iPhone 綁定 Suica 交通卡' }
+            ]
+          }
+        ]
+      }
+    };
+
+    // =========================================================================
+    // 2. STATE MANAGEMENT & LOCALSTORAGE
+    // =========================================================================
+    let currentTripKey = 'sapporo';
+    let currentTripData = BUILTIN_TRIPS['sapporo'];
+    let activeDay = 1;
+    let itineraryChecks = {};
+    let checklistChecks = {};
+
+    function getCustomTrips() {
+      try {
+        const stored = localStorage.getItem('user_custom_trips');
+        return stored ? JSON.parse(stored) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCustomTrip(trip) {
+      const customTrips = getCustomTrips();
+      const slug = trip.meta.slug || ('custom-' + Date.now());
+      trip.meta.slug = slug;
+      customTrips[slug] = trip;
+      localStorage.setItem('user_custom_trips', JSON.stringify(customTrips));
+      updateTripSelectorOptions();
+      return slug;
+    }
+
+    function loadTripState(tripKey) {
+      try {
+        const it = localStorage.getItem(`itin_checks_${tripKey}`);
+        itineraryChecks = it ? JSON.parse(it) : {};
+        const chk = localStorage.getItem(`chk_checks_${tripKey}`);
+        checklistChecks = chk ? JSON.parse(chk) : {};
+      } catch (e) {
+        itineraryChecks = {};
+        checklistChecks = {};
+      }
+    }
+
+    function saveItineraryState() {
+      try {
+        localStorage.setItem(`itin_checks_${currentTripKey}`, JSON.stringify(itineraryChecks));
+      } catch (e) {}
+    }
+
+    function saveChecklistState() {
+      try {
+        localStorage.setItem(`chk_checks_${currentTripKey}`, JSON.stringify(checklistChecks));
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // 3. UI HELPERS & TOAST
+    // =========================================================================
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2200);
+    }
+
+    function copyToClipboard(text, msg = '已複製至剪貼簿') {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showToast(msg));
+      } else {
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showToast(msg);
+      }
+    }
+
+    function openDriverModal(title, addr, note = '') {
+      document.getElementById('modal-jp-title').textContent = title;
+      document.getElementById('modal-jp-addr').textContent = addr;
+      document.getElementById('modal-jp-note').textContent = note;
+      const modal = document.getElementById('driver-modal');
+      modal.classList.remove('hidden');
+      document.getElementById('modal-copy-btn').onclick = () => copyToClipboard(addr, '已複製地址！');
+    }
+    document.getElementById('modal-close-btn').addEventListener('click', () => {
+      document.getElementById('driver-modal').classList.add('hidden');
+    });
+
+    // =========================================================================
+    // 4. RENDERING FUNCTIONS FOR 5 TABS
+    // =========================================================================
+    function renderAppHeader() {
+      const meta = currentTripData.meta || {};
+      document.getElementById('header-trip-title').textContent = meta.title || '自由行指南';
+      document.getElementById('header-trip-meta').textContent = `${meta.dates || ''} • ${meta.weather || '天氣舒適'}`;
+      document.title = `${meta.title || '自由行'} - Travel Planner Hub`;
+    }
+
+    function renderItineraryDayButtons() {
+      const container = document.getElementById('itinerary-day-buttons');
+      container.innerHTML = '';
+      if (!currentTripData.itinerary || currentTripData.itinerary.length === 0) {
+        container.innerHTML = '<span class="text-xs text-slate-400">暫無每日行程資料</span>';
+        return;
+      }
+      currentTripData.itinerary.forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = (activeDay === d.day)
+          ? 'shrink-0 rounded-lg bg-sky-700 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition'
+          : 'shrink-0 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition';
+        btn.textContent = d.date || `Day ${d.day}`;
+        btn.onclick = () => {
+          activeDay = d.day;
+          renderItineraryDayButtons();
+          renderItineraryList();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function renderItineraryList() {
+      const container = document.getElementById('itinerary-timeline-container');
+      container.innerHTML = '';
+      if (!currentTripData.itinerary || currentTripData.itinerary.length === 0) {
+        container.innerHTML = '<div class="rounded-2xl bg-white p-8 text-center text-slate-400 text-sm">點擊上方「匯入行程筆記」即可貼上行程！</div>';
+        return;
+      }
+
+      const days = (activeDay === 'all')
+        ? currentTripData.itinerary
+        : currentTripData.itinerary.filter(d => d.day === activeDay);
+
+      days.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-3';
+        let stopsHtml = '';
+        (d.stops || []).forEach(s => {
+          const isDone = !!itineraryChecks[s.id];
+          stopsHtml += `
+            <div class="relative pl-6 pb-4 border-l-2 border-slate-200 last:border-none last:pb-0">
+              <span class="absolute -left-[9px] top-0.5 h-4 w-4 rounded-full border-2 border-white ${isDone ? 'bg-emerald-500' : 'bg-slate-300'}"></span>
+              <div class="flex items-start justify-between gap-2">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="rounded bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-700">${s.time}</span>
+                    <span class="rounded bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-800">${s.tag || '景點'}</span>
+                  </div>
+                  <h4 class="text-sm font-bold ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}">${s.title}</h4>
+                  ${s.desc ? `<p class="text-xs text-slate-600 leading-relaxed">${s.desc}</p>` : ''}
+                </div>
+                <label class="cursor-pointer shrink-0">
+                  <input type="checkbox" class="stop-chk h-4 w-4 rounded border-slate-300 text-sky-700" data-id="${s.id}" ${isDone ? 'checked' : ''}>
+                </label>
+              </div>
+              <div class="mt-2.5 flex items-center gap-2">
+                ${s.jpAddr ? `
+                  <button type="button" class="driver-trigger rounded-lg bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1 text-xs font-bold hover:bg-sky-100 transition" data-title="${s.jpTitle || s.title}" data-addr="${s.jpAddr}" data-note="${s.jpNote || ''}">
+                    司機卡
+                  </button>
+                  <button type="button" class="copy-trigger rounded-lg bg-slate-100 text-slate-700 px-2.5 py-1 text-xs font-semibold hover:bg-slate-200 transition" data-addr="${s.jpAddr}">
+                    複製地址
+                  </button>
+                ` : ''}
+                ${s.linkUrl ? `
+                  <a href="${s.linkUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-sky-700 hover:underline">
+                    ${s.linkText || '官網地圖'} &nearr;
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">${d.date}</span>
+              <h3 class="text-base font-bold text-slate-900">${d.title}</h3>
+            </div>
+          </div>
+          <div class="pt-2">${stopsHtml}</div>
+        `;
+
+        card.querySelectorAll('.stop-chk').forEach(chk => {
+          chk.addEventListener('change', (e) => {
+            const id = e.target.getAttribute('data-id');
+            itineraryChecks[id] = e.target.checked;
+            saveItineraryState();
+            renderItineraryList();
+          });
+        });
+
+        card.querySelectorAll('.driver-trigger').forEach(b => {
+          b.addEventListener('click', () => {
+            openDriverModal(b.getAttribute('data-title'), b.getAttribute('data-addr'), b.getAttribute('data-note'));
+          });
+        });
+
+        card.querySelectorAll('.copy-trigger').forEach(b => {
+          b.addEventListener('click', () => {
+            copyToClipboard(b.getAttribute('data-addr'));
+          });
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('expand-all-days-btn').addEventListener('click', (e) => {
+      if (activeDay === 'all') {
+        activeDay = 1;
+        e.target.textContent = '展開全部總覽';
+      } else {
+        activeDay = 'all';
+        e.target.textContent = '收合單日瀏覽';
+      }
+      renderItineraryDayButtons();
+      renderItineraryList();
+    });
+
+    // FOOD RENDER
+    function renderFood(filterDay = 'all') {
+      const container = document.getElementById('food-grid-container');
+      container.innerHTML = '';
+      const foodList = currentTripData.food || [];
+      if (foodList.length === 0) {
+        container.innerHTML = '<div class="col-span-2 rounded-2xl bg-white p-8 text-center text-slate-400 text-sm">暫無特定美食與商場卡片</div>';
+        return;
+      }
+
+      const list = (filterDay === 'all')
+        ? foodList
+        : foodList.filter(f => f.day === parseInt(filterDay, 10));
+
+      list.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-white p-5 shadow-sm border border-slate-200 flex flex-col justify-between space-y-3';
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="rounded-md bg-amber-100 text-amber-800 px-2 py-0.5 text-xs font-bold">${f.dayLabel || `Day ${f.day}`}</span>
+              <span class="text-xs text-slate-400 font-medium">${f.catLabel || '特色美食'}</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">${f.name}</h3>
+            ${f.jpName ? `<p class="text-xs text-sky-800 font-medium">${f.jpName}</p>` : ''}
+            ${f.feature ? `<p class="text-xs text-slate-600 leading-relaxed">${f.feature}</p>` : ''}
+            ${f.mustOrder ? `
+              <div class="rounded-xl bg-slate-50 p-2.5 border border-slate-100 text-xs">
+                <span class="font-bold text-slate-700">必點名物：</span>
+                <span class="text-slate-600">${f.mustOrder}</span>
+              </div>
+            ` : ''}
+            ${f.jpAddress ? `<p class="text-xs text-slate-500"><span class="font-medium">地址：</span>${f.jpAddress}</p>` : ''}
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div class="flex gap-2">
+              ${f.jpAddress ? `
+                <button type="button" class="food-driver-btn rounded-xl bg-sky-700 text-white px-3 py-1.5 text-xs font-bold hover:bg-sky-800 transition">
+                  司機卡
+                </button>
+                <button type="button" class="food-copy-btn rounded-xl bg-slate-100 text-slate-700 px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition">
+                  複製地址
+                </button>
+              ` : ''}
+            </div>
+            ${f.url ? `<a href="${f.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-sky-700 hover:underline">地圖官網 &nearr;</a>` : ''}
+          </div>
+        `;
+
+        const driverBtn = card.querySelector('.food-driver-btn');
+        if (driverBtn) {
+          driverBtn.onclick = () => openDriverModal(f.jpName || f.name, f.jpAddress, '定位導航');
+        }
+        const copyBtn = card.querySelector('.food-copy-btn');
+        if (copyBtn) {
+          copyBtn.onclick = () => copyToClipboard(f.jpAddress);
+        }
+        container.appendChild(card);
+      });
+    }
+
+    function renderFoodFilters() {
+      const container = document.getElementById('food-day-filters');
+      container.innerHTML = '';
+      const foodList = currentTripData.food || [];
+      const days = [...new Set(foodList.map(f => f.day))].sort((a,b)=>a-b);
+      const allBtn = document.createElement('button');
+      allBtn.className = 'food-day-filter shrink-0 rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white';
+      allBtn.textContent = '全部';
+      allBtn.onclick = () => {
+        document.querySelectorAll('.food-day-filter').forEach(b => b.className = 'food-day-filter shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200');
+        allBtn.className = 'food-day-filter shrink-0 rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white';
+        renderFood('all');
+      };
+      container.appendChild(allBtn);
+
+      days.forEach(d => {
+        const b = document.createElement('button');
+        b.className = 'food-day-filter shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200';
+        b.textContent = `D${d}`;
+        b.onclick = () => {
+          document.querySelectorAll('.food-day-filter').forEach(x => x.className = 'food-day-filter shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200');
+          b.className = 'food-day-filter shrink-0 rounded-lg bg-sky-700 px-2.5 py-1 text-xs font-bold text-white';
+          renderFood(d);
+        };
+        container.appendChild(b);
+      });
+    }
+
+    // TRANSPORT & TICKETS RENDER
+    function renderTransport() {
+      const tbody = document.getElementById('transport-table-body');
+      tbody.innerHTML = '';
+      const list = currentTripData.transport || [];
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400">暫無特定交通路線資料</td></tr>';
+        return;
+      }
+      list.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-3 px-3 font-semibold text-slate-900">${t.route}</td>
+          <td class="py-3 px-3">${t.tool}</td>
+          <td class="py-3 px-3 text-sky-800 font-semibold">${t.price}</td>
+          <td class="py-3 px-3 leading-relaxed">${t.note}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTickets() {
+      const tbody = document.getElementById('tickets-table-body');
+      tbody.innerHTML = '';
+      const list = currentTripData.tickets || [];
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400">暫無特定門票預約資料</td></tr>';
+        return;
+      }
+      list.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-3 px-3 font-semibold text-slate-900">${t.spot}</td>
+          <td class="py-3 px-3">${t.time}</td>
+          <td class="py-3 px-3 text-sky-800 font-semibold">${t.price}</td>
+          <td class="py-3 px-3 leading-relaxed">${t.note}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // CHECKLIST RENDER
+    function renderChecklist() {
+      const container = document.getElementById('checklist-container');
+      container.innerHTML = '';
+      const groups = currentTripData.checklist || [];
+      let total = 0;
+      let done = 0;
+
+      if (groups.length === 0) {
+        container.innerHTML = '<div class="col-span-2 text-center py-6 text-slate-400">暫無行前清單項目</div>';
+        document.getElementById('checklist-progress-badge').textContent = '已完成 0 / 0';
+        return;
+      }
+
+      groups.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl border border-slate-200 bg-white p-4 space-y-3';
+        let itemsHtml = '';
+        (g.items || []).forEach(it => {
+          total++;
+          const isChecked = !!checklistChecks[it.id];
+          if (isChecked) done++;
+          itemsHtml += `
+            <label class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" class="chk-item mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-700" data-id="${it.id}" ${isChecked ? 'checked' : ''}>
+              <span class="text-xs sm:text-sm ${isChecked ? 'line-through text-slate-400' : 'text-slate-700'}">
+                ${it.label}
+              </span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">${g.category}</h3>
+          <div class="space-y-1">${itemsHtml}</div>
+        `;
+
+        card.querySelectorAll('.chk-item').forEach(chk => {
+          chk.addEventListener('change', (e) => {
+            const id = e.target.getAttribute('data-id');
+            checklistChecks[id] = e.target.checked;
+            saveChecklistState();
+            renderChecklist();
+          });
+        });
+
+        container.appendChild(card);
+      });
+
+      document.getElementById('checklist-progress-badge').textContent = `已完成 ${done} / ${total}`;
+    }
+
+    // SWITCH TRIP
+    function switchTrip(tripKey) {
+      currentTripKey = tripKey;
+      const customTrips = getCustomTrips();
+      if (BUILTIN_TRIPS[tripKey]) {
+        currentTripData = BUILTIN_TRIPS[tripKey];
+      } else if (customTrips[tripKey]) {
+        currentTripData = customTrips[tripKey];
+      } else {
+        currentTripData = BUILTIN_TRIPS['sapporo'];
+      }
+      activeDay = 1;
+      loadTripState(tripKey);
+      renderAppHeader();
+      renderItineraryDayButtons();
+      renderItineraryList();
+      renderFoodFilters();
+      renderFood('all');
+      renderTransport();
+      renderTickets();
+      renderChecklist();
+    }
+
+    // UPDATE SELECTOR OPTIONS
+    function updateTripSelectorOptions() {
+      const customGroup = document.getElementById('custom-trips-group');
+      customGroup.innerHTML = '';
+      const customTrips = getCustomTrips();
+      const keys = Object.keys(customTrips);
+      if (keys.length === 0) {
+        customGroup.innerHTML = '<option disabled>尚無自訂行程</option>';
+      } else {
+        keys.forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k;
+          opt.textContent = `${customTrips[k].meta.title || k} (自訂)`;
+          customGroup.appendChild(opt);
+        });
+      }
+    }
+
+    // =========================================================================
+    // 5. PURE JAVASCRIPT MARKDOWN PARSER ENGINE
+    // =========================================================================
+    function parseTripMarkdown(mdText) {
+      const lines = mdText.split('\n');
+      const trip = {
+        meta: {
+          title: '自訂自由行指南',
+          slug: 'custom-' + Date.now(),
+          themeColor: 'sky',
+          dates: '自由行行程',
+          weather: '晴朗舒適',
+          hotel: ''
+        },
+        itinerary: [],
+        food: [],
+        transport: [],
+        tickets: [],
+        checklist: []
+      };
+
+      let currentSection = null;
+      let currentDayObj = null;
+      let currentChkGroup = null;
+
+      let i = 0;
+      while (i < lines.length) {
+        const line = lines[i].trim();
+        if (line.startsWith('# ')) {
+          const title = line.replace('# ', '').trim();
+          if (title.includes('基本資訊')) currentSection = 'meta';
+          else if (title.includes('行程總覽')) currentSection = 'itinerary';
+          else if (title.includes('美饌') || title.includes('美食') || title.includes('商場')) currentSection = 'food';
+          else if (title.includes('交通') || title.includes('接駁')) currentSection = 'transport';
+          else if (title.includes('門票') || title.includes('開放時間') || title.includes('預約')) currentSection = 'tickets';
+          else if (title.includes('清單') || title.includes('行前')) currentSection = 'checklist';
+          else currentSection = 'other';
+          i++;
+          continue;
+        }
+
+        if (!currentSection) { i++; continue; }
+
+        if (currentSection === 'meta') {
+          if (line.startsWith('- 標題:')) trip.meta.title = line.replace('- 標題:', '').trim();
+          else if (line.startsWith('- 代碼:')) trip.meta.slug = line.replace('- 代碼:', '').trim();
+          else if (line.startsWith('- 主題色:')) trip.meta.themeColor = line.replace('- 主題色:', '').trim();
+          else if (line.startsWith('- 日期區間:') || line.startsWith('- 旅遊天數:')) trip.meta.dates = line.split(':', 2)[1].trim();
+          else if (line.startsWith('- 住宿飯店:')) trip.meta.hotel = line.replace('- 住宿飯店:', '').trim();
+          else if (line.startsWith('- 當地天氣:')) trip.meta.weather = line.replace('- 當地天氣:', '').trim();
+        }
+        else if (currentSection === 'itinerary') {
+          if (line.startsWith('## Day')) {
+            const m = line.match(/Day\s*(\d+)/i);
+            const dayNum = m ? parseInt(m[1], 10) : trip.itinerary.length + 1;
+            currentDayObj = {
+              day: dayNum,
+              date: `Day ${dayNum}`,
+              title: line.replace('##', '').trim(),
+              stops: []
+            };
+            trip.itinerary.push(currentDayObj);
+          } else if (line.startsWith('- 時間:') && currentDayObj) {
+            const stop = {
+              id: `d${currentDayObj.day}-s${currentDayObj.stops.length + 1}`,
+              time: line.replace('- 時間:', '').trim(),
+              title: '',
+              tag: '行程景點',
+              desc: '',
+              jpTitle: '',
+              jpAddr: '',
+              jpNote: '',
+              linkUrl: ''
+            };
+            let j = i + 1;
+            while (j < lines.length && lines[j].trim().startsWith('- ') && !lines[j].trim().startsWith('- 時間:')) {
+              const sub = lines[j].trim();
+              if (sub.startsWith('- 項目:')) stop.title = sub.replace('- 項目:', '').trim();
+              else if (sub.startsWith('- 標籤:')) stop.tag = sub.replace('- 標籤:', '').trim();
+              else if (sub.startsWith('- 地點:')) stop.jpTitle = sub.replace('- 地點:', '').trim();
+              else if (sub.startsWith('- 地址:')) stop.jpAddr = sub.replace('- 地址:', '').trim();
+              else if (sub.startsWith('- 備註:')) {
+                stop.jpNote = sub.replace('- 備註:', '').trim();
+                stop.desc = stop.jpNote;
+              } else if (sub.startsWith('- 連結:')) {
+                stop.linkUrl = sub.replace('- 連結:', '').trim();
+              }
+              j++;
+            }
+            i = j - 1;
+            if (!stop.jpTitle) stop.jpTitle = stop.title;
+            currentDayObj.stops.push(stop);
+          }
+        }
+        else if (currentSection === 'food') {
+          if (line.startsWith('- 店名:')) {
+            const fItem = {
+              name: line.replace('- 店名:', '').trim(),
+              jpName: '',
+              day: 1,
+              time: '12:00',
+              dayLabel: 'Day 1',
+              catLabel: '特色美食',
+              feature: '',
+              mustOrder: '',
+              jpAddress: '',
+              url: ''
+            };
+            let j = i + 1;
+            while (j < lines.length && lines[j].trim().startsWith('- ') && !lines[j].trim().startsWith('- 店名:')) {
+              const sub = lines[j].trim();
+              if (sub.startsWith('- 外文:') || sub.startsWith('- 日文:')) fItem.jpName = sub.split(':', 2)[1].trim();
+              else if (sub.startsWith('- 天數:')) {
+                const dm = sub.match(/\d+/);
+                if (dm) { fItem.day = parseInt(dm[0], 10); fItem.dayLabel = `Day ${fItem.day}`; }
+              } else if (sub.startsWith('- 時間:')) {
+                fItem.time = sub.split(':', 2)[1].trim();
+                fItem.dayLabel += ` • ${fItem.time}`;
+              } else if (sub.startsWith('- 類別:')) fItem.catLabel = sub.split(':', 2)[1].trim();
+              else if (sub.startsWith('- 特色:')) fItem.feature = sub.split(':', 2)[1].trim();
+              else if (sub.startsWith('- 必點:')) fItem.mustOrder = sub.split(':', 2)[1].trim();
+              else if (sub.startsWith('- 地址:')) fItem.jpAddress = sub.split(':', 2)[1].trim();
+              else if (sub.startsWith('- 連結:')) fItem.url = sub.split(':', 2)[1].trim();
+              j++;
+            }
+            i = j - 1;
+            if (!fItem.jpName) fItem.jpName = fItem.name;
+            trip.food.push(fItem);
+          }
+        }
+        else if (currentSection === 'transport') {
+          if (line.startsWith('- 區間:')) {
+            const tItem = {
+              route: line.replace('- 區間:', '').trim(),
+              tool: '',
+              price: '',
+              note: ''
+            };
+            let j = i + 1;
+            while (j < lines.length && lines[j].trim().startsWith('- ') && !lines[j].trim().startsWith('- 區間:')) {
+              const sub = lines[j].trim();
+              if (sub.startsWith('- 工具:')) tItem.tool = sub.replace('- 工具:', '').trim();
+              else if (sub.startsWith('- 費用:')) tItem.price = sub.replace('- 費用:', '').trim();
+              else if (sub.startsWith('- 備註:')) tItem.note = sub.replace('- 備註:', '').trim();
+              j++;
+            }
+            i = j - 1;
+            trip.transport.push(tItem);
+          }
+        }
+        else if (currentSection === 'tickets') {
+          if (line.startsWith('- 設施:')) {
+            const ticket = {
+              spot: line.replace('- 設施:', '').trim(),
+              time: '依現場開放為準',
+              price: '免費或現場購票',
+              note: ''
+            };
+            let j = i + 1;
+            while (j < lines.length && lines[j].trim().startsWith('- ') && !lines[j].trim().startsWith('- 設施:')) {
+              const sub = lines[j].trim();
+              if (sub.startsWith('- 開放時間:')) ticket.time = sub.replace('- 開放時間:', '').trim();
+              else if (sub.startsWith('- 門票:')) ticket.price = sub.replace('- 門票:', '').trim();
+              else if (sub.startsWith('- 重點:') || sub.startsWith('- 備註:')) ticket.note = sub.split(':', 2)[1].trim();
+              j++;
+            }
+            i = j - 1;
+            trip.tickets.push(ticket);
+          }
+        }
+        else if (currentSection === 'checklist') {
+          if (line.startsWith('## ')) {
+            currentChkGroup = {
+              category: line.replace('## ', '').trim(),
+              items: []
+            };
+            trip.checklist.push(currentChkGroup);
+          } else if ((line.startsWith('- [ ]') || line.startsWith('- [x]')) && currentChkGroup) {
+            currentChkGroup.items.push({
+              id: `chk-${trip.checklist.length}-${currentChkGroup.items.length + 1}`,
+              label: line.slice(5).trim()
+            });
+          }
+        }
+        i++;
+      }
+
+      return trip;
+    }
+
+    // =========================================================================
+    // 6. EXPORT STANDALONE SINGLE-FILE HTML GENERATOR
+    // =========================================================================
+    function exportStandaloneHtml() {
+      const title = currentTripData.meta.title || '自由行隨身指南';
+      const slug = currentTripData.meta.slug || 'guide';
+      const jsonStr = JSON.stringify(currentTripData, null, 2);
+
+      const htmlContent = `<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 p-4">
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+      <h1 class="text-xl font-bold text-slate-900">${title}</h1>
+      <p class="text-xs text-slate-500 mt-1">${currentTripData.meta.dates || ''} • 離線獨立隨身單檔手冊</p>
+    </div>
+    <div id="timeline" class="space-y-4"></div>
+  </div>
+  <script>
+    const data = ${jsonStr};
+    const c = document.getElementById('timeline');
+    data.itinerary.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3';
+      card.innerHTML = '<h2 class="text-base font-bold text-slate-900 pb-2 border-b border-slate-100">' + d.date + ' • ' + d.title + '</h2>';
+      let sHtml = '';
+      d.stops.forEach(s => {
+        sHtml += '<div class="pl-4 border-l-2 border-slate-200 py-1 space-y-1"><div class="flex items-center gap-2"><span class="font-bold text-xs bg-slate-100 px-2 py-0.5 rounded">' + s.time + '</span><span class="font-bold text-sm text-slate-900">' + s.title + '</span></div>' + (s.jpAddr ? '<p class="text-xs text-slate-500">地址：' + s.jpAddr + '</p>' : '') + '</div>';
+      });
+      card.innerHTML += sHtml;
+      c.appendChild(card);
+    });
+  <\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slug}-standalone.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`已成功匯出 ${slug}-standalone.html`);
+    }
+
+    // =========================================================================
+    // 7. EVENT LISTENERS SETUP
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      updateTripSelectorOptions();
+      switchTrip('sapporo');
+
+      // Trip selector change
+      document.getElementById('trip-selector').addEventListener('change', (e) => {
+        switchTrip(e.target.value);
+      });
+
+      // Tab switcher
+      const tabBtns = document.querySelectorAll('.main-tab-btn');
+      const sections = {
+        itinerary: document.getElementById('tab-itinerary'),
+        food: document.getElementById('tab-food'),
+        transport: document.getElementById('tab-transport'),
+        tickets: document.getElementById('tab-tickets'),
+        checklist: document.getElementById('tab-checklist')
+      };
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-main-tab');
+          tabBtns.forEach(b => {
+            b.className = 'main-tab-btn shrink-0 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 px-3.5 py-1.5 transition';
+          });
+          btn.className = 'main-tab-btn shrink-0 rounded-xl bg-slate-900 text-white px-3.5 py-1.5 shadow-sm transition';
+          Object.keys(sections).forEach(k => {
+            if (sections[k]) {
+              if (k === tab) sections[k].classList.remove('hidden');
+              else sections[k].classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Quick driver button
+      document.getElementById('quick-driver-btn').onclick = () => {
+        if (currentTripData.itinerary && currentTripData.itinerary[0] && currentTripData.itinerary[0].stops && currentTripData.itinerary[0].stops[0]) {
+          const s = currentTripData.itinerary[0].stops[0];
+          openDriverModal(s.jpTitle || s.title, s.jpAddr || '目的地詳細地址', s.jpNote || '');
+        } else {
+          showToast('暫無司機資訊');
+        }
+      };
+
+      // Reset checklist
+      document.getElementById('reset-checks-btn').onclick = () => {
+        if (confirm('確定重置此行程的所有勾選進度嗎？')) {
+          checklistChecks = {};
+          itineraryChecks = {};
+          saveChecklistState();
+          saveItineraryState();
+          renderChecklist();
+          renderItineraryList();
+          showToast('已重置勾選紀錄');
+        }
+      };
+
+      // Export HTML
+      document.getElementById('export-html-btn').onclick = exportStandaloneHtml;
+
+      // Import Modal
+      const importModal = document.getElementById('import-modal');
+      const textarea = document.getElementById('import-markdown-textarea');
+
+      document.getElementById('open-import-modal-btn').onclick = () => {
+        importModal.classList.remove('hidden');
+      };
+      document.getElementById('import-modal-close-btn').onclick = () => {
+        importModal.classList.add('hidden');
+      };
+      document.getElementById('cancel-import-btn').onclick = () => {
+        importModal.classList.add('hidden');
+      };
+
+      document.getElementById('load-sample-md-btn').onclick = () => {
+        textarea.value = `# 旅遊基本資訊
+- 標題: 日本京都 4天3夜古都漫步隨身指南
+- 代碼: kyoto-guide
+- 主題色: amber
+- 日期區間: 2026-11-20 至 2026-11-23
+- 住宿飯店: 京都四條河原町溫泉飯店
+- 當地天氣: 秋意漸濃 10°C ~ 18°C 楓葉季
+
+# 行程總覽
+## Day 1
+- 時間: 10:30 - 13:00
+- 項目: 抵達關西機場 ➔ 搭乘特急 Haruka 直奔京都車站
+- 標籤: 機場快線
+- 地點: JR 京都駅 (きょうとえき)
+- 地址: 京都府京都市下京区東塩小路釜座町
+- 備註: 推薦加購 Hello Kitty 紀念版 Haruka
+
+- 時間: 14:00 - 16:30
+- 項目: 清水寺散策、音羽之瀑與清水舞台參拜
+- 標籤: 世界遺產
+- 地點: 音羽山 清水寺
+- 地址: 京都府京都市東山区清水1丁目294
+- 備註: 楓葉季夜間特別拜觀
+
+# 必吃美饌與商場
+- 店名: 順正 南禪寺豆腐料理
+- 日文: 南禅寺 順正
+- 天數: Day 1
+- 時間: 18:00
+- 類別: 京料理湯豆腐
+- 特色: 百年庭園景觀名店，濃郁高湯現煮手作湯豆腐。
+- 必點: 湯豆腐宴席套餐
+- 地址: 京都府京都市左京区南禅寺草川町60
+
+# 交通與接駁
+- 區間: 關西機場 至 京都車站
+- 工具: JR 關空特急 Haruka
+- 費用: 單程約 2,200 日圓
+- 備註: 車程約 75 分鐘，直達免轉車。
+
+# 門票與預約
+- 設施: 清水寺
+- 開放時間: 06:00 至 18:00 (夜間拜觀至 21:30)
+- 門票: 成人 400 日圓
+- 重點: 推薦於黃昏前 1 小時入場觀賞夕照。
+
+# 行前檢查清單
+## 必備證件
+- [ ] 護照正本（效期需在 6 個月以上）
+- [ ] Visit Japan Web 入境 QR Code
+`;
+      };
+
+      document.getElementById('parse-and-load-btn').onclick = () => {
+        const text = textarea.value.trim();
+        if (!text) {
+          alert('請先貼上 Markdown 內容');
+          return;
+        }
+        const parsed = parseTripMarkdown(text);
+        const slug = saveCustomTrip(parsed);
+        importModal.classList.add('hidden');
+        document.getElementById('trip-selector').value = slug;
+        switchTrip(slug);
+        showToast(`已成功匯入【${parsed.meta.title}】！`);
+      };
+    });
+  </script>
+</body>
+</html>
