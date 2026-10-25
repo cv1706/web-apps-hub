@@ -202,13 +202,24 @@
       </div>
 
       <div class="flex-1 min-h-[260px] flex flex-col space-y-2">
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-500 font-medium">請貼上 Markdown 內容：</span>
+        <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500 font-medium">匯入方式：</span>
+            <!-- Hidden File Input -->
+            <input type="file" id="md-file-input" accept=".md,.markdown,text/markdown,text/plain" class="hidden">
+            <button id="trigger-file-upload-btn" type="button" class="inline-flex items-center gap-1 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1 text-xs font-bold hover:bg-sky-100 transition" title="從本機或 Obsidian 資料夾選取 .md 檔案">
+              <span>上傳 .md 檔案</span>
+            </button>
+            <span id="selected-file-name" class="text-xs text-sky-800 font-semibold truncate max-w-[200px]"></span>
+          </div>
           <button id="load-sample-md-btn" type="button" class="text-sky-700 font-bold hover:underline">
             載入標準示範範本
           </button>
         </div>
-        <textarea id="import-markdown-textarea" class="w-full flex-1 rounded-2xl border border-slate-300 p-3 text-xs font-mono leading-relaxed focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="# 旅遊基本資訊&#10;- 標題: 日本京都 4天3夜古都漫步&#10;- 代碼: kyoto-guide&#10;..."></textarea>
+
+        <div id="drop-zone" class="relative flex-1 flex flex-col rounded-2xl border-2 border-dashed border-slate-300 p-1.5 hover:border-sky-500 transition bg-slate-50/50">
+          <textarea id="import-markdown-textarea" class="w-full flex-1 rounded-xl p-2.5 text-xs font-mono leading-relaxed focus:outline-none bg-transparent" placeholder="可直接拖曳 .md 檔案至此，或點選上方「上傳 .md 檔案」，亦可直接貼上 Markdown 內容..."></textarea>
+        </div>
       </div>
 
       <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
@@ -1315,10 +1326,54 @@
 `;
       };
 
+      // File upload & Drag-and-drop handlers
+      const fileInput = document.getElementById('md-file-input');
+      const uploadBtn = document.getElementById('trigger-file-upload-btn');
+      const selectedFileName = document.getElementById('selected-file-name');
+      const dropZone = document.getElementById('drop-zone');
+
+      function handleFile(file) {
+        if (!file) return;
+        if (selectedFileName) selectedFileName.textContent = `已載入: ${file.name}`;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          textarea.value = e.target.result;
+          showToast(`已載入檔案：${file.name}`);
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+
+      if (uploadBtn && fileInput) {
+        uploadBtn.onclick = () => fileInput.click();
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleFile(e.target.files[0]);
+          }
+        });
+      }
+
+      if (dropZone) {
+        dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.classList.add('border-sky-500', 'bg-sky-50/50');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('border-sky-500', 'bg-sky-50/50');
+        });
+        dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('border-sky-500', 'bg-sky-50/50');
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFile(e.dataTransfer.files[0]);
+          }
+        });
+      }
+
       document.getElementById('parse-and-load-btn').onclick = () => {
         const text = textarea.value.trim();
         if (!text) {
-          alert('請先貼上 Markdown 內容');
+          alert('請先上傳 .md 檔案或貼上 Markdown 內容');
           return;
         }
         const parsed = parseTripMarkdown(text);
