@@ -19,6 +19,8 @@
   * **無錫上海親子自由行手帳**：[https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/](https://web-apps-hub.cv1706yang.workers.dev/wuxi-shanghai-guide/)
   * **富國島海島度假隨身指南**：[https://web-apps-hub.cv1706yang.workers.dev/phu-quoc-guide/](https://web-apps-hub.cv1706yang.workers.dev/phu-quoc-guide/)
   * **北海道雪季浪漫隨身指南**：[https://web-apps-hub.cv1706yang.workers.dev/sapporo-guide/](https://web-apps-hub.cv1706yang.workers.dev/sapporo-guide/)
+  * **全球自由行智慧導航平台**：[https://web-apps-hub.cv1706yang.workers.dev/travel-planner/](https://web-apps-hub.cv1706yang.workers.dev/travel-planner/)
+  * **全球特惠機票雷達 3D**：[https://web-apps-hub.cv1706yang.workers.dev/flight-radar/](https://web-apps-hub.cv1706yang.workers.dev/flight-radar/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
@@ -34,6 +36,8 @@
   * **無錫上海親子自由行手帳**：[https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/](https://cv1706.github.io/web-apps-hub/wuxi-shanghai-guide/)
   * **富國島海島度假隨身指南**：[https://cv1706.github.io/web-apps-hub/phu-quoc-guide/](https://cv1706.github.io/web-apps-hub/phu-quoc-guide/)
   * **北海道雪季浪漫隨身指南**：[https://cv1706.github.io/web-apps-hub/sapporo-guide/](https://cv1706.github.io/web-apps-hub/sapporo-guide/)
+  * **全球自由行智慧導航平台**：[https://cv1706.github.io/web-apps-hub/travel-planner/](https://cv1706.github.io/web-apps-hub/travel-planner/)
+  * **全球特惠機票雷達 3D**：[https://cv1706.github.io/web-apps-hub/flight-radar/](https://cv1706.github.io/web-apps-hub/flight-radar/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
@@ -141,6 +145,15 @@
   * **Markdown 筆記一鍵匯入解析**：內建純前端 Markdown 解析器，只要貼上符合標準格式之旅遊筆記，即可在 1 秒內動態生成完整的五大分頁（行程、美食、交通、門票、清單），並自動保存至 LocalStorage 自訂行程庫。
   * **免連網單檔 HTML 隨身匯出**：提供「匯出單檔 HTML」功能，一鍵打包下載獨立檔案，離線可開且零依賴。
   * **本地 Python 編譯器支援**：可於本地執行 `python Tools/web_apps/04-文旅生活/build_travel_guide.py --src <Markdown路徑> --deploy` 直接完成編譯與全自動部署。
+
+### 12. ✈️ 全球特惠機票雷達 3D (Flight Radar 3D)
+* **路徑**：`/flight-radar/`
+* **使用說明**：
+  * **暗黑太空 3D 地球儀**：基於 WebGL、Three.js 與 Globe.gl 建構，整合相機阻尼平滑縮放（Damping Smooth Zoom）、細緻滾輪步進與 HUD 獨立縮放控制鈕。
+  * **全域 46 條航線動態追蹤**：覆蓋台灣出發（TPE 桃園 / TSA 松山 / KHH 小港）直飛兩岸直航、歐洲、美洲、東北亞、東南亞與大洋洲之大圓航線軌跡。
+  * **智能搜尋與視角鎖定**：支援輸入中文城市名或 IATA 機場三字碼即時模糊比對，點擊目標自動平滑飛越並固定視角，防晃動且不自轉。
+  * **自訂出發日期與天數推算**：自訂啟程年月日與停留天數（2 至 60 天），自動換算精準回程日期並動態試算淡旺季行情價格。
+  * **航空哩程與點數價值對照**：內建哩程雷達對話視窗，比對現金特惠價 vs. 亞洲萬里通、無限萬哩遊等開票所需點數與稅費。
 
 ---
 

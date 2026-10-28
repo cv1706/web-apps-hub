@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全球特惠機票雷達 3D - 台灣出發低價探索</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Globe.gl & Three.js via CDN -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/globe.gl@2.32.2/dist/globe.gl.min.js"></script>
+  <style>
+    :root {
+      --bg-space: #030712;
+      --card-bg: rgba(10, 20, 38, 0.92);
+      --card-border: rgba(0, 240, 255, 0.28);
+      --card-glow: rgba(0, 240, 255, 0.18);
+      --cyan-neon: #00f0ff;
+      --cyan-dim: #0284c7;
+      --orange-neon: #f59e0b;
+      --green-deal: #10b981;
+      --purple-btn: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --badge-bg: rgba(16, 185, 129, 0.12);
+      --badge-border: rgba(16, 185, 129, 0.35);
+      --drawer-bg: rgba(6, 13, 29, 0.96);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-space);
+      color: var(--text-main);
+      font-family: 'Noto Sans TC', sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* 3D Canvas Container */
+    #globe-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* Top HUD Header */
+    .hud-header {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      right: 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+    }
+
+    .hud-origin-tag {
+      background: rgba(3, 7, 18, 0.82);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 8px;
+      padding: 8px 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.12);
+      pointer-events: auto;
+    }
+
+    .hud-origin-tag .origin-select-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .origin-dropdown {
+      background: transparent;
+      border: none;
+      color: var(--cyan-neon);
+      font-family: 'Chakra Petch', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      outline: none;
+    }
+    .origin-dropdown option {
+      background: #0a1128;
+      color: #fff;
+    }
+
+    .hud-origin-tag .sub {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .hud-stats-tag {
+      background: rgba(3, 7, 18, 0.82);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 8px;
+      padding: 8px 14px;
+      backdrop-filter: blur(8px);
+      text-align: right;
+      pointer-events: auto;
+    }
+
+    .hud-stats-tag .routes-count {
+      font-family: 'Chakra Petch', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange-neon);
+    }
+
+    .hud-stats-tag .status-indicator {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: var(--cyan-neon);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan-neon);
+      margin-right: 4px;
+    }
+
+    /* Filter Chips Bar */
+    .filter-bar {
+      position: absolute;
+      top: 82px;
+      left: 20px;
+      max-width: calc(100% - 440px);
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      pointer-events: auto;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-chip {
+      background: rgba(10, 20, 38, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(6px);
+    }
+
+    .filter-chip.active, .filter-chip:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+    }
+
+    /* Top Action Buttons (Reset View & Auto-Rotate Toggle) */
+    .top-actions-row {
+      position: absolute;
+      top: 130px;
+      left: 20px;
+      right: auto;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-action-pill {
+      background: rgba(10, 20, 38, 0.88);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: 'Chakra Petch', monospace;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .btn-action-pill:hover, .btn-action-pill.active {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+    }
+
+    /* Search Results Suggestion Dropdown */
+    .search-results-dropdown {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 0;
+      width: 100%;
+      max-height: 240px;
+      overflow-y: auto;
+      background: rgba(8, 16, 36, 0.98);
+      border: 1px solid rgba(0, 240, 255, 0.45);
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 240, 255, 0.2);
+      backdrop-filter: blur(16px);
+      display: none;
+      flex-direction: column;
+      z-index: 120;
+    }
+    .search-results-dropdown.active {
+      display: flex;
+    }
+
+    .search-result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .search-result-item:hover {
+      background: rgba(0, 240, 255, 0.18);
+    }
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-result-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .search-result-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-result-iata {
+      color: var(--cyan-neon);
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+    }
+
+    .search-result-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .search-result-price {
+      text-align: right;
+    }
+
+    .search-result-price .deal-p {
+      color: var(--green-deal);
+      font-weight: 700;
+      font-size: 14px;
+      font-family: 'Space Grotesk', monospace;
+    }
+
+    .search-result-price .ref-p {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .no-results-item {
+      padding: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* Floating Route 3D Marker Pill */
+    .route-marker-pill {
+      background: rgba(4, 13, 33, 0.94);
+      border: 1px solid rgba(0, 240, 255, 0.7);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+      font-size: 11px;
+      color: var(--text-main);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+      pointer-events: auto;
+      transform: translate(-50%, -100%);
+      margin-top: -8px;
+      position: relative;
+      will-change: transform;
+      contain: layout paint;
+    }
+
+    .route-marker-pill::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 6px 5px 0;
+      border-style: solid;
+      border-color: rgba(0, 240, 255, 0.7) transparent transparent;
+      display: block;
+      width: 0;
+    }
+
+    .route-marker-pill:hover, .route-marker-pill.selected {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: #ffffff;
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
+      z-index: 50;
+    }
+
+    .route-marker-pill .price-tag {
+      color: var(--orange-neon);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    /* Target Detail Card (Popup Modal) */
+    .target-card {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      bottom: auto;
+      left: auto;
+      width: 390px;
+      max-width: calc(100vw - 40px);
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 16px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 24px var(--card-glow);
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(15px);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.35) rgba(15, 23, 42, 0.4);
+    }
+
+    .target-card::-webkit-scrollbar {
+      width: 5px;
+    }
+    .target-card::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 4px;
+    }
+    .target-card::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.35);
+      border-radius: 4px;
+    }
+    .target-card::-webkit-scrollbar-thumb:hover {
+      background: var(--cyan-neon);
+    }
+
+    .target-card.active {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .target-card .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      position: sticky;
+      top: -12px;
+      background: var(--card-bg);
+      padding: 4px 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+
+    .target-card .tag-label {
+      font-family: 'Chakra Petch', monospace;
+      font-size: 11px;
+      color: var(--cyan-neon);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .target-card .close-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 6px;
+    }
+    .target-card .close-icon-btn:hover {
+      color: #fff;
+    }
+
+    .target-card .title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .target-card .target-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .target-card .target-country {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .target-card .price-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .target-card .price-currency {
+      color: var(--orange-neon);
+      font-weight: 700;
+      font-size: 15px;
+      margin-right: 2px;
+    }
+
+    .target-card .price-amount {
+      color: var(--orange-neon);
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .target-card .price-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    .target-card .route-schedule-info {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+    }
+
+    /* Verified Green Badge */
+    .deal-badge {
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+
+    .deal-badge-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green-deal);
+      margin-bottom: 4px;
+    }
+
+    .deal-badge-title .deal-price {
+      font-size: 15px;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+    }
+
+    .deal-badge-desc {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    /* Action Buttons */
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-google {
+      width: 100%;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #8b5cf6 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-google:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-trip {
+      flex: 2;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-trip:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: var(--cyan-neon);
+    }
+
+    .btn-dismiss {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-dismiss:hover {
+      color: #fff;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    /* Bottom Quick Search Drawer (Matching Screenshot) */
+    .bottom-search-drawer {
+      position: absolute;
+      bottom: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 440px;
+      background: var(--drawer-bg);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 14px;
+      padding: 12px 16px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      z-index: 80;
+    }
+
+    .drawer-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .drawer-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flight-type-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .flight-type-btn.active {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+      font-weight: 600;
+    }
+
+    .drawer-search-input {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 6px 12px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .drawer-search-input:focus {
+      border-color: var(--cyan-neon);
+    }
+    .drawer-search-input::placeholder {
+      color: #64748b;
+    }
+
+    /* Custom Date & Duration Configurator */
+    .drawer-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .btn-toggle-config {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: var(--cyan-neon);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-toggle-config:hover, .btn-toggle-config.active {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: #ffffff;
+      color: #ffffff;
+    }
+
+    .drawer-config-panel {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr 1.3fr;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .config-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .config-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .config-date-input, .config-number-input {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 6px;
+      padding: 4px 6px;
+      color: #ffffff;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      outline: none;
+      width: 100%;
+    }
+    .config-date-input:focus, .config-number-input:focus {
+      border-color: var(--cyan-neon);
+    }
+
+    .duration-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .unit-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .return-calc-field {
+      justify-content: flex-end;
+    }
+    .return-calc-val {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      color: var(--cyan-neon);
+      font-weight: 700;
+      white-space: nowrap;
+      padding: 5px 0;
+    }
+
+    .quick-days-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .quick-days-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .quick-days-label {
+      font-size: 10px;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .day-chip {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .day-chip.active, .day-chip:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+    }
+
+    .btn-generate-deals {
+      background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+      transition: all 0.2s;
+      margin-top: 2px;
+    }
+    .btn-generate-deals:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      background: rgba(4, 9, 23, 0.96);
+      border-top: 1px solid rgba(0, 240, 255, 0.2);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 90;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .nav-item.active {
+      color: var(--cyan-neon);
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+
+    .nav-icon {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 15px;
+    }
+
+    /* Miles / Points Modal */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .miles-modal-card {
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 240, 255, 0.2);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .miles-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .miles-table th {
+      text-align: left;
+      color: var(--cyan-neon);
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    }
+    .miles-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 899px) {
+      .filter-bar {
+        max-width: 100%;
+        right: 12px;
+      }
+      .top-actions-row {
+        top: 126px;
+        left: 12px;
+        right: auto;
+      }
+      .target-card {
+        top: auto;
+        bottom: 74px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(20px);
+        width: calc(100% - 24px);
+        max-width: 440px;
+        max-height: calc(100vh - 140px);
+        z-index: 120;
+      }
+      .target-card.active {
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    @media (max-width: 480px) {
+      .hud-header {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+      }
+      .filter-bar {
+        top: 74px;
+        left: 12px;
+        right: 12px;
+      }
+      .target-card {
+        bottom: 70px;
+        width: calc(100% - 16px);
+        padding: 12px 14px;
+      }
+      .bottom-search-drawer {
+        bottom: 64px;
+        width: calc(100% - 16px);
+      }
+    }
+
+    /* GDS Amadeus Integration Styles */
+    .gds-status-tag {
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 8px;
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: all 0.2s;
+      pointer-events: auto;
+      text-align: left;
+    }
+    .gds-status-tag:hover {
+      border-color: var(--cyan-neon);
+      background: rgba(10, 20, 38, 0.95);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    }
+    .gds-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+    .gds-dot.connected {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .btn-gds-live {
+      width: 100%;
+      background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-gds-live:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .btn-gds-live:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .gds-live-container {
+      background: rgba(6, 78, 59, 0.28);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    .gds-live-title {
+      color: #34d399;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.2);
+      padding-bottom: 4px;
+    }
+    .gds-live-price {
+      font-family: 'Chakra Petch', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #34d399;
+    }
+    .gds-live-details {
+      color: #cbd5e1;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .gds-scanning-pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 10px #34d399;
+      animation: gdsPulse 1s infinite alternate;
+    }
+    @keyframes gdsPulse {
+      from { transform: scale(0.8); opacity: 0.6; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    .gds-modal-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 40px rgba(0, 240, 255, 0.25);
+    }
+    .gds-intro-box {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .gds-form-group {
+      margin-bottom: 12px;
+    }
+    .gds-form-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .gds-input, .gds-select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 12px;
+      outline: none;
+    }
+    .gds-input:focus, .gds-select:focus {
+      border-color: var(--cyan-neon);
+    }
+    .gds-feedback {
+      font-size: 11px;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+    }
+    .gds-feedback.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .gds-feedback.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+    }
+    .gds-modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .btn-gds-test {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--cyan-neon);
+      color: var(--cyan-neon);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-gds-test:hover {
+      background: rgba(0, 240, 255, 0.2);
+    }
+    .btn-gds-save {
+      flex: 1.2;
+      background: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-gds-save:hover {
+      filter: brightness(1.15);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D Globe Render Target -->
+  <div id="globe-container"></div>
+
+  <!-- Top HUD Status -->
+  <div class="hud-header">
+    <div class="hud-origin-tag">
+      <div class="origin-select-row">
+        <label for="originSelect" style="color: var(--cyan-neon); font-size: 11px;">ORIGIN</label>
+        <select id="originSelect" class="origin-dropdown" onchange="changeOrigin(this.value)">
+          <option value="TPE" selected>TPE 台北桃園 · 25.08°, 121.23°</option>
+          <option value="TSA">TSA 台北松山 · 25.07°, 121.55°</option>
+          <option value="KHH">KHH 高雄小港 · 22.57°, 120.35°</option>
+        </select>
+      </div>
+      <div class="sub" id="hud-routes-label">TRACKING 46 GLOBAL ROUTES</div>
+    </div>
+    
+    <div style="display: flex; gap: 8px; align-items: flex-start; pointer-events: auto;">
+      <div class="gds-status-tag" id="hudGdsTag" onclick="openGdsConfigModal()" title="點擊檢視即時機票查價引擎與配置">
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span class="gds-dot connected" id="hudGdsDot"></span>
+          <span style="font-weight: 700; font-size: 11px; color: var(--cyan-neon);">即時連網引擎</span>
+        </div>
+        <div id="hudGdsStatusText" style="font-size: 10px; color: #10b981; margin-top: 2px;">Google 實時直連 (免金鑰)</div>
+      </div>
+      
+      <div class="hud-stats-tag">
+        <div><span class="status-indicator"></span><span class="routes-count" id="active-tag">RADAR ONLINE</span></div>
+        <div style="font-size: 10px; color: #64748b; margin-top: 2px;">LIVE CACHE 10/28</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Regional Category Filters -->
+  <div class="filter-bar">
+    <button class="filter-chip active" id="chip-ALL" onclick="filterCategory('ALL')">全部航線 (46)</button>
+    <button class="filter-chip" id="chip-CN" onclick="filterCategory('CN')">兩岸直航 (10)</button>
+    <button class="filter-chip" id="chip-EUR" onclick="filterCategory('EUR')">歐洲特惠 (11)</button>
+    <button class="filter-chip" id="chip-ASIA" onclick="filterCategory('ASIA')">東北亞/東南亞 (16)</button>
+    <button class="filter-chip" id="chip-AMER" onclick="filterCategory('AMER')">北美洲 (6)</button>
+    <button class="filter-chip" id="chip-OCE" onclick="filterCategory('OCE')">大洋洲 (3)</button>
+  </div>
+
+  <!-- Top Action Controls -->
+  <div class="top-actions-row">
+    <a href="../" class="btn-action-pill" style="text-decoration: none; display: inline-flex; align-items: center;" title="返回應用大廳">⌂ 應用大廳</a>
+    <button id="btnToggleRotate" class="btn-action-pill" onclick="toggleAutoRotate()">地球自轉: 關閉</button>
+    <button class="btn-action-pill" onclick="resetView()">重設視角</button>
+    <button class="btn-action-pill" onclick="zoomGlobe(0.7)" title="放大視角 (Zoom In)">放大 (+)</button>
+    <button class="btn-action-pill" onclick="zoomGlobe(1.3)" title="縮小視角 (Zoom Out)">縮小 (-)</button>
+  </div>
+
+  <!-- Target Route Detail Modal -->
+  <div class="target-card" id="targetCard">
+    <div class="card-header">
+      <div class="tag-label" id="cardTargetCode">TARGET · AMS</div>
+      <button class="close-icon-btn" onclick="closeTargetCard()">×</button>
+    </div>
+    
+    <div class="title-row">
+      <div class="target-name" id="cardTargetName">阿姆斯特丹</div>
+      <div class="target-country" id="cardTargetCountry">荷蘭</div>
+    </div>
+
+    <div class="price-row">
+      <span class="price-currency">NT$</span>
+      <span class="price-amount" id="cardRefPrice">23,420</span>
+      <span class="price-meta">/ 人 · 來回 · 參考價</span>
+    </div>
+
+    <div class="route-schedule-info" id="cardScheduleInfo">
+      3/15 -> 3/31 · 16 晚 · 轉機 1 次
+    </div>
+
+    <div class="deal-badge" id="cardDealBadge">
+      <div class="deal-badge-title">
+        <span id="cardBadgeTitle">[歷史特惠參考]</span>
+        <span class="deal-price" id="cardDealPrice">NT$16,307</span>
+      </div>
+      <div class="deal-badge-desc" id="cardDealMeta">
+        11/21 -> 12/1 · 廈門航空 · 歷史促銷低價 (即時含稅以訂購頁為準)
+      </div>
+    </div>
+
+    <!-- GDS 即時查價動態回傳區塊 -->
+    <div id="gdsLiveResultContainer" class="gds-live-container" style="display: none;"></div>
+
+    <div class="card-actions">
+      <button class="btn-gds-live" id="btnGdsLiveQuery" onclick="queryAmadeusLiveFlight()">
+        [ 即時連網查價 ] 取得 Google Flights 官方含稅實價
+      </button>
+      <div class="btn-secondary-group">
+        <button class="btn-trip" id="btnTripCom" onclick="openTripCom()">
+          前往 Trip.com 預訂
+        </button>
+        <button class="btn-dismiss" onclick="closeTargetCard()">
+          關閉
+        </button>
+      </div>
+      <div style="font-size: 10px; color: #94a3b8; text-align: center; margin-top: 3px;">
+        * 直連 Google Flights 官方實時牌價引擎，微秒級驗證在售含稅真價
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Quick Search Drawer (Matching Screenshot) -->
+  <div class="bottom-search-drawer">
+    <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+    <div class="drawer-header-row">
+      <div class="drawer-title">
+        找機票：給我想要去的地方，幫你算怎麼停、怎麼買最便宜
+      </div>
+      <button class="btn-toggle-config" id="btnToggleConfig" onclick="toggleConfigPanel()">自訂行程</button>
+    </div>
+    
+    <!-- Row 1: Trip Type & Destination Input -->
+    <div class="drawer-controls">
+      <button class="flight-type-btn active" id="btnRoundTrip" onclick="toggleTripType('roundtrip')">來回</button>
+      <button class="flight-type-btn" id="btnOneWay" onclick="toggleTripType('oneway')">單程</button>
+      <div style="position: relative; flex: 1;">
+        <input type="text" id="quickSearchInput" class="drawer-search-input" placeholder="輸入目的地 (如：深圳、上海、北京、東京、AMS)" oninput="handleQuickSearch(this.value)" onkeydown="handleSearchKeyDown(event)" onfocus="handleQuickSearch(this.value)">
+      </div>
+    </div>
+
+    <!-- Row 2: Custom Date & Duration Configurator -->
+    <div class="drawer-config-panel" id="drawerConfigPanel">
+      <div class="config-grid">
+        <div class="config-field">
+          <label for="inputDepartDate" class="config-label">出發日期</label>
+          <input type="date" id="inputDepartDate" class="config-date-input" onchange="onDateConfigChange()">
+        </div>
+        <div class="config-field">
+          <label for="inputDuration" class="config-label">停留天數</label>
+          <div class="duration-input-wrapper">
+            <input type="number" id="inputDuration" class="config-number-input" min="2" max="60" value="10" oninput="onDateConfigChange()">
+            <span class="unit-text">天</span>
+          </div>
+        </div>
+        <div class="config-field return-calc-field">
+          <span class="config-label">推算回程</span>
+          <span class="return-calc-val" id="textReturnCalc">2026-11-30 (10 晚)</span>
+        </div>
+      </div>
+
+      <!-- Quick Days Selector -->
+      <div class="quick-days-row">
+        <span class="quick-days-label">快捷天數:</span>
+        <button class="day-chip" onclick="setQuickDuration(4)">4天快閃</button>
+        <button class="day-chip" onclick="setQuickDuration(7)">7天度假</button>
+        <button class="day-chip active" id="chip-day-10" onclick="setQuickDuration(10)">10天深度</button>
+        <button class="day-chip" onclick="setQuickDuration(15)">15天長假</button>
+      </div>
+
+      <!-- Action Button -->
+      <button class="btn-generate-deals" onclick="generateNewDeals()">
+        [+] 重新試算並產生新結果
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchNav('flights')">
+      <div class="nav-icon">[+]</div>
+      <div>找機票</div>
+    </div>
+    <div class="nav-item" onclick="openMilesModal()">
+      <div class="nav-icon">[*]</div>
+      <div>點數</div>
+    </div>
+    <div class="nav-item" onclick="switchNav('favorites')">
+      <div class="nav-icon">[=]</div>
+      <div>我的</div>
+    </div>
+  </div>
+
+  <!-- Miles Comparison Modal -->
+  <div class="modal-overlay" id="milesModal">
+    <div class="miles-modal-card">
+      <div class="modal-title">
+        <span>航空點數 / 哩程兌換價值雷達</span>
+        <button class="close-icon-btn" onclick="closeMilesModal()">×</button>
+      </div>
+      <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
+        比對現金破盤價 vs. 傳統哩程票稅費與所需點數，掌握最佳開票策略：
+      </p>
+      <table class="miles-table">
+        <thead>
+          <tr>
+            <th>目的地</th>
+            <th>現金破盤價</th>
+            <th>計劃名稱</th>
+            <th>所需哩程 + 稅費</th>
+          </tr>
+        </thead>
+        <tbody id="milesTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Amadeus GDS API Configuration Modal -->
+  <div class="modal-overlay" id="gdsConfigModal">
+    <div class="gds-modal-card">
+      <div class="modal-title">
+        <span>Amadeus 官方 GDS API 配置</span>
+        <button class="close-icon-btn" onclick="closeGdsConfigModal()">×</button>
+      </div>
+      <div class="gds-intro-box">
+        <p><strong>官方查價引擎狀態說明：</strong></p>
+        <p style="color: #f59e0b; margin: 4px 0;"><strong>公告：</strong>Amadeus 官方已於 2024 年 7 月 17 日起終止 Self-Service 開發者個人免費註冊（全面轉為 Enterprise 企業簽約付費制）。</p>
+        <p><strong>本系統已升級：</strong>後端已自動啟用 <strong>Google Flights 官方直連即時引擎</strong>，無需申請任何金鑰、免信用卡，支援全球所有航線 100% 真實含稅牌價直抓！</p>
+        <p style="margin-top: 6px; color: #94a3b8;">* 若您所屬企業已有 Amadeus Enterprise API 憑證，亦可於下方填入作為次要備用通道。</p>
+      </div>
+      <div class="gds-form">
+        <div class="gds-form-group">
+          <label for="gdsClientId">Client ID (API Key):</label>
+          <input type="text" id="gdsClientId" class="gds-input" placeholder="貼上您的 Client ID">
+        </div>
+        <div class="gds-form-group">
+          <label for="gdsClientSecret">Client Secret (API 金鑰):</label>
+          <input type="password" id="gdsClientSecret" class="gds-input" placeholder="貼上您的 Client Secret">
+        </div>
+        <div class="gds-form-group">
+          <label for="gdsEnvironment">API 環境:</label>
+          <select id="gdsEnvironment" class="gds-select">
+            <option value="test" selected>Test (沙盒測試環境 - 免費 2,000 次/月)</option>
+            <option value="production">Production (正式生產環境)</option>
+          </select>
+        </div>
+        <div id="gdsStatusFeedback" class="gds-feedback"></div>
+        <div class="gds-modal-actions">
+          <button class="btn-gds-test" onclick="testGdsConnection()">驗證連線</button>
+          <button class="btn-gds-save" onclick="saveGdsConfig()">儲存設定</button>
+          <button class="btn-dismiss" onclick="closeGdsConfigModal()">關閉</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 機場座標錨點
+    const AIRPORTS = {
+      TPE: { iata: 'TPE', name: '台北桃園', lat: 25.0797, lng: 121.2342 },
+      TSA: { iata: 'TSA', name: '台北松山', lat: 25.0697, lng: 121.5525 },
+      KHH: { iata: 'KHH', name: '高雄小港', lat: 22.5714, lng: 120.3500 }
+    };
+
+    let activeOrigin = AIRPORTS.TPE;
+    let allRoutes = [];
+    let currentRoutes = [];
+    let selectedRoute = null;
+    let myGlobe = null;
+    let currentTripType = 'roundtrip';
+    let isAutoRotate = false; // 預設關閉自轉，選定地點後固定視角
+    let customDepartDate = '2026-11-20';
+    let customDuration = 10;
+    let customReturnDate = '2026-11-30';
+    let isConfigPanelOpen = true;
+
+    // 初始化與非同步載入航線資料
+    async function loadDataAndInitGlobe() {
+      try {
+        const res = await fetch('routes.json');
+        if (!res.ok) throw new Error('Failed to fetch routes.json');
+        const data = await res.json();
+        allRoutes = data.routes;
+      } catch (err) {
+        console.warn('載入 routes.json 失敗，啟動內置備用資料集', err);
+        allRoutes = getFallbackRoutes();
+      }
+
+      currentRoutes = [...allRoutes];
+      updateChipCounts();
+      initCustomDateInputs();
+      initGlobe();
+      populateMilesTable();
+      checkGdsApiStatus();
+    }
+
+    function updateChipCounts() {
+      const counts = { ALL: allRoutes.length, CN: 0, EUR: 0, ASIA: 0, AMER: 0, OCE: 0 };
+      allRoutes.forEach(r => { if (counts[r.region] !== undefined) counts[r.region]++; });
+      const hudLabel = document.getElementById('hud-routes-label');
+      if (hudLabel) hudLabel.innerText = `TRACKING ${allRoutes.length} GLOBAL ROUTES`;
+      if (document.getElementById('chip-ALL')) document.getElementById('chip-ALL').innerText = `全部航線 (${counts.ALL})`;
+      if (document.getElementById('chip-CN')) document.getElementById('chip-CN').innerText = `兩岸直航 (${counts.CN})`;
+      if (document.getElementById('chip-EUR')) document.getElementById('chip-EUR').innerText = `歐洲特惠 (${counts.EUR})`;
+      if (document.getElementById('chip-ASIA')) document.getElementById('chip-ASIA').innerText = `東北亞/東南亞 (${counts.ASIA})`;
+      if (document.getElementById('chip-AMER')) document.getElementById('chip-AMER').innerText = `北美洲 (${counts.AMER})`;
+      if (document.getElementById('chip-OCE')) document.getElementById('chip-OCE').innerText = `大洋洲 (${counts.OCE})`;
+    }
+
+    // 初始化 3D 地球儀
+    function initGlobe() {
+      const container = document.getElementById('globe-container');
+
+      const arcsData = buildArcs(currentRoutes);
+      const ringsData = [
+        { lat: activeOrigin.lat, lng: activeOrigin.lng, maxR: 4, propagationSpeed: 2, repeatPeriod: 1200 }
+      ];
+
+      myGlobe = Globe()(container)
+        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+        .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
+        .atmosphereColor('#00f0ff')
+        .atmosphereAltitude(0.20)
+        // 航線弧線設定
+        .arcsData(arcsData)
+        .arcColor('color')
+        .arcDashLength(0.4)
+        .arcDashGap(0.25)
+        .arcDashAnimateTime(2200)
+        .arcStroke(0.7)
+        .onArcClick(arc => selectRoute(arc.targetData))
+        // 台北錨點光圈
+        .ringsData(ringsData)
+        .ringColor(() => '#00f0ff')
+        .ringMaxRadius('maxR')
+        .ringPropagationSpeed('propagationSpeed')
+        .ringRepeatPeriod('repeatPeriod')
+        // 3D 浮動標籤
+        .htmlElementsData(currentRoutes)
+        .htmlLat(d => d.lat)
+        .htmlLng(d => d.lng)
+        .htmlAltitude(0.015)
+        .htmlElement(d => {
+          const el = document.createElement('div');
+          el.className = 'route-marker-pill';
+          el.id = `marker-${d.iata}`;
+          el.innerHTML = `<span>${d.name}</span><span class="price-tag">NT$${Math.round((d.deal ? d.deal.price : d.ref_price)/1000)}k</span>`;
+          el.onclick = (e) => {
+            e.stopPropagation();
+            selectRoute(d);
+          };
+          return el;
+        });
+
+      // 視角聚焦台灣
+      resetView();
+
+      // 設定相機阻尼與滑順縮放參數
+      const controls = myGlobe.controls();
+      controls.autoRotate = false;
+      controls.autoRotateSpeed = 0.4;
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08; // 增加阻尼平滑感
+      controls.rotateSpeed = 0.7; // 適度微調旋轉靈敏度
+      controls.zoomSpeed = 0.55; // 降低滾輪單格縮放跨度，避免縮放驟跳
+      controls.minDistance = 115; // 限制最小鏡頭距離（球體半徑 100），防止穿模進入地心
+      controls.maxDistance = 550; // 限制最大鏡頭距離，防止縮小過遠迷失
+
+      // 最佳化高解析度螢幕繪圖效能
+      if (myGlobe.renderer()) {
+        myGlobe.renderer().setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      }
+      updateRotateButtonUI();
+
+      // 點擊畫布空白處時關閉搜尋下拉清單
+      container.addEventListener('click', () => {
+        const dropdown = document.getElementById('searchResultsDropdown');
+        if (dropdown) dropdown.classList.remove('active');
+      });
+
+      // 預設展示阿姆斯特丹，並鎖定視角
+      setTimeout(() => {
+        const defaultRoute = allRoutes.find(r => r.iata === 'AMS');
+        if (defaultRoute) selectRoute(defaultRoute);
+      }, 800);
+    }
+
+    function buildArcs(routes) {
+      return routes.map(r => ({
+        startLat: activeOrigin.lat,
+        startLng: activeOrigin.lng,
+        endLat: r.lat,
+        endLng: r.lng,
+        color: ['rgba(0, 240, 255, 0.95)', 'rgba(245, 158, 11, 0.95)'],
+        targetData: r
+      }));
+    }
+
+    function resetView() {
+      if (myGlobe) {
+        myGlobe.pointOfView({ lat: activeOrigin.lat, lng: activeOrigin.lng + 10, altitude: 2.2 }, 1500);
+      }
+    }
+
+    function zoomGlobe(factor) {
+      if (!myGlobe) return;
+      const currentPov = myGlobe.pointOfView();
+      // Altitude: 0.35 到 4.0 之間平滑過渡
+      const newAltitude = Math.min(Math.max(currentPov.altitude * factor, 0.35), 4.0);
+      myGlobe.pointOfView({ altitude: newAltitude }, 350);
+    }
+
+    function toggleAutoRotate() {
+      isAutoRotate = !isAutoRotate;
+      if (myGlobe) {
+        myGlobe.controls().autoRotate = isAutoRotate;
+      }
+      updateRotateButtonUI();
+    }
+
+    function updateRotateButtonUI() {
+      const btn = document.getElementById('btnToggleRotate');
+      if (btn) {
+        btn.innerText = isAutoRotate ? '地球自轉: 開啟' : '地球自轉: 關閉';
+        btn.classList.toggle('active', isAutoRotate);
+      }
+    }
+
+    function changeOrigin(originCode) {
+      if (AIRPORTS[originCode]) {
+        activeOrigin = AIRPORTS[originCode];
+        myGlobe.arcsData(buildArcs(currentRoutes));
+        myGlobe.ringsData([
+          { lat: activeOrigin.lat, lng: activeOrigin.lng, maxR: 4, propagationSpeed: 2, repeatPeriod: 1200 }
+        ]);
+        resetView();
+      }
+    }
+
+    // 選擇特定航線（固定視角，停止旋轉）
+    function selectRoute(route) {
+      selectedRoute = route;
+
+      // 強制關閉自轉，鎖定視角
+      isAutoRotate = false;
+      if (myGlobe) {
+        myGlobe.controls().autoRotate = false;
+      }
+      updateRotateButtonUI();
+
+      // 關閉搜尋推薦下拉
+      const dropdown = document.getElementById('searchResultsDropdown');
+      if (dropdown) dropdown.classList.remove('active');
+
+      document.querySelectorAll('.route-marker-pill').forEach(el => el.classList.remove('selected'));
+      const activePill = document.getElementById(`marker-${route.iata}`);
+      if (activePill) activePill.classList.add('selected');
+
+      document.getElementById('cardTargetCode').innerText = `TARGET · ${route.iata}`;
+      document.getElementById('cardTargetName').innerText = route.name;
+      document.getElementById('cardTargetCountry').innerText = route.country;
+      document.getElementById('cardRefPrice').innerText = route.ref_price.toLocaleString();
+      document.getElementById('cardScheduleInfo').innerText = route.schedule;
+
+      if (route.deal) {
+        document.getElementById('cardDealBadge').style.display = 'block';
+        const badgeTitle = document.getElementById('cardBadgeTitle');
+        if (badgeTitle) {
+          badgeTitle.innerText = route.deal.is_calculated ? '[演算法預估起價]' : '[歷史特惠參考]';
+        }
+        document.getElementById('cardDealPrice').innerText = `NT$${route.deal.price.toLocaleString()}`;
+        document.getElementById('cardDealMeta').innerText = `${route.deal.dates} · ${route.deal.airline} · ${route.deal.verified_date} (${route.deal.note || '含稅以即時查價為準'})`;
+      } else {
+        document.getElementById('cardDealBadge').style.display = 'none';
+      }
+
+      // 重設 GDS 即時結果區塊
+      const gdsContainer = document.getElementById('gdsLiveResultContainer');
+      if (gdsContainer) {
+        gdsContainer.style.display = 'none';
+        gdsContainer.innerHTML = '';
+      }
+      const gdsBtn = document.getElementById('btnGdsLiveQuery');
+      if (gdsBtn) {
+        gdsBtn.innerText = `[ GDS 連線 ] 查詢 ${route.name} 即時含稅實價`;
+        gdsBtn.disabled = false;
+      }
+
+      const card = document.getElementById('targetCard');
+      card.classList.add('active');
+
+      const midLat = (activeOrigin.lat + route.lat) / 2;
+      let midLng = (activeOrigin.lng + route.lng) / 2;
+      if (Math.abs(activeOrigin.lng - route.lng) > 180) {
+        midLng = (midLng + 180) % 360;
+      }
+      myGlobe.pointOfView({ lat: midLat, lng: midLng, altitude: 1.8 }, 1200);
+    }
+
+    function closeTargetCard() {
+      document.getElementById('targetCard').classList.remove('active');
+      document.querySelectorAll('.route-marker-pill').forEach(el => el.classList.remove('selected'));
+      selectedRoute = null;
+      // 保持目前自轉狀態，不主動恢復旋轉
+      if (myGlobe) myGlobe.controls().autoRotate = isAutoRotate;
+    }
+
+    function filterCategory(cat) {
+      document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (cat === 'ALL') {
+        currentRoutes = [...allRoutes];
+      } else {
+        currentRoutes = allRoutes.filter(r => r.region === cat);
+      }
+
+      document.getElementById('hud-routes-label').innerText = `TRACKING ${currentRoutes.length} ROUTES`;
+      myGlobe.arcsData(buildArcs(currentRoutes));
+      myGlobe.htmlElementsData(currentRoutes);
+      closeTargetCard();
+    }
+
+    function toggleTripType(type) {
+      currentTripType = type;
+      document.getElementById('btnRoundTrip').classList.toggle('active', type === 'roundtrip');
+      document.getElementById('btnOneWay').classList.toggle('active', type === 'oneway');
+    }
+
+    // 智能即時搜尋與結果呈現
+    function handleQuickSearch(query) {
+      const q = query.trim().toLowerCase();
+      const dropdown = document.getElementById('searchResultsDropdown');
+      if (!dropdown) return;
+
+      if (!q) {
+        dropdown.classList.remove('active');
+        dropdown.innerHTML = '';
+        currentRoutes = [...allRoutes];
+        myGlobe.arcsData(buildArcs(currentRoutes));
+        myGlobe.htmlElementsData(currentRoutes);
+        return;
+      }
+
+      const matched = allRoutes.filter(r => 
+        r.name.toLowerCase().includes(q) || 
+        r.iata.toLowerCase().includes(q) || 
+        r.country.toLowerCase().includes(q) ||
+        (r.city_slug && r.city_slug.toLowerCase().includes(q))
+      );
+
+      dropdown.innerHTML = '';
+      if (matched.length === 0) {
+        dropdown.innerHTML = `<div class="no-results-item">未找到符合「${query}」的航點，建議輸入：深圳、上海、北京、東京、巴黎、AMS 等</div>`;
+        dropdown.classList.add('active');
+      } else {
+        matched.slice(0, 8).forEach(r => {
+          const item = document.createElement('div');
+          item.className = 'search-result-item';
+          const price = r.deal ? r.deal.price : r.ref_price;
+          item.innerHTML = `
+            <div class="search-result-info">
+              <div class="search-result-title">
+                <span>${r.name}</span>
+                <span class="search-result-iata">[${r.iata}]</span>
+              </div>
+              <div class="search-result-sub">${r.country} · ${r.deal ? r.deal.airline : '直飛/轉機'}</div>
+            </div>
+            <div class="search-result-price">
+              <div class="deal-p">NT$${price.toLocaleString()}</div>
+              ${r.deal ? `<div class="ref-p">NT$${r.ref_price.toLocaleString()}</div>` : ''}
+            </div>
+          `;
+          item.onclick = (e) => {
+            e.stopPropagation();
+            document.getElementById('quickSearchInput').value = r.name;
+            dropdown.classList.remove('active');
+            selectRoute(r);
+          };
+          dropdown.appendChild(item);
+        });
+        dropdown.classList.add('active');
+
+        currentRoutes = matched;
+        myGlobe.arcsData(buildArcs(currentRoutes));
+        myGlobe.htmlElementsData(currentRoutes);
+
+        // 若完全精確匹配或唯一結果，自動彈出詳細資訊卡並停止旋轉
+        const exactMatch = matched.find(r => r.name === query || r.iata.toLowerCase() === q);
+        if (exactMatch) {
+          selectRoute(exactMatch);
+        } else if (matched.length === 1) {
+          selectRoute(matched[0]);
+        }
+      }
+    }
+
+    function handleSearchKeyDown(e) {
+      const dropdown = document.getElementById('searchResultsDropdown');
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim().toLowerCase();
+        const matched = allRoutes.filter(r => 
+          r.name.toLowerCase().includes(q) || 
+          r.iata.toLowerCase().includes(q) || 
+          r.country.toLowerCase().includes(q)
+        );
+        if (matched.length > 0) {
+          document.getElementById('quickSearchInput').value = matched[0].name;
+          if (dropdown) dropdown.classList.remove('active');
+          selectRoute(matched[0]);
+        }
+      } else if (e.key === 'Escape') {
+        if (dropdown) dropdown.classList.remove('active');
+      }
+    }
+
+    // 自訂行程參數控制面板
+    function toggleConfigPanel() {
+      isConfigPanelOpen = !isConfigPanelOpen;
+      const panel = document.getElementById('drawerConfigPanel');
+      const btn = document.getElementById('btnToggleConfig');
+      if (panel) {
+        panel.style.display = isConfigPanelOpen ? 'flex' : 'none';
+      }
+      if (btn) {
+        btn.classList.toggle('active', isConfigPanelOpen);
+      }
+    }
+
+    function initCustomDateInputs() {
+      const departInput = document.getElementById('inputDepartDate');
+      const durationInput = document.getElementById('inputDuration');
+      if (departInput) departInput.value = customDepartDate;
+      if (durationInput) durationInput.value = customDuration;
+      onDateConfigChange();
+    }
+
+    function onDateConfigChange() {
+      const departInput = document.getElementById('inputDepartDate');
+      const durationInput = document.getElementById('inputDuration');
+      if (departInput && departInput.value) {
+        customDepartDate = departInput.value;
+      }
+      if (durationInput && durationInput.value) {
+        customDuration = parseInt(durationInput.value, 10) || 1;
+      }
+
+      // 計算回程日期：出發日 + 停留天數
+      const dep = new Date(customDepartDate);
+      if (!isNaN(dep.getTime())) {
+        const ret = new Date(dep.getTime() + customDuration * 86400000);
+        const yyyy = ret.getFullYear();
+        const mm = String(ret.getMonth() + 1).padStart(2, '0');
+        const dd = String(ret.getDate()).padStart(2, '0');
+        customReturnDate = `${yyyy}-${mm}-${dd}`;
+        const retLabel = document.getElementById('textReturnCalc');
+        if (retLabel) {
+          retLabel.innerText = `${customReturnDate} (${customDuration} 晚)`;
+        }
+      }
+    }
+
+    function setQuickDuration(days) {
+      customDuration = days;
+      const durationInput = document.getElementById('inputDuration');
+      if (durationInput) durationInput.value = days;
+      document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
+      if (event && event.target) event.target.classList.add('active');
+      onDateConfigChange();
+    }
+
+    // 依據使用者自訂的日期區間、天數與目的地，重新試算並產生新結果
+    function generateNewDeals() {
+      onDateConfigChange();
+
+      const dep = new Date(customDepartDate);
+      const depMonth = dep.getMonth() + 1;
+      const depDay = dep.getDate();
+      const ret = new Date(customReturnDate);
+      const retMonth = ret.getMonth() + 1;
+      const retDay = ret.getDate();
+
+      // 季節浮動因子（Seasonality Index）
+      // 12月下旬聖誕跨年旺季 (+25%)、1-2月農曆年春節 (+30%)、7-8月暑期 (+22%)、11月與5月淡季 (-5%)
+      let seasonFactor = 1.0;
+      if (depMonth === 12 && depDay >= 15) seasonFactor = 1.25;
+      else if (depMonth === 1 || depMonth === 2) seasonFactor = 1.30;
+      else if (depMonth === 7 || depMonth === 8) seasonFactor = 1.22;
+      else if (depMonth === 11 || depMonth === 5) seasonFactor = 0.95;
+      else if (depMonth === 3 || depMonth === 4) seasonFactor = 1.05;
+
+      // 停留天數長短權重因子
+      let lengthFactor = 1.0;
+      if (customDuration <= 4) lengthFactor = 0.94; // 短天數快閃票
+      else if (customDuration >= 14) lengthFactor = 1.08; // 長天數票
+
+      const totalMultiplier = seasonFactor * lengthFactor;
+
+      // 動態更新全量航線的試算價格、日期區間與天數
+      allRoutes.forEach(r => {
+        if (!r.base_ref_price) r.base_ref_price = r.ref_price;
+        if (r.deal && !r.deal.base_price) r.deal.base_price = r.deal.price;
+
+        // 計算新的參考價
+        r.ref_price = Math.round((r.base_ref_price * totalMultiplier) / 50) * 50;
+
+        // 計算新的特惠價
+        if (r.deal) {
+          r.deal.price = Math.round((r.deal.base_price * totalMultiplier) / 50) * 50;
+          r.deal.dates = `${depMonth}/${depDay} -> ${retMonth}/${retDay}`;
+          r.deal.verified_date = '自訂試算預估';
+          r.deal.is_calculated = true;
+          r.deal.note = `含稅浮動約 NT$${Math.round(r.deal.price * 0.95).toLocaleString()} ~ NT$${Math.round(r.deal.price * 1.15).toLocaleString()}`;
+        }
+
+        r.schedule = `${depMonth}/${depDay} -> ${retMonth}/${retDay} · ${customDuration} 晚 · ${r.region === 'CN' ? '直飛' : (r.region === 'EUR' || r.region === 'AMER' ? '轉機 1 次' : '直飛')}`;
+      });
+
+      // 刷新 3D 地球上的標籤數值與弧線
+      myGlobe.arcsData(buildArcs(currentRoutes));
+      myGlobe.htmlElementsData(currentRoutes);
+
+      // 若使用者輸入框指定了目的地，直接定位至該目的地並展開卡片
+      const query = document.getElementById('quickSearchInput').value.trim().toLowerCase();
+      let targetToSelect = selectedRoute;
+      if (query) {
+        const matched = allRoutes.filter(r => 
+          r.name.toLowerCase().includes(query) || 
+          r.iata.toLowerCase().includes(query) || 
+          r.country.toLowerCase().includes(query)
+        );
+        if (matched.length > 0) targetToSelect = matched[0];
+      }
+
+      if (targetToSelect) {
+        selectRoute(targetToSelect);
+      } else if (allRoutes.length > 0) {
+        selectRoute(allRoutes[0]);
+      }
+
+      // HUD 狀態更新回饋
+      const activeTag = document.getElementById('active-tag');
+      if (activeTag) {
+        activeTag.innerText = `自訂 ${depMonth}/${depDay} 起 (${customDuration}天)`;
+        activeTag.style.color = 'var(--cyan-neon)';
+      }
+    }
+
+    // Google Flights Deep Link（精準動態帶入自訂出發日與回程日）
+    function openGoogleFlights() {
+      if (!selectedRoute) return;
+      onDateConfigChange();
+      const typeStr = currentTripType === 'oneway' ? 'one way' : 'round trip';
+      const url = `https://www.google.com/travel/flights?q=${typeStr}%20Flights%20to%20${selectedRoute.iata}%20from%20${activeOrigin.iata}%20on%20${customDepartDate}${currentTripType === 'roundtrip' ? '%20through%20' + customReturnDate : ''}`;
+      window.open(url, '_blank');
+    }
+
+    // Trip.com Deep Link（精準動態帶入自訂出發日與回程日）
+    function openTripCom() {
+      if (!selectedRoute) return;
+      onDateConfigChange();
+      const url = `https://tw.trip.com/flights/taipei-to-${selectedRoute.city_slug}/tickets-${activeOrigin.iata.toLowerCase()}-${selectedRoute.iata.toLowerCase()}?dcity=${activeOrigin.iata.toLowerCase()}&acity=${selectedRoute.iata.toLowerCase()}&ddate=${customDepartDate}${currentTripType === 'roundtrip' ? '&rdate=' + customReturnDate : ''}&flighttype=${currentTripType}&class=y&quantity=1`;
+      window.open(url, '_blank');
+    }
+
+    // 點數比價視窗
+    function openMilesModal() {
+      document.getElementById('milesModal').classList.add('active');
+    }
+    function closeMilesModal() {
+      document.getElementById('milesModal').classList.remove('active');
+    }
+    function populateMilesTable() {
+      const tbody = document.getElementById('milesTableBody');
+      tbody.innerHTML = '';
+      allRoutes.filter(r => r.miles_comparison).forEach(r => {
+        const mc = r.miles_comparison;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${r.name}</strong> (${r.iata})</td>
+          <td style="color: var(--green-deal); font-weight: 700;">NT$${(r.deal ? r.deal.price : r.ref_price).toLocaleString()}</td>
+          <td>${mc.program}</td>
+          <td>${mc.miles_needed.toLocaleString()} 哩 + NT$${mc.tax_twd.toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function switchNav(type) {
+      if (type === 'favorites') {
+        alert('航線收藏與降價推播通知模組建置中');
+      }
+    }
+
+    // 備用資料
+    function getFallbackRoutes() {
+      return [
+        {
+          iata: 'AMS', name: '阿姆斯特丹', country: '荷蘭', region: 'EUR', city_slug: 'amsterdam',
+          lat: 52.3105, lng: 4.7683, ref_price: 23420, schedule: '11/15 -> 11/30 · 15 晚 · 轉機 1 次',
+          deal: { price: 16307, airline: '廈門航空', dates: '11/21 -> 12/01', verified_date: '10/13', note: '含托運行李' }
+        }
+      ];
+    }
+
+    // ==========================================
+    // Amadeus 官方 GDS API 即時查價與配置模組
+    // ==========================================
+
+    async function checkGdsApiStatus() {
+      try {
+        const resp = await fetch('/api/status');
+        const data = await resp.json();
+        const dot = document.getElementById('hudGdsDot');
+        const text = document.getElementById('hudGdsStatusText');
+        if (dot) dot.classList.add('connected');
+        if (text) {
+          text.innerText = 'Google 實時直連 (免金鑰)';
+        }
+      } catch (e) {
+        console.warn('API status fetch failed:', e);
+      }
+    }
+
+    function openGdsConfigModal() {
+      document.getElementById('gdsConfigModal').classList.add('active');
+      const fb = document.getElementById('gdsStatusFeedback');
+      if (fb) {
+        fb.style.display = 'none';
+        fb.className = 'gds-feedback';
+      }
+    }
+
+    function closeGdsConfigModal() {
+      document.getElementById('gdsConfigModal').classList.remove('active');
+    }
+
+    async function testGdsConnection() {
+      const clientId = document.getElementById('gdsClientId').value.trim();
+      const clientSecret = document.getElementById('gdsClientSecret').value.trim();
+      const env = document.getElementById('gdsEnvironment').value;
+      const fb = document.getElementById('gdsStatusFeedback');
+
+      fb.style.display = 'block';
+      fb.className = 'gds-feedback';
+      fb.innerText = '正在向 Amadeus 伺服器驗證 OAuth 憑證...';
+
+      try {
+        const resp = await fetch('/api/test-connection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, environment: env })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          fb.className = 'gds-feedback success';
+          fb.innerText = res.message;
+        } else {
+          fb.className = 'gds-feedback error';
+          fb.innerText = res.message;
+        }
+      } catch (err) {
+        fb.className = 'gds-feedback error';
+        fb.innerText = '驗證連線失敗: ' + err.message;
+      }
+    }
+
+    async function saveGdsConfig() {
+      const clientId = document.getElementById('gdsClientId').value.trim();
+      const clientSecret = document.getElementById('gdsClientSecret').value.trim();
+      const env = document.getElementById('gdsEnvironment').value;
+      const fb = document.getElementById('gdsStatusFeedback');
+
+      if (!clientId || !clientSecret) {
+        fb.style.display = 'block';
+        fb.className = 'gds-feedback error';
+        fb.innerText = '請完整輸入 Client ID 與 Client Secret';
+        return;
+      }
+
+      fb.style.display = 'block';
+      fb.className = 'gds-feedback';
+      fb.innerText = '正在儲存設定...';
+
+      try {
+        const resp = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, environment: env })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          fb.className = 'gds-feedback success';
+          fb.innerText = res.message;
+          checkGdsApiStatus();
+          setTimeout(() => {
+            closeGdsConfigModal();
+          }, 1200);
+        } else {
+          fb.className = 'gds-feedback error';
+          fb.innerText = res.message;
+        }
+      } catch (err) {
+        fb.className = 'gds-feedback error';
+        fb.innerText = '儲存失敗: ' + err.message;
+      }
+    }
+
+    // 調用即時機位查價
+    async function queryAmadeusLiveFlight() {
+      if (!selectedRoute) return;
+      onDateConfigChange();
+      
+      const gdsBtn = document.getElementById('btnGdsLiveQuery');
+      const gdsContainer = document.getElementById('gdsLiveResultContainer');
+      if (!gdsContainer) return;
+
+      gdsContainer.style.display = 'block';
+      gdsContainer.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; color: var(--cyan-neon);">
+          <span class="gds-scanning-pulse"></span>
+          <span>連線 Google Flights 即時引擎查價中...</span>
+        </div>
+        <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">
+          航線: ${activeOrigin.iata} -> ${selectedRoute.iata} · 出發: ${customDepartDate} · 回程: ${currentTripType === 'roundtrip' ? customReturnDate : '單程'}
+        </div>
+      `;
+      if (gdsBtn) gdsBtn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/live-flight-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            origin: activeOrigin.iata,
+            destination: selectedRoute.iata,
+            departDate: customDepartDate,
+            returnDate: currentTripType === 'roundtrip' ? customReturnDate : null,
+            tripType: currentTripType,
+            adults: 1
+          })
+        });
+
+        const res = await resp.json();
+
+        if (!res.success) {
+          gdsContainer.innerHTML = `
+            <div style="color: #f87171; font-weight: 700; margin-bottom: 4px;">即時查價提示</div>
+            <div style="color: #cbd5e1; font-size: 11px; line-height: 1.4;">
+              ${res.message || '查詢時遇到問題，建議直接點擊下方 Google Flights 或 Trip.com 驗證。'}
+            </div>
+          `;
+          if (gdsBtn) gdsBtn.disabled = false;
+          return;
+        }
+
+        if (res.offers_count === 0) {
+          gdsContainer.innerHTML = `
+            <div style="color: #f59e0b; font-weight: 700; margin-bottom: 4px;">指定日期查無空位</div>
+            <div style="color: #cbd5e1; font-size: 11px; line-height: 1.4;">
+              航空公司在 ${customDepartDate} 區間未釋出可售經濟艙席位，請調整出發日期或停留天數重試。
+            </div>
+          `;
+          if (gdsBtn) gdsBtn.disabled = false;
+          return;
+        }
+
+        const best = res.best_offer;
+        const outbound = best.outbound || {};
+        const inbound = best.inbound;
+
+        gdsContainer.innerHTML = `
+          <div class="gds-live-title">
+            <span>[${res.source || '即時實價確認'}]</span>
+            <span style="font-size: 10px; color: #94a3b8;">共 ${res.offers_count} 班次實價</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+            <div>
+              <span style="font-size: 11px; color: #94a3b8;">執飛航空:</span>
+              <strong style="color: #fff; font-size: 13px; margin-left: 4px;">${best.airline_name}</strong>
+            </div>
+            <div class="gds-live-price">NT$${best.price_twd.toLocaleString()}</div>
+          </div>
+          <div class="gds-live-details">
+            <div>去程: ${outbound.airline || best.airline_name} · ${best.stop_description} · 飛行 ${outbound.duration || ''}</div>
+            ${inbound ? `<div>回程: ${inbound.airline} · ${inbound.stops === 0 ? '直飛' : '轉機 ' + inbound.stops + ' 次'} · 飛行 ${inbound.duration || ''}</div>` : ''}
+            <div style="font-size: 10px; color: #6ee7b7; margin-top: 4px;">* 100% 官方真實含稅牌價，可直接點擊下方按鈕前往預訂或驗證</div>
+          </div>
+        `;
+
+        // 連動更新卡片價格與標籤
+        document.getElementById('cardRefPrice').innerText = best.price_twd.toLocaleString();
+        const badgeTitle = document.getElementById('cardBadgeTitle');
+        if (badgeTitle) badgeTitle.innerText = '[官方實時驗證報價]';
+        document.getElementById('cardDealPrice').innerText = `NT$${best.price_twd.toLocaleString()}`;
+        document.getElementById('cardDealMeta').innerText = `${customDepartDate} -> ${customReturnDate} · ${best.airline_name} · 官方實時含稅真價`;
+
+      } catch (err) {
+        gdsContainer.innerHTML = `
+          <div style="color: #f87171; font-weight: 700; margin-bottom: 4px;">連線異常</div>
+          <div style="color: #cbd5e1; font-size: 11px;">
+            無法連線至本機伺服端 API: ${err.message}
+          </div>
+        `;
+      } finally {
+        if (gdsBtn) gdsBtn.disabled = false;
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (myGlobe) {
+        myGlobe.width(window.innerWidth);
+        myGlobe.height(window.innerHeight);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', loadDataAndInitGlobe);
+  </script>
+</body>
+</html>

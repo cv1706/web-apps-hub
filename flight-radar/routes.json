@@ -1,0 +1,1115 @@
+{
+  "updated_at": "2026-10-28T08:11:09+08:00",
+  "origin": {
+    "iata": "TPE",
+    "name": "台北桃園",
+    "lat": 25.0797,
+    "lng": 121.2342
+  },
+  "routes": [
+    {
+      "iata": "AMS",
+      "name": "阿姆斯特丹",
+      "country": "荷蘭",
+      "region": "EUR",
+      "city_slug": "amsterdam",
+      "lat": 52.3105,
+      "lng": 4.7683,
+      "ref_price": 23420,
+      "schedule": "11/15 -> 11/30 · 15 晚 · 轉機 1 次",
+      "deal": {
+        "price": 16307,
+        "airline": "廈門航空",
+        "dates": "11/21 -> 12/01",
+        "verified_date": "10/13",
+        "note": "含托運行李"
+      },
+      "miles_comparison": {
+        "program": "國泰亞洲萬里通 (Asia Miles)",
+        "miles_needed": 64000,
+        "tax_twd": 7200,
+        "cash_equiv": 26400
+      }
+    },
+    {
+      "iata": "LHR",
+      "name": "倫敦希斯洛",
+      "country": "英國",
+      "region": "EUR",
+      "city_slug": "london",
+      "lat": 51.47,
+      "lng": -0.4543,
+      "ref_price": 26800,
+      "schedule": "11/10 -> 11/24 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 18550,
+        "airline": "中國南方航空",
+        "dates": "11/18 -> 12/02",
+        "verified_date": "10/15",
+        "note": "廣州中轉特惠"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 70000,
+        "tax_twd": 8400,
+        "cash_equiv": 29400
+      }
+    },
+    {
+      "iata": "CDG",
+      "name": "巴黎戴高樂",
+      "country": "法國",
+      "region": "EUR",
+      "city_slug": "paris",
+      "lat": 49.0097,
+      "lng": 2.5479,
+      "ref_price": 25900,
+      "schedule": "12/01 -> 12/15 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 17920,
+        "airline": "中國東方航空",
+        "dates": "12/03 -> 12/17",
+        "verified_date": "10/18",
+        "note": "上海中轉"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 70000,
+        "tax_twd": 7800,
+        "cash_equiv": 28800
+      }
+    },
+    {
+      "iata": "FRA",
+      "name": "法蘭克福",
+      "country": "德國",
+      "region": "EUR",
+      "city_slug": "frankfurt",
+      "lat": 50.0379,
+      "lng": 8.5622,
+      "ref_price": 27500,
+      "schedule": "11/25 -> 12/10 · 15 晚 · 直飛/轉機",
+      "deal": {
+        "price": 19800,
+        "airline": "國泰航空",
+        "dates": "11/28 -> 12/12",
+        "verified_date": "10/20",
+        "note": "香港中轉好時段"
+      },
+      "miles_comparison": {
+        "program": "國泰亞洲萬里通 (Asia Miles)",
+        "miles_needed": 64000,
+        "tax_twd": 6800,
+        "cash_equiv": 26000
+      }
+    },
+    {
+      "iata": "VIE",
+      "name": "維也納",
+      "country": "奧地利",
+      "region": "EUR",
+      "city_slug": "vienna",
+      "lat": 48.1103,
+      "lng": 16.5697,
+      "ref_price": 28900,
+      "schedule": "11/15 -> 11/28 · 13 晚 · 轉機 1 次",
+      "deal": {
+        "price": 19200,
+        "airline": "土耳其航空",
+        "dates": "11/20 -> 12/04",
+        "verified_date": "10/22",
+        "note": "伊斯坦堡中轉"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 70000,
+        "tax_twd": 7500,
+        "cash_equiv": 28500
+      }
+    },
+    {
+      "iata": "MXP",
+      "name": "米蘭馬爾彭薩",
+      "country": "義大利",
+      "region": "EUR",
+      "city_slug": "milan",
+      "lat": 45.6301,
+      "lng": 8.7255,
+      "ref_price": 26400,
+      "schedule": "12/05 -> 12/20 · 15 晚 · 轉機 1 次",
+      "deal": {
+        "price": 18300,
+        "airline": "新加坡航空",
+        "dates": "12/08 -> 12/22",
+        "verified_date": "10/25",
+        "note": "新加坡轉機促銷"
+      },
+      "miles_comparison": {
+        "program": "新航 KrisFlyer",
+        "miles_needed": 76000,
+        "tax_twd": 5200,
+        "cash_equiv": 28000
+      }
+    },
+    {
+      "iata": "FCO",
+      "name": "羅馬達文西",
+      "country": "義大利",
+      "region": "EUR",
+      "city_slug": "rome",
+      "lat": 41.8003,
+      "lng": 12.2389,
+      "ref_price": 27200,
+      "schedule": "11/12 -> 11/26 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 19400,
+        "airline": "阿聯酋航空",
+        "dates": "11/15 -> 11/29",
+        "verified_date": "10/19",
+        "note": "杜拜中轉"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 70000,
+        "tax_twd": 8200,
+        "cash_equiv": 29200
+      }
+    },
+    {
+      "iata": "PRG",
+      "name": "布拉格",
+      "country": "捷克",
+      "region": "EUR",
+      "city_slug": "prague",
+      "lat": 50.1008,
+      "lng": 14.26,
+      "ref_price": 29500,
+      "schedule": "11/08 -> 11/22 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 21300,
+        "airline": "大韓航空",
+        "dates": "11/12 -> 11/25",
+        "verified_date": "10/24",
+        "note": "仁川中轉"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 70000,
+        "tax_twd": 7100,
+        "cash_equiv": 28100
+      }
+    },
+    {
+      "iata": "BCN",
+      "name": "巴塞隆納",
+      "country": "西班牙",
+      "region": "EUR",
+      "city_slug": "barcelona",
+      "lat": 41.2974,
+      "lng": 2.0833,
+      "ref_price": 26800,
+      "schedule": "11/19 -> 12/03 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 18900,
+        "airline": "卡達航空",
+        "dates": "11/22 -> 12/06",
+        "verified_date": "10/21",
+        "note": "杜哈中轉促銷"
+      },
+      "miles_comparison": {
+        "program": "卡達航空 Privilege Club (Avios)",
+        "miles_needed": 70000,
+        "tax_twd": 8900,
+        "cash_equiv": 29900
+      }
+    },
+    {
+      "iata": "MUC",
+      "name": "慕尼黑",
+      "country": "德國",
+      "region": "EUR",
+      "city_slug": "munich",
+      "lat": 48.3537,
+      "lng": 11.775,
+      "ref_price": 28100,
+      "schedule": "12/02 -> 12/16 · 14 晚 · 直飛/轉機",
+      "deal": {
+        "price": 20500,
+        "airline": "長榮航空",
+        "dates": "12/04 -> 12/18",
+        "verified_date": "10/23",
+        "note": "直飛限時降價"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 70000,
+        "tax_twd": 6500,
+        "cash_equiv": 27500
+      }
+    },
+    {
+      "iata": "ZRH",
+      "name": "蘇黎世",
+      "country": "瑞士",
+      "region": "EUR",
+      "city_slug": "zurich",
+      "lat": 47.4582,
+      "lng": 8.5555,
+      "ref_price": 31200,
+      "schedule": "11/14 -> 11/28 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 22600,
+        "airline": "國泰航空",
+        "dates": "11/17 -> 12/01",
+        "verified_date": "10/17",
+        "note": "香港中轉"
+      },
+      "miles_comparison": {
+        "program": "國泰亞洲萬里通 (Asia Miles)",
+        "miles_needed": 64000,
+        "tax_twd": 7900,
+        "cash_equiv": 27100
+      }
+    },
+    {
+      "iata": "NRT",
+      "name": "東京成田",
+      "country": "日本",
+      "region": "ASIA",
+      "city_slug": "tokyo",
+      "lat": 35.772,
+      "lng": 140.3929,
+      "ref_price": 13500,
+      "schedule": "11/15 -> 11/20 · 5 晚 · 直飛",
+      "deal": {
+        "price": 8250,
+        "airline": "酷航",
+        "dates": "11/18 -> 11/23",
+        "verified_date": "10/26",
+        "note": "含隨身行李"
+      },
+      "miles_comparison": {
+        "program": "長榮/華航/星宇",
+        "miles_needed": 35000,
+        "tax_twd": 3200,
+        "cash_equiv": 13700
+      }
+    },
+    {
+      "iata": "KIX",
+      "name": "大阪關西",
+      "country": "日本",
+      "region": "ASIA",
+      "city_slug": "osaka",
+      "lat": 34.432,
+      "lng": 135.2304,
+      "ref_price": 12800,
+      "schedule": "11/12 -> 11/17 · 5 晚 · 直飛",
+      "deal": {
+        "price": 7900,
+        "airline": "樂桃航空",
+        "dates": "11/14 -> 11/19",
+        "verified_date": "10/25",
+        "note": "深夜早班優惠"
+      },
+      "miles_comparison": {
+        "program": "國泰亞洲萬里通 (Asia Miles)",
+        "miles_needed": 20000,
+        "tax_twd": 2900,
+        "cash_equiv": 8900
+      }
+    },
+    {
+      "iata": "FUK",
+      "name": "福岡",
+      "country": "日本",
+      "region": "ASIA",
+      "city_slug": "fukuoka",
+      "lat": 33.5859,
+      "lng": 130.4507,
+      "ref_price": 11500,
+      "schedule": "11/10 -> 11/14 · 4 晚 · 直飛",
+      "deal": {
+        "price": 6800,
+        "airline": "台灣虎航",
+        "dates": "11/13 -> 11/17",
+        "verified_date": "10/27",
+        "note": "冬季清倉特惠"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 35000,
+        "tax_twd": 2800,
+        "cash_equiv": 13300
+      }
+    },
+    {
+      "iata": "CTS",
+      "name": "札幌新千歲",
+      "country": "日本",
+      "region": "ASIA",
+      "city_slug": "sapporo",
+      "lat": 42.7752,
+      "lng": 141.6923,
+      "ref_price": 18200,
+      "schedule": "12/05 -> 12/10 · 5 晚 · 直飛",
+      "deal": {
+        "price": 12400,
+        "airline": "酷航",
+        "dates": "12/08 -> 12/13",
+        "verified_date": "10/26",
+        "note": "雪季早期特價"
+      },
+      "miles_comparison": {
+        "program": "星宇航空 COSMILE",
+        "miles_needed": 35000,
+        "tax_twd": 3400,
+        "cash_equiv": 13900
+      }
+    },
+    {
+      "iata": "OKA",
+      "name": "沖繩那霸",
+      "country": "日本",
+      "region": "ASIA",
+      "city_slug": "okinawa",
+      "lat": 26.1958,
+      "lng": 127.6459,
+      "ref_price": 8500,
+      "schedule": "11/08 -> 11/11 · 3 晚 · 直飛",
+      "deal": {
+        "price": 4600,
+        "airline": "樂桃航空",
+        "dates": "11/15 -> 11/18",
+        "verified_date": "10/27",
+        "note": "週末快閃價"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 35000,
+        "tax_twd": 2600,
+        "cash_equiv": 13100
+      }
+    },
+    {
+      "iata": "ICN",
+      "name": "首爾仁川",
+      "country": "韓國",
+      "region": "ASIA",
+      "city_slug": "seoul",
+      "lat": 37.4602,
+      "lng": 126.4407,
+      "ref_price": 9800,
+      "schedule": "11/16 -> 11/21 · 5 晚 · 直飛",
+      "deal": {
+        "price": 5400,
+        "airline": "真航空",
+        "dates": "11/20 -> 11/25",
+        "verified_date": "10/26",
+        "note": "含15公斤托運"
+      },
+      "miles_comparison": {
+        "program": "韓亞航空 / 星空聯盟",
+        "miles_needed": 30000,
+        "tax_twd": 2700,
+        "cash_equiv": 11700
+      }
+    },
+    {
+      "iata": "PUS",
+      "name": "釜山金海",
+      "country": "韓國",
+      "region": "ASIA",
+      "city_slug": "busan",
+      "lat": 35.1795,
+      "lng": 128.9382,
+      "ref_price": 8200,
+      "schedule": "11/09 -> 11/13 · 4 晚 · 直飛",
+      "deal": {
+        "price": 4300,
+        "airline": "釜山航空",
+        "dates": "11/17 -> 11/21",
+        "verified_date": "10/25",
+        "note": "早鳥限時促銷"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 35000,
+        "tax_twd": 2500,
+        "cash_equiv": 13000
+      }
+    },
+    {
+      "iata": "BKK",
+      "name": "曼谷素萬那普",
+      "country": "泰國",
+      "region": "ASIA",
+      "city_slug": "bangkok",
+      "lat": 13.69,
+      "lng": 100.7501,
+      "ref_price": 9500,
+      "schedule": "11/18 -> 11/24 · 6 晚 · 直飛",
+      "deal": {
+        "price": 5200,
+        "airline": "泰越捷航空",
+        "dates": "11/22 -> 11/28",
+        "verified_date": "10/27",
+        "note": "冬季度假首選"
+      },
+      "miles_comparison": {
+        "program": "長榮/星宇/華航",
+        "miles_needed": 35000,
+        "tax_twd": 2900,
+        "cash_equiv": 13400
+      }
+    },
+    {
+      "iata": "CNX",
+      "name": "清邁",
+      "country": "泰國",
+      "region": "ASIA",
+      "city_slug": "chiang-mai",
+      "lat": 18.7668,
+      "lng": 98.9626,
+      "ref_price": 10200,
+      "schedule": "11/15 -> 11/20 · 5 晚 · 直飛",
+      "deal": {
+        "price": 6100,
+        "airline": "亞洲航空",
+        "dates": "11/24 -> 11/29",
+        "verified_date": "10/26",
+        "note": "水燈節後低價"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 35000,
+        "tax_twd": 2600,
+        "cash_equiv": 13100
+      }
+    },
+    {
+      "iata": "SIN",
+      "name": "新加坡樟宜",
+      "country": "新加坡",
+      "region": "ASIA",
+      "city_slug": "singapore",
+      "lat": 1.3644,
+      "lng": 103.9915,
+      "ref_price": 11000,
+      "schedule": "11/10 -> 11/15 · 5 晚 · 直飛",
+      "deal": {
+        "price": 6500,
+        "airline": "酷航",
+        "dates": "11/16 -> 11/21",
+        "verified_date": "10/24",
+        "note": "直飛波音787"
+      },
+      "miles_comparison": {
+        "program": "新航 KrisFlyer",
+        "miles_needed": 33000,
+        "tax_twd": 2800,
+        "cash_equiv": 12700
+      }
+    },
+    {
+      "iata": "KUL",
+      "name": "吉隆坡",
+      "country": "馬來西亞",
+      "region": "ASIA",
+      "city_slug": "kuala-lumpur",
+      "lat": 2.7456,
+      "lng": 101.7099,
+      "ref_price": 8800,
+      "schedule": "11/14 -> 11/19 · 5 晚 · 直飛",
+      "deal": {
+        "price": 4800,
+        "airline": "全亞洲航空",
+        "dates": "11/19 -> 11/24",
+        "verified_date": "10/25",
+        "note": "特惠早鳥"
+      },
+      "miles_comparison": {
+        "program": "長榮/華航",
+        "miles_needed": 35000,
+        "tax_twd": 2500,
+        "cash_equiv": 13000
+      }
+    },
+    {
+      "iata": "DAD",
+      "name": "峴港",
+      "country": "越南",
+      "region": "ASIA",
+      "city_slug": "da-nang",
+      "lat": 16.0439,
+      "lng": 108.1994,
+      "ref_price": 7800,
+      "schedule": "11/11 -> 11/15 · 4 晚 · 直飛",
+      "deal": {
+        "price": 4200,
+        "airline": "越捷航空",
+        "dates": "11/21 -> 11/25",
+        "verified_date": "10/26",
+        "note": "週末快閃"
+      },
+      "miles_comparison": {
+        "program": "星宇航空 COSMILE",
+        "miles_needed": 35000,
+        "tax_twd": 2400,
+        "cash_equiv": 12900
+      }
+    },
+    {
+      "iata": "DPS",
+      "name": "峇里島伍拉賴",
+      "country": "印尼",
+      "region": "ASIA",
+      "city_slug": "bali",
+      "lat": -8.7482,
+      "lng": 115.1672,
+      "ref_price": 14500,
+      "schedule": "11/20 -> 11/26 · 6 晚 · 轉機/直飛",
+      "deal": {
+        "price": 8900,
+        "airline": "菲律賓航空",
+        "dates": "11/25 -> 12/01",
+        "verified_date": "10/23",
+        "note": "馬尼拉中轉"
+      },
+      "miles_comparison": {
+        "program": "長榮/華航直飛",
+        "miles_needed": 50000,
+        "tax_twd": 3100,
+        "cash_equiv": 18100
+      }
+    },
+    {
+      "iata": "HKG",
+      "name": "香港",
+      "country": "中國香港",
+      "region": "ASIA",
+      "city_slug": "hong-kong",
+      "lat": 22.308,
+      "lng": 113.9185,
+      "ref_price": 6200,
+      "schedule": "11/15 -> 11/18 · 3 晚 · 直飛",
+      "deal": {
+        "price": 4100,
+        "airline": "香港航空",
+        "dates": "11/22 -> 11/25",
+        "verified_date": "10/27",
+        "note": "含20公斤行李"
+      },
+      "miles_comparison": {
+        "program": "國泰亞洲萬里通 (Asia Miles)",
+        "miles_needed": 15000,
+        "tax_twd": 2300,
+        "cash_equiv": 6800
+      }
+    },
+    {
+      "iata": "SGN",
+      "name": "胡志明市新山一",
+      "country": "越南",
+      "region": "ASIA",
+      "city_slug": "ho-chi-minh-city",
+      "lat": 10.8188,
+      "lng": 106.6519,
+      "ref_price": 7500,
+      "schedule": "11/10 -> 11/14 · 4 晚 · 直飛",
+      "deal": {
+        "price": 3950,
+        "airline": "越捷航空",
+        "dates": "11/18 -> 11/22",
+        "verified_date": "10/25",
+        "note": "促銷航點"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 35000,
+        "tax_twd": 2500,
+        "cash_equiv": 13000
+      }
+    },
+    {
+      "iata": "MNL",
+      "name": "馬尼拉尼諾伊",
+      "country": "菲律賓",
+      "region": "ASIA",
+      "city_slug": "manila",
+      "lat": 14.5086,
+      "lng": 121.0194,
+      "ref_price": 6800,
+      "schedule": "11/12 -> 11/16 · 4 晚 · 直飛",
+      "deal": {
+        "price": 3600,
+        "airline": "宿霧太平洋",
+        "dates": "11/19 -> 11/23",
+        "verified_date": "10/24",
+        "note": "百元機票促銷"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 35000,
+        "tax_twd": 2200,
+        "cash_equiv": 12700
+      }
+    },
+    {
+      "iata": "LAX",
+      "name": "洛杉磯",
+      "country": "美國",
+      "region": "AMER",
+      "city_slug": "los-angeles",
+      "lat": 33.9416,
+      "lng": -118.4085,
+      "ref_price": 28500,
+      "schedule": "11/10 -> 11/24 · 14 晚 · 轉機/直飛",
+      "deal": {
+        "price": 18900,
+        "airline": "廈門航空",
+        "dates": "11/17 -> 12/01",
+        "verified_date": "10/20",
+        "note": "廈門中轉破盤價"
+      },
+      "miles_comparison": {
+        "program": "星宇航空 / 長榮",
+        "miles_needed": 70000,
+        "tax_twd": 7200,
+        "cash_equiv": 28200
+      }
+    },
+    {
+      "iata": "SFO",
+      "name": "舊金山",
+      "country": "美國",
+      "region": "AMER",
+      "city_slug": "san-francisco",
+      "lat": 37.6213,
+      "lng": -122.379,
+      "ref_price": 29800,
+      "schedule": "11/15 -> 11/29 · 14 晚 · 轉機/直飛",
+      "deal": {
+        "price": 19600,
+        "airline": "中國南方航空",
+        "dates": "11/20 -> 12/04",
+        "verified_date": "10/22",
+        "note": "廣州中轉特惠"
+      },
+      "miles_comparison": {
+        "program": "華航華夏哩程酬賓",
+        "miles_needed": 70000,
+        "tax_twd": 6800,
+        "cash_equiv": 27800
+      }
+    },
+    {
+      "iata": "SEA",
+      "name": "西雅圖塔科馬",
+      "country": "美國",
+      "region": "AMER",
+      "city_slug": "seattle",
+      "lat": 47.4502,
+      "lng": -122.3088,
+      "ref_price": 26500,
+      "schedule": "11/12 -> 11/25 · 13 晚 · 直飛",
+      "deal": {
+        "price": 21500,
+        "airline": "達美航空",
+        "dates": "11/18 -> 12/01",
+        "verified_date": "10/25",
+        "note": "直飛降價促銷"
+      },
+      "miles_comparison": {
+        "program": "達美飛鏢哩程 (SkyMiles)",
+        "miles_needed": 75000,
+        "tax_twd": 3800,
+        "cash_equiv": 26300
+      }
+    },
+    {
+      "iata": "JFK",
+      "name": "紐約甘迺迪",
+      "country": "美國",
+      "region": "AMER",
+      "city_slug": "new-york",
+      "lat": 40.6413,
+      "lng": -73.7781,
+      "ref_price": 34500,
+      "schedule": "11/15 -> 12/01 · 16 晚 · 轉機",
+      "deal": {
+        "price": 23800,
+        "airline": "大韓航空",
+        "dates": "11/22 -> 12/08",
+        "verified_date": "10/21",
+        "note": "仁川中轉"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 80000,
+        "tax_twd": 8200,
+        "cash_equiv": 32200
+      }
+    },
+    {
+      "iata": "YVR",
+      "name": "溫哥華",
+      "country": "加拿大",
+      "region": "AMER",
+      "city_slug": "vancouver",
+      "lat": 49.1967,
+      "lng": -123.1815,
+      "ref_price": 27500,
+      "schedule": "11/14 -> 11/28 · 14 晚 · 直飛/轉機",
+      "deal": {
+        "price": 20400,
+        "airline": "菲律賓航空",
+        "dates": "11/21 -> 12/05",
+        "verified_date": "10/24",
+        "note": "馬尼拉中轉"
+      },
+      "miles_comparison": {
+        "program": "加拿大航空 Aeroplan",
+        "miles_needed": 75000,
+        "tax_twd": 4200,
+        "cash_equiv": 26700
+      }
+    },
+    {
+      "iata": "YYZ",
+      "name": "多倫多皮爾遜",
+      "country": "加拿大",
+      "region": "AMER",
+      "city_slug": "toronto",
+      "lat": 43.6777,
+      "lng": -79.6248,
+      "ref_price": 36000,
+      "schedule": "11/10 -> 11/26 · 16 晚 · 轉機",
+      "deal": {
+        "price": 25900,
+        "airline": "長榮航空/加航",
+        "dates": "11/16 -> 12/02",
+        "verified_date": "10/19",
+        "note": "聯程優惠"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 80000,
+        "tax_twd": 8500,
+        "cash_equiv": 32500
+      }
+    },
+    {
+      "iata": "SYD",
+      "name": "雪梨京斯福特",
+      "country": "澳洲",
+      "region": "OCE",
+      "city_slug": "sydney",
+      "lat": -33.9399,
+      "lng": 151.1753,
+      "ref_price": 22500,
+      "schedule": "11/15 -> 11/28 · 13 晚 · 轉機 1 次",
+      "deal": {
+        "price": 14800,
+        "airline": "酷航",
+        "dates": "11/20 -> 12/03",
+        "verified_date": "10/26",
+        "note": "新加坡中轉特價"
+      },
+      "miles_comparison": {
+        "program": "澳洲航空 Qantas",
+        "miles_needed": 56000,
+        "tax_twd": 6100,
+        "cash_equiv": 22900
+      }
+    },
+    {
+      "iata": "MEL",
+      "name": "墨爾本圖拉馬林",
+      "country": "澳洲",
+      "region": "OCE",
+      "city_slug": "melbourne",
+      "lat": -37.669,
+      "lng": 144.841,
+      "ref_price": 23200,
+      "schedule": "11/12 -> 11/26 · 14 晚 · 轉機 1 次",
+      "deal": {
+        "price": 15200,
+        "airline": "酷航",
+        "dates": "11/18 -> 12/01",
+        "verified_date": "10/25",
+        "note": "避寒優惠票"
+      },
+      "miles_comparison": {
+        "program": "華航直飛",
+        "miles_needed": 55000,
+        "tax_twd": 5800,
+        "cash_equiv": 22300
+      }
+    },
+    {
+      "iata": "BNE",
+      "name": "布里斯本",
+      "country": "澳洲",
+      "region": "OCE",
+      "city_slug": "brisbane",
+      "lat": -27.3942,
+      "lng": 153.1218,
+      "ref_price": 24800,
+      "schedule": "11/14 -> 11/27 · 13 晚 · 直飛/轉機",
+      "deal": {
+        "price": 17500,
+        "airline": "長榮航空",
+        "dates": "11/21 -> 12/04",
+        "verified_date": "10/22",
+        "note": "早鳥直飛"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 55000,
+        "tax_twd": 5200,
+        "cash_equiv": 21700
+      }
+    },
+    {
+      "iata": "PVG",
+      "name": "上海浦東",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "shanghai",
+      "lat": 31.1443,
+      "lng": 121.8083,
+      "ref_price": 9200,
+      "schedule": "11/15 -> 11/19 · 4 晚 · 直飛",
+      "deal": {
+        "price": 6200,
+        "airline": "中國東方航空",
+        "dates": "11/18 -> 11/22",
+        "verified_date": "10/26",
+        "note": "直飛含23公斤行李"
+      },
+      "miles_comparison": {
+        "program": "華航/東航天合聯盟",
+        "miles_needed": 30000,
+        "tax_twd": 2200,
+        "cash_equiv": 11200
+      }
+    },
+    {
+      "iata": "PEK",
+      "name": "北京首都",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "beijing",
+      "lat": 40.0799,
+      "lng": 116.6031,
+      "ref_price": 11500,
+      "schedule": "11/18 -> 11/23 · 5 晚 · 直飛",
+      "deal": {
+        "price": 7600,
+        "airline": "中國國際航空",
+        "dates": "11/21 -> 11/26",
+        "verified_date": "10/25",
+        "note": "星空聯盟直飛特價"
+      },
+      "miles_comparison": {
+        "program": "長榮/國航星空聯盟",
+        "miles_needed": 35000,
+        "tax_twd": 2500,
+        "cash_equiv": 13000
+      }
+    },
+    {
+      "iata": "SZX",
+      "name": "深圳寶安",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "shenzhen",
+      "lat": 22.6393,
+      "lng": 113.8107,
+      "ref_price": 8800,
+      "schedule": "11/12 -> 11/16 · 4 晚 · 直飛",
+      "deal": {
+        "price": 5800,
+        "airline": "深圳航空",
+        "dates": "11/17 -> 11/21",
+        "verified_date": "10/27",
+        "note": "早晚班直飛特惠"
+      },
+      "miles_comparison": {
+        "program": "長榮/深航星空聯盟",
+        "miles_needed": 30000,
+        "tax_twd": 2100,
+        "cash_equiv": 11100
+      }
+    },
+    {
+      "iata": "CAN",
+      "name": "廣州白雲",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "guangzhou",
+      "lat": 23.3924,
+      "lng": 113.2988,
+      "ref_price": 8900,
+      "schedule": "11/14 -> 11/18 · 4 晚 · 直飛",
+      "deal": {
+        "price": 5900,
+        "airline": "中國南方航空",
+        "dates": "11/19 -> 11/23",
+        "verified_date": "10/26",
+        "note": "直飛含托運行李"
+      },
+      "miles_comparison": {
+        "program": "南航明珠俱樂部",
+        "miles_needed": 30000,
+        "tax_twd": 2200,
+        "cash_equiv": 11200
+      }
+    },
+    {
+      "iata": "XMN",
+      "name": "廈門高崎",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "xiamen",
+      "lat": 24.544,
+      "lng": 118.1277,
+      "ref_price": 6800,
+      "schedule": "11/10 -> 11/13 · 3 晚 · 直飛",
+      "deal": {
+        "price": 4200,
+        "airline": "廈門航空",
+        "dates": "11/15 -> 11/18",
+        "verified_date": "10/27",
+        "note": "快閃近程特惠"
+      },
+      "miles_comparison": {
+        "program": "廈航白鷺俱樂部",
+        "miles_needed": 20000,
+        "tax_twd": 1900,
+        "cash_equiv": 7900
+      }
+    },
+    {
+      "iata": "TFU",
+      "name": "成都天府",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "chengdu",
+      "lat": 30.3167,
+      "lng": 104.4417,
+      "ref_price": 12500,
+      "schedule": "11/20 -> 11/25 · 5 晚 · 直飛",
+      "deal": {
+        "price": 8400,
+        "airline": "四川航空",
+        "dates": "11/24 -> 11/29",
+        "verified_date": "10/25",
+        "note": "天府直飛特惠"
+      },
+      "miles_comparison": {
+        "program": "華航/長榮直飛",
+        "miles_needed": 35000,
+        "tax_twd": 2600,
+        "cash_equiv": 13100
+      }
+    },
+    {
+      "iata": "HGH",
+      "name": "杭州蕭山",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "hangzhou",
+      "lat": 30.2295,
+      "lng": 120.4344,
+      "ref_price": 8600,
+      "schedule": "11/16 -> 11/20 · 4 晚 · 直飛",
+      "deal": {
+        "price": 5600,
+        "airline": "長榮航空",
+        "dates": "11/22 -> 11/26",
+        "verified_date": "10/26",
+        "note": "江南商務早鳥"
+      },
+      "miles_comparison": {
+        "program": "長榮無限萬哩遊",
+        "miles_needed": 30000,
+        "tax_twd": 2100,
+        "cash_equiv": 11100
+      }
+    },
+    {
+      "iata": "CKG",
+      "name": "重慶江北",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "chongqing",
+      "lat": 29.7192,
+      "lng": 106.6417,
+      "ref_price": 11800,
+      "schedule": "11/17 -> 11/22 · 5 晚 · 直飛",
+      "deal": {
+        "price": 7900,
+        "airline": "中國國際航空",
+        "dates": "11/23 -> 11/28",
+        "verified_date": "10/24",
+        "note": "山城直航特惠"
+      },
+      "miles_comparison": {
+        "program": "國航/長榮星空聯盟",
+        "miles_needed": 35000,
+        "tax_twd": 2500,
+        "cash_equiv": 13000
+      }
+    },
+    {
+      "iata": "TAO",
+      "name": "青島膠東",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "qingdao",
+      "lat": 36.3764,
+      "lng": 120.0886,
+      "ref_price": 10500,
+      "schedule": "11/15 -> 11/20 · 5 晚 · 直飛",
+      "deal": {
+        "price": 7100,
+        "airline": "山東航空",
+        "dates": "11/19 -> 11/24",
+        "verified_date": "10/25",
+        "note": "膠東直飛航點"
+      },
+      "miles_comparison": {
+        "program": "華航直飛",
+        "miles_needed": 35000,
+        "tax_twd": 2400,
+        "cash_equiv": 12900
+      }
+    },
+    {
+      "iata": "WUH",
+      "name": "武漢天河",
+      "country": "中國大陸",
+      "region": "CN",
+      "city_slug": "wuhan",
+      "lat": 30.7838,
+      "lng": 114.2081,
+      "ref_price": 12800,
+      "schedule": "11/20 -> 11/30 · 10 晚 · 直飛/轉機",
+      "deal": {
+        "price": 9703,
+        "airline": "中國南方航空",
+        "dates": "11/20 -> 11/30",
+        "verified_date": "10/28 即時查價",
+        "note": "轉機含稅約 9,703 / 直飛約 10,768"
+      },
+      "miles_comparison": {
+        "program": "南航明珠俱樂部",
+        "miles_needed": 30000,
+        "tax_twd": 2300,
+        "cash_equiv": 11300
+      }
+    }
+  ]
+}
