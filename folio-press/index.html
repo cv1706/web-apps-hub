@@ -1440,8 +1440,17 @@ func (d *OrderBookDispatcher) Dispatch(order *OrderEvent) error {
       } catch (err) {
         state.ollama.connected = false;
         if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-rose-400';
-        if (statusText) statusText.innerText = 'Docker 未啟動或無回應';
-        if (notify) alert(`無法連線至 Ollama 端點 (${endpoint})：${err.message}\n請確認 Docker Desktop / Ollama 容器已正常運行。`);
+        
+        const isHttps = window.location.protocol === 'https:';
+        const isLocal = endpoint.includes('localhost') || endpoint.includes('127.0.0.1');
+
+        if (isHttps && isLocal) {
+          if (statusText) statusText.innerText = '安全限制 (Mixed Content)';
+          if (notify) alert(`【連線受阻：瀏覽器安全機制攔截】\n您目前透過 HTTPS 雲端網站訪問本機 HTTP Ollama。現代瀏覽器（Chrome）會因 Mixed Content / Private Network Access 規範阻擋存取。\n\n【建議解法】：\n1. 【推薦】使用本地端開啟：執行 Tools/start_folio_press.bat（以 http://localhost:8080 開啟），直連 Ollama 零限制。\n2. 或在 Chrome 網址列開啟 chrome://flags/#block-insecure-private-network-requests 改設為 Disabled。`);
+        } else {
+          if (statusText) statusText.innerText = 'Docker 未啟動或無回應';
+          if (notify) alert(`無法連線至 Ollama 端點 (${endpoint})：${err.message}\n請確認 Docker Desktop / Ollama 容器已正常運行。`);
+        }
       }
     }
 
@@ -1530,7 +1539,12 @@ func (d *OrderBookDispatcher) Dispatch(order *OrderEvent) error {
         appendChatMessage('assistant', `已依據全文為您提煉標題：\n「${parsed.title}」\n副標題：${parsed.subtitle}`);
       } catch (err) {
         console.error('Ollama analysis failed:', err);
-        appendChatMessage('assistant', `分析時發生錯誤：${err.message}。請確認 Docker 容器已啟動且端點正確。`);
+        const isHttps = window.location.protocol === 'https:';
+        if (isHttps && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+          appendChatMessage('assistant', `⚠️ 【瀏覽器安全限制 (Mixed Content / PNA)】\n您目前位於 HTTPS 雲端網站，瀏覽器預設阻擋 JavaScript 直接存取本機 HTTP (${state.ollama.endpoint})。\n\n💡 【解決方案】：\n1. 【推薦】直接雙擊執行本機 Tools/start_folio_press.bat（以 http://localhost:8080 開啟，100% 暢通直連 Ollama）。\n2. 或於 Chrome 網址列開啟 chrome://flags/#block-insecure-private-network-requests 並將其設為 Disabled。`);
+        } else {
+          appendChatMessage('assistant', `分析時發生錯誤：${err.message}。請確認 Docker 容器已啟動且端點正確。`);
+        }
       } finally {
         if (loadingEl) loadingEl.classList.add('hidden');
       }
@@ -1651,7 +1665,12 @@ func (d *OrderBookDispatcher) Dispatch(order *OrderEvent) error {
         appendChatMessage('assistant', parsed.reply || `已為您更新標題為：「${parsed.title}」`);
       } catch (err) {
         console.error('Chat error:', err);
-        appendChatMessage('assistant', `微調時出錯：${err.message}`);
+        const isHttps = window.location.protocol === 'https:';
+        if (isHttps && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+          appendChatMessage('assistant', `⚠️ 【瀏覽器安全限制 (Mixed Content / PNA)】\n您目前位於 HTTPS 雲端網站，瀏覽器預設阻擋存取本機 HTTP (${state.ollama.endpoint})。\n請改用本機 Tools/start_folio_press.bat 開啟以獲得完整 Ollama 對話功能。`);
+        } else {
+          appendChatMessage('assistant', `微調時出錯：${err.message}`);
+        }
       } finally {
         if (btn) {
           btn.disabled = false;
