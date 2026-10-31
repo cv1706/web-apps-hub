@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>印務室 Folio Press — AI 對話轉顧問報告與高階 A4 排版工作台</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%2232%22%20height=%2232%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%231E3A5F%22/><text x=%2216%22 y=%2222%22 font-size=%2218%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22serif%22 font-weight=%22bold%22>F</text></svg>">
+
+  <!-- Google Fonts & Pretendard -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for Math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+
+  <!-- html2canvas for Long Image Export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'Noto Sans TC', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            serif: ['Noto Serif TC', 'Georgia', 'Nanum Myeongjo', 'serif'],
+            mono: ['DM Mono', 'Consolas', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#F0F4F8',
+              100: '#D9E2EC',
+              500: '#1E3A5F',
+              600: '#152C49',
+              900: '#0B192C',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* =========================================================
+       THEME SYSTEM VARIABLES (100% 勾稽原版 6 大主題架構)
+       ========================================================= */
+    :root {
+      --font-sans: 'Pretendard', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Noto Serif TC', Georgia, 'Nanum Myeongjo', serif;
+      --font-mono: 'DM Mono', Consolas, monospace;
+    }
+
+    /* 01 瑞士顧問 (Swiss Corporate) */
+    [data-theme="swiss"] {
+      --paper: #FFFFFF;
+      --ink: #111113;
+      --muted: #6B6B70;
+      --accent: #1E3A5F;
+      --accent-tint: #F2F4F7;
+      --rule: #E3E6EA;
+      --canvas-bg: #E4E2DD;
+      --font-head: var(--font-sans);
+      --font-body: var(--font-sans);
+    }
+
+    /* 02 聖水象牙 (Seongsu Ivory) */
+    [data-theme="seongsu"] {
+      --paper: #FAF8F5;
+      --ink: #282625;
+      --muted: #78726D;
+      --accent: #3E5A47;
+      --accent-tint: #F0EDE6;
+      --rule: #E4DFD5;
+      --canvas-bg: #E6E1D8;
+      --font-head: var(--font-serif);
+      --font-body: var(--font-sans);
+    }
+
+    /* 03 東京雜誌 (Tokyo Magazine) */
+    [data-theme="tokyo"] {
+      --paper: #FDFBF7;
+      --ink: #1F1D1A;
+      --muted: #6E6A63;
+      --accent: #B33A1E;
+      --accent-tint: #F8F1EA;
+      --rule: #E7DFD2;
+      --canvas-bg: #E4DED4;
+      --font-head: var(--font-serif);
+      --font-body: var(--font-sans);
+    }
+
+    /* 04 金融簡報 (Financial Briefing) */
+    [data-theme="ft"] {
+      --paper: #FFFFFF;
+      --ink: #0F172A;
+      --muted: #475569;
+      --accent: #0F2942;
+      --accent-tint: #EEF2F7;
+      --rule: #D7DEE8;
+      --canvas-bg: #DFE3E9;
+      --font-head: var(--font-sans);
+      --font-body: var(--font-sans);
+    }
+
+    /* 05 牛津學術 (Oxford Academic) */
+    [data-theme="oxford"] {
+      --paper: #FCFCFA;
+      --ink: #141413;
+      --muted: #575653;
+      --accent: #7C2D12;
+      --accent-tint: #F4F2EC;
+      --rule: #DAD6CE;
+      --canvas-bg: #E3E1DB;
+      --font-head: var(--font-serif);
+      --font-body: var(--font-serif);
+    }
+
+    /* 00 對話原貌 (Chat Transcript) */
+    [data-theme="chat"] {
+      --paper: #FFFFFF;
+      --ink: #0D0D0D;
+      --muted: #6B6B6B;
+      --accent: #2F2F2F;
+      --accent-tint: #F4F4F4;
+      --rule: #E5E5E5;
+      --canvas-bg: #E9E8E6;
+      --font-head: var(--font-sans);
+      --font-body: var(--font-sans);
+    }
+
+    /* Base Typography Scaling */
+    .scale-small { --base: 12px; }
+    .scale-normal { --base: 13.5px; }
+    .scale-large { --base: 15px; }
+
+    /* =========================================================
+       PAGE & PAPER SIMULATION (A4 / LETTER)
+       ========================================================= */
+    .pages-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 0;
+      transform-origin: top center;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .page {
+      position: relative;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: var(--base);
+      line-height: 1.7;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 20px 25px -5px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      box-sizing: border-box;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    /* A4 Standards (794px x 1123px at 96 DPI) */
+    .page.size-a4 {
+      width: 794px;
+      height: 1123px;
+    }
+
+    /* US Letter (816px x 1056px at 96 DPI) */
+    .page.size-letter {
+      width: 816px;
+      height: 1056px;
+    }
+
+    /* Running Header */
+    .page-head {
+      position: absolute;
+      top: 32px;
+      left: 64px;
+      right: 64px;
+      height: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 6px;
+      font-family: var(--font-body);
+      user-select: none;
+    }
+
+    /* Body Container */
+    .page-body {
+      position: absolute;
+      top: 84px;
+      left: 64px;
+      right: 64px;
+      bottom: 72px;
+      overflow: hidden;
+    }
+
+    /* Running Footer */
+    .page-foot {
+      position: absolute;
+      bottom: 30px;
+      left: 64px;
+      right: 64px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      font-size: 10.5px;
+      color: var(--muted);
+      border-top: 1px solid var(--rule);
+      padding-top: 8px;
+      font-family: var(--font-body);
+      user-select: none;
+    }
+
+    .page-foot .pf-l {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .page-foot .pf-c {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.06em;
+    }
+    .page-foot .pf-r {
+      opacity: 0.8;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    /* =========================================================
+       THEME SPECIFIC OVERRIDES & ACCENTS
+       ========================================================= */
+
+    /* [01 瑞士顧問] */
+    [data-theme="swiss"] .cover {
+      border-top: 5px solid var(--accent);
+      padding-top: calc(var(--base) * 1.5);
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: calc(var(--base) * 1.8);
+      padding-bottom: calc(var(--base) * 1.2);
+    }
+    [data-theme="swiss"] .cover-title {
+      font-family: var(--font-head);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: calc(var(--base) * 2.3);
+      line-height: 1.2;
+      color: var(--ink);
+    }
+    [data-theme="swiss"] .blk-h2::before {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    /* [02 聖水象牙] */
+    [data-theme="seongsu"] .cover {
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: calc(var(--base) * 1.8);
+      padding-bottom: calc(var(--base) * 1.2);
+    }
+    [data-theme="seongsu"] .cover-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: calc(var(--base) * 2.2);
+      color: var(--ink);
+    }
+    [data-theme="seongsu"] .cover-sub {
+      font-family: var(--font-head);
+      font-style: italic;
+    }
+    [data-theme="seongsu"] .blk-h2::before {
+      content: "";
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+    }
+
+    /* [03 東京雜誌] */
+    [data-theme="tokyo"] .cover {
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: calc(var(--base) * 1.8);
+      padding-bottom: calc(var(--base) * 1.2);
+    }
+    [data-theme="tokyo"] .cover-title {
+      border-left: 6px solid var(--accent);
+      padding-left: 18px;
+      font-weight: 800;
+      font-size: calc(var(--base) * 2.1);
+      letter-spacing: 0;
+    }
+    [data-theme="tokyo"] .blk-h2 {
+      border-left: 4px solid var(--accent);
+      padding-left: 12px;
+    }
+    [data-theme="tokyo"] .blk-h3::before {
+      content: "■";
+      color: var(--accent);
+      font-size: 0.65em;
+      margin-right: 8px;
+      position: relative;
+      top: -2px;
+    }
+    [data-theme="tokyo"] .page-head {
+      letter-spacing: 0.22em;
+    }
+
+    /* [04 金融簡報] */
+    [data-theme="ft"] .cover {
+      background: var(--accent);
+      padding: 24px 26px;
+      border-radius: 4px;
+      border-bottom: 0;
+      color: #FFFFFF;
+      margin-bottom: calc(var(--base) * 1.8);
+    }
+    [data-theme="ft"] .cover-title,
+    [data-theme="ft"] .cover-sub,
+    [data-theme="ft"] .cover-meta,
+    [data-theme="ft"] .cover-meta span {
+      color: #FFFFFF !important;
+    }
+    [data-theme="ft"] .cover-meta {
+      opacity: 0.9;
+    }
+    [data-theme="ft"] .blk-h2 {
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: calc(var(--base) * 1.25);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+    [data-theme="ft"] table {
+      font-variant-numeric: tabular-nums;
+    }
+    [data-theme="ft"] tbody tr:nth-child(even) td {
+      background: var(--accent-tint);
+    }
+
+    /* [05 牛津學術] */
+    [data-theme="oxford"] .cover {
+      text-align: center;
+      border-bottom: 3px double var(--rule);
+      padding-bottom: calc(var(--base) * 1.8);
+      margin-bottom: calc(var(--base) * 1.8);
+    }
+    [data-theme="oxford"] .cover-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: calc(var(--base) * 2.2);
+    }
+    [data-theme="oxford"] .cover-sub {
+      font-style: italic;
+      text-align: center;
+    }
+    [data-theme="oxford"] .cover-meta {
+      justify-content: center;
+    }
+    [data-theme="oxford"] .blk-h2 {
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 4px;
+    }
+    [data-theme="oxford"] .blk-h3 {
+      font-style: italic;
+    }
+
+    /* [00 對話原貌] */
+    [data-theme="chat"] .cover {
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: calc(var(--base) * 1.2);
+      margin-bottom: calc(var(--base) * 1.8);
+    }
+    [data-theme="chat"] .cover-title {
+      font-size: calc(var(--base) * 1.8);
+      font-weight: 700;
+    }
+    [data-theme="chat"] .prompt-box {
+      max-width: 82%;
+      margin-left: auto;
+      background: var(--accent-tint);
+      border-radius: 18px 18px 4px 18px;
+      padding: 12px 18px;
+      line-height: 1.6;
+      border: 1px solid var(--rule);
+    }
+    [data-theme="chat"] .prompt-label {
+      text-align: right;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    [data-theme="chat"] .answer-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    [data-theme="chat"] .answer-label::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    /* =========================================================
+       BLOCKS & CONTENT STYLES
+       ========================================================= */
+    .blk {
+      position: relative;
+      margin-bottom: calc(var(--base) * 1.1);
+      transition: background 0.15s ease;
+    }
+    .blk:hover {
+      outline: 1px dashed rgba(30, 58, 95, 0.3);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .blk:hover .blk-toolbar {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .blk-toolbar {
+      position: absolute;
+      top: -12px;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #FFFFFF;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      padding: 2px 6px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      z-index: 20;
+    }
+    .blk-toolbar button {
+      padding: 3px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      color: #4B5563;
+      transition: all 0.1s ease;
+    }
+    .blk-toolbar button:hover {
+      background: #F3F4F6;
+      color: #111827;
+    }
+    .blk-toolbar button.btn-danger:hover {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+
+    /* Headings */
+    .blk-h2 {
+      font-family: var(--font-head);
+      font-size: calc(var(--base) * 1.45);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.35;
+      margin-top: calc(var(--base) * 1.4);
+      margin-bottom: calc(var(--base) * 0.7);
+    }
+    .blk-h3 {
+      font-family: var(--font-head);
+      font-size: calc(var(--base) * 1.18);
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-top: calc(var(--base) * 1.1);
+      margin-bottom: calc(var(--base) * 0.5);
+    }
+
+    /* Paragraphs & Text */
+    .blk-p {
+      color: var(--ink);
+      line-height: 1.75;
+      text-align: justify;
+    }
+    .blk-p strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Blockquote / Callout */
+    .blk-quote {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-tint);
+      padding: 12px 18px;
+      border-radius: 0 6px 6px 0;
+      font-style: normal;
+      color: var(--ink);
+      margin: calc(var(--base) * 0.8) 0;
+    }
+
+    /* Tables */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: calc(var(--base) * 0.8) 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: calc(var(--base) * 0.92);
+      line-height: 1.5;
+    }
+    th {
+      background: var(--accent-tint);
+      color: var(--ink);
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 2px solid var(--rule);
+    }
+    td {
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink);
+    }
+
+    /* Code & Pre */
+    pre {
+      border-radius: 8px;
+      padding: 14px 18px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: calc(var(--base) * 0.85);
+      line-height: 1.55;
+      margin: calc(var(--base) * 0.8) 0;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    [data-code-theme="dark"] pre {
+      background: #1E222A;
+      color: #ECEFF4;
+      border: 1px solid #2E3440;
+    }
+    [data-code-theme="dark"] code:not(pre code) {
+      background: #2E3440;
+      color: #ECEFF4;
+    }
+    [data-code-theme="light"] pre {
+      background: #F8F9FA;
+      color: #212529;
+      border: 1px solid #E9ECEF;
+    }
+    [data-code-theme="light"] code:not(pre code) {
+      background: var(--accent-tint);
+      color: var(--accent);
+    }
+
+    /* Lists */
+    ul, ol {
+      padding-left: 24px;
+      margin: calc(var(--base) * 0.5) 0;
+    }
+    ul { list-style-type: disc; }
+    ol { list-style-type: decimal; }
+    li {
+      margin-bottom: 4px;
+      line-height: 1.65;
+    }
+
+    /* Table of Contents (TOC) */
+    .toc-card {
+      background: var(--accent-tint);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: calc(var(--base) * 1.2) 0;
+    }
+    .toc-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: calc(var(--base) * 1.05);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--rule);
+      padding-bottom: 6px;
+    }
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 0;
+      font-size: calc(var(--base) * 0.92);
+      color: var(--ink);
+    }
+    .toc-item-dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--muted);
+      margin: 0 8px;
+      opacity: 0.4;
+    }
+    .toc-item-page {
+      font-family: var(--font-mono);
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =========================================================
+       PRINT RULES (PDF EXPORT 0 CLUTTER)
+       ========================================================= */
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        background: #FFFFFF !important;
+        overflow: visible !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      #main-container {
+        display: block !important;
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+      }
+      #canvas-viewport {
+        overflow: visible !important;
+        padding: 0 !important;
+        background: #FFFFFF !important;
+      }
+      .pages-stack {
+        padding: 0 !important;
+        gap: 0 !important;
+        transform: none !important;
+      }
+      .page {
+        box-shadow: none !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .page:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+      .blk:hover {
+        outline: none !important;
+      }
+      .blk-toolbar {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
+
+  <!-- =========================================================
+       TOPBAR NAVIGATION
+       ========================================================= -->
+  <header class="no-print h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 z-30 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-[#1E3A5F] text-white flex items-center justify-center font-serif font-bold text-lg shadow-sm">
+        F
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-slate-900 text-sm tracking-tight">印務室 Folio Press</h1>
+          <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono font-medium">100% 離線免授權版</span>
+        </div>
+        <p class="text-[11px] text-slate-500 hidden sm:block">AI 對話轉顧問報告 · 出版級 A4 排版 · 3x 長圖輸出</p>
+      </div>
+    </div>
+
+    <!-- Center Document Quick Controls -->
+    <div class="hidden md:flex items-center gap-2">
+      <label class="text-xs text-slate-500 font-medium">預設範例：</label>
+      <select id="preset-selector" onchange="loadPreset(this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-500">
+        <option value="quant">台股量化投資決策戰報 (旗艦雙軌)</option>
+        <option value="consulting">麥肯錫式企業策略諮詢備忘錄</option>
+        <option value="tech">高可用分散式架構白皮書</option>
+        <option value="blank">空白畫布 (自訂貼入對話)</option>
+      </select>
+    </div>
+
+    <!-- Right Action Buttons -->
+    <div class="flex items-center gap-2">
+      <!-- Import Button -->
+      <button onclick="openImportModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 shadow-sm transition">
+        <i data-lucide="file-input" class="w-3.5 h-3.5 text-slate-500"></i>
+        <span>匯入文字 / Markdown</span>
+      </button>
+
+      <!-- AI Denoise Button -->
+      <button onclick="denoiseContent()" title="一鍵去除 AI 寒暄客套話、免責聲明與冗餘標籤" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-md hover:bg-indigo-100 shadow-sm transition">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i>
+        <span>一鍵去 AI 感</span>
+      </button>
+
+      <!-- Export Dropdown -->
+      <div class="relative group">
+        <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#1E3A5F] rounded-md hover:bg-[#152C49] shadow transition">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>匯出交付物</span>
+          <i data-lucide="chevron-down" class="w-3 h-3 opacity-70"></i>
+        </button>
+
+        <div class="absolute right-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-1.5 hidden group-hover:block hover:block z-40">
+          <button onclick="exportToPDF()" class="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+            <i data-lucide="printer" class="w-4 h-4 text-slate-500"></i>
+            <div>
+              <div class="font-medium">匯出 A4 PDF 報告</div>
+              <div class="text-[10px] text-slate-400">向量清晰 · 智慧分頁 · 零雜訊</div>
+            </div>
+          </button>
+          <button onclick="exportToImage()" class="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+            <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i>
+            <div>
+              <div class="font-medium">匯出 3x 高畫質長圖</div>
+              <div class="text-[10px] text-slate-400">社群傳播 · 完整長圖 PNG</div>
+            </div>
+          </button>
+          <div class="border-t border-slate-100 my-1"></div>
+          <button onclick="exportToMarkdown()" class="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-blue-500"></i>
+            <div>
+              <div class="font-medium">匯出乾淨 Markdown (.md)</div>
+            </div>
+          </button>
+          <button onclick="copyRichText()" class="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+            <i data-lucide="clipboard-copy" class="w-4 h-4 text-indigo-500"></i>
+            <div>
+              <div class="font-medium">複製富文本 (Word / Notion)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       MAIN WORKSPACE (SIDEBAR + CANVAS)
+       ========================================================= -->
+  <div id="main-container" class="flex-1 flex overflow-hidden relative">
+
+    <!-- Left Controls Panel (Sidebar) -->
+    <aside class="no-print w-80 bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto z-20 shadow-sm">
+      <div class="p-4 space-y-6">
+
+        <!-- Theme Selection Grid -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
+            出版級設計主題 (6 大樣式)
+          </label>
+          <div class="grid grid-cols-2 gap-2" id="theme-button-group">
+            <button onclick="setTheme('swiss')" data-theme-btn="swiss" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-slate-300 transition bg-white flex flex-col justify-between h-20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">01 瑞士顧問</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1E3A5F]"></span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-tight">頂部色帶 · 乾淨留白 · 麥肯錫風格</p>
+            </button>
+
+            <button onclick="setTheme('seongsu')" data-theme-btn="seongsu" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-slate-300 transition bg-white flex flex-col justify-between h-20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">02 聖水象牙</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#3E5A47]"></span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-tight">溫潤象牙 · 橄欖重點 · 日韓講義</p>
+            </button>
+
+            <button onclick="setTheme('tokyo')" data-theme-btn="tokyo" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-slate-300 transition bg-white flex flex-col justify-between h-20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">03 東京雜誌</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#B33A1E]"></span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-tight">朱紅側欄 · 方塊項目 · 編輯出版</p>
+            </button>
+
+            <button onclick="setTheme('ft')" data-theme-btn="ft" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-slate-300 transition bg-white flex flex-col justify-between h-20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">04 金融簡報</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#0F2942]"></span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-tight">深藍色帶 · 斑馬表格 · 投行研報</p>
+            </button>
+
+            <button onclick="setTheme('oxford')" data-theme-btn="oxford" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-slate-300 transition bg-white flex flex-col justify-between h-20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">05 牛津學術</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#7C2D12]"></span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-tight">雙線裝飾 · 典雅襯線 · 論文專論</p>
+            </button>
+
+            <button onclick="setTheme('chat')" data-theme-btn="chat" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-slate-300 transition bg-white flex flex-col justify-between h-20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">00 對話原貌</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#2F2F2F]"></span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-tight">氣泡問答 · 原汁原味 · 紀實封存</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Document Metadata -->
+        <div class="space-y-3 pt-2 border-t border-slate-200">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            報告標頭與元數據
+          </label>
+
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">主標題 (Title)</label>
+            <input type="text" id="meta-title" oninput="updateMeta('title', this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">副標題 / 業務主旨 (Subtitle)</label>
+            <input type="text" id="meta-subtitle" oninput="updateMeta('subtitle', this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">機構名稱</label>
+              <input type="text" id="meta-org" oninput="updateMeta('org', this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">撰寫者 / 顧問</label>
+              <input type="text" id="meta-author" oninput="updateMeta('author', this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">報告日期</label>
+              <input type="date" id="meta-date" onchange="updateMeta('date', this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">機密等級</label>
+              <select id="meta-confidentiality" onchange="updateMeta('confidentiality', this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <option value="STRICTLY CONFIDENTIAL">嚴格機密 (Confidential)</option>
+                <option value="INTERNAL ONLY">內部流通 (Internal Only)</option>
+                <option value="CLIENT WORK">客戶專用 (Client Work)</option>
+                <option value="PUBLIC">公開發布 (Public)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout & Typography Controls -->
+        <div class="space-y-3 pt-2 border-t border-slate-200">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            版面與文字規格
+          </label>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">紙張規格</label>
+              <select id="paper-size" onchange="setPaperSize(this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <option value="a4">A4 (210 × 297 mm)</option>
+                <option value="letter">US Letter (8.5 × 11 in)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">字級比例</label>
+              <select id="font-scale" onchange="setFontScale(this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <option value="scale-small">小 (12 px)</option>
+                <option value="scale-normal" selected>標準 (13.5 px)</option>
+                <option value="scale-large">大 (15 px)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">程式碼主題</label>
+              <select id="code-theme" onchange="setCodeTheme(this.value)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <option value="dark">深色 (Nord Dark)</option>
+                <option value="light">淺色 (GitHub Light)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-1">自動目錄 (TOC)</label>
+              <select id="opt-toc" onchange="toggleTOC(this.value === 'true')" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <option value="true">啟用 (自動頁碼映射)</option>
+                <option value="false">停用目錄</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">自訂頁尾註腳 (Footer)</label>
+            <input type="text" id="meta-footer" oninput="updateMeta('customFooter', this.value)" placeholder="例：本報告僅供內部策略決策參考" class="w-full text-xs bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Center Canvas Area -->
+    <main id="canvas-viewport" class="flex-1 bg-[#E4E2DD] overflow-y-auto overflow-x-hidden relative flex flex-col items-center">
+
+      <!-- Floating Zoom & Page Counter Bar -->
+      <div class="no-print sticky top-4 z-30 bg-white/95 backdrop-blur border border-slate-300/80 rounded-full shadow-md px-3 py-1.5 flex items-center gap-3 text-xs text-slate-700">
+        <button onclick="zoomOut()" class="p-1 hover:bg-slate-100 rounded text-slate-600 transition" title="縮小">
+          <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+        </button>
+        <span id="zoom-text" class="font-mono text-slate-800 font-semibold w-10 text-center">100%</span>
+        <button onclick="zoomIn()" class="p-1 hover:bg-slate-100 rounded text-slate-600 transition" title="放大">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+        </button>
+        <span class="w-px h-3 bg-slate-300"></span>
+        <button onclick="zoomFit()" class="px-2 py-0.5 hover:bg-slate-100 rounded text-slate-600 transition text-[11px] font-medium">
+          最適視窗
+        </button>
+        <span class="w-px h-3 bg-slate-300"></span>
+        <div class="flex items-center gap-1 font-mono text-[11px] text-slate-600">
+          <i data-lucide="file" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span id="page-count-badge">共 1 頁 · A4</span>
+        </div>
+      </div>
+
+      <!-- Rendered Pages Stack Container -->
+      <div id="pages-stack" class="pages-stack scale-normal" data-theme="swiss" data-code-theme="dark">
+        <!-- Rendered Pages will be injected dynamically here -->
+      </div>
+
+      <!-- Invisible Measure Sandbox for precise clientHeight calculations -->
+      <div id="measure-sandbox" class="absolute -left-[9999px] top-0 invisible pointer-events-none" style="width: 666px;"></div>
+
+    </main>
+  </div>
+
+  <!-- =========================================================
+       IMPORT MODAL DIALOG
+       ========================================================= -->
+  <div id="import-modal" class="no-print fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-brand-500"></i>
+          <h3 class="font-bold text-slate-900 text-sm">匯入對話內容或 Markdown</h3>
+        </div>
+        <button onclick="closeImportModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">貼上原始對話或 Markdown 文本</label>
+          <textarea id="import-textarea" rows="12" class="w-full font-mono text-xs p-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="可直接貼上 ChatGPT、Claude、Gemini 的對話紀錄，或是任何標準 Markdown 文章..."></textarea>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <p>支援格式：標準 Markdown、對話式 User/Assistant 分段</p>
+          <label class="cursor-pointer text-brand-500 hover:underline inline-flex items-center gap-1 font-medium">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>選取本地 .md 檔案</span>
+            <input type="file" accept=".md,.txt" onchange="handleFileUpload(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+        <button onclick="closeImportModal()" class="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition">
+          取消
+        </button>
+        <button onclick="applyImportedText()" class="px-4 py-2 text-xs font-semibold text-white bg-[#1E3A5F] rounded-md hover:bg-[#152C49] shadow transition">
+          確認套用並排版
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="no-print fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg text-xs font-medium shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-message">操作完成</span>
+  </div>
+
+  <!-- =========================================================
+       CORE LOGIC & ENGINE JAVASCRIPT
+       ========================================================= -->
+  <script>
+    // State SSOT
+    const state = {
+      theme: 'swiss',
+      paperSize: 'a4', // a4 (794x1123) or letter (816x1056)
+      fontScale: 'scale-normal',
+      codeTheme: 'dark',
+      zoom: 1.0,
+      showTOC: true,
+      meta: {
+        title: '馬丁舒華茲與唐奇安通道雙軌旗艦模型操作指南',
+        subtitle: '台股多因子五階篩選 · EMA 10 回馬槍回踩與多階階梯鎖利戰報',
+        org: 'ALPHA QUANT LAB · 機構級決策室',
+        author: '首席量化策略師',
+        date: new Date().toISOString().split('T')[0],
+        confidentiality: 'STRICTLY CONFIDENTIAL',
+        customFooter: '本量化研報為 SSOT 單一事實來源自動生成 · 嚴禁未經授權之商業轉載'
+      },
+      rawContent: '',
+      blocks: []
+    };
+
+    // Pre-configured Presets
+    const PRESETS = {
+      quant: `# 馬丁舒華茲與唐奇安通道雙軌旗艦模型操作指南
+
+## 一、 策略核心邏輯與雙軌定位
+
+本旗艦模型整合**馬丁·舒華茲（Marty Schwartz）EMA 10 回馬槍**與**唐奇安通道突破（Donchian Channel Breakout）**雙軌機制，旨在捕捉高動量領頭羊股票之爆發性利潤，同時兼顧量縮回踩之超額風險報酬比。
+
+> **核心風控鐵律**：順大盤大勢，逆個股小波段。大盤指數必須位於 EMA 10 之上始得啟動攻擊部位；若跌破 EMA 10 則全面進入防禦狀態。
+
+### 雙軌模型之策略分工與配置比率
+
+| 策略模組 | 進場邏輯 | 目標報酬比 (R:R) | 部位權重分配 |
+| :--- | :--- | :--- | :--- |
+| **馬丁舒華茲 EMA 10** | 強勢股回踩 EMA 10 且成交量萎縮 30% 以上 | 1 : 2.5 以上 | 40% (首批狙擊部位) |
+| **唐奇安通道突破** | 突破過去 20 日最高價並伴隨爆量 1.5 倍 | 1 : 3.0 以上 | 60% (主升段加碼部位) |
+
+---
+
+## 二、 五階多因子實戰選股漏斗
+
+選股流程採用階梯式嚴格篩選，確保過濾後標的具備足夠流動性與強大動能：
+
+1. **第一階：全市場流動性濾網**
+   - 5 日均量大於 1,500 張，排除小型冷門股。
+   - 股價大於 15 元，剔除全額交割或財務高風險股。
+2. **第二階：多頭趨勢排列檢驗**
+   - 滿足均線多頭排列：$MA_{20} > MA_{60} > MA_{120}$。
+   - 現價站穩所有短期與中期均線之上。
+3. **第三階：籌碼集中度過濾**
+   - 外資與投信近 3 日合計呈現淨買超。
+   - 主力買賣超佔成交量比率大於 12%。
+
+\`\`\`python
+# EMA 10 回馬槍觸發條件虛擬碼
+def evaluate_schwartz_trigger(close, ema10, volume, avg_vol_5):
+    pullback_condition = (close >= ema10 * 0.995) and (close <= ema10 * 1.015)
+    volume_shrink_condition = volume <= (avg_vol_5 * 0.70)
+    return pullback_condition and volume_shrink_condition
+\`\`\`
+
+---
+
+## 三、 多階動態階梯目標價與暴利奔馳鎖利 SOP
+
+為徹底解決「賺少賠多」之心理偏誤，系統採用多階階梯停利機制：
+
+- **T1 第一目標價（保本鎖利）**：進場後獲利達 $+4.5\%$，強制獲利了結 30% 部位，並將剩餘部位之停損點上移至**進場成本價**（無風險交易）。
+- **T2 第二目標價（趨勢主段）**：獲利達 $+8.5\%$，再獲利平倉 30% 部位，啟動唐奇安通道下軌動態追蹤。
+- **T3 暴利奔馳（讓利潤無限延伸）**：剩餘 40% 部位不預設停利點，跌破 EMA 10 或跌破 10 日新低始全數獲利了結。`,
+
+      consulting: `# 數位轉型策略與全通路客戶體驗提升諮詢備忘錄
+
+## 一、 執行摘要與核心洞察
+
+根據本季度對貴司核心事業群之訪談與市場同業對標，貴司在數位通路之客戶流失率高達 42%，主要瓶頸在於全通路數據斷鏈、會員權益未打通以及結帳流程體驗中斷。
+
+> **策略建議核心**：建立單一客戶視圖（Customer Data Platform, CDP），重塑全通路無縫旅程，預估能在 18 個月內提升客戶終身價值（LTV）達 28%。
+
+### 核心問題拆解與影響矩陣
+
+| 業務維度 | 現行痛點 | 潛在營收漏斗損失 | 優先處理級別 |
+| :--- | :--- | :--- | :--- |
+| **數據孤島** | 線下 POS 與線上 APP 數據未即時同步 | 每年約 1,200 萬元行銷無效投放 | P0 (立即啟動) |
+| **結帳流失** | 購物車結帳流程需跨 5 道頁面 | 轉換率低於電商業界平均 1.8% | P0 (本季優化) |
+| **會員權益** | 實體門市會員點數無法於線上直接抵用 | 顧客滿意度 CSAT 下滑 14 分 | P1 (次季執行) |
+
+---
+
+## 二、 戰略解法與三年實施路線圖
+
+1. **第一階段（Foundation）：數據底座統一與基礎架構改造**
+   - 串聯線下 120 家門市之 ERP 與線上 Shopify 系統。
+   - 整合即時庫存查詢 API，避免「線上超賣、線下有貨無法調度」之窘境。
+2. **第二階段（Activation）：個人化推薦引擎與行銷自動化**
+   - 依據客戶過往瀏覽與購買習慣，自動觸發客製化推播訊息。
+   - 導入 AI 動態促銷模組，提高回購頻率。
+3. **第三階段（Scale）：生態圈聯盟與跨界價值共創**
+   - 與交通出行及生活金融業者建立點數互兌生態圈。`,
+
+      tech: `# 高可用微服務架構與全球低延遲通訊白皮書
+
+## 一、 架構設計目標與核心指標
+
+本系統為支撐每日十億級別高頻即時交易報價與微秒級撮合指令，設計目標涵蓋極致低延遲、高吞吐與跨區域主從容災：
+
+- **端到端延遲**：99.9% 請求於 15 毫秒內完成。
+- **高可用性承諾（SLA）**：99.999%（年度非預期停機時間低於 5.26 分鐘）。
+- **水平擴展能力**：支援單一叢集無縫擴展至 50,000 QPS。
+
+\`\`\`go
+// 高性能訂單撮合分發模組
+type OrderBookDispatcher struct {
+    EngineID  string
+    RingBuffer chan *OrderEvent
+    Metrics   *PrometheusCollector
+}
+
+func (d *OrderBookDispatcher) Dispatch(order *OrderEvent) error {
+    select {
+    case d.RingBuffer <- order:
+        return nil
+    default:
+        return ErrQueueCongested
+    }
+}
+\`\`\`
+
+---
+
+## 二、 容災架構與數據強一致性驗證
+
+透過 Raft 共識演算法實現多節點狀態機複製，確保即使遭遇單一可用區（AZ）斷電斷網，亦可在 3 秒內完成 Leader 選舉並繼續提供服務。
+
+### 數據吞吐量與節點規模實測
+
+| 節點規模 (Nodes) | 平均寫入延遲 (ms) | 峰值吞吐量 (QPS) | CPU 平均負載 |
+| :--- | :--- | :--- | :--- |
+| **3 Nodes** | 2.4 ms | 18,500 | 48% |
+| **5 Nodes** | 3.1 ms | 32,000 | 56% |
+| **7 Nodes** | 4.2 ms | 46,800 | 62% |`,
+
+      blank: `# 請在此輸入您的自訂標題
+
+## 一、 第一個章節
+
+在此輸入您的內文，您可以直接貼上來自 ChatGPT、Claude 或 Gemini 的對話紀錄。
+
+- 支援條列清單項目
+- 支援粗體、斜體與程式碼區塊
+- 點擊「一鍵去 AI 感」可自動去除客套話與多餘修飾詞`
+    };
+
+    // Initialize marked with tables and gfm
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
+      headerIds: true,
+    });
+
+    // App Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initMetaForm();
+      loadPreset('quant');
+      highlightCurrentTheme();
+    });
+
+    function initMetaForm() {
+      document.getElementById('meta-title').value = state.meta.title;
+      document.getElementById('meta-subtitle').value = state.meta.subtitle;
+      document.getElementById('meta-org').value = state.meta.org;
+      document.getElementById('meta-author').value = state.meta.author;
+      document.getElementById('meta-date').value = state.meta.date;
+      document.getElementById('meta-confidentiality').value = state.meta.confidentiality;
+      document.getElementById('meta-footer').value = state.meta.customFooter;
+    }
+
+    function updateMeta(field, val) {
+      state.meta[field] = val;
+      renderAll();
+    }
+
+    function setTheme(themeId) {
+      state.theme = themeId;
+      document.getElementById('pages-stack').setAttribute('data-theme', themeId);
+      highlightCurrentTheme();
+      renderAll();
+    }
+
+    function highlightCurrentTheme() {
+      document.querySelectorAll('[data-theme-btn]').forEach(btn => {
+        const id = btn.getAttribute('data-theme-btn');
+        if (id === state.theme) {
+          btn.classList.add('ring-2', 'ring-brand-500', 'border-transparent', 'bg-blue-50/40');
+        } else {
+          btn.classList.remove('ring-2', 'ring-brand-500', 'border-transparent', 'bg-blue-50/40');
+        }
+      });
+    }
+
+    function setPaperSize(size) {
+      state.paperSize = size;
+      renderAll();
+    }
+
+    function setFontScale(scaleClass) {
+      state.fontScale = scaleClass;
+      const stack = document.getElementById('pages-stack');
+      stack.classList.remove('scale-small', 'scale-normal', 'scale-large');
+      stack.classList.add(scaleClass);
+      renderAll();
+    }
+
+    function setCodeTheme(codeTheme) {
+      state.codeTheme = codeTheme;
+      document.getElementById('pages-stack').setAttribute('data-code-theme', codeTheme);
+    }
+
+    function toggleTOC(enable) {
+      state.showTOC = enable;
+      renderAll();
+    }
+
+    // Zoom Controls
+    function zoomIn() {
+      if (state.zoom < 1.6) {
+        state.zoom = Math.round((state.zoom + 0.1) * 10) / 10;
+        applyZoom();
+      }
+    }
+    function zoomOut() {
+      if (state.zoom > 0.4) {
+        state.zoom = Math.round((state.zoom - 0.1) * 10) / 10;
+        applyZoom();
+      }
+    }
+    function zoomFit() {
+      const container = document.getElementById('canvas-viewport');
+      const targetWidth = state.paperSize === 'a4' ? 794 : 816;
+      const availableWidth = container.clientWidth - 80;
+      let calculatedZoom = availableWidth / targetWidth;
+      state.zoom = Math.min(1.2, Math.max(0.4, Math.round(calculatedZoom * 100) / 100));
+      applyZoom();
+    }
+    function applyZoom() {
+      const stack = document.getElementById('pages-stack');
+      stack.style.transform = `scale(${state.zoom})`;
+      document.getElementById('zoom-text').innerText = `${Math.round(state.zoom * 100)}%`;
+    }
+
+    // Content Parsing & Block Splitting
+    function parseContentToBlocks(mdText) {
+      const blocks = [];
+      const lines = mdText.split('\n');
+      let currentType = null;
+      let currentBuffer = [];
+
+      const flushBuffer = () => {
+        if (currentBuffer.length === 0) return;
+        const text = currentBuffer.join('\n').trim();
+        if (!text) {
+          currentBuffer = [];
+          return;
+        }
+
+        let html = marked.parse(text);
+        let keepWithNext = false;
+
+        if (currentType === 'h2') {
+          keepWithNext = true;
+        } else if (currentType === 'h3') {
+          keepWithNext = true;
+        }
+
+        blocks.push({
+          id: 'blk-' + Math.random().toString(36).substr(2, 9),
+          type: currentType,
+          raw: text,
+          html: html,
+          keepWithNext: keepWithNext,
+          included: true
+        });
+
+        currentBuffer = [];
+        currentType = null;
+      };
+
+      let inCodeBlock = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line.trim().startsWith('```')) {
+          inCodeBlock = !inCodeBlock;
+          currentBuffer.push(line);
+          if (!inCodeBlock) {
+            currentType = 'code';
+            flushBuffer();
+          }
+          continue;
+        }
+
+        if (inCodeBlock) {
+          currentBuffer.push(line);
+          continue;
+        }
+
+        if (line.trim().startsWith('## ')) {
+          flushBuffer();
+          currentType = 'h2';
+          currentBuffer.push(line);
+          flushBuffer();
+          continue;
+        }
+
+        if (line.trim().startsWith('### ')) {
+          flushBuffer();
+          currentType = 'h3';
+          currentBuffer.push(line);
+          flushBuffer();
+          continue;
+        }
+
+        if (line.trim().startsWith('# ') && blocks.length === 0) {
+          // Document Main Title
+          const titleText = line.replace('# ', '').trim();
+          state.meta.title = titleText;
+          document.getElementById('meta-title').value = titleText;
+          continue;
+        }
+
+        if (line.trim().startsWith('> ')) {
+          if (currentType && currentType !== 'quote') flushBuffer();
+          currentType = 'quote';
+          currentBuffer.push(line);
+          continue;
+        }
+
+        if (line.trim().startsWith('|')) {
+          if (currentType && currentType !== 'table') flushBuffer();
+          currentType = 'table';
+          currentBuffer.push(line);
+          continue;
+        }
+
+        if (line.trim() === '') {
+          flushBuffer();
+          continue;
+        }
+
+        // Regular Paragraph / Lists
+        if (!currentType) currentType = 'p';
+        currentBuffer.push(line);
+      }
+
+      flushBuffer();
+      return blocks;
+    }
+
+    // AI Denoising Engine (一鍵去除 AI 感)
+    function denoiseContent() {
+      let content = state.rawContent;
+
+      const aiFluffPatterns = [
+        /^(好的[，,！!]?|當然可以[，,！!]?|沒問題[，,！!]?|以下為您整理[：:幾個]?|以下是[針對]*的分析報告[：:]?).*$/gmi,
+        /^希望這份(分析|報告|說明|整理)對您(有所)?幫助.*$/gmi,
+        /^如果您還有任何問題[，,歡迎隨時詢問！!。]*$/gmi,
+        /^作為一個[A-Za-z0-9 ]*AI語言模型.*$/gmi,
+        /^Certainly! Here is the.*$/gmi,
+        /^I hope this helps!.*$/gmi
+      ];
+
+      for (let pat of aiFluffPatterns) {
+        content = content.replace(pat, '');
+      }
+
+      // Clean up multiple empty lines
+      content = content.replace(/\n{3,}/g, '\n\n').trim();
+
+      state.rawContent = content;
+      state.blocks = parseContentToBlocks(content);
+      renderAll();
+      showToast('已完成去 AI 感淨化，移除所有客套話與贅詞！');
+    }
+
+    function loadPreset(presetKey) {
+      if (!PRESETS[presetKey]) return;
+      state.rawContent = PRESETS[presetKey];
+      state.blocks = parseContentToBlocks(state.rawContent);
+      renderAll();
+    }
+
+    // =========================================================
+    // PAGINATION ENGINE (智慧分頁演算)
+    // =========================================================
+    function renderAll() {
+      const sandbox = document.getElementById('measure-sandbox');
+      const pagesStack = document.getElementById('pages-stack');
+      const pageSizeClass = state.paperSize === 'a4' ? 'size-a4' : 'size-letter';
+      const availablePageHeight = state.paperSize === 'a4' ? 950 : 880; // Printable inner body height
+
+      // Step 1: Collect Headings for Table of Contents
+      const headings = [];
+      state.blocks.forEach((blk, idx) => {
+        if (!blk.included) return;
+        if (blk.type === 'h2') {
+          const cleanText = blk.raw.replace(/##\s*/, '').replace(/\*\*/g, '').trim();
+          headings.push({ id: blk.id, title: cleanText, level: 2 });
+        } else if (blk.type === 'h3') {
+          const cleanText = blk.raw.replace(/###\s*/, '').replace(/\*\*/g, '').trim();
+          headings.push({ id: blk.id, title: cleanText, level: 3 });
+        }
+      });
+
+      // Step 2: Measure heights in Sandbox
+      sandbox.className = `pages-stack ${state.fontScale}`;
+      sandbox.setAttribute('data-theme', state.theme);
+      sandbox.innerHTML = '';
+
+      // Measure Cover Block
+      const coverHtml = createCoverHtml();
+      sandbox.innerHTML = `<div id="measure-cover">${coverHtml}</div>`;
+      const coverHeight = document.getElementById('measure-cover').offsetHeight;
+
+      // Measure TOC Block
+      let tocHtml = '';
+      let tocHeight = 0;
+      if (state.showTOC && headings.length > 0) {
+        tocHtml = createTOCHtml(headings, {});
+        sandbox.innerHTML = `<div id="measure-toc">${tocHtml}</div>`;
+        tocHeight = document.getElementById('measure-toc').offsetHeight;
+      }
+
+      // Measure Content Blocks
+      const measuredBlocks = [];
+      state.blocks.forEach(blk => {
+        if (!blk.included) return;
+        sandbox.innerHTML = `<div class="blk blk-${blk.type}">${blk.html}</div>`;
+        const h = sandbox.firstElementChild.offsetHeight + 18; // plus margin
+        measuredBlocks.push({
+          block: blk,
+          height: h
+        });
+      });
+
+      // Step 3: Run Page Packing Simulation
+      const pages = [];
+      let currentPage = [];
+      let currentHeight = 0;
+
+      // Add Cover to Page 1
+      currentPage.push({ type: 'cover', html: coverHtml, height: coverHeight });
+      currentHeight += coverHeight;
+
+      // Add TOC to Page 1 if space permits, else push to Page 2
+      if (state.showTOC && headings.length > 0) {
+        if (currentHeight + tocHeight > availablePageHeight) {
+          pages.push(currentPage);
+          currentPage = [];
+          currentHeight = 0;
+        }
+        currentPage.push({ type: 'toc', html: tocHtml, height: tocHeight });
+        currentHeight += tocHeight;
+      }
+
+      // Distribute blocks
+      const headingPageMap = {};
+
+      for (let i = 0; i < measuredBlocks.length; i++) {
+        const item = measuredBlocks[i];
+        const blk = item.block;
+        const h = item.height;
+
+        // If block is heading, track its page
+        if (blk.type === 'h2' || blk.type === 'h3') {
+          headingPageMap[blk.id] = pages.length + 1;
+        }
+
+        // Check if fits in current page
+        if (currentHeight + h > availablePageHeight && currentPage.length > 0) {
+          // Avoid orphan heading at the very bottom
+          const lastItem = currentPage[currentPage.length - 1];
+          if (lastItem && lastItem.block && lastItem.block.keepWithNext) {
+            currentPage.pop();
+            pages.push(currentPage);
+            currentPage = [lastItem, { type: 'content', block: blk, html: blk.html, height: h }];
+            currentHeight = lastItem.height + h;
+            continue;
+          }
+
+          pages.push(currentPage);
+          currentPage = [];
+          currentHeight = 0;
+
+          // Re-record heading page if wrapped
+          if (blk.type === 'h2' || blk.type === 'h3') {
+            headingPageMap[blk.id] = pages.length + 1;
+          }
+        }
+
+        currentPage.push({ type: 'content', block: blk, html: blk.html, height: h });
+        currentHeight += h;
+      }
+
+      if (currentPage.length > 0) {
+        pages.push(currentPage);
+      }
+
+      // Step 4: Re-render TOC with calculated page numbers
+      if (state.showTOC && headings.length > 0) {
+        const finalizedTocHtml = createTOCHtml(headings, headingPageMap);
+        for (let p of pages) {
+          for (let item of p) {
+            if (item.type === 'toc') {
+              item.html = finalizedTocHtml;
+            }
+          }
+        }
+      }
+
+      // Step 5: Render Physical A4 Pages to DOM
+      const totalPages = pages.length;
+      document.getElementById('page-count-badge').innerText = `共 ${totalPages} 頁 · ${state.paperSize.toUpperCase()}`;
+
+      pagesStack.innerHTML = '';
+
+      pages.forEach((pageItems, pageIdx) => {
+        const pageNum = pageIdx + 1;
+        const pageEl = document.createElement('div');
+        pageEl.className = `page ${pageSizeClass}`;
+        pageEl.id = `rendered-page-${pageNum}`;
+
+        // Header
+        const headerEl = document.createElement('div');
+        headerEl.className = 'page-head';
+        headerEl.innerHTML = `
+          <span>${escapeHtml(state.meta.org)}</span>
+          <span class="font-bold text-brand-500">${escapeHtml(state.meta.confidentiality)}</span>
+        `;
+        pageEl.appendChild(headerEl);
+
+        // Body
+        const bodyEl = document.createElement('div');
+        bodyEl.className = 'page-body';
+
+        pageItems.forEach(item => {
+          if (item.type === 'cover' || item.type === 'toc') {
+            const div = document.createElement('div');
+            div.innerHTML = item.html;
+            bodyEl.appendChild(div.firstElementChild);
+          } else {
+            const blk = item.block;
+            const blkEl = document.createElement('div');
+            blkEl.className = `blk blk-${blk.type}`;
+            blkEl.id = blk.id;
+            blkEl.innerHTML = `
+              <div class="blk-toolbar no-print">
+                <button onclick="moveBlock('${blk.id}', -1)" title="上移"><i data-lucide="arrow-up" class="w-3 h-3"></i></button>
+                <button onclick="moveBlock('${blk.id}', 1)" title="下移"><i data-lucide="arrow-down" class="w-3 h-3"></i></button>
+                <button onclick="deleteBlock('${blk.id}')" class="btn-danger" title="隱藏 / 刪除"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+              </div>
+              ${blk.html}
+            `;
+            bodyEl.appendChild(blkEl);
+          }
+        });
+
+        pageEl.appendChild(bodyEl);
+
+        // Footer
+        const footerEl = document.createElement('div');
+        footerEl.className = 'page-foot';
+        footerEl.innerHTML = `
+          <div class="pf-l">${escapeHtml(state.meta.customFooter)}</div>
+          <div class="pf-c">第 ${pageNum} 頁 · 共 ${totalPages} 頁</div>
+          <div class="pf-r">Folio Press Studio</div>
+        `;
+        pageEl.appendChild(footerEl);
+
+        pagesStack.appendChild(pageEl);
+      });
+
+      // Re-trigger Icons and Math rendering
+      lucide.createIcons();
+      renderMathInElement(pagesStack, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+
+      applyZoom();
+    }
+
+    function createCoverHtml() {
+      return `
+        <div class="cover">
+          <div class="cover-meta flex items-center gap-2 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span>${escapeHtml(state.meta.org)}</span>
+            <span>·</span>
+            <span>${escapeHtml(state.meta.date)}</span>
+            <span>·</span>
+            <span class="text-brand-500 font-bold">${escapeHtml(state.meta.confidentiality)}</span>
+          </div>
+          <h1 class="cover-title">${escapeHtml(state.meta.title)}</h1>
+          ${state.meta.subtitle ? `<div class="cover-sub mt-2 text-xs font-medium opacity-80">${escapeHtml(state.meta.subtitle)}</div>` : ''}
+          <div class="cover-meta flex items-center gap-3 mt-3 text-[11px] text-slate-500">
+            <span>報告主筆：<b>${escapeHtml(state.meta.author)}</b></span>
+          </div>
+        </div>
+      `;
+    }
+
+    function createTOCHtml(headings, pageMap) {
+      const itemsHtml = headings.map(h => {
+        const pageNum = pageMap[h.id] || 1;
+        const indentClass = h.level === 3 ? 'pl-4 opacity-90' : 'font-semibold';
+        return `
+          <div class="toc-item ${indentClass}">
+            <span>${escapeHtml(h.title)}</span>
+            <span class="toc-item-dots"></span>
+            <span class="toc-item-page">p. ${pageNum}</span>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="toc-card">
+          <div class="toc-title">目錄導引 (Table of Contents)</div>
+          <div class="space-y-1">${itemsHtml}</div>
+        </div>
+      `;
+    }
+
+    // Block Manipulations
+    function moveBlock(blockId, direction) {
+      const idx = state.blocks.findIndex(b => b.id === blockId);
+      if (idx < 0) return;
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= state.blocks.length) return;
+
+      const temp = state.blocks[idx];
+      state.blocks[idx] = state.blocks[targetIdx];
+      state.blocks[targetIdx] = temp;
+      renderAll();
+      showToast('已調整區塊順序');
+    }
+
+    function deleteBlock(blockId) {
+      state.blocks = state.blocks.filter(b => b.id !== blockId);
+      renderAll();
+      showToast('已移除指定區塊');
+    }
+
+    // Modal Import Logic
+    function openImportModal() {
+      document.getElementById('import-textarea').value = state.rawContent;
+      document.getElementById('import-modal').classList.remove('hidden');
+    }
+    function closeImportModal() {
+      document.getElementById('import-modal').classList.add('hidden');
+    }
+    function applyImportedText() {
+      const text = document.getElementById('import-textarea').value;
+      if (!text.trim()) {
+        alert('請輸入有效內容！');
+        return;
+      }
+      state.rawContent = text;
+      state.blocks = parseContentToBlocks(text);
+      closeImportModal();
+      renderAll();
+      showToast('已成功匯入新文本！');
+    }
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('import-textarea').value = e.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    // =========================================================
+    // EXPORT FUNCTIONS (PDF, 3x IMAGE, MD, RICH TEXT)
+    // =========================================================
+
+    // 1. Export to PDF via Native Browser Print
+    function exportToPDF() {
+      showToast('準備產生 A4 報告 PDF，正在調度列印引擎...');
+      // Temporarily reset zoom to 1.0 for perfect printing
+      const oldZoom = state.zoom;
+      state.zoom = 1.0;
+      applyZoom();
+
+      setTimeout(() => {
+        window.print();
+        state.zoom = oldZoom;
+        applyZoom();
+      }, 300);
+    }
+
+    // 2. Export to 3x Long Image via html2canvas
+    async function exportToImage() {
+      showToast('正在進行 3 倍超高畫質長圖渲染，請稍候...');
+      const stack = document.getElementById('pages-stack');
+
+      // Temporarily remove transform for accurate canvas capture
+      const oldTransform = stack.style.transform;
+      stack.style.transform = 'none';
+
+      try {
+        const canvas = await html2canvas(stack, {
+          scale: 3, // 3x Ultra HD
+          useCORS: true,
+          backgroundColor: '#FFFFFF',
+          logging: false
+        });
+
+        stack.style.transform = oldTransform;
+
+        const imgData = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = imgData;
+        const sanitizedTitle = state.meta.title.replace(/[^\w\u4e00-\u9fa5]/g, '_');
+        a.download = `${sanitizedTitle}_3x_LongImage.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('3x 高畫質長圖下載完成！');
+      } catch (err) {
+        stack.style.transform = oldTransform;
+        console.error('Long image export failed', err);
+        alert('長圖渲染失敗：' + err.message);
+      }
+    }
+
+    // 3. Export to Markdown (.md)
+    function exportToMarkdown() {
+      let md = `# ${state.meta.title}\n\n`;
+      if (state.meta.subtitle) md += `> **副標題**：${state.meta.subtitle}\n\n`;
+      md += `* 機構：${state.meta.org}\n`;
+      md += `* 作者：${state.meta.author}\n`;
+      md += `* 日期：${state.meta.date}\n`;
+      md += `* 密級：${state.meta.confidentiality}\n\n---\n\n`;
+
+      state.blocks.forEach(b => {
+        if (!b.included) return;
+        md += b.raw + '\n\n';
+      });
+
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const sanitizedTitle = state.meta.title.replace(/[^\w\u4e00-\u9fa5]/g, '_');
+      a.download = `${sanitizedTitle}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('已匯出 Markdown 檔案！');
+    }
+
+    // 4. Copy Rich Text for Microsoft Word / Notion
+    async function copyRichText() {
+      let html = `<div style="font-family: sans-serif; line-height: 1.6;">`;
+      html += `<h1>${escapeHtml(state.meta.title)}</h1>`;
+      if (state.meta.subtitle) html += `<p><em>${escapeHtml(state.meta.subtitle)}</em></p>`;
+      html += `<p><small>${escapeHtml(state.meta.org)} · ${escapeHtml(state.meta.date)} · ${escapeHtml(state.meta.confidentiality)}</small></p><hr/>`;
+
+      state.blocks.forEach(b => {
+        if (!b.included) return;
+        html += b.html;
+      });
+      html += `</div>`;
+
+      try {
+        const blob = new Blob([html], { type: 'text/html' });
+        const textBlob = new Blob([state.rawContent], { type: 'text/plain' });
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': blob,
+            'text/plain': textBlob
+          })
+        ]);
+        showToast('已複製富文本！可直接貼上至 Word 或 Notion');
+      } catch (e) {
+        console.error('Clipboard copy failed', e);
+        showToast('剪貼簿複製受限，請直接匯出 Markdown 或 PDF');
+      }
+    }
+
+    // Utility: Show Toast Notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
+
