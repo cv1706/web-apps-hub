@@ -793,6 +793,58 @@
     <aside class="no-print w-80 bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto z-20 shadow-sm">
       <div class="p-4 space-y-6">
 
+        <!-- Ollama 本地 AI 智慧助理卡片 -->
+        <div class="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50/80 to-slate-50 p-3.5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-md bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                🦙
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <span>Ollama 本地智慧解析</span>
+                  <span id="ollama-status-dot" class="w-2 h-2 rounded-full bg-slate-300" title="檢查連線中..."></span>
+                </div>
+                <p id="ollama-status-text" class="text-[10px] text-slate-500 font-mono">Docker 離線 · 零 Token 費用</p>
+              </div>
+            </div>
+            <button onclick="toggleOllamaSettings()" class="text-slate-400 hover:text-slate-600 p-1 rounded hover:bg-white transition" title="連線設定">
+              <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Ollama Config (Collapsible) -->
+          <div id="ollama-config-drawer" class="hidden space-y-2 pt-2 border-t border-indigo-100 text-xs">
+            <div>
+              <label class="block text-[10px] text-slate-500 mb-0.5">端點位址 (Endpoint)</label>
+              <input type="text" id="ollama-endpoint" value="http://localhost:11434" onchange="checkOllamaConnection(true)" class="w-full text-xs font-mono bg-white border border-slate-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-500 mb-0.5">本地模型 (Model)</label>
+              <div class="flex gap-1.5">
+                <select id="ollama-model-select" onchange="onOllamaModelChange(this.value)" class="flex-1 text-xs bg-white border border-slate-200 rounded px-2 py-1 font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                  <option value="qwen2.5:1.5b">qwen2.5:1.5b</option>
+                </select>
+                <button onclick="checkOllamaConnection(true)" class="px-2 py-1 text-xs bg-white border border-slate-200 rounded hover:bg-slate-100 transition" title="重新整理模型清單">
+                  <i data-lucide="refresh-cw" class="w-3 h-3 text-slate-600"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-2">
+            <button id="btn-ollama-analyze" onclick="startOllamaAnalysis()" class="flex-1 py-1.5 px-2.5 text-xs font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>AI 提煉標題</span>
+            </button>
+            <button onclick="openOllamaChatModal()" class="py-1.5 px-2.5 text-xs font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 shadow-sm flex items-center justify-center gap-1 transition" title="與 AI 討論標題與排版">
+              <i data-lucide="messages-square" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>跟我討論</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Theme Selection Grid -->
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
@@ -1018,6 +1070,129 @@
     </div>
   </div>
 
+  <!-- =========================================================
+       OLLAMA AI 顧問討論室 MODAL
+       ========================================================= -->
+  <div id="ollama-chat-modal" class="no-print fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[88vh]">
+      <!-- Header -->
+      <div class="px-5 py-3.5 bg-gradient-to-r from-indigo-50 to-white border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+            🦙
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <span>Ollama 本地 AI 顧問討論室</span>
+              <span id="modal-model-badge" class="text-[10px] bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono font-medium">qwen2.5:1.5b</span>
+            </h3>
+            <p class="text-[11px] text-slate-500">對話微調報告主旨 · 提煉顧問級標題 · 一鍵套用排版畫布</p>
+          </div>
+        </div>
+        <button onclick="closeOllamaChatModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Main Body (Split View: Current Meta vs Discussion Chat) -->
+      <div class="flex-1 flex overflow-hidden">
+        <!-- Left: Extracted / Proposed Meta Preview -->
+        <div class="w-1/2 p-4 border-r border-slate-200 overflow-y-auto space-y-3.5 bg-slate-50/50">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="file-check" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>AI 提煉成果預覽</span>
+            </span>
+            <span id="analysis-loading" class="text-[11px] text-indigo-600 animate-pulse font-medium hidden">
+              AI 深度思考中...
+            </span>
+          </div>
+
+          <!-- Proposal Card -->
+          <div class="bg-white border border-slate-200 rounded-lg p-3.5 shadow-sm space-y-3">
+            <div>
+              <label class="block text-[10px] text-slate-400 font-medium uppercase mb-0.5">報告主標題 (Main Title)</label>
+              <div id="ai-prop-title" class="text-xs font-bold text-slate-900 bg-slate-50 p-2 rounded border border-slate-100 leading-snug">
+                點擊右側討論指令或於輸入框發送訊息...
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] text-slate-400 font-medium uppercase mb-0.5">業務副標題 (Executive Subtitle)</label>
+              <div id="ai-prop-subtitle" class="text-xs text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 leading-relaxed">
+                尚未提煉
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] text-slate-400 font-medium uppercase mb-0.5">機構名稱</label>
+                <div id="ai-prop-org" class="text-xs text-slate-700 bg-slate-50 p-1.5 rounded border border-slate-100">
+                  -
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-medium uppercase mb-0.5">密級標籤</label>
+                <div id="ai-prop-conf" class="text-xs font-semibold text-indigo-700 bg-indigo-50/60 p-1.5 rounded border border-indigo-100">
+                  -
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] text-slate-400 font-medium uppercase mb-0.5">核心洞察要點 (Key Takeaways)</label>
+              <ul id="ai-prop-summary" class="text-xs text-slate-600 space-y-1 list-disc pl-4 bg-slate-50 p-2.5 rounded border border-slate-100">
+                <li class="text-slate-400 italic">點擊右側快速指令或發送訊息開始討論</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Apply Button -->
+          <button id="btn-apply-ai-meta" onclick="applyOllamaProposal()" class="w-full py-2 px-3 text-xs font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>確認滿意 · 一鍵套用至排版畫布</span>
+          </button>
+        </div>
+
+        <!-- Right: Interactive Discussion Chat -->
+        <div class="w-1/2 flex flex-col bg-white">
+          <div class="p-3 border-b border-slate-100">
+            <span class="text-xs font-bold text-slate-700">快速討論指令</span>
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button onclick="sendQuickPrompt('請分析內文，提煉出最吸睛且具備麥肯錫商業顧問感的標題與副標題')" class="text-[11px] px-2 py-1 rounded bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 transition">
+                💼 麥肯錫顧問風
+              </button>
+              <button onclick="sendQuickPrompt('請重新提煉，加強技術架構、高並行與工程規格白皮書風格')" class="text-[11px] px-2 py-1 rounded bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 transition">
+                ⚡ 科技白皮書風
+              </button>
+              <button onclick="sendQuickPrompt('請重新命名，使標題具備生活美學與讀書筆記質感')" class="text-[11px] px-2 py-1 rounded bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 transition">
+                🌿 日雜專題風
+              </button>
+              <button onclick="sendQuickPrompt('請將副標題精簡為 25 字以內的強效策略句')" class="text-[11px] px-2 py-1 rounded bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 transition">
+                ✂️ 縮短副標題
+              </button>
+            </div>
+          </div>
+
+          <!-- Chat Messages Container -->
+          <div id="ollama-chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs font-sans">
+            <div class="bg-indigo-50/70 text-slate-700 p-2.5 rounded-lg border border-indigo-100">
+              我是您的本地 AI 排版顧問（由本地 Docker Ollama 驅動）。您可以直接提出修改意見，或點選上方快速指令，我會為您即時調整左側的報告標題與副標題！
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="p-2.5 border-t border-slate-200 bg-slate-50 flex gap-2">
+            <input type="text" id="ollama-chat-input" onkeydown="if(event.key==='Enter')sendOllamaChatMessage()" placeholder="輸入討論意見，例如：改得更有決策感..." class="flex-1 text-xs bg-white border border-slate-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            <button onclick="sendOllamaChatMessage()" id="btn-send-chat" class="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-xs font-medium hover:bg-indigo-700 transition">
+              發送
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="no-print fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg text-xs font-medium shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50">
     <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
@@ -1046,7 +1221,16 @@
         customFooter: '本量化研報為 SSOT 單一事實來源自動生成 · 嚴禁未經授權之商業轉載'
       },
       rawContent: '',
-      blocks: []
+      blocks: [],
+      // Ollama State
+      ollama: {
+        endpoint: 'http://localhost:11434',
+        model: 'qwen2.5:1.5b',
+        connected: false,
+        models: ['qwen2.5:1.5b'],
+        proposal: null,
+        history: []
+      }
     };
 
     // Pre-configured Presets
@@ -1195,7 +1379,313 @@ func (d *OrderBookDispatcher) Dispatch(order *OrderEvent) error {
       initMetaForm();
       loadPreset('quant');
       highlightCurrentTheme();
+      checkOllamaConnection(false);
     });
+
+    // =========================================================
+    // OLLAMA LOCAL AI CONTROLLER & DISCUSSION ENGINE
+    // =========================================================
+    function toggleOllamaSettings() {
+      const drawer = document.getElementById('ollama-config-drawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function onOllamaModelChange(val) {
+      state.ollama.model = val;
+      const badge = document.getElementById('modal-model-badge');
+      if (badge) badge.innerText = val;
+    }
+
+    async function checkOllamaConnection(notify = false) {
+      const endpointInput = document.getElementById('ollama-endpoint');
+      const endpoint = (endpointInput ? endpointInput.value.trim() : '') || 'http://localhost:11434';
+      state.ollama.endpoint = endpoint;
+      const statusDot = document.getElementById('ollama-status-dot');
+      const statusText = document.getElementById('ollama-status-text');
+
+      if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+      if (statusText) statusText.innerText = '連線測試中...';
+
+      try {
+        const res = await fetch(`${endpoint}/api/tags`, { method: 'GET', signal: AbortSignal.timeout(4000) });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const models = (data.models || []).map(m => m.name);
+
+        state.ollama.connected = true;
+        state.ollama.models = models.length > 0 ? models : ['qwen2.5:1.5b'];
+
+        // Populate model dropdown
+        const select = document.getElementById('ollama-model-select');
+        if (select) {
+          select.innerHTML = '';
+          state.ollama.models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.innerText = m;
+            if (m === state.ollama.model || m.startsWith('qwen2.5')) {
+              opt.selected = true;
+              state.ollama.model = m;
+            }
+            select.appendChild(opt);
+          });
+        }
+
+        const badge = document.getElementById('modal-model-badge');
+        if (badge) badge.innerText = state.ollama.model;
+
+        if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-sm';
+        if (statusText) statusText.innerText = `已連線 · ${state.ollama.model}`;
+        if (notify) showToast(`成功連線至 Ollama！已找到 ${state.ollama.models.length} 個本地模型`);
+      } catch (err) {
+        state.ollama.connected = false;
+        if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-rose-400';
+        if (statusText) statusText.innerText = 'Docker 未啟動或無回應';
+        if (notify) alert(`無法連線至 Ollama 端點 (${endpoint})：${err.message}\n請確認 Docker Desktop / Ollama 容器已正常運行。`);
+      }
+    }
+
+    function openOllamaChatModal() {
+      document.getElementById('ollama-chat-modal').classList.remove('hidden');
+      if (!state.ollama.proposal) {
+        startOllamaAnalysis();
+      }
+    }
+
+    function closeOllamaChatModal() {
+      document.getElementById('ollama-chat-modal').classList.add('hidden');
+    }
+
+    async function startOllamaAnalysis(userDirective = '') {
+      if (!state.ollama.connected) {
+        await checkOllamaConnection(false);
+      }
+
+      openOllamaChatModal();
+
+      const loadingEl = document.getElementById('analysis-loading');
+      if (loadingEl) loadingEl.classList.remove('hidden');
+
+      // Sample snippet of content (up to 3000 chars for fast inference)
+      const sampleText = state.rawContent.substring(0, 3000).trim();
+      if (!sampleText) {
+        if (loadingEl) loadingEl.classList.add('hidden');
+        alert('請先輸入或匯入文章內容！');
+        return;
+      }
+
+      const systemPrompt = `你是一名資深繁體中文出版主編與商業諮詢總顧問。
+請分析使用者的對話紀錄或文章內容，為其提煉適合印刷與正式報告的元數據。
+回覆格式必須嚴格是純 JSON 物件，嚴禁包含 markdown 程式碼區塊標記（如 \`\`\`json 或 \`\`\`），直接以 { 開頭，} 結尾：
+{
+  "title": "精確吸睛且具備專業感的繁體中文報告主標題",
+  "subtitle": "說明業務範疇、方法論或核心洞察之繁體中文副標題（約20-35字）",
+  "org": "建議之機構或研究團隊名稱（如 ALPHA QUANT LAB / 戰略諮詢部）",
+  "confidentiality": "STRICTLY CONFIDENTIAL 或 INTERNAL ONLY 或 CLIENT WORK 或 PUBLIC",
+  "summary": ["核心重點或業務洞察 1", "核心重點或業務洞察 2", "核心重點或業務洞察 3"]
+}`;
+
+      const userPrompt = userDirective ? 
+        `【原始文章內容片段】：\n${sampleText}\n\n【使用者特定編修指令】：\n${userDirective}` : 
+        `【原始文章內容片段】：\n${sampleText}\n\n請依據全文脈絡萃取最適合的標題與業務洞察。`;
+
+      try {
+        const response = await fetch(`${state.ollama.endpoint}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: state.ollama.model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            stream: false,
+            options: { temperature: 0.3 }
+          })
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const content = data.message?.content || '{}';
+
+        // Clean JSON parsing
+        let jsonStr = content.trim();
+        if (jsonStr.startsWith('```json')) jsonStr = jsonStr.replace(/^```json/, '');
+        if (jsonStr.startsWith('```')) jsonStr = jsonStr.replace(/^```/, '');
+        if (jsonStr.endsWith('```')) jsonStr = jsonStr.replace(/```$/, '');
+        jsonStr = jsonStr.trim();
+
+        // Extract JSON boundaries
+        const startIdx = jsonStr.indexOf('{');
+        const endIdx = jsonStr.lastIndexOf('}');
+        if (startIdx !== -1 && endIdx !== -1) {
+          jsonStr = jsonStr.substring(startIdx, endIdx + 1);
+        }
+
+        const parsed = JSON.parse(jsonStr);
+        state.ollama.proposal = parsed;
+        renderOllamaProposal(parsed);
+
+        // Append to chat history
+        appendChatMessage('assistant', `已依據全文為您提煉標題：\n「${parsed.title}」\n副標題：${parsed.subtitle}`);
+      } catch (err) {
+        console.error('Ollama analysis failed:', err);
+        appendChatMessage('assistant', `分析時發生錯誤：${err.message}。請確認 Docker 容器已啟動且端點正確。`);
+      } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    function renderOllamaProposal(p) {
+      if (!p) return;
+      const elTitle = document.getElementById('ai-prop-title');
+      const elSub = document.getElementById('ai-prop-subtitle');
+      const elOrg = document.getElementById('ai-prop-org');
+      const elConf = document.getElementById('ai-prop-conf');
+
+      if (elTitle) elTitle.innerText = p.title || '無標題';
+      if (elSub) elSub.innerText = p.subtitle || '-';
+      if (elOrg) elOrg.innerText = p.org || '-';
+      if (elConf) elConf.innerText = p.confidentiality || 'INTERNAL ONLY';
+
+      const summaryUl = document.getElementById('ai-prop-summary');
+      if (summaryUl) {
+        summaryUl.innerHTML = '';
+        (p.summary || []).forEach(item => {
+          const li = document.createElement('li');
+          li.innerText = item;
+          summaryUl.appendChild(li);
+        });
+      }
+    }
+
+    function appendChatMessage(role, text) {
+      const container = document.getElementById('ollama-chat-messages');
+      if (!container) return;
+      const div = document.createElement('div');
+      if (role === 'user') {
+        div.className = 'bg-indigo-600 text-white p-2.5 rounded-lg ml-auto max-w-[85%] leading-relaxed text-right';
+        div.innerText = text;
+      } else {
+        div.className = 'bg-slate-100 text-slate-800 p-2.5 rounded-lg mr-auto max-w-[90%] leading-relaxed border border-slate-200';
+        div.innerText = text;
+      }
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendQuickPrompt(promptText) {
+      document.getElementById('ollama-chat-input').value = promptText;
+      sendOllamaChatMessage();
+    }
+
+    async function sendOllamaChatMessage() {
+      const input = document.getElementById('ollama-chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+
+      appendChatMessage('user', msg);
+      const btn = document.getElementById('btn-send-chat');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = '處理中...';
+      }
+
+      const loadingEl = document.getElementById('analysis-loading');
+      if (loadingEl) loadingEl.classList.remove('hidden');
+
+      const systemPrompt = `你是一名資深繁體中文出版主編與商業諮詢總顧問。
+使用者正在與你討論並微調一份報告的排版標題與元數據。
+當前草擬方案：
+- 主標題: ${state.ollama.proposal?.title || state.meta.title}
+- 副標題: ${state.ollama.proposal?.subtitle || state.meta.subtitle}
+- 機構: ${state.ollama.proposal?.org || state.meta.org}
+- 密級: ${state.ollama.proposal?.confidentiality || state.meta.confidentiality}
+
+請根據使用者的具體回饋進行調整，並嚴格以純 JSON 物件回傳（嚴禁包含任何 markdown 程式碼標記或額外字元）：
+{
+  "title": "修訂後之繁體中文主標題",
+  "subtitle": "修訂後之繁體中文副標題",
+  "org": "機構名稱",
+  "confidentiality": "STRICTLY CONFIDENTIAL 或 INTERNAL ONLY 或 CLIENT WORK 或 PUBLIC",
+  "summary": ["要點1", "要點2", "要點3"],
+  "reply": "向使用者簡要說明你做了哪些優化調整（約30字）"
+}`;
+
+      try {
+        const response = await fetch(`${state.ollama.endpoint}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: state.ollama.model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: msg }
+            ],
+            stream: false,
+            options: { temperature: 0.4 }
+          })
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const content = (data.message?.content || '{}').trim();
+
+        let jsonStr = content;
+        if (jsonStr.startsWith('```json')) jsonStr = jsonStr.replace(/^```json/, '');
+        if (jsonStr.startsWith('```')) jsonStr = jsonStr.replace(/^```/, '');
+        if (jsonStr.endsWith('```')) jsonStr = jsonStr.replace(/```$/, '');
+        jsonStr = jsonStr.trim();
+
+        const startIdx = jsonStr.indexOf('{');
+        const endIdx = jsonStr.lastIndexOf('}');
+        if (startIdx !== -1 && endIdx !== -1) {
+          jsonStr = jsonStr.substring(startIdx, endIdx + 1);
+        }
+
+        const parsed = JSON.parse(jsonStr);
+        state.ollama.proposal = parsed;
+        renderOllamaProposal(parsed);
+
+        appendChatMessage('assistant', parsed.reply || `已為您更新標題為：「${parsed.title}」`);
+      } catch (err) {
+        console.error('Chat error:', err);
+        appendChatMessage('assistant', `微調時出錯：${err.message}`);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = '發送';
+        }
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    function applyOllamaProposal() {
+      if (!state.ollama.proposal) return;
+      const p = state.ollama.proposal;
+
+      if (p.title) {
+        state.meta.title = p.title;
+        document.getElementById('meta-title').value = p.title;
+      }
+      if (p.subtitle) {
+        state.meta.subtitle = p.subtitle;
+        document.getElementById('meta-subtitle').value = p.subtitle;
+      }
+      if (p.org) {
+        state.meta.org = p.org;
+        document.getElementById('meta-org').value = p.org;
+      }
+      if (p.confidentiality) {
+        state.meta.confidentiality = p.confidentiality;
+        document.getElementById('meta-confidentiality').value = p.confidentiality;
+      }
+
+      closeOllamaChatModal();
+      renderAll();
+      showToast('已將 Ollama AI 提煉成果套用至排版畫布！');
+    }
 
     function initMetaForm() {
       document.getElementById('meta-title').value = state.meta.title;

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-TW" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>雲端數位工具與互動應用總覽 · Web Apps Hub</title>
-  <meta name="description" content="精選獨立 Web 應用與策略遊戲專區：印務室 Folio Press AI 顧問排版工作台、全球特惠機票雷達 3D、三國戰棋全紀元、江山時序歷史地圖、Open Live Map 即時地圖監控、台灣即時路況看板、國道通行費試算、工程吊裝安全計算、選擇權量化決策與房地產估價工具。">
+  <meta name="description"
+    content="精選獨立 Web 應用與策略遊戲專區：印務室 Folio Press AI 顧問排版工作台、全球特惠機票雷達 3D、三國戰棋全紀元、江山時序歷史地圖、Open Live Map 即時地圖監控、台灣即時路況看板、國道通行費試算、工程吊裝安全計算、選擇權量化決策與房地產估價工具。">
   <script>
-    (function() {
+    (function () {
       const savedTheme = localStorage.getItem('hub-theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
     })();
@@ -38,7 +40,7 @@
       --badge-top-bg: #eef2ff;
       --badge-top-border: #c7d2fe;
       --badge-top-text: #4338ca;
-      
+
       --ver-gold-bg: #fef3c7;
       --ver-gold-border: #fde68a;
       --ver-gold-text: #b45309;
@@ -87,7 +89,7 @@
       --badge-top-bg: rgba(99, 102, 241, 0.18);
       --badge-top-border: rgba(99, 102, 241, 0.4);
       --badge-top-text: #a5b4fc;
-      
+
       --ver-gold-bg: rgba(245, 158, 11, 0.18);
       --ver-gold-border: rgba(245, 158, 11, 0.35);
       --ver-gold-text: #fbbf24;
@@ -254,10 +256,29 @@
       letter-spacing: 0.3px;
     }
 
-    .ver-gold { background: var(--ver-gold-bg); color: var(--ver-gold-text); border: 1px solid var(--ver-gold-border); }
-    .ver-emerald { background: var(--ver-emerald-bg); color: var(--ver-emerald-text); border: 1px solid var(--ver-emerald-border); }
-    .ver-cyan { background: var(--ver-cyan-bg); color: var(--ver-cyan-text); border: 1px solid var(--ver-cyan-border); }
-    .ver-indigo { background: var(--ver-indigo-bg); color: var(--ver-indigo-text); border: 1px solid var(--ver-indigo-border); }
+    .ver-gold {
+      background: var(--ver-gold-bg);
+      color: var(--ver-gold-text);
+      border: 1px solid var(--ver-gold-border);
+    }
+
+    .ver-emerald {
+      background: var(--ver-emerald-bg);
+      color: var(--ver-emerald-text);
+      border: 1px solid var(--ver-emerald-border);
+    }
+
+    .ver-cyan {
+      background: var(--ver-cyan-bg);
+      color: var(--ver-cyan-text);
+      border: 1px solid var(--ver-cyan-border);
+    }
+
+    .ver-indigo {
+      background: var(--ver-indigo-bg);
+      color: var(--ver-indigo-text);
+      border: 1px solid var(--ver-indigo-border);
+    }
 
     h2.app-title {
       font-size: 18px;
@@ -357,292 +378,305 @@
     }
   </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="top-controls">
-    <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
-      🌙 深色模式
-    </button>
+  <div class="container">
+    <div class="top-controls">
+      <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="切換深淺模式">
+        🌙 深色模式
+      </button>
+    </div>
+
+    <header>
+      <div class="badge-top">🚀 獨立 Web 應用公開入口</div>
+      <h1>雲端數位工具與互動應用</h1>
+      <p class="subtitle">彙整印務室 Folio Press AI 顧問報告排版工作台、全球特惠機票雷達 3D、策略戰棋遊戲、江山時序歷史地圖、全台即時路況看板、Open Live Map
+        即時地圖監控、國道計程通行費試算、工程起重安全分析、選擇權量化決策與台灣房地產估價之純靜態 Web 工具箱。</p>
+    </header>
+
+    <main class="apps-grid">
+      <!-- Card 1: 三國戰棋 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">⚔️</div>
+          <span class="ver-badge ver-gold">v1.3.0 貫日增益版</span>
+        </div>
+        <h2 class="app-title">三國戰棋 · 歷史全紀元</h2>
+        <p class="app-desc">百位歷史武將立繪、50 關史詩戰役沙盤。支援將魂突破升星、太史慈直線雙目標「貫日連珠」穿透攻擊與軍團增益陣法。</p>
+        <ul class="features-list">
+          <li>50 關史詩演義章節 (黃巾至晉統)</li>
+          <li>100 位專屬持武立繪武將名冊</li>
+          <li>弓兵盲區與直線穿透戰技體系</li>
+        </ul>
+        <a href="./games/three-kingdoms-chess/" class="launch-btn" id="btn-chess">啟動三國戰棋 ➔</a>
+      </article>
+
+      <!-- Card 2: 台灣即時路況 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🚦</div>
+          <span class="ver-badge ver-emerald">Live 即時監測</span>
+        </div>
+        <h2 class="app-title">台灣即時路況動態看板</h2>
+        <p class="app-desc">全台國道與快速道路車流速度監控，自動抓取 TDX 交通即時數據，視覺化呈現路段擁塞、平均時速與路況預警。</p>
+        <ul class="features-list">
+          <li>全台國道主線即時車速流向</li>
+          <li>路況壅塞分級與動態色條</li>
+          <li>自動更新數據與路段速查</li>
+        </ul>
+        <a href="./taiwan-traffic-live/" class="launch-btn" id="btn-traffic">開啟即時路況 ➔</a>
+      </article>
+
+      <!-- Card 3: 國道里程與自行開車交通費申報系統 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🚗</div>
+          <span class="ver-badge ver-cyan">出差報銷專用</span>
+        </div>
+        <h2 class="app-title">自行開車交通費申報與國道里程計算</h2>
+        <p class="app-desc">專為公務出差與差旅月報設計。內建國 1、國 3、國 5 官方交流道里程數據，自動計算計費里程、eTag 9折通行費、多途經點去回程與 A4 橫向報表匯出。</p>
+        <ul class="features-list">
+          <li>國 1 / 國 3 / 國 5 交流道里程免金鑰速查</li>
+          <li>公務出差去回程、多路段與停車費彙整</li>
+          <li>A4 橫向 PDF 匯出與月報加總一覽表</li>
+        </ul>
+        <a href="./highway-toll-calculator/" class="launch-btn" id="btn-toll">開啟交通費申報 ➔</a>
+      </article>
+
+      <!-- Card 4: 吊車配重計算器 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🏗️</div>
+          <span class="ver-badge ver-indigo">工程安全專用</span>
+        </div>
+        <h2 class="app-title">移動式起重機吊裝配重安全試算</h2>
+        <p class="app-desc">符合高壓氣體與工業安全法規之起重機作業參數試算，自動校核主臂長度、作業半徑、額定總負荷與安全額度比率。</p>
+        <ul class="features-list">
+          <li>多廠牌起重機性能曲線檢核</li>
+          <li>支腿受力與地耐力安全係數</li>
+          <li>極限作業半徑預警警報</li>
+        </ul>
+        <a href="./crane-calculator/" class="launch-btn" id="btn-crane">進入吊裝試算 ➔</a>
+      </article>
+
+      <!-- Card 5: 台指選擇權量化決策與損益平衡小工具 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">📈</div>
+          <span class="ver-badge ver-gold">量化決策 Pro</span>
+        </div>
+        <h2 class="app-title">台指選擇權量化多空決策與損益平衡小工具</h2>
+        <p class="app-desc">結合大盤多空濾網與 Black-Scholes 模型，即時產出高勝率價差組合（PCS / CCS / 鐵鷹）、損益平衡圖（Payoff Diagram）與 OptionStrat
+          風格多維度情境矩陣。</p>
+        <ul class="features-list">
+          <li>100% 對齊 Telegram Bot 三大實盤指令</li>
+          <li>到期結算線與 T+0 浮動損益動態繪製</li>
+          <li>Greeks 風險指標與手機端自適應觸控操作</li>
+        </ul>
+        <a href="./options-quant-app/" class="launch-btn" id="btn-options">啟動選擇權小工具 ➔</a>
+      </article>
+
+      <!-- Card 6: 台灣房地產估價與開價分析 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🏡</div>
+          <span class="ver-badge ver-emerald">房產估價 Pro</span>
+        </div>
+        <h2 class="app-title">台灣房地產估價與開價合理性分析器</h2>
+        <p class="app-desc">整合區域特徵行情基準、扣車位淨坪拆算、開價合理性量表、房貸月付收租試算與法拍屋折價分析。</p>
+        <ul class="features-list">
+          <li>扣除車位真實單價與區域中位數比對</li>
+          <li>法拍拍次折價率與不點交瑕疵風險排查</li>
+          <li>新青安/一般房貸本息攤還與租金投報率</li>
+          <li>實價登錄社區行情即時線上查價</li>
+        </ul>
+        <a href="./taiwan-real-estate/" class="launch-btn" id="btn-real-estate">進入房產估價 ➔</a>
+      </article>
+
+      <!-- Card 7: Open Live Map 即時地圖 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🗺️</div>
+          <span class="ver-badge ver-cyan">Live 即時圖資</span>
+        </div>
+        <h2 class="app-title">Open Live Map · 全台即時地圖與路況監控</h2>
+        <p class="app-desc">整合全台國道、公路局省道與市區即時 CCTV 串流影像、行車跟車導覽監看、中央氣象署即時測站、桃園環保車 GPS 與內政部實價登錄聚合圖資。</p>
+        <ul class="features-list">
+          <li>全台國道省道 CCTV 串流、多分割畫面與跟車導覽</li>
+          <li>中央氣象署測站即時溫雨風速、桃園環保車動態 GPS</li>
+          <li>內政部實價登錄聚合圖層、Mapillary 街景與自訂點位</li>
+        </ul>
+        <a href="https://gslai.win/" target="_blank" rel="noopener noreferrer" class="launch-btn"
+          id="btn-open-live-map">開啟 Open Live Map ↗</a>
+      </article>
+
+      <!-- Card 8: 江山時序歷史地圖 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">📜</div>
+          <span class="ver-badge ver-gold">歷史地圖 Pro</span>
+        </div>
+        <h2 class="app-title">江山時序 · 中國歷史地圖時間軸（繁體中文版）</h2>
+        <p class="app-desc">純前端宣紙古風互動地圖。完整收錄自戰國至現代 2,400 餘年、18 朝代、167 階段疆域政區演變快照、歷代名城古今對照、天下名關、歷史人物時空行跡與 35 篇朝代戰役靜態專題考據。
+        </p>
+        <ul class="features-list">
+          <li>18 朝代 167 階段多邊形快照與鬼影邊界對照</li>
+          <li>1,387 座名城關隘 2,400 年古今建制沿革溯源</li>
+          <li>歷史先賢生平行跡路線與繁簡雙向搜尋支援</li>
+          <li>35 篇疆域、古詩詞路線與著名戰役專題考據</li>
+        </ul>
+        <div class="card-btn-group">
+          <a href="./jiangshan-map/" class="launch-btn" id="btn-jiangshan">開啟互動主地圖 ➔</a>
+          <a href="./jiangshan-map/topics/index.html" class="launch-btn secondary-btn" id="btn-jiangshan-topics">專題考據總覽
+            📖</a>
+        </div>
+      </article>
+
+      <!-- Card 9: 無錫 × 上海親子旅遊隨身手帳 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🏮</div>
+          <span class="ver-badge ver-emerald">文旅生活 Pro</span>
+        </div>
+        <h2 class="app-title">無錫 × 上海 · 6天5夜親子自由行隨身指南</h2>
+        <p class="app-desc">專為 2 大 1 小（12 歲）量身打造之江浙文旅互動手帳。收錄 2/1
+          浦東機場極速公共運輸（機場聯絡線＋高鐵＋地鐵3號線）與專車直達指引、惠山古鎮寄暢園、三國水滸景區大秀、上海千古情立體街區、2 月吃蟹名店卡與滴滴一鍵打車司機定位卡。</p>
+        <ul class="features-list">
+          <li>2/1 浦東機場 ➔ 無錫極速接駁（聯絡線+高鐵+地鐵）</li>
+          <li>惠山古鎮、三國水滸景區與上海千古情必看大秀時刻</li>
+          <li>2 月必吃蟹名店卡（憶秦園、熙盛源、成隆行、老吉士）</li>
+          <li>景點門票預約、12歲台胞證優惠與滴滴司機大字卡</li>
+        </ul>
+        <a href="./wuxi-shanghai-guide/" class="launch-btn" id="btn-wuxi-guide">開啟旅遊隨身手帳 ➔</a>
+      </article>
+
+      <!-- Card 10: 富國島海島度假隨身互動指南 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🏝️</div>
+          <span class="ver-badge ver-cyan">海島度假 Pro</span>
+        </div>
+        <h2 class="app-title">富國島 · 4天3夜海島自由行隨身指南</h2>
+        <p class="app-desc">富國島海島度假隨身互動手帳。收錄直飛免簽證入境通關、海關換匯技巧、瑞享五星度假酒店私人沙灘與巧克力歡樂時光、珍珠水陸樂園巨龜水族館與 ONCE
+          秀、富國大世界威尼斯水舞秀、傳統跳跳蝦米粉與金剛超市伴手禮。</p>
+        <ul class="features-list">
+          <li>台灣直飛 30 天免簽證與機場換匯防偽重點</li>
+          <li>瑞享度假酒店私人沙灘、無邊際泳池與巧克力時光</li>
+          <li>珍珠水陸樂園、富國大世界威尼斯水舞秀時刻表</li>
+          <li>金剛超市特產掃貨、Sonasea 夜市與越語司機定位卡</li>
+        </ul>
+        <a href="./phu-quoc-guide/" class="launch-btn" id="btn-phuquoc-guide">開啟富國島隨身指南 ➔</a>
+      </article>
+
+      <!-- Card 11: 北海道札幌 × 小樽 × 美瑛旭川 7天6夜隨身指南 -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">❄️</div>
+          <span class="ver-badge ver-indigo">雪季浪漫 Pro</span>
+        </div>
+        <h2 class="app-title">北海道札幌 · 7天6夜雪季浪漫隨身指南</h2>
+        <p class="app-desc">
+          札幌、小樽、美瑛與旭川初冬雪季隨身手帳。收錄白色燈樹節、電視塔展望台夜景、小樽三角市場爆量海鮮丼與蒸氣鐘、藻岩山日本新三大夜景、白色戀人公園城堡點燈、旭山動物園企鵝、美瑛青池與森林精靈露台，以及薄野 GAJA
+          燒肉、羊座成吉思汗烤羊與名店湯咖哩定位卡。</p>
+        <ul class="features-list">
+          <li>白色燈樹節、小樽運河蒸氣鐘與藻岩山百萬夜景</li>
+          <li>11/27 美瑛旭山一日遊（動物園+青池+白須瀑布+精靈露台）</li>
+          <li>GAJA燒肉、成吉思汗羊座、KING湯咖哩與DONGURI竹輪麵包</li>
+          <li>新千歲機場國內線 2F 終極採買清單與日語司機導航卡</li>
+        </ul>
+        <a href="./sapporo-guide/" class="launch-btn" id="btn-sapporo-guide">開啟北海道隨身指南 ➔</a>
+      </article>
+
+      <!-- Card 12: 全球自由行智慧導航平台 (Travel Planner Hub) -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">🧭</div>
+          <span class="ver-badge ver-gold">模版引擎 Hub</span>
+        </div>
+        <h2 class="app-title">全球自由行智慧導航平台 · 行程匯入與多國切換</h2>
+        <p class="app-desc">通用型自由行互動式隨身導覽引擎。支援北海道、富國島、無錫上海、東京等多國城市一鍵切換，內建純前端 Markdown
+          筆記解析器，可直接貼上行程筆記即時動態生成五大分頁，並支援一鍵打包匯出為免連網的單檔獨立 HTML。</p>
+        <ul class="features-list">
+          <li>多國城市自由行一鍵秒級下拉切換</li>
+          <li>Markdown 筆記/行程文字一鍵匯入與動態解析</li>
+          <li>五大固定核心分頁（行程、美食、交通、門票、清單）</li>
+          <li>一鍵打包下載為免依賴獨立隨身單檔 HTML</li>
+        </ul>
+        <a href="./travel-planner/" class="launch-btn" id="btn-travel-planner">開啟智慧導航平台 ➔</a>
+      </article>
+
+      <!-- Card 13: 全球特惠機票雷達 3D -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">✈️</div>
+          <span class="ver-badge ver-cyan">3D 航線雷達</span>
+        </div>
+        <h2 class="app-title">全球特惠機票雷達 3D · 台灣出發低價探索</h2>
+        <p class="app-desc">基於 WebGL 與 Three.js 打造之暗黑太空 3D 互動地球儀。即時追蹤台灣出發（桃園 TPE / 松山 TSA / 小港 KHH）全球 46
+          條熱門航線，整合大圓航線動態軌跡、平滑阻尼縮放、自訂日期天數智能推算與航空哩程點數對照雷達。</p>
+        <ul class="features-list">
+          <li>46 條全球航線 3D 動態軌跡與平滑阻尼縮放</li>
+          <li>自訂出發日期、旅遊停留天數與回程智能推算</li>
+          <li>六大洲區域快速篩選、淡旺季行情動態試算</li>
+          <li>現金破盤價 vs. 航空哩程兌換價值對照雷達</li>
+        </ul>
+        <a href="./flight-radar/" class="launch-btn" id="btn-flight-radar">啟動機票雷達 ➔</a>
+      </article>
+
+      <!-- Card 14: 印務室 Folio Press -->
+      <article class="app-card">
+        <div class="card-top">
+          <div class="app-icon">📑</div>
+          <span class="ver-badge ver-indigo">AI 排版 Pro</span>
+        </div>
+        <h2 class="app-title">印務室 Folio Press · AI 對話轉顧問報告排版工作台</h2>
+        <p class="app-desc">一鍵將 ChatGPT、Claude、Gemini 與 Perplexity 對話去 AI 感，排版為出版級高顏值 A4 顧問報告 PDF、聖水洞/日雜風講義、3x 長圖與
+          Markdown。100% 本機離線、免授權碼。</p>
+        <ul class="features-list">
+          <li>6 大出版級主題（瑞士顧問、聖水象牙、東京雜誌、金融簡報、牛津學術、對話原貌）</li>
+          <li>一鍵去 AI 感（自動過濾寒暄客套話與結尾免責聲明）</li>
+          <li>雙階物理分頁演算、防孤行孤頁與動態目錄真實頁碼反填</li>
+          <li>四合一交付匯出（A4 向量 PDF、3x 長圖、Word 富文本、Markdown）</li>
+        </ul>
+        <a href="./folio-press/" class="launch-btn" id="btn-folio-press">開啟排版工作台 ➔</a>
+      </article>
+    </main>
+
+    <footer>
+      <p>Web Apps Hub · 靜態獨立部署架構 · 託管於 Cloudflare Workers & GitHub Pages</p>
+    </footer>
   </div>
 
-  <header>
-    <div class="badge-top">🚀 獨立 Web 應用公開入口</div>
-    <h1>雲端數位工具與互動應用</h1>
-    <p class="subtitle">彙整印務室 Folio Press AI 顧問報告排版工作台、全球特惠機票雷達 3D、策略戰棋遊戲、江山時序歷史地圖、全台即時路況看板、Open Live Map 即時地圖監控、國道計程通行費試算、工程起重安全分析、選擇權量化決策與台灣房地產估價之純靜態 Web 工具箱。</p>
-  </header>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('hub-theme', next);
+      updateToggleBtn(next);
+    }
 
-  <main class="apps-grid">
-    <!-- Card 1: 三國戰棋 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">⚔️</div>
-        <span class="ver-badge ver-gold">v1.3.0 貫日增益版</span>
-      </div>
-      <h2 class="app-title">三國戰棋 · 歷史全紀元</h2>
-      <p class="app-desc">百位歷史武將立繪、50 關史詩戰役沙盤。支援將魂突破升星、太史慈直線雙目標「貫日連珠」穿透攻擊與軍團增益陣法。</p>
-      <ul class="features-list">
-        <li>50 關史詩演義章節 (黃巾至晉統)</li>
-        <li>100 位專屬持武立繪武將名冊</li>
-        <li>弓兵盲區與直線穿透戰技體系</li>
-      </ul>
-      <a href="./games/three-kingdoms-chess/" class="launch-btn" id="btn-chess">啟動三國戰棋 ➔</a>
-    </article>
-
-    <!-- Card 2: 台灣即時路況 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🚦</div>
-        <span class="ver-badge ver-emerald">Live 即時監測</span>
-      </div>
-      <h2 class="app-title">台灣即時路況動態看板</h2>
-      <p class="app-desc">全台國道與快速道路車流速度監控，自動抓取 TDX 交通即時數據，視覺化呈現路段擁塞、平均時速與路況預警。</p>
-      <ul class="features-list">
-        <li>全台國道主線即時車速流向</li>
-        <li>路況壅塞分級與動態色條</li>
-        <li>自動更新數據與路段速查</li>
-      </ul>
-      <a href="./taiwan-traffic-live/" class="launch-btn" id="btn-traffic">開啟即時路況 ➔</a>
-    </article>
-
-    <!-- Card 3: 國道里程與自行開車交通費申報系統 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🚗</div>
-        <span class="ver-badge ver-cyan">出差報銷專用</span>
-      </div>
-      <h2 class="app-title">自行開車交通費申報與國道里程計算</h2>
-      <p class="app-desc">專為公務出差與差旅月報設計。內建國 1、國 3、國 5 官方交流道里程數據，自動計算計費里程、eTag 9折通行費、多途經點去回程與 A4 橫向報表匯出。</p>
-      <ul class="features-list">
-        <li>國 1 / 國 3 / 國 5 交流道里程免金鑰速查</li>
-        <li>公務出差去回程、多路段與停車費彙整</li>
-        <li>A4 橫向 PDF 匯出與月報加總一覽表</li>
-      </ul>
-      <a href="./highway-toll-calculator/" class="launch-btn" id="btn-toll">開啟交通費申報 ➔</a>
-    </article>
-
-    <!-- Card 4: 吊車配重計算器 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🏗️</div>
-        <span class="ver-badge ver-indigo">工程安全專用</span>
-      </div>
-      <h2 class="app-title">移動式起重機吊裝配重安全試算</h2>
-      <p class="app-desc">符合高壓氣體與工業安全法規之起重機作業參數試算，自動校核主臂長度、作業半徑、額定總負荷與安全額度比率。</p>
-      <ul class="features-list">
-        <li>多廠牌起重機性能曲線檢核</li>
-        <li>支腿受力與地耐力安全係數</li>
-        <li>極限作業半徑預警警報</li>
-      </ul>
-      <a href="./crane-calculator/" class="launch-btn" id="btn-crane">進入吊裝試算 ➔</a>
-    </article>
-
-    <!-- Card 5: 台指選擇權量化決策與損益平衡小工具 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">📈</div>
-        <span class="ver-badge ver-gold">量化決策 Pro</span>
-      </div>
-      <h2 class="app-title">台指選擇權量化多空決策與損益平衡小工具</h2>
-      <p class="app-desc">結合大盤多空濾網與 Black-Scholes 模型，即時產出高勝率價差組合（PCS / CCS / 鐵鷹）、損益平衡圖（Payoff Diagram）與 OptionStrat 風格多維度情境矩陣。</p>
-      <ul class="features-list">
-        <li>100% 對齊 Telegram Bot 三大實盤指令</li>
-        <li>到期結算線與 T+0 浮動損益動態繪製</li>
-        <li>Greeks 風險指標與手機端自適應觸控操作</li>
-      </ul>
-      <a href="./options-quant-app/" class="launch-btn" id="btn-options">啟動選擇權小工具 ➔</a>
-    </article>
-
-    <!-- Card 6: 台灣房地產估價與開價分析 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🏡</div>
-        <span class="ver-badge ver-emerald">房產估價 Pro</span>
-      </div>
-      <h2 class="app-title">台灣房地產估價與開價合理性分析器</h2>
-      <p class="app-desc">整合區域特徵行情基準、扣車位淨坪拆算、開價合理性量表、房貸月付收租試算與法拍屋折價分析。</p>
-      <ul class="features-list">
-        <li>扣除車位真實單價與區域中位數比對</li>
-        <li>法拍拍次折價率與不點交瑕疵風險排查</li>
-        <li>新青安/一般房貸本息攤還與租金投報率</li>
-        <li>實價登錄社區行情即時線上查價</li>
-      </ul>
-      <a href="./taiwan-real-estate/" class="launch-btn" id="btn-real-estate">進入房產估價 ➔</a>
-    </article>
-
-    <!-- Card 7: Open Live Map 即時地圖 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🗺️</div>
-        <span class="ver-badge ver-cyan">Live 即時圖資</span>
-      </div>
-      <h2 class="app-title">Open Live Map · 全台即時地圖與路況監控</h2>
-      <p class="app-desc">整合全台國道、公路局省道與市區即時 CCTV 串流影像、行車跟車導覽監看、中央氣象署即時測站、桃園環保車 GPS 與內政部實價登錄聚合圖資。</p>
-      <ul class="features-list">
-        <li>全台國道省道 CCTV 串流、多分割畫面與跟車導覽</li>
-        <li>中央氣象署測站即時溫雨風速、桃園環保車動態 GPS</li>
-        <li>內政部實價登錄聚合圖層、Mapillary 街景與自訂點位</li>
-      </ul>
-      <a href="https://gslai.win/" target="_blank" rel="noopener noreferrer" class="launch-btn" id="btn-open-live-map">開啟 Open Live Map ↗</a>
-    </article>
-
-    <!-- Card 8: 江山時序歷史地圖 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">📜</div>
-        <span class="ver-badge ver-gold">歷史地圖 Pro</span>
-      </div>
-      <h2 class="app-title">江山時序 · 中國歷史地圖時間軸（繁體中文版）</h2>
-      <p class="app-desc">純前端宣紙古風互動地圖。完整收錄自戰國至現代 2,400 餘年、18 朝代、167 階段疆域政區演變快照、歷代名城古今對照、天下名關、歷史人物時空行跡與 35 篇朝代戰役靜態專題考據。</p>
-      <ul class="features-list">
-        <li>18 朝代 167 階段多邊形快照與鬼影邊界對照</li>
-        <li>1,387 座名城關隘 2,400 年古今建制沿革溯源</li>
-        <li>歷史先賢生平行跡路線與繁簡雙向搜尋支援</li>
-        <li>35 篇疆域、古詩詞路線與著名戰役專題考據</li>
-      </ul>
-      <div class="card-btn-group">
-        <a href="./jiangshan-map/" class="launch-btn" id="btn-jiangshan">開啟互動主地圖 ➔</a>
-        <a href="./jiangshan-map/topics/index.html" class="launch-btn secondary-btn" id="btn-jiangshan-topics">專題考據總覽 📖</a>
-      </div>
-    </article>
-
-    <!-- Card 9: 無錫 × 上海親子旅遊隨身手帳 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🏮</div>
-        <span class="ver-badge ver-emerald">文旅生活 Pro</span>
-      </div>
-      <h2 class="app-title">無錫 × 上海 · 6天5夜親子自由行隨身指南</h2>
-      <p class="app-desc">專為 2 大 1 小（12 歲）量身打造之江浙文旅互動手帳。收錄 2/1 浦東機場極速公共運輸（機場聯絡線＋高鐵＋地鐵3號線）與專車直達指引、惠山古鎮寄暢園、三國水滸景區大秀、上海千古情立體街區、2 月吃蟹名店卡與滴滴一鍵打車司機定位卡。</p>
-      <ul class="features-list">
-        <li>2/1 浦東機場 ➔ 無錫極速接駁（聯絡線+高鐵+地鐵）</li>
-        <li>惠山古鎮、三國水滸景區與上海千古情必看大秀時刻</li>
-        <li>2 月必吃蟹名店卡（憶秦園、熙盛源、成隆行、老吉士）</li>
-        <li>景點門票預約、12歲台胞證優惠與滴滴司機大字卡</li>
-        <li>獨立字級縮放切換（標準/中/大）與防破版架構</li>
-      </ul>
-      <a href="./wuxi-shanghai-guide/" class="launch-btn" id="btn-wuxi-guide">開啟旅遊隨身手帳 ➔</a>
-    </article>
-
-    <!-- Card 10: 富國島海島度假隨身互動指南 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🏝️</div>
-        <span class="ver-badge ver-cyan">海島度假 Pro</span>
-      </div>
-      <h2 class="app-title">富國島 · 4天3夜海島自由行隨身指南</h2>
-      <p class="app-desc">富國島海島度假隨身互動手帳。收錄直飛免簽證入境通關、海關換匯技巧、瑞享五星度假酒店私人沙灘與巧克力歡樂時光、珍珠水陸樂園巨龜水族館與 ONCE 秀、富國大世界威尼斯水舞秀、傳統跳跳蝦米粉與金剛超市伴手禮。</p>
-      <ul class="features-list">
-        <li>台灣直飛 30 天免簽證與機場換匯防偽重點</li>
-        <li>瑞享度假酒店私人沙灘、無邊際泳池與巧克力時光</li>
-        <li>珍珠水陸樂園、富國大世界威尼斯水舞秀時刻表</li>
-        <li>金剛超市特產掃貨、Sonasea 夜市與越語司機定位卡</li>
-      </ul>
-      <a href="./phu-quoc-guide/" class="launch-btn" id="btn-phuquoc-guide">開啟富國島隨身指南 ➔</a>
-    </article>
-
-    <!-- Card 11: 北海道札幌 × 小樽 × 美瑛旭川 7天6夜隨身指南 -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">❄️</div>
-        <span class="ver-badge ver-indigo">雪季浪漫 Pro</span>
-      </div>
-      <h2 class="app-title">北海道札幌 · 7天6夜雪季浪漫隨身指南</h2>
-      <p class="app-desc">札幌、小樽、美瑛與旭川初冬雪季隨身手帳。收錄白色燈樹節、電視塔展望台夜景、小樽三角市場爆量海鮮丼與蒸氣鐘、藻岩山日本新三大夜景、白色戀人公園城堡點燈、旭山動物園企鵝、美瑛青池與森林精靈露台，以及薄野 GAJA 燒肉、羊座成吉思汗烤羊與名店湯咖哩定位卡。</p>
-      <ul class="features-list">
-        <li>白色燈樹節、小樽運河蒸氣鐘與藻岩山百萬夜景</li>
-        <li>11/27 美瑛旭山一日遊（動物園+青池+白須瀑布+精靈露台）</li>
-        <li>GAJA燒肉、成吉思汗羊座、KING湯咖哩與DONGURI竹輪麵包</li>
-        <li>新千歲機場國內線 2F 終極採買清單與日語司機導航卡</li>
-      </ul>
-      <a href="./sapporo-guide/" class="launch-btn" id="btn-sapporo-guide">開啟北海道隨身指南 ➔</a>
-    </article>
-
-    <!-- Card 12: 全球自由行智慧導航平台 (Travel Planner Hub) -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">🧭</div>
-        <span class="ver-badge ver-gold">模版引擎 Hub</span>
-      </div>
-      <h2 class="app-title">全球自由行智慧導航平台 · 行程匯入與多國切換</h2>
-      <p class="app-desc">通用型自由行互動式隨身導覽引擎。支援北海道、富國島、無錫上海、東京等多國城市一鍵切換，內建純前端 Markdown 筆記解析器，可直接貼上行程筆記即時動態生成五大分頁，並支援一鍵打包匯出為免連網的單檔獨立 HTML。</p>
-      <ul class="features-list">
-        <li>多國城市自由行一鍵秒級下拉切換</li>
-        <li>Markdown 筆記/行程文字一鍵匯入與動態解析</li>
-        <li>五大固定核心分頁（行程、美食、交通、門票、清單）</li>
-        <li>一鍵打包下載為免依賴獨立隨身單檔 HTML</li>
-      </ul>
-      <a href="./travel-planner/" class="launch-btn" id="btn-travel-planner">開啟智慧導航平台 ➔</a>
-    </article>
-
-    <!-- Card 13: 全球特惠機票雷達 3D -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">✈️</div>
-        <span class="ver-badge ver-cyan">3D 航線雷達</span>
-      </div>
-      <h2 class="app-title">全球特惠機票雷達 3D · 台灣出發低價探索</h2>
-      <p class="app-desc">基於 WebGL 與 Three.js 打造之暗黑太空 3D 互動地球儀。即時追蹤台灣出發（桃園 TPE / 松山 TSA / 小港 KHH）全球 46 條熱門航線，整合大圓航線動態軌跡、平滑阻尼縮放、自訂日期天數智能推算與航空哩程點數對照雷達。</p>
-      <ul class="features-list">
-        <li>46 條全球航線 3D 動態軌跡與平滑阻尼縮放</li>
-        <li>自訂出發日期、旅遊停留天數與回程智能推算</li>
-        <li>六大洲區域快速篩選、淡旺季行情動態試算</li>
-        <li>現金破盤價 vs. 航空哩程兌換價值對照雷達</li>
-      </ul>
-      <a href="./flight-radar/" class="launch-btn" id="btn-flight-radar">啟動機票雷達 ➔</a>
-    </article>
-
-    <!-- Card 14: 印務室 Folio Press -->
-    <article class="app-card">
-      <div class="card-top">
-        <div class="app-icon">📑</div>
-        <span class="ver-badge ver-indigo">AI 排版 Pro</span>
-      </div>
-      <h2 class="app-title">印務室 Folio Press · AI 對話轉顧問報告排版工作台</h2>
-      <p class="app-desc">一鍵將 ChatGPT、Claude、Gemini 與 Perplexity 對話去 AI 感，排版為出版級高顏值 A4 顧問報告 PDF、聖水洞/日雜風講義、3x 長圖與 Markdown。100% 本機離線、免授權碼。</p>
-      <ul class="features-list">
-        <li>6 大出版級主題（瑞士顧問、聖水象牙、東京雜誌、金融簡報、牛津學術、對話原貌）</li>
-        <li>一鍵去 AI 感（自動過濾寒暄客套話與結尾免責聲明）</li>
-        <li>雙階物理分頁演算、防孤行孤頁與動態目錄真實頁碼反填</li>
-        <li>四合一交付匯出（A4 向量 PDF、3x 長圖、Word 富文本、Markdown）</li>
-      </ul>
-      <a href="./folio-press/" class="launch-btn" id="btn-folio-press">開啟排版工作台 ➔</a>
-    </article>
-  </main>
-
-  <footer>
-    <p>Web Apps Hub · 靜態獨立部署架構 · 託管於 Cloudflare Workers & GitHub Pages</p>
-  </footer>
-</div>
-
-<script>
-  function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    localStorage.setItem('hub-theme', next);
-    updateToggleBtn(next);
-  }
-
-  function updateToggleBtn(theme) {
-    const btn = document.getElementById('theme-toggle-btn');
-    if (btn) {
-      if (theme === 'dark') {
-        btn.innerHTML = '☀️ 淺色模式';
-        btn.setAttribute('aria-label', '切換為淺色模式');
-      } else {
-        btn.innerHTML = '🌙 深色模式';
-        btn.setAttribute('aria-label', '切換為深色模式');
+    function updateToggleBtn(theme) {
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) {
+        if (theme === 'dark') {
+          btn.innerHTML = '☀️ 淺色模式';
+          btn.setAttribute('aria-label', '切換為淺色模式');
+        } else {
+          btn.innerHTML = '🌙 深色模式';
+          btn.setAttribute('aria-label', '切換為深色模式');
+        }
       }
     }
-  }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    updateToggleBtn(current);
-  });
-</script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      updateToggleBtn(current);
+    });
+  </script>
 
 </body>
+
 </html>
