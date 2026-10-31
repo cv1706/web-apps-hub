@@ -9,11 +9,77 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --app-max-width: 1024px;
+    }
+
+    html {
+      font-size: 16px;
+      overflow-x: hidden !important;
+      width: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html[data-font-size="sm"] {
+      font-size: 16px;
+    }
+
+    html[data-font-size="md"] {
+      font-size: 18px;
+    }
+
+    html[data-font-size="lg"] {
+      font-size: 20px;
+    }
+
     body {
       font-family: 'Inter', 'Noto Sans TC', sans-serif;
       background-color: #f8fafc;
       color: #0f172a;
+      overflow-x: hidden !important;
+      width: 100%;
+      max-width: 100vw !important;
+      position: relative;
     }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    /* 鎖定外層框架最大寬度，阻斷 Tailwind rem 與根字級聯動造成外框膨脹破版 */
+    .max-w-5xl,
+    header > div,
+    main,
+    footer > div {
+      max-width: min(var(--app-max-width), 100%) !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    /* 彈窗對齊視窗邊界防溢出 */
+    #driver-modal > div {
+      max-width: min(28rem, calc(100vw - 2rem)) !important;
+      box-sizing: border-box !important;
+    }
+
+    /* 確保所有表格與滾動軸在任何字級下皆順暢滾動且不破壞外框 */
+    .overflow-x-auto {
+      max-width: 100% !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Grid 子元素縮小防溢出 */
+    .grid > * {
+      min-width: 0;
+    }
+
+    /* 文字自然換行防破版 */
+    h1, h2, h3, h4, h5, h6, p, span, a, td, th {
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -82,39 +148,55 @@
   </div>
 
   <!-- Hero Header -->
-  <header class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg">
-    <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+  <header class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg w-full">
+    <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8 w-full">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div class="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-200 border border-indigo-400/30 mb-2">
-            <span>✈️ 去程 2/1 東方航空 MU5008 (15:00 桃機T2 ➔ 17:05 浦東T1) • 回程 2/6 東方航空 MU5007 (12:10 浦東T1 ➔ 14:00 桃機T2)</span>
+        <div class="min-w-0 flex-1">
+          <div class="inline-flex flex-wrap items-center gap-2 rounded-2xl bg-indigo-500/20 px-3 py-1.5 text-xs font-medium text-indigo-200 border border-indigo-400/30 mb-2 max-w-full break-words">
+            <span>去程 2/1 東方航空 MU5008 (15:00 桃機T2 ➔ 17:05 浦東T1) • 回程 2/6 東方航空 MU5007 (12:10 浦東T1 ➔ 14:00 桃機T2)</span>
             <span>•</span>
-            <span>👨‍👩‍👦 2大1小（12歲）親子自由行</span>
+            <span>2大1小（12歲）親子自由行</span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white break-words">
             《寒假飛一下~上海無錫》親子旅遊隨身手帳
           </h1>
-          <p class="mt-1 text-sm text-slate-300">
+          <p class="mt-1 text-sm text-slate-300 leading-relaxed break-words">
             三國水滸看大秀 • 惠山古鎮憶秦園 • 太湖黿頭渚紅嘴鷗 • 上海千古情 • 自然館・張園石庫門・LV巨輪＆星巴克工坊 • 除夕壽喜燒圍爐
           </p>
         </div>
-        <!-- Quick Progress Pill -->
-        <div class="flex items-center gap-3 self-start sm:self-center rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/15">
-          <div>
-            <p class="text-xs text-slate-300">行前與行程完成度</p>
-            <div class="flex items-baseline gap-2">
-              <span id="overall-progress-text" class="text-lg font-bold text-emerald-300">0%</span>
-              <span id="overall-progress-count" class="text-xs text-slate-300">(0/0)</span>
-            </div>
+        <!-- Right Controls: Font Scale Adjuster + Quick Progress Pill -->
+        <div class="flex flex-wrap items-center gap-2.5 shrink-0 self-start sm:self-center">
+          <!-- Font Size Selector -->
+          <div class="flex items-center gap-1 rounded-2xl bg-white/10 p-1 backdrop-blur-sm border border-white/15">
+            <span class="text-xs text-slate-300 px-2 font-medium">字級</span>
+            <button type="button" id="font-scale-sm" class="font-scale-btn rounded-xl px-2.5 py-1 text-xs font-bold bg-white text-slate-900 shadow-xs transition" data-size="sm" title="標準字體 (100%)">
+              標準
+            </button>
+            <button type="button" id="font-scale-md" class="font-scale-btn rounded-xl px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-white/20 transition" data-size="md" title="放大字體 (115%)">
+              中
+            </button>
+            <button type="button" id="font-scale-lg" class="font-scale-btn rounded-xl px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-white/20 transition" data-size="lg" title="特大字體 (130%)">
+              大
+            </button>
           </div>
-          <button id="reset-checks-btn" type="button" class="rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/20 transition" title="重置所有勾選狀態">
-            重置勾選
-          </button>
+          <!-- Quick Progress Pill -->
+          <div class="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-2.5 backdrop-blur-sm border border-white/15">
+            <div>
+              <p class="text-xs text-slate-300">完成度</p>
+              <div class="flex items-baseline gap-2">
+                <span id="overall-progress-text" class="text-lg font-bold text-emerald-300">0%</span>
+                <span id="overall-progress-count" class="text-xs text-slate-300">(0/0)</span>
+              </div>
+            </div>
+            <button id="reset-checks-btn" type="button" class="rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/20 transition" title="重置所有勾選狀態">
+              重置
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Main Navigation Tabs -->
-      <nav class="mt-6 flex gap-2 overflow-x-auto no-scrollbar border-b border-white/15 pb-3" aria-label="主要功能切換">
+      <nav class="mt-6 flex gap-2 overflow-x-auto no-scrollbar border-b border-white/15 pb-3 w-full max-w-full" aria-label="主要功能切換">
         <button type="button" data-main-tab="itinerary" class="main-tab-btn shrink-0 rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold shadow-sm transition">
           🗓️ 每日行程與打車卡
         </button>
@@ -140,8 +222,8 @@
     <!-- SECTION 1: ITINERARY -->
     <section id="tab-itinerary" class="space-y-6 fade-in">
       <!-- Day Selector Bar -->
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
-        <div id="day-buttons-container" class="flex gap-1.5 overflow-x-auto no-scrollbar">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3 rounded-2xl shadow-sm border border-slate-200 w-full max-w-full">
+        <div id="day-buttons-container" class="flex gap-1.5 overflow-x-auto no-scrollbar flex-1 min-w-0">
           <!-- Populated by JS -->
         </div>
         <div class="flex items-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
@@ -152,14 +234,14 @@
       </div>
 
       <!-- Day 5 Feature Banner (Visible when Day 5 or All Days is active) -->
-      <div id="day5-switcher-banner" class="hidden rounded-2xl bg-gradient-to-r from-amber-50 via-rose-50 to-indigo-50 p-4 border border-amber-200/80 shadow-sm">
+      <div id="day5-switcher-banner" class="hidden rounded-2xl bg-gradient-to-r from-amber-50 via-rose-50 to-indigo-50 p-4 border border-amber-200/80 shadow-sm w-full max-w-full">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div class="flex items-center gap-2">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
               <span class="inline-flex items-center gap-1 rounded-md bg-rose-600 px-2 py-0.5 text-xs font-bold text-white">🏮 2/5 除夕特別企劃</span>
               <span class="text-xs font-semibold text-rose-800">海派石庫門 • 太古匯雙地標 • 長泰廣場圍爐</span>
             </div>
-            <p class="mt-1 text-xs sm:text-sm text-slate-700">上海自然博物館 ➔ 吳江路美食街 ➔ 張園石庫門 ➔ LV巨輪＆星巴克烘焙工坊 ➔ 一绪に寿喜烧放题除夕圍爐</p>
+            <p class="mt-1 text-xs sm:text-sm text-slate-700 leading-relaxed break-words">上海自然博物館 ➔ 吳江路美食街 ➔ 張園石庫門 ➔ LV巨輪＆星巴克烘焙工坊 ➔ 一绪に寿喜烧放题除夕圍爐</p>
           </div>
           <span class="shrink-0 self-start sm:self-center inline-flex items-center rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-rose-700 border border-rose-200 shadow-xs">
             🎉 新春除夕團圓日
@@ -210,12 +292,12 @@
       </div>
 
       <!-- Category Filter Tabs -->
-      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-        <div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3 w-full max-w-full">
+        <div class="min-w-0 flex-1">
           <h3 class="text-lg font-bold text-slate-900">三大推薦吃法與順路名店定位卡</h3>
           <p class="text-xs text-slate-500 mt-0.5">點擊卡片按鈕可一鍵複製滴滴打車搜尋詞，或開啟大字司機定位卡</p>
         </div>
-        <div class="flex gap-1 overflow-x-auto no-scrollbar">
+        <div class="flex gap-1 overflow-x-auto no-scrollbar max-w-full shrink-0">
           <button type="button" id="crab-filter-all" class="crab-filter-btn rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white transition">
             全部名店
           </button>
@@ -232,7 +314,7 @@
       </div>
 
       <!-- Crab Restaurants Cards Grid -->
-      <div id="crabs-container" class="grid gap-4 md:grid-cols-2">
+      <div id="crabs-container" class="grid gap-4 grid-cols-1 md:grid-cols-2 w-full">
         <!-- Populated by JS -->
       </div>
     </section>
@@ -250,7 +332,7 @@
           </span>
         </div>
 
-        <div id="hotels-grid" class="mt-4 grid gap-4 md:grid-cols-3">
+        <div id="hotels-grid" class="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full">
           <!-- Populated by JS -->
         </div>
       </div>
@@ -483,7 +565,7 @@
           </span>
         </div>
 
-        <div id="checklist-grid" class="mt-4 grid gap-4 md:grid-cols-2">
+        <div id="checklist-grid" class="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2 w-full">
           <!-- Populated by JS -->
         </div>
       </div>
@@ -1108,7 +1190,8 @@
       activeDay: 1,              // 1..6 or 'all'
       day5Option: 'A',           // 'A' | 'B'
       activeCrabCategory: 'all', // 'all' | 1 | 2 | 3
-      checkedItems: {}           // { [id]: true }
+      checkedItems: {},          // { [id]: true }
+      fontSize: 'sm'             // 'sm' | 'md' | 'lg'
     };
 
     function loadState() {
@@ -1121,6 +1204,9 @@
             if (parsed.day5Option === 'A' || parsed.day5Option === 'B') {
               state.day5Option = parsed.day5Option;
             }
+            if (['sm', 'md', 'lg'].includes(parsed.fontSize)) {
+              state.fontSize = parsed.fontSize;
+            }
           }
         }
       } catch (e) {
@@ -1132,7 +1218,8 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           checkedItems: state.checkedItems,
-          day5Option: state.day5Option
+          day5Option: state.day5Option,
+          fontSize: state.fontSize
         }));
       } catch (e) {
         // Ignore storage errors
@@ -1476,11 +1563,11 @@
               <p class="text-xs font-semibold text-slate-800 mt-0.5 select-all">${r.address}</p>
             </div>
           </div>
-          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
             <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-indigo-600 hover:underline">
               🔗 平台評價/指南 ↗
             </a>
-            <div class="flex gap-1.5">
+            <div class="flex flex-wrap gap-1.5">
               <button type="button" class="crab-copy-btn rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
                 📋 複製滴滴地址
               </button>
@@ -1554,11 +1641,11 @@
               🚇 <strong>周邊與交通：</strong>${h.metro}
             </p>
           </div>
-          <div class="mt-4 pt-3 border-t border-slate-200/70 flex gap-2">
-            <button type="button" class="hotel-copy-btn flex-1 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 transition">
+          <div class="mt-4 pt-3 border-t border-slate-200/70 flex flex-wrap gap-2">
+            <button type="button" class="hotel-copy-btn flex-1 min-w-[120px] rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 transition">
               📋 複製滴滴地址
             </button>
-            <button type="button" class="hotel-driver-btn rounded-xl bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 hover:bg-amber-200 transition">
+            <button type="button" class="hotel-driver-btn shrink-0 rounded-xl bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 hover:bg-amber-200 transition">
               🚕 司機卡
             </button>
           </div>
@@ -1627,6 +1714,36 @@
     }
 
     // ==========================================
+    // FONT SIZE CONTROLLER
+    // ==========================================
+    function setupFontSizeControls() {
+      applyFontSize(state.fontSize || 'sm');
+
+      ['sm', 'md', 'lg'].forEach(size => {
+        const btn = document.getElementById(`font-scale-${size}`);
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+          state.fontSize = size;
+          saveState();
+          applyFontSize(size);
+        });
+      });
+    }
+
+    function applyFontSize(size) {
+      document.documentElement.setAttribute('data-font-size', size);
+      ['sm', 'md', 'lg'].forEach(s => {
+        const btn = document.getElementById(`font-scale-${s}`);
+        if (!btn) return;
+        if (s === size) {
+          btn.className = 'font-scale-btn rounded-xl px-2.5 py-1 text-xs font-bold bg-white text-slate-900 shadow-xs transition';
+        } else {
+          btn.className = 'font-scale-btn rounded-xl px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-white/20 transition';
+        }
+      });
+    }
+
+    // ==========================================
     // 5. INITIALIZATION & GLOBAL LISTENERS
     // ==========================================
     function initApp() {
@@ -1688,6 +1805,9 @@
 
       // Setup Crab Filters
       setupCrabFilterButtons();
+
+      // Setup Font Size Controls
+      setupFontSizeControls();
 
       // Initial render
       renderMainTabs();
