@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>光印轉換所 Photo to PDF · 極速相片轉 PDF 隱私工坊</title>
+  <meta name="description" content="100% 本機離線、零雲端洩漏之相片轉 PDF 網頁工具。支援 HEIC/JPG/PNG 格式、EXIF 自動轉正、拖曳排序、紙張與邊距設定、多圖拼貼、中文浮水印與多階壓縮品質控制。">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%2232%22%20height=%2232%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%234F46E5%22/><path d=%22M9 7h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2212%22 cy=%2212%22 r=%221.5%22 fill=%22white%22/><path d=%22M25 19l-5-5-8 8%22 stroke=%22white%22 stroke-width=%222%22 fill=%22none%22/></svg>">
+
+  <!-- Google Fonts: Pretendard & Noto Sans TC -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'Noto Sans TC', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['DM Mono', 'Consolas', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              200: '#C7D2FE',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+
+  <!-- SortableJS for Drag and Drop Reordering -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+  <!-- pdf-lib for Client-side PDF Generation (v1.17.1 + 多重 CDN 容錯備援) -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script>
+    if (!window.PDFLib) {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"><\/script>');
+    }
+  </script>
+  <script>
+    if (!window.PDFLib) {
+      document.write('<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- heic2any for iPhone HEIC decoding -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+  <style>
+    /* 自訂平滑過渡與捲軸美化 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.6);
+    }
+    .sortable-ghost {
+      opacity: 0.35;
+      transform: scale(0.96);
+      border: 2px dashed #4F46E5 !important;
+    }
+    .sortable-chosen {
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+    }
+    .grid-bg {
+      background-size: 24px 24px;
+      background-image: radial-gradient(circle, rgba(156, 163, 175, 0.15) 1px, transparent 1px);
+    }
+    .dark .grid-bg {
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans flex flex-col antialiased select-none">
+
+  <!-- 頂部導覽列 -->
+  <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-sm shadow-brand-500/30">
+        <i data-lucide="file-output" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-base font-bold tracking-tight text-slate-900 dark:text-white">光印轉換所 Photo to PDF</h1>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>100% 離線純前端
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">零雲端上傳 · 證件相片隱私防護 · 支援 HEIC / 拖曳排序 / 浮水印防偽</p>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <!-- 回到首頁 Hub 連結 -->
+      <a href="../../../output/web-apps-hub/index.html" class="px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center space-x-1" title="返回 Web Apps Hub 總覽">
+        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        <span class="hidden md:inline">應用總覽</span>
+      </a>
+
+      <!-- 使用說明按鈕 -->
+      <button id="btn-open-help" class="px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center space-x-1" title="查看操作指引與功能說明">
+        <i data-lucide="help-circle" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+        <span>使用說明</span>
+      </button>
+
+      <!-- 清空按鈕 -->
+      <button id="btn-clear-all" class="px-2.5 py-1.5 text-xs font-medium rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 transition flex items-center space-x-1 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+        <i data-lucide="trash-2" class="w-4 h-4"></i>
+        <span>清空</span>
+      </button>
+
+      <!-- 主題切換 -->
+      <button id="btn-theme-toggle" class="p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="切換深淺模式">
+        <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+        <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主工作區：左右分割 -->
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+    <!-- 左側：圖片管理與拖曳排序區 (60%) -->
+    <main class="flex-1 flex flex-col bg-slate-100/60 dark:bg-slate-900/40 overflow-hidden relative">
+
+      <!-- 頂部資訊列與批次動作 -->
+      <div class="h-12 border-b border-slate-200 dark:border-slate-800 px-4 md:px-6 flex items-center justify-between bg-white/60 dark:bg-slate-900/60 backdrop-blur z-10">
+        <div class="flex items-center space-x-3 text-xs">
+          <!-- 雙視圖切換 Tab -->
+          <div class="inline-flex p-0.5 rounded-lg bg-slate-200/80 dark:bg-slate-800 border border-slate-300/60 dark:border-slate-700">
+            <button id="tab-view-gallery" class="px-2.5 py-1 rounded-md text-xs font-medium bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition flex items-center space-x-1">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+              <span>相片管理</span>
+            </button>
+            <button id="tab-view-pages" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center space-x-1">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              <span>分頁模擬</span>
+            </button>
+          </div>
+
+          <span class="text-slate-300 dark:text-slate-700">|</span>
+          <span class="font-medium text-slate-600 dark:text-slate-400">已載入：<strong id="stat-count" class="text-brand-600 dark:text-brand-400 text-sm font-semibold">0</strong> 張相片</span>
+          <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
+          <span class="text-slate-500 dark:text-slate-400 hidden sm:inline">總體積：<span id="stat-size" class="font-mono">0 KB</span></span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <!-- 批次旋轉全部 -->
+          <button id="btn-batch-rotate" class="px-2 py-1 text-xs font-medium rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition flex items-center space-x-1 disabled:opacity-40" disabled title="將全部相片順時針旋轉 90 度">
+            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">全部順轉 90°</span>
+          </button>
+          <!-- 批次反轉順序 -->
+          <button id="btn-batch-reverse" class="px-2 py-1 text-xs font-medium rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition flex items-center space-x-1 disabled:opacity-40" disabled title="顛倒當前頁面順序">
+            <i data-lucide="arrow-up-down" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">倒序排列</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 拖曳上傳區與縮圖展示滾動容器 -->
+      <div id="canvas-container" class="flex-1 overflow-y-auto p-4 md:p-6 grid-bg">
+
+        <!-- 空狀態上傳 Dropzone -->
+        <div id="dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 rounded-2xl p-8 sm:p-12 text-center bg-white/70 dark:bg-slate-900/60 backdrop-blur transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[320px] shadow-sm">
+          <input type="file" id="file-input" class="hidden" multiple accept="image/*,.heic,.heif">
+          
+          <div class="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
+            <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+          </div>
+
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">點擊選取相片 或 將檔案拖曳至此處</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4">支援 JPG、PNG、WebP、BMP 與 iPhone 原生 HEIC / HEIF 格式。支援從剪貼簿按 <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">Ctrl+V</kbd> 直接貼上。</p>
+
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <button type="button" id="btn-select-files" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs shadow-md shadow-brand-500/20 transition flex items-center space-x-1.5">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>選取本機相片</span>
+            </button>
+            <button type="button" id="btn-load-demo" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-xs transition flex items-center space-x-1.5">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+              <span>載入示範圖檔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 縮圖列表格 (Sortable Grid) -->
+        <div id="image-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 hidden">
+          <!-- 卡片由 JavaScript 動態渲染 -->
+        </div>
+
+        <!-- 實體分頁模擬視圖容器 (Page Simulation View) -->
+        <div id="pages-simulation-view" class="hidden flex flex-col items-center space-y-8 py-4">
+          <!-- 由 JavaScript 動態依據每頁拼貼張數與紙張比例渲染分頁卡片 -->
+        </div>
+
+        <!-- 懸浮增加相片按鈕 (當有照片時顯示) -->
+        <div id="gallery-footer-actions" class="mt-6 flex justify-center hidden">
+          <button id="btn-add-more" class="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 hover:bg-brand-50/50 dark:hover:bg-brand-950/30 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-300 transition flex items-center space-x-2">
+            <i data-lucide="image-plus" class="w-4 h-4"></i>
+            <span>追加更多相片...</span>
+          </button>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- 右側：排版與匯出控制台 (40%, 寬度約 380px~420px) -->
+    <aside class="w-full lg:w-96 xl:w-[420px] border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col h-auto lg:h-full z-20 shadow-lg lg:shadow-none">
+
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="sliders" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+          <h2 class="text-sm font-bold text-slate-900 dark:text-white">PDF 版面與輸出參數</h2>
+        </div>
+        <span class="text-[11px] font-mono text-slate-400">v1.0.0 SSOT</span>
+      </div>
+
+      <!-- 控制項表單滾動區 -->
+      <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 text-xs">
+
+        <!-- 1. 紙張規格與方向 -->
+        <div class="space-y-3">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            紙張規格與方向
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[11px] text-slate-500 mb-1 block">紙張格式</label>
+              <select id="cfg-page-size" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                <option value="a4" selected>A4 (210 × 297 mm)</option>
+                <option value="a3">A3 (297 × 420 mm)</option>
+                <option value="letter">Letter (8.5 × 11 in)</option>
+                <option value="legal">Legal (8.5 × 14 in)</option>
+                <option value="fit">自適應相片尺寸 (無白邊)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-500 mb-1 block">頁面方向</label>
+              <select id="cfg-page-orientation" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                <option value="auto" selected>自動 (依相片比例)</option>
+                <option value="portrait">強制直向 (Portrait)</option>
+                <option value="landscape">強制橫向 (Landscape)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 邊距與縮放版型 -->
+        <div class="space-y-3">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            邊距與擺放縮放模式
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[11px] text-slate-500 mb-1 block">頁面邊距</label>
+              <select id="cfg-page-margin" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                <option value="0">無邊距 (0 mm 全滿)</option>
+                <option value="15" selected>窄邊距 (5 mm)</option>
+                <option value="30">標準邊距 (10 mm)</option>
+                <option value="45">寬邊距 (15 mm)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-500 mb-1 block">縮放填滿方式</label>
+              <select id="cfg-image-fit" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                <option value="contain" selected>完整顯示 (留白不裁切)</option>
+                <option value="cover">填滿頁面 (適度裁切邊緣)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 單頁多圖拼貼模式 -->
+        <div class="space-y-2">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            每頁拼貼張數
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-grid="1" class="btn-grid-layout py-2 rounded-lg border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-medium text-xs text-center transition">
+              單頁 1 張
+            </button>
+            <button type="button" data-grid="2" class="btn-grid-layout py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
+              單頁 2 張
+            </button>
+            <button type="button" data-grid="4" class="btn-grid-layout py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
+              單頁 4 張 (2×2)
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. 輸出壓縮品質控管 -->
+        <div class="space-y-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center space-x-1">
+              <i data-lucide="gauge" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400"></i>
+              <span>檔案壓縮與解析度</span>
+            </label>
+            <span id="quality-label" class="text-[11px] font-mono text-brand-600 dark:text-brand-400 font-medium">平衡 (200 DPI / 85%)</span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5">
+            <button type="button" data-quality="compact" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+              輕巧
+            </button>
+            <button type="button" data-quality="balanced" class="btn-quality py-1.5 rounded text-[11px] border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-semibold">
+              平衡
+            </button>
+            <button type="button" data-quality="print" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+              高清
+            </button>
+            <button type="button" data-quality="lossless" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+              無損
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400">「平衡」兼顧手機閱讀與文字清晰度，體積約縮減 70% 至 85%。</p>
+        </div>
+
+        <!-- 5. 防偽浮水印與頁尾編號 -->
+        <div class="space-y-3">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            頁尾頁碼與防偽浮水印
+          </label>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label for="cfg-show-page-num" class="text-xs text-slate-600 dark:text-slate-400 flex items-center space-x-1.5 cursor-pointer">
+                <input type="checkbox" id="cfg-show-page-num" class="rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-700">
+                <span>啟用頁尾置中頁碼 (如 Page 1 / 10)</span>
+              </label>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="cfg-watermark" class="text-[11px] text-slate-500">自訂防偽斜向浮水印 (選填)</label>
+                <span class="text-[10px] text-slate-400">留空則不添加</span>
+              </div>
+              <input type="text" id="cfg-watermark" placeholder="例：僅供身分查核使用 影本無效" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 檔名自訂 -->
+        <div class="space-y-1">
+          <label for="cfg-filename" class="block text-[11px] text-slate-500 font-medium">匯出檔案名稱</label>
+          <div class="flex items-center space-x-1">
+            <input type="text" id="cfg-filename" value="Photos-Merged" class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <span class="text-slate-400 text-xs font-mono">.pdf</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 底部匯出操作區域 -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
+        <!-- 進度條 (預設隱藏) -->
+        <div id="export-progress-wrap" class="hidden space-y-1.5">
+          <div class="flex justify-between text-[11px]">
+            <span id="export-status-text" class="text-slate-600 dark:text-slate-400">正在處理中...</span>
+            <span id="export-percent" class="font-mono text-brand-600 dark:text-brand-400 font-semibold">0%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div id="export-progress-bar" class="h-full bg-brand-600 rounded-full transition-all duration-150 w-0"></div>
+          </div>
+        </div>
+
+        <!-- 雙操作按鈕：匯出前預覽 + 直接下載 -->
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btn-preview-pdf" class="py-2.5 rounded-xl border border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/40 text-brand-600 dark:text-brand-300 font-semibold text-xs transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+            <span>匯出前預覽</span>
+          </button>
+
+          <button id="btn-export-pdf" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-semibold text-xs shadow-md shadow-brand-500/25 transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>下載 PDF</span>
+          </button>
+        </div>
+
+        <p class="text-[10px] text-center text-slate-400 dark:text-slate-500">
+          全程於本機記憶體完成 · 檔案絕不經過任何伺服器
+        </p>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- 圖片全螢幕 Lightbox 預覽 Modal -->
+  <div id="preview-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="relative max-w-4xl max-h-[90vh] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+      <div class="h-12 px-4 border-b border-slate-800 flex items-center justify-between text-white text-xs">
+        <span id="modal-title" class="font-medium truncate">相片預覽</span>
+        <button id="btn-close-modal" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-4 flex-1 flex items-center justify-center overflow-hidden bg-black/40">
+        <img id="modal-img" class="max-w-full max-h-[75vh] object-contain rounded" src="" alt="預覽圖">
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF 實體全螢幕排版預覽 Modal -->
+  <div id="pdf-preview-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-5">
+    <div class="relative w-full max-w-5xl h-[92vh] bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+      <!-- 頂部工具列 -->
+      <div class="h-14 px-4 sm:px-6 border-b border-slate-800 bg-slate-900/95 flex items-center justify-between text-white">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center text-white shadow-sm">
+            <i data-lucide="file-check" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="text-xs sm:text-sm font-bold text-slate-100">PDF 實體排版效果預覽</h3>
+              <span id="preview-page-count" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-brand-300 border border-slate-700">共 0 頁</span>
+            </div>
+            <p class="text-[10px] text-slate-400 hidden sm:block">即時渲染真實紙張邊距、拼貼佈局與防偽浮水印</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <!-- 立即下載按鈕 -->
+          <button id="btn-confirm-download" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow transition flex items-center space-x-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>確認無誤，立即下載</span>
+          </button>
+          <!-- 關閉按鈕 -->
+          <button id="btn-close-pdf-preview" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition" title="關閉預覽">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- PDF 內嵌預覽區域 (IFrame) -->
+      <div class="flex-1 bg-slate-950 relative overflow-hidden flex items-center justify-center">
+        <iframe id="pdf-preview-frame" class="w-full h-full border-0 bg-slate-900" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作指南使用說明 Modal -->
+  <div id="help-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6">
+    <div class="relative w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <!-- 標頭 -->
+      <div class="h-14 px-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-7 h-7 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">光印轉換所 · 操作說明與功能手冊</h3>
+        </div>
+        <button id="btn-close-help" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- 內容區 -->
+      <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 text-xs text-slate-600 dark:text-slate-300">
+        <!-- 核心特性 -->
+        <section class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+            <span>系統亮點與隱私承諾</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+              <strong class="text-slate-900 dark:text-white block mb-0.5">100% 離線純前端運算</strong>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">所有圖檔解碼與 PDF 組裝全程於本機記憶體完成，完全不傳送至伺服器，個資發票與證件影本絕不洩漏。</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+              <strong class="text-slate-900 dark:text-white block mb-0.5">iPhone HEIC 原生轉碼</strong>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">內建前端 WebAssembly/JS 解碼器，直接拖曳 iOS 拍攝之 HEIC/HEIF 照片即可自動轉為高畫質 JPEG。</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+              <strong class="text-slate-900 dark:text-white block mb-0.5">雙軌即時預覽</strong>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">提供畫布「分頁排版模擬」與「全螢幕 PDF 閱讀器預覽」，在真正下載前確認每一頁邊距、拼貼與浮水印。</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+              <strong class="text-slate-900 dark:text-white block mb-0.5">防偽中文浮水印</strong>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">離線向量繪製透明中文字串（如「僅供身分查核使用」），免載入肥大字型檔即可精準防盜用。</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 四步操作流程 -->
+        <section class="space-y-2.5">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+            <span>四步標準操作流程 (SOP)</span>
+          </h4>
+          <ol class="space-y-2 list-decimal list-inside text-[11px] leading-relaxed">
+            <li><strong class="text-slate-800 dark:text-slate-200">載入相片</strong>：點擊「選取本機相片」、直接拖曳檔案至框內，或截圖後按 <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Ctrl+V</kbd> 貼上。</li>
+            <li><strong class="text-slate-800 dark:text-slate-200">調整順序與方向</strong>：長按相片卡片拖曳重排順序；滑鼠懸浮點擊旋轉按鈕調整橫直向。</li>
+            <li><strong class="text-slate-800 dark:text-slate-200">設定排版參數</strong>：選擇紙張（A4、自適應）、邊距、每頁拼貼格數（1、2、4 張）、頁碼與防偽浮水印。</li>
+            <li><strong class="text-slate-800 dark:text-slate-200">預覽與匯出</strong>：點擊「分頁模擬」檢視排版分頁，或點擊「匯出前預覽」彈出 PDF 閱讀器，審核無誤點擊下載即可完成。</li>
+          </ol>
+        </section>
+
+        <!-- 常見問題 -->
+        <section class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+            <span>常見問題排除 (FAQ)</span>
+          </h4>
+          <div class="space-y-2 text-[11px]">
+            <p><strong class="text-slate-800 dark:text-slate-200">Q：相片超過 100 張會造成瀏覽器閃退嗎？</strong><br>
+            A：不會。系統實施雙軌記憶體管理，主畫面僅加載 400 像素微型縮圖，匯出時採循序組裝即刻釋放，實測桌機環境可穩定處理上百張大圖。</p>
+            <p><strong class="text-slate-800 dark:text-slate-200">Q：轉出的 PDF 檔案過大無法用 Email 發送怎麼辦？</strong><br>
+            A：在右側「檔案壓縮與解析度」選擇「輕巧」或「平衡」檔位，系統會自動在不影響字體閱讀的前提下降低取樣率，檔案體積約縮減 75% 以上。</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- 底部按鈕 -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex justify-end">
+        <button id="btn-close-help-footer" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs transition">
+          我知道了
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 應用程式核心邏輯腳本 -->
+  <script>
+    // ==========================================
+    // 狀態管理 State
+    // ==========================================
+    const state = {
+      images: [], // 陣列物件: { id, file, name, size, width, height, rotation (0, 90, 180, 270), thumbUrl }
+      activeView: 'gallery', // 'gallery' (縮圖管理) 或 'pages' (分頁排版模擬)
+      cachedPdfBlob: null,
+      pageSize: 'a4',
+      orientation: 'auto',
+      margin: 15, // 點 (pt)
+      fitMode: 'contain',
+      gridLayout: 1, // 1, 2, 4
+      qualityPreset: 'balanced', // compact, balanced, print, lossless
+      showPageNum: false,
+      watermarkText: '',
+      isExporting: false
+    };
+
+    // 標準紙張規格定義 (單位: pt, 1 pt = 1/72 inch, 1 mm 約等於 2.83465 pt)
+    const PAGE_SIZES = {
+      a4: [595.28, 841.89],
+      a3: [841.89, 1190.55],
+      letter: [612.0, 792.0],
+      legal: [612.0, 1008.0]
+    };
+
+    // DOM 元素引用
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+    const imageGallery = document.getElementById('image-gallery');
+    const pagesSimulationView = document.getElementById('pages-simulation-view');
+    const tabViewGallery = document.getElementById('tab-view-gallery');
+    const tabViewPages = document.getElementById('tab-view-pages');
+    const galleryFooterActions = document.getElementById('gallery-footer-actions');
+    const btnSelectFiles = document.getElementById('btn-select-files');
+    const btnAddMore = document.getElementById('btn-add-more');
+    const btnLoadDemo = document.getElementById('btn-load-demo');
+    const btnClearAll = document.getElementById('btn-clear-all');
+    const btnBatchRotate = document.getElementById('btn-batch-rotate');
+    const btnBatchReverse = document.getElementById('btn-batch-reverse');
+    const btnThemeToggle = document.getElementById('btn-theme-toggle');
+    const statCount = document.getElementById('stat-count');
+    const statSize = document.getElementById('stat-size');
+
+    // 匯出與預覽按鈕
+    const btnPreviewPdf = document.getElementById('btn-preview-pdf');
+    const btnExportPdf = document.getElementById('btn-export-pdf');
+    const exportProgressWrap = document.getElementById('export-progress-wrap');
+    const exportProgressBar = document.getElementById('export-progress-bar');
+    const exportStatusText = document.getElementById('export-status-text');
+    const exportPercent = document.getElementById('export-percent');
+
+    // PDF 預覽視窗 Modal
+    const pdfPreviewModal = document.getElementById('pdf-preview-modal');
+    const pdfPreviewFrame = document.getElementById('pdf-preview-frame');
+    const btnClosePdfPreview = document.getElementById('btn-close-pdf-preview');
+    const btnConfirmDownload = document.getElementById('btn-confirm-download');
+    const previewPageCount = document.getElementById('preview-page-count');
+
+    // 參數控制元素
+    const cfgPageSize = document.getElementById('cfg-page-size');
+    const cfgPageOrientation = document.getElementById('cfg-page-orientation');
+    const cfgPageMargin = document.getElementById('cfg-page-margin');
+    const cfgImageFit = document.getElementById('cfg-image-fit');
+    const cfgShowPageNum = document.getElementById('cfg-show-page-num');
+    const cfgWatermark = document.getElementById('cfg-watermark');
+    const cfgFilename = document.getElementById('cfg-filename');
+    const qualityLabel = document.getElementById('quality-label');
+
+    // Modal 元素
+    const previewModal = document.getElementById('preview-modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalTitle = document.getElementById('modal-title');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+
+    // 使用說明 Modal 元素
+    const btnOpenHelp = document.getElementById('btn-open-help');
+    const helpModal = document.getElementById('help-modal');
+    const btnCloseHelp = document.getElementById('btn-close-help');
+    const btnCloseHelpFooter = document.getElementById('btn-close-help-footer');
+
+    btnOpenHelp.addEventListener('click', () => helpModal.classList.remove('hidden'));
+    btnCloseHelp.addEventListener('click', () => helpModal.classList.add('hidden'));
+    btnCloseHelpFooter.addEventListener('click', () => helpModal.classList.add('hidden'));
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) helpModal.classList.add('hidden');
+    });
+
+    // 初始化 Lucide 圖標
+    lucide.createIcons();
+
+    // ==========================================
+    // 主題切換 (Dark / Light)
+    // ==========================================
+    function initTheme() {
+      const savedTheme = localStorage.getItem('photo2pdf-theme') || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+    initTheme();
+
+    btnThemeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('photo2pdf-theme', isDark ? 'dark' : 'light');
+    });
+
+    // ==========================================
+    // SortableJS 拖曳排序初始化
+    // ==========================================
+    const sortable = new Sortable(imageGallery, {
+      animation: 180,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      handle: '.drag-handle',
+      onEnd: function () {
+        // 依據 DOM 節點順序更新 state.images 陣列
+        const cardElements = Array.from(imageGallery.querySelectorAll('[data-image-id]'));
+        const newOrderIds = cardElements.map(el => el.getAttribute('data-image-id'));
+        const imageMap = new Map(state.images.map(img => [img.id, img]));
+        state.images = newOrderIds.map(id => imageMap.get(id)).filter(Boolean);
+        updatePageBadges();
+      }
+    });
+
+    // ==========================================
+    // 檔案載入與解析管線 (支援 HEIC, EXIF)
+    // ==========================================
+    btnSelectFiles.addEventListener('click', () => fileInput.click());
+    btnAddMore.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('click', (e) => {
+      if (e.target !== btnLoadDemo && !btnLoadDemo.contains(e.target)) {
+        fileInput.click();
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(Array.from(e.target.files));
+      fileInput.value = '';
+    });
+
+    // 拖曳放置處理
+    ['dragenter', 'dragover'].forEach(eventName => {
+      window.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('border-brand-500', 'bg-brand-50/20');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      window.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('border-brand-500', 'bg-brand-50/20');
+      }, false);
+    });
+
+    window.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files.length > 0) {
+        handleFiles(Array.from(dt.files));
+      }
+    });
+
+    // 剪貼簿貼上處理 (Ctrl+V)
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      const files = [];
+      for (let item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          if (blob) {
+            files.push(new File([blob], `Pasted-Image-${Date.now()}.png`, { type: blob.type }));
+          }
+        }
+      }
+      if (files.length > 0) {
+        handleFiles(files);
+      }
+    });
+
+    // 處理輸入的檔案列表
+    async function handleFiles(fileList) {
+      const validImages = fileList.filter(f => {
+        const isImg = f.type.startsWith('image/');
+        const ext = f.name.toLowerCase();
+        const isHeic = ext.endsWith('.heic') || ext.endsWith('.heif');
+        return isImg || isHeic;
+      });
+
+      if (validImages.length === 0) return;
+
+      // 顯示簡易載入狀態
+      btnSelectFiles.disabled = true;
+
+      for (let file of validImages) {
+        try {
+          let processFile = file;
+          // 若為 HEIC / HEIF 則呼叫 heic2any 轉為 JPEG
+          const ext = file.name.toLowerCase();
+          if (ext.endsWith('.heic') || ext.endsWith('.heif') || file.type === 'image/heic') {
+            if (window.heic2any) {
+              const convertedBlob = await heic2any({
+                blob: file,
+                toType: 'image/jpeg',
+                quality: 0.9
+              });
+              const blobToUse = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+              processFile = new File([blobToUse], file.name.replace(/\.(heic|heif)$/i, '.jpg'), { type: 'image/jpeg' });
+            }
+          }
+
+          // 讀取寬高並生成輕量縮圖 (400px)
+          const { width, height, thumbUrl } = await createThumbnail(processFile);
+
+          const newImageObj = {
+            id: 'img_' + Math.random().toString(36).substring(2, 11),
+            file: processFile,
+            name: processFile.name,
+            size: processFile.size,
+            width: width,
+            height: height,
+            rotation: 0,
+            thumbUrl: thumbUrl
+          };
+
+          state.images.push(newImageObj);
+        } catch (err) {
+          console.error('載入相片失敗:', file.name, err);
+        }
+      }
+
+      btnSelectFiles.disabled = false;
+      renderGallery();
+      updateStats();
+    }
+
+    // 生成低記憶體預覽縮圖
+    function createThumbnail(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDim = 400;
+            let targetW = img.width;
+            let targetH = img.height;
+            if (targetW > maxDim || targetH > maxDim) {
+              if (targetW > targetH) {
+                targetH = Math.round((targetH * maxDim) / targetW);
+                targetW = maxDim;
+              } else {
+                targetW = Math.round((targetW * maxDim) / targetH);
+                targetH = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = targetW;
+            canvas.height = targetH;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, targetW, targetH);
+            const thumbUrl = canvas.toDataURL('image/jpeg', 0.8);
+            resolve({ width: img.width, height: img.height, thumbUrl });
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ==========================================
+    // 渲染畫布與卡片
+    // ==========================================
+    function renderGallery() {
+      if (state.images.length === 0) {
+        dropzone.classList.remove('hidden');
+        imageGallery.classList.add('hidden');
+        galleryFooterActions.classList.add('hidden');
+        btnClearAll.disabled = true;
+        btnBatchRotate.disabled = true;
+        btnBatchReverse.disabled = true;
+        btnExportPdf.disabled = true;
+        imageGallery.innerHTML = '';
+        pagesSimulationView.innerHTML = '';
+        btnPreviewPdf.disabled = true;
+        btnExportPdf.disabled = true;
+        return;
+      }
+
+      dropzone.classList.add('hidden');
+      if (state.activeView === 'gallery') {
+        imageGallery.classList.remove('hidden');
+        pagesSimulationView.classList.add('hidden');
+      } else {
+        imageGallery.classList.add('hidden');
+        pagesSimulationView.classList.remove('hidden');
+        renderPagesSimulation();
+      }
+
+      galleryFooterActions.classList.remove('hidden');
+      btnClearAll.disabled = false;
+      btnBatchRotate.disabled = false;
+      btnBatchReverse.disabled = false;
+      btnPreviewPdf.disabled = false;
+      btnExportPdf.disabled = false;
+
+      imageGallery.innerHTML = state.images.map((item, index) => `
+        <div class="group relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden" data-image-id="${item.id}">
+          
+          <!-- 頂部頁籤與動作 -->
+          <div class="h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+            <span class="page-badge inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-brand-100 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300">
+              #${index + 1}
+            </span>
+            <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1" title="按住拖曳排序">
+              <i data-lucide="grip-horizontal" class="w-3.5 h-3.5"></i>
+            </div>
+            <button class="btn-delete text-slate-400 hover:text-rose-500 transition p-1" data-id="${item.id}" title="移除此相片">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- 縮圖主體 -->
+          <div class="relative aspect-[3/4] bg-slate-100 dark:bg-slate-900 flex items-center justify-center overflow-hidden cursor-pointer preview-trigger" data-id="${item.id}">
+            <img src="${item.thumbUrl}" alt="${item.name}" 
+                 class="max-h-full max-w-full object-contain transition-transform duration-200" 
+                 style="transform: rotate(${item.rotation}deg);">
+            
+            <!-- 懸浮提示 -->
+            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+              <button class="btn-rotate p-1.5 rounded-full bg-white/90 text-slate-800 hover:bg-white shadow transition" data-id="${item.id}" title="旋轉 90 度">
+                <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+              </button>
+              <button class="btn-zoom p-1.5 rounded-full bg-white/90 text-slate-800 hover:bg-white shadow transition" data-id="${item.id}" title="放大檢視">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 底部檔名與尺寸 -->
+          <div class="p-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700/40 bg-white dark:bg-slate-800">
+            <p class="truncate font-medium text-slate-700 dark:text-slate-300" title="${item.name}">${item.name}</p>
+            <div class="flex justify-between items-center mt-0.5 font-mono text-[9px] text-slate-400">
+              <span>${item.width} × ${item.height}</span>
+              <span>${formatBytes(item.size)}</span>
+            </div>
+          </div>
+
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+      attachCardEvents();
+    }
+
+    // 更新各卡片序號
+    function updatePageBadges() {
+      const badges = imageGallery.querySelectorAll('.page-badge');
+      badges.forEach((b, i) => {
+        b.textContent = `#${i + 1}`;
+      });
+    }
+
+    // 卡片內部按鈕事件委派
+    function attachCardEvents() {
+      // 刪除相片
+      imageGallery.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          state.images = state.images.filter(img => img.id !== id);
+          renderGallery();
+          updateStats();
+        });
+      });
+
+      // 順時針旋轉 90 度
+      imageGallery.querySelectorAll('.btn-rotate').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          const target = state.images.find(img => img.id === id);
+          if (target) {
+            target.rotation = (target.rotation + 90) % 360;
+            const cardImg = imageGallery.querySelector(`[data-image-id="${id}"] img`);
+            if (cardImg) {
+              cardImg.style.transform = `rotate(${target.rotation}deg)`;
+            }
+          }
+        });
+      });
+
+      // 點擊縮圖或放大鏡彈出 Lightbox
+      imageGallery.querySelectorAll('.btn-zoom, .preview-trigger').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-rotate') || e.target.closest('.btn-delete')) return;
+          const id = el.getAttribute('data-id');
+          const target = state.images.find(img => img.id === id);
+          if (target) {
+            modalTitle.textContent = `${target.name} (${target.width} × ${target.height})`;
+            modalImg.src = target.thumbUrl;
+            modalImg.style.transform = `rotate(${target.rotation}deg)`;
+            previewModal.classList.remove('hidden');
+          }
+        });
+      });
+    }
+
+    // 關閉相片放大 Modal
+    btnCloseModal.addEventListener('click', () => previewModal.classList.add('hidden'));
+    previewModal.addEventListener('click', (e) => {
+      if (e.target === previewModal) previewModal.classList.add('hidden');
+    });
+
+    // ==========================================
+    // 視圖切換 (相片管理 vs 分頁模擬)
+    // ==========================================
+    tabViewGallery.addEventListener('click', () => {
+      state.activeView = 'gallery';
+      tabViewGallery.classList.add('bg-white', 'dark:bg-slate-700', 'text-slate-800', 'dark:text-white', 'shadow-sm');
+      tabViewGallery.classList.remove('text-slate-600', 'dark:text-slate-400');
+      tabViewPages.classList.remove('bg-white', 'dark:bg-slate-700', 'text-slate-800', 'dark:text-white', 'shadow-sm');
+      tabViewPages.classList.add('text-slate-600', 'dark:text-slate-400');
+      if (state.images.length > 0) {
+        imageGallery.classList.remove('hidden');
+        pagesSimulationView.classList.add('hidden');
+      }
+    });
+
+    tabViewPages.addEventListener('click', () => {
+      state.activeView = 'pages';
+      tabViewPages.classList.add('bg-white', 'dark:bg-slate-700', 'text-slate-800', 'dark:text-white', 'shadow-sm');
+      tabViewPages.classList.remove('text-slate-600', 'dark:text-slate-400');
+      tabViewGallery.classList.remove('bg-white', 'dark:bg-slate-700', 'text-slate-800', 'dark:text-white', 'shadow-sm');
+      tabViewGallery.classList.add('text-slate-600', 'dark:text-slate-400');
+      if (state.images.length > 0) {
+        imageGallery.classList.add('hidden');
+        pagesSimulationView.classList.remove('hidden');
+        renderPagesSimulation();
+      }
+    });
+
+    // 渲染實體分頁排版模擬
+    function renderPagesSimulation() {
+      if (state.images.length === 0) {
+        pagesSimulationView.innerHTML = '';
+        return;
+      }
+
+      const perPage = state.gridLayout;
+      const totalPages = Math.ceil(state.images.length / perPage);
+      const isFitModeCover = state.fitMode === 'cover';
+
+      let html = '';
+      for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
+        const sliceStart = pageIdx * perPage;
+        const currentBatch = state.images.slice(sliceStart, sliceStart + perPage);
+        const [pageW, pageH] = getPageDimensions(currentBatch[0]);
+        const aspectRatio = (pageW / pageH);
+        const isLandscape = pageW > pageH;
+
+        // 計算每頁格線配置
+        let gridColsClass = 'grid-cols-1';
+        let gridRowsClass = 'grid-rows-1';
+        if (perPage === 2) {
+          if (isLandscape) {
+            gridColsClass = 'grid-cols-2';
+            gridRowsClass = 'grid-rows-1';
+          } else {
+            gridColsClass = 'grid-cols-1';
+            gridRowsClass = 'grid-rows-2';
+          }
+        } else if (perPage === 4) {
+          gridColsClass = 'grid-cols-2';
+          gridRowsClass = 'grid-rows-2';
+        }
+
+        const marginPadding = Math.min(Math.round(state.margin * 0.45), 28);
+
+        html += `
+          <div class="flex flex-col items-center w-full max-w-xl">
+            <!-- 頁面標題列 -->
+            <div class="w-full flex justify-between items-center px-1 mb-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <span class="font-semibold text-brand-600 dark:text-brand-400">Page ${pageIdx + 1} / ${totalPages}</span>
+              <span>${state.pageSize.toUpperCase()} · ${isLandscape ? '橫向' : '直向'} · ${perPage}張/頁</span>
+            </div>
+
+            <!-- 紙張本體卡片 -->
+            <div class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl shadow-xl relative overflow-hidden flex flex-col transition-all" 
+                 style="aspect-ratio: ${aspectRatio}; padding: ${marginPadding}px;">
+              
+              <!-- 影像網格 -->
+              <div class="w-full h-full grid ${gridColsClass} ${gridRowsClass} gap-2 relative z-0">
+                ${currentBatch.map(item => `
+                  <div class="relative w-full h-full bg-slate-50 dark:bg-slate-950/50 rounded flex items-center justify-center overflow-hidden border border-dashed border-slate-200 dark:border-slate-800">
+                    <img src="${item.thumbUrl}" alt="${item.name}" 
+                         class="max-w-full max-h-full ${isFitModeCover ? 'w-full h-full object-cover' : 'object-contain'} transition-transform" 
+                         style="transform: rotate(${item.rotation}deg);">
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- 防偽浮水印模擬 (若有) -->
+              ${state.watermarkText ? `
+                <div class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center overflow-hidden">
+                  <span class="text-slate-400/35 dark:text-slate-500/30 text-lg sm:text-2xl font-bold tracking-widest uppercase select-none transform -rotate-30 whitespace-nowrap px-4 py-1 border-2 border-dashed border-slate-400/30 rounded-lg">
+                    ${escapeHtml(state.watermarkText)}
+                  </span>
+                </div>
+              ` : ''}
+
+              <!-- 頁尾頁碼模擬 (若啟用) -->
+              ${state.showPageNum ? `
+                <div class="absolute bottom-1.5 inset-x-0 text-center pointer-events-none z-10">
+                  <span class="text-[9px] font-mono text-slate-400">Page ${pageIdx + 1} / ${totalPages}</span>
+                </div>
+              ` : ''}
+
+            </div>
+          </div>
+        `;
+      }
+
+      pagesSimulationView.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    // ==========================================
+    // 批次動作與資訊更新
+    // ==========================================
+    function updateStats() {
+      statCount.textContent = state.images.length;
+      const totalBytes = state.images.reduce((sum, img) => sum + img.size, 0);
+      statSize.textContent = formatBytes(totalBytes);
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // 清空全部
+    btnClearAll.addEventListener('click', () => {
+      if (confirm('確定要清空所有已載入的相片嗎？')) {
+        state.images = [];
+        renderGallery();
+        updateStats();
+      }
+    });
+
+    // 批次順轉 90 度
+    btnBatchRotate.addEventListener('click', () => {
+      state.images.forEach(img => {
+        img.rotation = (img.rotation + 90) % 360;
+      });
+      renderGallery();
+    });
+
+    // 倒序排列
+    btnBatchReverse.addEventListener('click', () => {
+      state.images.reverse();
+      renderGallery();
+    });
+
+    // 載入示範圖檔 (由 Canvas 動態繪製幾何範例圖，免去外網相依)
+    btnLoadDemo.addEventListener('click', async () => {
+      btnLoadDemo.disabled = true;
+      const demos = [
+        { title: '文件樣張 · 研發契約簽署頁', color: '#1E3A5F', bg: '#F8FAFC', w: 1200, h: 1600 },
+        { title: '身分查驗 · 身分證件影本範例', color: '#047857', bg: '#F0FDF4', w: 1600, h: 1000 },
+        { title: '出差報銷 · 統一發票電子明細', color: '#B45309', bg: '#FFFBEB', w: 1000, h: 1400 }
+      ];
+
+      for (let item of demos) {
+        const canvas = document.createElement('canvas');
+        canvas.width = item.w;
+        canvas.height = item.h;
+        const ctx = canvas.getContext('2d');
+
+        // 背景
+        ctx.fillStyle = item.bg;
+        ctx.fillRect(0, 0, item.w, item.h);
+
+        // 外框
+        ctx.strokeStyle = item.color;
+        ctx.lineWidth = 12;
+        ctx.strokeRect(40, 40, item.w - 80, item.h - 80);
+
+        // 標題文字
+        ctx.fillStyle = item.color;
+        ctx.font = 'bold 44px sans-serif';
+        ctx.fillText(item.title, 80, 120);
+
+        // 模擬文字條塊
+        ctx.fillStyle = 'rgba(100, 116, 139, 0.25)';
+        for (let y = 180; y < item.h - 140; y += 45) {
+          ctx.fillRect(80, y, item.w - 160, 20);
+        }
+
+        // 印章標記
+        ctx.beginPath();
+        ctx.arc(item.w - 160, item.h - 160, 80, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
+        ctx.fill();
+        ctx.strokeStyle = '#DC2626';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+
+        ctx.fillStyle = '#DC2626';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('正式核驗章', item.w - 160, item.h - 150);
+        ctx.textAlign = 'left';
+
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.9));
+        const file = new File([blob], `${item.title}.jpg`, { type: 'image/jpeg' });
+        const { width, height, thumbUrl } = await createThumbnail(file);
+
+        state.images.push({
+          id: 'demo_' + Math.random().toString(36).substring(2, 9),
+          file: file,
+          name: file.name,
+          size: file.size,
+          width: width,
+          height: height,
+          rotation: 0,
+          thumbUrl: thumbUrl
+        });
+      }
+
+      btnLoadDemo.disabled = false;
+      renderGallery();
+      updateStats();
+    });
+
+    // ==========================================
+    // 參數控制監聽 (與分頁排版即時連動)
+    // ==========================================
+    function onParamChange() {
+      state.cachedPdfBlob = null;
+      if (state.activeView === 'pages') {
+        renderPagesSimulation();
+      }
+    }
+
+    cfgPageSize.addEventListener('change', (e) => { state.pageSize = e.target.value; onParamChange(); });
+    cfgPageOrientation.addEventListener('change', (e) => { state.orientation = e.target.value; onParamChange(); });
+    cfgPageMargin.addEventListener('change', (e) => { state.margin = parseFloat(e.target.value); onParamChange(); });
+    cfgImageFit.addEventListener('change', (e) => { state.fitMode = e.target.value; onParamChange(); });
+    cfgShowPageNum.addEventListener('change', (e) => { state.showPageNum = e.target.checked; onParamChange(); });
+    cfgWatermark.addEventListener('input', (e) => { state.watermarkText = e.target.value.trim(); onParamChange(); });
+
+    // 拼貼佈局按鈕切換
+    document.querySelectorAll('.btn-grid-layout').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-grid-layout').forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300');
+          b.classList.add('border-slate-200', 'dark:border-slate-700', 'bg-slate-50', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300');
+        btn.classList.remove('border-slate-200', 'dark:border-slate-700', 'bg-slate-50', 'dark:bg-slate-800');
+        state.gridLayout = parseInt(btn.getAttribute('data-grid'));
+        onParamChange();
+      });
+    });
+
+    // 壓縮品質檔位切換
+    document.querySelectorAll('.btn-quality').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-quality').forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300', 'font-semibold');
+          b.classList.add('border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300', 'font-semibold');
+        btn.classList.remove('border-slate-200', 'dark:border-slate-700', 'bg-white');
+        
+        const q = btn.getAttribute('data-quality');
+        state.qualityPreset = q;
+        if (q === 'compact') qualityLabel.textContent = '輕巧 (150 DPI / 75%)';
+        if (q === 'balanced') qualityLabel.textContent = '平衡 (200 DPI / 85%)';
+        if (q === 'print') qualityLabel.textContent = '高清 (300 DPI / 95%)';
+        if (q === 'lossless') qualityLabel.textContent = '原圖無損 (直接封裝)';
+        onParamChange();
+      });
+    });
+
+    // ==========================================
+    // PDF 生成核心引擎 (pdf-lib 整合)
+    // ==========================================
+    async function buildPdfDocument() {
+      const pdfLibInstance = window.PDFLib;
+      if (!pdfLibInstance) {
+        throw new Error('PDF 核心引擎 (pdf-lib) 載入中或受網路連線限制，請確認連網狀態或重新整理頁面');
+      }
+      const { PDFDocument, rgb, degrees, StandardFonts } = pdfLibInstance;
+      const pdfDoc = await PDFDocument.create();
+
+      // 載入內建標準字型 (用於頁碼)
+      const fontHelvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+      // 若有中文字浮水印，使用透明 Canvas 渲染文字並轉換為 PNG Image 嵌入
+      let watermarkPngImage = null;
+      if (state.watermarkText) {
+        watermarkPngImage = await createWatermarkPng(pdfDoc, state.watermarkText);
+      }
+
+      const totalImages = state.images.length;
+      const perPage = state.gridLayout; // 1, 2, 4
+      const totalPages = Math.ceil(totalImages / perPage);
+
+      // 分頁批次處理
+      for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
+        const sliceStart = pageIdx * perPage;
+        const currentBatch = state.images.slice(sliceStart, sliceStart + perPage);
+
+        exportStatusText.textContent = `正在處理第 ${pageIdx + 1} / ${totalPages} 頁...`;
+        const currentPercent = Math.round(((pageIdx) / totalPages) * 100);
+        exportProgressBar.style.width = `${currentPercent}%`;
+        exportPercent.textContent = `${currentPercent}%`;
+
+        // 決定該頁的尺寸與方向
+        let [pageW, pageH] = getPageDimensions(currentBatch[0]);
+
+        const page = pdfDoc.addPage([pageW, pageH]);
+        const margin = state.margin;
+
+        // 計算可用內容寬高
+        const contentW = pageW - (margin * 2);
+        const contentH = pageH - (margin * 2);
+
+        // 依據拼貼模式劃分子區域
+        const slots = calculateGridSlots(perPage, margin, pageW, pageH, contentW, contentH);
+
+        // 逐張繪入該頁格子中
+        for (let i = 0; i < currentBatch.length; i++) {
+          const imgData = currentBatch[i];
+          const slot = slots[i];
+
+          // 取得已旋轉且壓縮之 JPEG/PNG bytes
+          const { imgBytes, isPng } = await processImageForPdf(imgData, state.qualityPreset);
+
+          let embeddedImage;
+          if (isPng) {
+            embeddedImage = await pdfDoc.embedPng(imgBytes);
+          } else {
+            embeddedImage = await pdfDoc.embedJpg(imgBytes);
+          }
+
+          // 計算在 slot 內的繪製座標與尺寸 (Contain / Cover)
+          const { drawX, drawY, drawW, drawH } = fitImageInBox(
+            embeddedImage.width,
+            embeddedImage.height,
+            slot.x,
+            slot.y,
+            slot.w,
+            slot.h,
+            state.fitMode
+          );
+
+          page.drawImage(embeddedImage, {
+            x: drawX,
+            y: drawY,
+            width: drawW,
+            height: drawH,
+          });
+        }
+
+        // 繪製斜向防偽浮水印 (若有)
+        if (watermarkPngImage) {
+          const wmScale = Math.min(pageW, pageH) * 0.7;
+          const aspect = watermarkPngImage.width / watermarkPngImage.height;
+          const wmW = wmScale;
+          const wmH = wmScale / aspect;
+          page.drawImage(watermarkPngImage, {
+            x: (pageW - wmW) / 2,
+            y: (pageH - wmH) / 2,
+            width: wmW,
+            height: wmH,
+            opacity: 0.28,
+            rotate: degrees(30)
+          });
+        }
+
+        // 繪製頁碼 (若啟用)
+        if (state.showPageNum) {
+          const pageNumText = `Page ${pageIdx + 1} / ${totalPages}`;
+          const textSize = 9;
+          const textWidth = fontHelvetica.widthOfTextAtSize(pageNumText, textSize);
+          page.drawText(pageNumText, {
+            x: (pageW - textWidth) / 2,
+            y: Math.max(margin / 2, 12),
+            size: textSize,
+            font: fontHelvetica,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+        }
+      }
+
+      exportStatusText.textContent = '正在封裝輸出檔案...';
+      exportProgressBar.style.width = '100%';
+      exportPercent.textContent = '100%';
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      state.cachedPdfBlob = blob;
+
+      return { blob, totalPages, bytesCount: pdfBytes.byteLength };
+    }
+
+    // 匯出前預覽按鈕
+    btnPreviewPdf.addEventListener('click', async () => {
+      if (state.images.length === 0 || state.isExporting) return;
+
+      state.isExporting = true;
+      btnPreviewPdf.disabled = true;
+      btnExportPdf.disabled = true;
+      exportProgressWrap.classList.remove('hidden');
+      exportProgressBar.style.width = '0%';
+      exportPercent.textContent = '0%';
+
+      try {
+        const { blob, totalPages } = await buildPdfDocument();
+        const pdfUrl = URL.createObjectURL(blob);
+        pdfPreviewFrame.src = pdfUrl;
+        previewPageCount.textContent = `共 ${totalPages} 頁`;
+        pdfPreviewModal.classList.remove('hidden');
+
+        exportStatusText.textContent = '預覽載入完成';
+        setTimeout(() => exportProgressWrap.classList.add('hidden'), 1500);
+      } catch (err) {
+        console.error('PDF 預覽失敗:', err);
+        alert('生成 PDF 預覽時發生錯誤：' + err.message);
+        exportStatusText.textContent = '預覽失敗';
+      } finally {
+        state.isExporting = false;
+        btnPreviewPdf.disabled = false;
+        btnExportPdf.disabled = false;
+      }
+    });
+
+    // 關閉 PDF 預覽視窗
+    btnClosePdfPreview.addEventListener('click', () => {
+      pdfPreviewModal.classList.add('hidden');
+      pdfPreviewFrame.src = 'about:blank';
+    });
+    pdfPreviewModal.addEventListener('click', (e) => {
+      if (e.target === pdfPreviewModal) {
+        pdfPreviewModal.classList.add('hidden');
+        pdfPreviewFrame.src = 'about:blank';
+      }
+    });
+
+    // 預覽視窗內的確認下載按鈕
+    btnConfirmDownload.addEventListener('click', () => {
+      if (state.cachedPdfBlob) {
+        const fileName = (cfgFilename.value.trim() || 'Photos-Merged') + '.pdf';
+        downloadBlob(state.cachedPdfBlob, fileName);
+        pdfPreviewModal.classList.add('hidden');
+        pdfPreviewFrame.src = 'about:blank';
+      }
+    });
+
+    // 直接匯出下載按鈕
+    btnExportPdf.addEventListener('click', async () => {
+      if (state.images.length === 0 || state.isExporting) return;
+
+      state.isExporting = true;
+      btnPreviewPdf.disabled = true;
+      btnExportPdf.disabled = true;
+      exportProgressWrap.classList.remove('hidden');
+      exportProgressBar.style.width = '0%';
+      exportPercent.textContent = '0%';
+
+      try {
+        let blobToDownload = state.cachedPdfBlob;
+        let bytesLength = 0;
+
+        if (!blobToDownload) {
+          const res = await buildPdfDocument();
+          blobToDownload = res.blob;
+          bytesLength = res.bytesCount;
+        } else {
+          bytesLength = blobToDownload.size;
+        }
+
+        const fileName = (cfgFilename.value.trim() || 'Photos-Merged') + '.pdf';
+        downloadBlob(blobToDownload, fileName);
+
+        exportStatusText.textContent = `匯出成功！大小：${formatBytes(bytesLength)}`;
+        setTimeout(() => {
+          exportProgressWrap.classList.add('hidden');
+        }, 4000);
+
+      } catch (err) {
+        console.error('PDF 生成失敗:', err);
+        alert('匯出 PDF 時發生錯誤：' + err.message);
+        exportStatusText.textContent = '匯出失敗';
+      } finally {
+        state.isExporting = false;
+        btnPreviewPdf.disabled = false;
+        btnExportPdf.disabled = false;
+      }
+    });
+
+    // 取得頁面尺寸 (考慮紙張設定與方向)
+    function getPageDimensions(firstImg) {
+      if (state.pageSize === 'fit' && firstImg) {
+        // 自適應相片模式：若相片旋轉 90 或 270 度，交換長寬
+        let w = firstImg.width;
+        let h = firstImg.height;
+        if (firstImg.rotation === 90 || firstImg.rotation === 270) {
+          [w, h] = [h, w];
+        }
+        // 換算為合適的 pt 尺寸 (限制長邊約 842 pt，即 A4 高度)
+        const scale = 842 / Math.max(w, h);
+        return [w * scale, h * scale];
+      }
+
+      let [baseW, baseH] = PAGE_SIZES[state.pageSize] || PAGE_SIZES.a4;
+
+      if (state.orientation === 'portrait') {
+        return [Math.min(baseW, baseH), Math.max(baseW, baseH)];
+      } else if (state.orientation === 'landscape') {
+        return [Math.max(baseW, baseH), Math.min(baseW, baseH)];
+      } else {
+        // 自動方向：依據第一張圖片的方向
+        let imgW = firstImg ? firstImg.width : baseW;
+        let imgH = firstImg ? firstImg.height : baseH;
+        if (firstImg && (firstImg.rotation === 90 || firstImg.rotation === 270)) {
+          [imgW, imgH] = [imgH, imgW];
+        }
+        if (imgW > imgH) {
+          return [Math.max(baseW, baseH), Math.min(baseW, baseH)];
+        } else {
+          return [Math.min(baseW, baseH), Math.max(baseW, baseH)];
+        }
+      }
+    }
+
+    // 計算單頁多格拼貼格子
+    function calculateGridSlots(gridCount, margin, pageW, pageH, contentW, contentH) {
+      const slots = [];
+      if (gridCount === 1) {
+        slots.push({ x: margin, y: margin, w: contentW, h: contentH });
+      } else if (gridCount === 2) {
+        const gap = 10;
+        if (pageW >= pageH) {
+          // 橫向：左右並排
+          const slotW = (contentW - gap) / 2;
+          slots.push({ x: margin, y: margin, w: slotW, h: contentH });
+          slots.push({ x: margin + slotW + gap, y: margin, w: slotW, h: contentH });
+        } else {
+          // 直向：上下堆疊 (PDF 原點在左下角，slot0 為上方，slot1 為下方)
+          const slotH = (contentH - gap) / 2;
+          slots.push({ x: margin, y: margin + slotH + gap, w: contentW, h: slotH });
+          slots.push({ x: margin, y: margin, w: contentW, h: slotH });
+        }
+      } else if (gridCount === 4) {
+        // 2x2 四格
+        const gap = 10;
+        const slotW = (contentW - gap) / 2;
+        const slotH = (contentH - gap) / 2;
+        // 左上
+        slots.push({ x: margin, y: margin + slotH + gap, w: slotW, h: slotH });
+        // 右上
+        slots.push({ x: margin + slotW + gap, y: margin + slotH + gap, w: slotW, h: slotH });
+        // 左下
+        slots.push({ x: margin, y: margin, w: slotW, h: slotH });
+        // 右下
+        slots.push({ x: margin + slotW + gap, y: margin, w: slotW, h: slotH });
+      }
+      return slots;
+    }
+
+    // 將圖片置入目標 slot 區域之位置演算
+    function fitImageInBox(imgW, imgH, boxX, boxY, boxW, boxH, mode) {
+      const imgAspect = imgW / imgH;
+      const boxAspect = boxW / boxH;
+      let drawW, drawH;
+
+      if (mode === 'cover') {
+        if (imgAspect > boxAspect) {
+          drawH = boxH;
+          drawW = boxH * imgAspect;
+        } else {
+          drawW = boxW;
+          drawH = boxW / imgAspect;
+        }
+      } else {
+        // contain
+        if (imgAspect > boxAspect) {
+          drawW = boxW;
+          drawH = boxW / imgAspect;
+        } else {
+          drawH = boxH;
+          drawW = boxH * imgAspect;
+        }
+      }
+
+      const drawX = boxX + (boxW - drawW) / 2;
+      const drawY = boxY + (boxH - drawH) / 2;
+
+      return { drawX, drawY, drawW, drawH };
+    }
+
+    // 處理圖片旋轉與品質壓縮
+    function processImageForPdf(imgData, qualityPreset) {
+      return new Promise((resolve, reject) => {
+        // 若為無損且沒有旋轉，且為原生 JPEG 或 PNG，可直接返回原二進位 bytes
+        const isOriginalJpeg = imgData.file.type === 'image/jpeg';
+        const isOriginalPng = imgData.file.type === 'image/png';
+        if (qualityPreset === 'lossless' && imgData.rotation === 0 && (isOriginalJpeg || isOriginalPng)) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({
+              imgBytes: new Uint8Array(reader.result),
+              isPng: isOriginalPng
+            });
+          };
+          reader.onerror = reject;
+          reader.readAsArrayBuffer(imgData.file);
+          return;
+        }
+
+        // 其餘情況透過 Canvas 執行旋轉與重採樣
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let maxDim;
+            let quality = 0.85;
+
+            if (qualityPreset === 'compact') {
+              maxDim = 1600;
+              quality = 0.72;
+            } else if (qualityPreset === 'balanced') {
+              maxDim = 2480; // A4 @ 300 DPI 約 2480x3508
+              quality = 0.85;
+            } else if (qualityPreset === 'print') {
+              maxDim = 3508;
+              quality = 0.95;
+            } else {
+              maxDim = Math.max(img.width, img.height);
+              quality = 0.98;
+            }
+
+            let targetW = img.width;
+            let targetH = img.height;
+            if (targetW > maxDim || targetH > maxDim) {
+              if (targetW > targetH) {
+                targetH = Math.round((targetH * maxDim) / targetW);
+                targetW = maxDim;
+              } else {
+                targetW = Math.round((targetW * maxDim) / targetH);
+                targetH = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            const rot = imgData.rotation;
+
+            // 旋轉 90 或 270 度時長寬交換
+            if (rot === 90 || rot === 270) {
+              canvas.width = targetH;
+              canvas.height = targetW;
+            } else {
+              canvas.width = targetW;
+              canvas.height = targetH;
+            }
+
+            const ctx = canvas.getContext('2d');
+            ctx.save();
+
+            // 移動原點並旋轉
+            if (rot === 90) {
+              ctx.translate(canvas.width, 0);
+              ctx.rotate(Math.PI / 2);
+            } else if (rot === 180) {
+              ctx.translate(canvas.width, canvas.height);
+              ctx.rotate(Math.PI);
+            } else if (rot === 270) {
+              ctx.translate(0, canvas.height);
+              ctx.rotate((3 * Math.PI) / 2);
+            }
+
+            // 繪入圖像
+            ctx.drawImage(img, 0, 0, targetW, targetH);
+            ctx.restore();
+
+            canvas.toBlob((blob) => {
+              const r = new FileReader();
+              r.onload = () => {
+                resolve({
+                  imgBytes: new Uint8Array(r.result),
+                  isPng: false
+                });
+              };
+              r.onerror = reject;
+              r.readAsArrayBuffer(blob);
+            }, 'image/jpeg', quality);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(imgData.file);
+      });
+    }
+
+    // 透過 Canvas 將中文文字渲染為透明 PNG 以作為 PDF 浮水印
+    async function createWatermarkPng(pdfDoc, text) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(120, 120, 120, 0.45)';
+      ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      const arrayBuffer = await blob.arrayBuffer();
+      return await pdfDoc.embedPng(new Uint8Array(arrayBuffer));
+    }
+
+    // 本機觸發下載 Blob
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
+

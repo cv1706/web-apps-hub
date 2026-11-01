@@ -21,6 +21,8 @@
   * **北海道雪季浪漫隨身指南**：[https://web-apps-hub.cv1706yang.workers.dev/sapporo-guide/](https://web-apps-hub.cv1706yang.workers.dev/sapporo-guide/)
   * **全球自由行智慧導航平台**：[https://web-apps-hub.cv1706yang.workers.dev/travel-planner/](https://web-apps-hub.cv1706yang.workers.dev/travel-planner/)
   * **全球特惠機票雷達 3D**：[https://web-apps-hub.cv1706yang.workers.dev/flight-radar/](https://web-apps-hub.cv1706yang.workers.dev/flight-radar/)
+  * **印務室 Folio Press**：[https://web-apps-hub.cv1706yang.workers.dev/folio-press/](https://web-apps-hub.cv1706yang.workers.dev/folio-press/)
+  * **光印轉換所 Photo to PDF**：[https://web-apps-hub.cv1706yang.workers.dev/photo-to-pdf/](https://web-apps-hub.cv1706yang.workers.dev/photo-to-pdf/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 * **GitHub Pages 靜態站點**：
@@ -38,6 +40,8 @@
   * **北海道雪季浪漫隨身指南**：[https://cv1706.github.io/web-apps-hub/sapporo-guide/](https://cv1706.github.io/web-apps-hub/sapporo-guide/)
   * **全球自由行智慧導航平台**：[https://cv1706.github.io/web-apps-hub/travel-planner/](https://cv1706.github.io/web-apps-hub/travel-planner/)
   * **全球特惠機票雷達 3D**：[https://cv1706.github.io/web-apps-hub/flight-radar/](https://cv1706.github.io/web-apps-hub/flight-radar/)
+  * **印務室 Folio Press**：[https://cv1706.github.io/web-apps-hub/folio-press/](https://cv1706.github.io/web-apps-hub/folio-press/)
+  * **光印轉換所 Photo to PDF**：[https://cv1706.github.io/web-apps-hub/photo-to-pdf/](https://cv1706.github.io/web-apps-hub/photo-to-pdf/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
 
 ---
@@ -154,6 +158,14 @@
   * **智能搜尋與視角鎖定**：支援輸入中文城市名或 IATA 機場三字碼即時模糊比對，點擊目標自動平滑飛越並固定視角，防晃動且不自轉。
   * **自訂出發日期與天數推算**：自訂啟程年月日與停留天數（2 至 60 天），自動換算精準回程日期並動態試算淡旺季行情價格。
   * **航空哩程與點數價值對照**：內建哩程雷達對話視窗，比對現金特惠價 vs. 亞洲萬里通、無限萬哩遊等開票所需點數與稅費。
+
+### 13. 🖼️ 光印轉換所 Photo to PDF (極速相片轉 PDF 隱私工坊)
+* **路徑**：`/photo-to-pdf/`
+* **使用說明**：
+  * **100% 離線純前端零洩漏**：全流程於本機瀏覽器記憶體執行，個資證件、發票單據絕不上傳雲端伺服器。
+  * **全格式支援與自動校正**：原生支援 iPhone HEIC/HEIF 解碼轉檔、JPG、PNG、WebP，並具備 EXIF 自動旋轉校正與剪貼簿直接貼上（Ctrl+V）。
+  * **版面與多圖拼貼控制**：支援自適應無白邊、標準 A4/A3/Letter、單頁 1/2/4 張網格拼貼與邊距靈活調整。
+  * **多階壓縮與防偽浮水印**：提供輕巧/平衡/高清/無損四階壓縮控制，並支援中文防偽浮水印與置中頁碼。
 
 ---
 
