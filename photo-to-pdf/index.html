@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>光印轉換所 Photo to PDF · 極速相片轉 PDF 隱私工坊</title>
-  <meta name="description" content="100% 本機離線、零雲端洩漏之相片轉 PDF 網頁工具。支援 HEIC/JPG/PNG 格式、EXIF 自動轉正、拖曳排序、紙張與邊距設定、多圖拼貼、中文浮水印與多階壓縮品質控制。">
+  <title>光印轉換所 Photo & PDF · 極速相片與 PDF 雙向轉換隱私工坊</title>
+  <meta name="description" content="100% 本機離線、零雲端洩漏之相片轉 PDF 與 PDF 轉圖片雙向工具。支援 HEIC/JPG/PNG 轉 PDF、PDF 逐頁轉高解析圖片、拖曳排序、紙張與邊距設定、中文浮水印與 ZIP 批次打包下載。">
 
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%2232%22%20height=%2232%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%234F46E5%22/><path d=%22M9 7h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2212%22 cy=%2212%22 r=%221.5%22 fill=%22white%22/><path d=%22M25 19l-5-5-8 8%22 stroke=%22white%22 stroke-width=%222%22 fill=%22none%22/></svg>">
@@ -65,6 +65,22 @@
   <!-- heic2any for iPhone HEIC decoding -->
   <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
+  <!-- pdf.js for Client-side PDF to Image Decoding (v3.11.174 + 多重 CDN 容錯備援) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (!window.pdfjsLib) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- JSZip for batch image export in zip format (v3.10.1 + 多重 CDN 容錯備援) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    if (!window.JSZip) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"><\/script>');
+    }
+  </script>
+
   <style>
     /* 自訂平滑過渡與捲軸美化 */
     ::-webkit-scrollbar {
@@ -108,13 +124,25 @@
       </div>
       <div>
         <div class="flex items-center space-x-2">
-          <h1 class="text-base font-bold tracking-tight text-slate-900 dark:text-white">光印轉換所 Photo to PDF</h1>
+          <h1 class="text-base font-bold tracking-tight text-slate-900 dark:text-white">光印轉換所 Photo & PDF</h1>
           <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>100% 離線純前端
           </span>
         </div>
-        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">零雲端上傳 · 證件相片隱私防護 · 支援 HEIC / 拖曳排序 / 浮水印防偽</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">零雲端上傳 · 相片與 PDF 雙向轉換 · 隱私無痕防護</p>
       </div>
+    </div>
+
+    <!-- 雙向主模式切換 Tab (Photo to PDF vs PDF to Image) -->
+    <div class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-inner">
+      <button id="mode-tab-photo2pdf" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-sm">
+        <i data-lucide="images" class="w-4 h-4"></i>
+        <span>相片轉 PDF</span>
+      </button>
+      <button id="mode-tab-pdf2img" class="px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <i data-lucide="file-image" class="w-4 h-4"></i>
+        <span>PDF 轉圖片</span>
+      </button>
     </div>
 
     <div class="flex items-center space-x-2 sm:space-x-3">
@@ -150,7 +178,9 @@
     <!-- 左側：圖片管理與拖曳排序區 (60%) -->
     <main class="flex-1 flex flex-col bg-slate-100/60 dark:bg-slate-900/40 overflow-hidden relative">
 
-      <!-- 頂部資訊列與批次動作 -->
+      <!-- 模式一：相片轉 PDF 工作區 -->
+      <div id="workspace-photo" class="flex-1 flex flex-col h-full overflow-hidden">
+        <!-- 頂部資訊列與批次動作 -->
       <div class="h-12 border-b border-slate-200 dark:border-slate-800 px-4 md:px-6 flex items-center justify-between bg-white/60 dark:bg-slate-900/60 backdrop-blur z-10">
         <div class="flex items-center space-x-3 text-xs">
           <!-- 雙視圖切換 Tab -->
@@ -230,6 +260,82 @@
         </div>
 
       </div>
+    </div>
+
+    <!-- 模式二：PDF 轉圖片工作區 -->
+    <div id="workspace-pdf" class="flex-1 flex flex-col h-full overflow-hidden hidden">
+      <!-- 頂部資訊列與批次動作 -->
+      <div class="h-12 border-b border-slate-200 dark:border-slate-800 px-4 md:px-6 flex items-center justify-between bg-white/60 dark:bg-slate-900/60 backdrop-blur z-10">
+        <div class="flex items-center space-x-2 sm:space-x-3 text-xs">
+          <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[150px] sm:max-w-xs" id="pdf-doc-name" title="尚未載入檔案">尚未載入 PDF</span>
+          <span class="text-slate-300 dark:text-slate-700">|</span>
+          <span class="font-medium text-slate-600 dark:text-slate-400">總頁數：<strong id="pdf-stat-pages" class="text-brand-600 dark:text-brand-400 text-sm font-semibold">0</strong> 頁</span>
+          <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
+          <span class="text-slate-500 dark:text-slate-400 hidden sm:inline">已選：<strong id="pdf-stat-selected" class="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">0</strong> 頁</span>
+          <span class="text-slate-300 dark:text-slate-700 hidden md:inline">|</span>
+          <span class="text-slate-500 dark:text-slate-400 hidden md:inline">檔案：<span id="pdf-stat-size" class="font-mono">0 KB</span></span>
+        </div>
+
+        <div class="flex items-center space-x-1.5 sm:space-x-2">
+          <!-- 頁面選取輔助按鈕 -->
+          <button id="btn-pdf-toggle-select" class="px-2 py-1 text-xs font-medium rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition flex items-center space-x-1 disabled:opacity-40" disabled title="切換全部勾選/取消">
+            <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline" id="btn-pdf-select-label">全選</span>
+          </button>
+          <button id="btn-pdf-select-odd" class="px-2 py-1 text-xs font-medium rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition flex items-center space-x-1 disabled:opacity-40" disabled title="僅勾選奇數頁">
+            <span>奇數頁</span>
+          </button>
+          <button id="btn-pdf-select-even" class="px-2 py-1 text-xs font-medium rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition flex items-center space-x-1 disabled:opacity-40" disabled title="僅勾選偶數頁">
+            <span>偶數頁</span>
+          </button>
+          <span class="text-slate-300 dark:text-slate-700">|</span>
+          <!-- 全部旋轉 90 度 -->
+          <button id="btn-pdf-batch-rotate" class="px-2 py-1 text-xs font-medium rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition flex items-center space-x-1 disabled:opacity-40" disabled title="將全部頁面順時針旋轉 90 度">
+            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">全部順轉 90°</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 拖曳上傳區與縮圖展示滾動容器 -->
+      <div id="pdf-canvas-container" class="flex-1 overflow-y-auto p-4 md:p-6 grid-bg">
+        <!-- 空狀態上傳 Dropzone -->
+        <div id="pdf-dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 rounded-2xl p-8 sm:p-12 text-center bg-white/70 dark:bg-slate-900/60 backdrop-blur transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[320px] shadow-sm">
+          <input type="file" id="pdf-file-input" class="hidden" accept=".pdf,application/pdf">
+          
+          <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
+            <i data-lucide="file-text" class="w-8 h-8"></i>
+          </div>
+
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">點擊選取 PDF 檔案 或 將文件拖曳至此處</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4">100% 離線純前端解析 · 支援多頁批次拆解 · 自訂 DPI 高清匯出 · 支援密碼保護 PDF 解密</p>
+
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <button type="button" id="btn-select-pdf" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs shadow-md shadow-brand-500/20 transition flex items-center space-x-1.5">
+              <i data-lucide="folder-open" class="w-4 h-4"></i>
+              <span>選取本機 PDF</span>
+            </button>
+            <button type="button" id="btn-load-demo-pdf" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-xs transition flex items-center space-x-1.5">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+              <span>載入示範 PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PDF 縮圖 Grid -->
+        <div id="pdf-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 hidden">
+          <!-- 頁面卡片由 JavaScript 動態生成 -->
+        </div>
+
+        <!-- 底部更換檔案按鈕 -->
+        <div id="pdf-footer-actions" class="mt-6 flex justify-center hidden">
+          <button id="btn-change-pdf" class="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 hover:bg-brand-50/50 dark:hover:bg-brand-950/30 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-300 transition flex items-center space-x-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            <span>更換其他 PDF 檔案...</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     </main>
 
@@ -239,174 +345,312 @@
       <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <i data-lucide="sliders" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
-          <h2 class="text-sm font-bold text-slate-900 dark:text-white">PDF 版面與輸出參數</h2>
+          <h2 id="aside-title" class="text-sm font-bold text-slate-900 dark:text-white">PDF 版面與輸出參數</h2>
         </div>
-        <span class="text-[11px] font-mono text-slate-400">v1.0.0 SSOT</span>
+        <span class="text-[11px] font-mono text-slate-400">v1.1.0 SSOT</span>
       </div>
 
-      <!-- 控制項表單滾動區 -->
-      <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 text-xs">
+      <!-- 面板一：相片轉 PDF 參數設定與匯出 -->
+      <div id="panel-photo-params" class="flex-1 flex flex-col overflow-hidden">
+        <!-- 控制項表單滾動區 -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 text-xs">
 
-        <!-- 1. 紙張規格與方向 -->
-        <div class="space-y-3">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            紙張規格與方向
-          </label>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[11px] text-slate-500 mb-1 block">紙張格式</label>
-              <select id="cfg-page-size" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
-                <option value="a4" selected>A4 (210 × 297 mm)</option>
-                <option value="a3">A3 (297 × 420 mm)</option>
-                <option value="letter">Letter (8.5 × 11 in)</option>
-                <option value="legal">Legal (8.5 × 14 in)</option>
-                <option value="fit">自適應相片尺寸 (無白邊)</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[11px] text-slate-500 mb-1 block">頁面方向</label>
-              <select id="cfg-page-orientation" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
-                <option value="auto" selected>自動 (依相片比例)</option>
-                <option value="portrait">強制直向 (Portrait)</option>
-                <option value="landscape">強制橫向 (Landscape)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. 邊距與縮放版型 -->
-        <div class="space-y-3">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            邊距與擺放縮放模式
-          </label>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[11px] text-slate-500 mb-1 block">頁面邊距</label>
-              <select id="cfg-page-margin" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
-                <option value="0">無邊距 (0 mm 全滿)</option>
-                <option value="15" selected>窄邊距 (5 mm)</option>
-                <option value="30">標準邊距 (10 mm)</option>
-                <option value="45">寬邊距 (15 mm)</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[11px] text-slate-500 mb-1 block">縮放填滿方式</label>
-              <select id="cfg-image-fit" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
-                <option value="contain" selected>完整顯示 (留白不裁切)</option>
-                <option value="cover">填滿頁面 (適度裁切邊緣)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. 單頁多圖拼貼模式 -->
-        <div class="space-y-2">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            每頁拼貼張數
-          </label>
-          <div class="grid grid-cols-3 gap-2">
-            <button type="button" data-grid="1" class="btn-grid-layout py-2 rounded-lg border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-medium text-xs text-center transition">
-              單頁 1 張
-            </button>
-            <button type="button" data-grid="2" class="btn-grid-layout py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
-              單頁 2 張
-            </button>
-            <button type="button" data-grid="4" class="btn-grid-layout py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
-              單頁 4 張 (2×2)
-            </button>
-          </div>
-        </div>
-
-        <!-- 4. 輸出壓縮品質控管 -->
-        <div class="space-y-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center space-x-1">
-              <i data-lucide="gauge" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400"></i>
-              <span>檔案壓縮與解析度</span>
+          <!-- 1. 紙張規格與方向 -->
+          <div class="space-y-3">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              紙張規格與方向
             </label>
-            <span id="quality-label" class="text-[11px] font-mono text-brand-600 dark:text-brand-400 font-medium">平衡 (200 DPI / 85%)</span>
-          </div>
-
-          <div class="grid grid-cols-4 gap-1.5">
-            <button type="button" data-quality="compact" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
-              輕巧
-            </button>
-            <button type="button" data-quality="balanced" class="btn-quality py-1.5 rounded text-[11px] border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-semibold">
-              平衡
-            </button>
-            <button type="button" data-quality="print" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
-              高清
-            </button>
-            <button type="button" data-quality="lossless" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
-              無損
-            </button>
-          </div>
-          <p class="text-[10px] text-slate-400">「平衡」兼顧手機閱讀與文字清晰度，體積約縮減 70% 至 85%。</p>
-        </div>
-
-        <!-- 5. 防偽浮水印與頁尾編號 -->
-        <div class="space-y-3">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            頁尾頁碼與防偽浮水印
-          </label>
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <label for="cfg-show-page-num" class="text-xs text-slate-600 dark:text-slate-400 flex items-center space-x-1.5 cursor-pointer">
-                <input type="checkbox" id="cfg-show-page-num" class="rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-700">
-                <span>啟用頁尾置中頁碼 (如 Page 1 / 10)</span>
-              </label>
-            </div>
-
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label for="cfg-watermark" class="text-[11px] text-slate-500">自訂防偽斜向浮水印 (選填)</label>
-                <span class="text-[10px] text-slate-400">留空則不添加</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[11px] text-slate-500 mb-1 block">紙張格式</label>
+                <select id="cfg-page-size" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                  <option value="a4" selected>A4 (210 × 297 mm)</option>
+                  <option value="a3">A3 (297 × 420 mm)</option>
+                  <option value="letter">Letter (8.5 × 11 in)</option>
+                  <option value="legal">Legal (8.5 × 14 in)</option>
+                  <option value="fit">自適應相片尺寸 (無白邊)</option>
+                </select>
               </div>
-              <input type="text" id="cfg-watermark" placeholder="例：僅供身分查核使用 影本無效" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <div>
+                <label class="text-[11px] text-slate-500 mb-1 block">頁面方向</label>
+                <select id="cfg-page-orientation" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                  <option value="auto" selected>自動 (依相片比例)</option>
+                  <option value="portrait">強制直向 (Portrait)</option>
+                  <option value="landscape">強制橫向 (Landscape)</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- 6. 檔名自訂 -->
-        <div class="space-y-1">
-          <label for="cfg-filename" class="block text-[11px] text-slate-500 font-medium">匯出檔案名稱</label>
-          <div class="flex items-center space-x-1">
-            <input type="text" id="cfg-filename" value="Photos-Merged" class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-            <span class="text-slate-400 text-xs font-mono">.pdf</span>
+          <!-- 2. 邊距與縮放版型 -->
+          <div class="space-y-3">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              邊距與擺放縮放模式
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[11px] text-slate-500 mb-1 block">頁面邊距</label>
+                <select id="cfg-page-margin" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                  <option value="0">無邊距 (0 mm 全滿)</option>
+                  <option value="15" selected>窄邊距 (5 mm)</option>
+                  <option value="30">標準邊距 (10 mm)</option>
+                  <option value="45">寬邊距 (15 mm)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] text-slate-500 mb-1 block">縮放填滿方式</label>
+                <select id="cfg-image-fit" class="w-full px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                  <option value="contain" selected>完整顯示 (留白不裁切)</option>
+                  <option value="cover">填滿頁面 (適度裁切邊緣)</option>
+                </select>
+              </div>
+            </div>
           </div>
+
+          <!-- 3. 單頁多圖拼貼模式 -->
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              每頁拼貼張數
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" data-grid="1" class="btn-grid-layout py-2 rounded-lg border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-medium text-xs text-center transition">
+                單頁 1 張
+              </button>
+              <button type="button" data-grid="2" class="btn-grid-layout py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
+                單頁 2 張
+              </button>
+              <button type="button" data-grid="4" class="btn-grid-layout py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
+                單頁 4 張 (2×2)
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. 輸出壓縮品質控管 -->
+          <div class="space-y-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center space-x-1">
+                <i data-lucide="gauge" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400"></i>
+                <span>檔案壓縮與解析度</span>
+              </label>
+              <span id="quality-label" class="text-[11px] font-mono text-brand-600 dark:text-brand-400 font-medium">平衡 (200 DPI / 85%)</span>
+            </div>
+
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" data-quality="compact" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+                輕巧
+              </button>
+              <button type="button" data-quality="balanced" class="btn-quality py-1.5 rounded text-[11px] border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-semibold">
+                平衡
+              </button>
+              <button type="button" data-quality="print" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+                高清
+              </button>
+              <button type="button" data-quality="lossless" class="btn-quality py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+                無損
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400">「平衡」兼顧手機閱讀與文字清晰度，體積約縮減 70% 至 85%。</p>
+          </div>
+
+          <!-- 5. 防偽浮水印與頁尾編號 -->
+          <div class="space-y-3">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              頁尾頁碼與防偽浮水印
+            </label>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label for="cfg-show-page-num" class="text-xs text-slate-600 dark:text-slate-400 flex items-center space-x-1.5 cursor-pointer">
+                  <input type="checkbox" id="cfg-show-page-num" class="rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-700">
+                  <span>啟用頁尾置中頁碼 (如 Page 1 / 10)</span>
+                </label>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label for="cfg-watermark" class="text-[11px] text-slate-500">自訂防偽斜向浮水印 (選填)</label>
+                  <span class="text-[10px] text-slate-400">留空則不添加</span>
+                </div>
+                <input type="text" id="cfg-watermark" placeholder="例：僅供身分查核使用 影本無效" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. 檔名自訂 -->
+          <div class="space-y-1">
+            <label for="cfg-filename" class="block text-[11px] text-slate-500 font-medium">匯出檔案名稱</label>
+            <div class="flex items-center space-x-1">
+              <input type="text" id="cfg-filename" value="Photos-Merged" class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <span class="text-slate-400 text-xs font-mono">.pdf</span>
+            </div>
+          </div>
+
         </div>
 
+        <!-- 底部匯出操作區域 -->
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
+          <!-- 進度條 (預設隱藏) -->
+          <div id="export-progress-wrap" class="hidden space-y-1.5">
+            <div class="flex justify-between text-[11px]">
+              <span id="export-status-text" class="text-slate-600 dark:text-slate-400">正在處理中...</span>
+              <span id="export-percent" class="font-mono text-brand-600 dark:text-brand-400 font-semibold">0%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+              <div id="export-progress-bar" class="h-full bg-brand-600 rounded-full transition-all duration-150 w-0"></div>
+            </div>
+          </div>
+
+          <!-- 雙操作按鈕：匯出前預覽 + 直接下載 -->
+          <div class="grid grid-cols-2 gap-2">
+            <button id="btn-preview-pdf" class="py-2.5 rounded-xl border border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/40 text-brand-600 dark:text-brand-300 font-semibold text-xs transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span>匯出前預覽</span>
+            </button>
+
+            <button id="btn-export-pdf" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-semibold text-xs shadow-md shadow-brand-500/25 transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>下載 PDF</span>
+            </button>
+          </div>
+
+          <p class="text-[10px] text-center text-slate-400 dark:text-slate-500">
+            全程於本機記憶體完成 · 檔案絕不經過任何伺服器
+          </p>
+        </div>
       </div>
 
-      <!-- 底部匯出操作區域 -->
-      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
-        <!-- 進度條 (預設隱藏) -->
-        <div id="export-progress-wrap" class="hidden space-y-1.5">
-          <div class="flex justify-between text-[11px]">
-            <span id="export-status-text" class="text-slate-600 dark:text-slate-400">正在處理中...</span>
-            <span id="export-percent" class="font-mono text-brand-600 dark:text-brand-400 font-semibold">0%</span>
+      <!-- 面板二：PDF 轉圖片參數設定與匯出 -->
+      <div id="panel-pdf-params" class="flex-1 flex flex-col overflow-hidden hidden">
+        <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 text-xs">
+
+          <!-- 1. 輸出圖片格式 -->
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              輸出圖片格式
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" data-format="png" class="btn-pdf-format py-2 rounded-lg border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-semibold text-xs text-center transition">
+                PNG (無損)
+              </button>
+              <button type="button" data-format="jpeg" class="btn-pdf-format py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
+                JPEG (輕巧)
+              </button>
+              <button type="button" data-format="webp" class="btn-pdf-format py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs text-center hover:border-slate-300 transition">
+                WebP (高效)
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400">「PNG」呈現最純淨的文字線條；「JPEG」適合彩色相片或大檔壓制。</p>
           </div>
-          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-            <div id="export-progress-bar" class="h-full bg-brand-600 rounded-full transition-all duration-150 w-0"></div>
+
+          <!-- 2. 解析度與放大倍率 (DPI) -->
+          <div class="space-y-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center space-x-1">
+                <i data-lucide="scaling" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400"></i>
+                <span>解析度與放大倍率</span>
+              </label>
+              <span id="pdf-scale-label" class="text-[11px] font-mono text-brand-600 dark:text-brand-400 font-medium">2.0x (144 DPI 高清)</span>
+            </div>
+
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" data-scale="1.0" class="btn-pdf-scale py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+                1.0x (72)
+              </button>
+              <button type="button" data-scale="1.5" class="btn-pdf-scale py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+                1.5x (108)
+              </button>
+              <button type="button" data-scale="2.0" class="btn-pdf-scale py-1.5 rounded text-[11px] border border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-300 font-semibold">
+                2.0x (144)
+              </button>
+              <button type="button" data-scale="3.0" class="btn-pdf-scale py-1.5 rounded text-[11px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300">
+                3.0x (216)
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400">A4 頁面在 2.0x 渲染時約 1190 × 1684 像素，清晰銳利且兼具轉換速度。</p>
           </div>
+
+          <!-- 3. 壓縮品質控管 (針對 JPEG / WebP) -->
+          <div id="pdf-quality-wrap" class="space-y-2 hidden">
+            <div class="flex justify-between items-center">
+              <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">壓縮品質 (Quality)</label>
+              <span id="pdf-quality-val" class="font-mono text-brand-600 dark:text-brand-400 font-medium text-[11px]">90%</span>
+            </div>
+            <input type="range" id="pdf-quality-slider" min="50" max="100" value="90" step="5" class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-600">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>50% (極輕)</span>
+              <span>85% (建議)</span>
+              <span>100% (極致)</span>
+            </div>
+          </div>
+
+          <!-- 4. 匯出範圍與頁碼篩選 -->
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              匯出範圍與頁碼設定
+            </label>
+            <div class="space-y-2">
+              <div class="flex items-center space-x-3">
+                <label class="inline-flex items-center space-x-1.5 cursor-pointer">
+                  <input type="radio" name="pdf-range" value="all" checked class="text-brand-600 focus:ring-brand-500">
+                  <span class="text-xs text-slate-700 dark:text-slate-300">全部頁面</span>
+                </label>
+                <label class="inline-flex items-center space-x-1.5 cursor-pointer">
+                  <input type="radio" name="pdf-range" value="selected" class="text-brand-600 focus:ring-brand-500">
+                  <span class="text-xs text-slate-700 dark:text-slate-300">僅勾選頁面</span>
+                </label>
+                <label class="inline-flex items-center space-x-1.5 cursor-pointer">
+                  <input type="radio" name="pdf-range" value="custom" class="text-brand-600 focus:ring-brand-500">
+                  <span class="text-xs text-slate-700 dark:text-slate-300">指定範圍</span>
+                </label>
+              </div>
+              <div id="pdf-custom-range-wrap" class="hidden">
+                <input type="text" id="pdf-custom-range-input" placeholder="例：1-3, 5, 8-10" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <p class="text-[10px] text-slate-400 mt-1">輸入自訂範圍自動同步頁面勾選狀態</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. 檔名自訂與前綴 -->
+          <div class="space-y-1">
+            <label for="pdf-export-filename" class="block text-[11px] text-slate-500 font-medium">圖片檔名前綴</label>
+            <div class="flex items-center space-x-1">
+              <input type="text" id="pdf-export-filename" value="Document-Page" class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <span id="pdf-filename-ext" class="text-slate-400 text-xs font-mono">_001.png</span>
+            </div>
+            <p class="text-[10px] text-slate-400">壓縮包將自動命名為 <code class="font-mono text-slate-600 dark:text-slate-300">[前綴].zip</code></p>
+          </div>
+
         </div>
 
-        <!-- 雙操作按鈕：匯出前預覽 + 直接下載 -->
-        <div class="grid grid-cols-2 gap-2">
-          <button id="btn-preview-pdf" class="py-2.5 rounded-xl border border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/40 text-brand-600 dark:text-brand-300 font-semibold text-xs transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
-            <i data-lucide="eye" class="w-4 h-4"></i>
-            <span>匯出前預覽</span>
-          </button>
+        <!-- 底部匯出操作區域 -->
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
+          <!-- 進度條 -->
+          <div id="pdf-export-progress-wrap" class="hidden space-y-1.5">
+            <div class="flex justify-between text-[11px]">
+              <span id="pdf-export-status-text" class="text-slate-600 dark:text-slate-400">準備轉換中...</span>
+              <span id="pdf-export-percent" class="font-mono text-brand-600 dark:text-brand-400 font-semibold">0%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+              <div id="pdf-export-progress-bar" class="h-full bg-indigo-600 rounded-full transition-all duration-150 w-0"></div>
+            </div>
+          </div>
 
-          <button id="btn-export-pdf" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-semibold text-xs shadow-md shadow-brand-500/25 transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            <span>下載 PDF</span>
-          </button>
+          <!-- 雙操作按鈕：打包 ZIP + 逐頁連續下載 -->
+          <div class="grid grid-cols-2 gap-2">
+            <button id="btn-download-zip" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-semibold text-xs shadow-md shadow-brand-500/25 transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+              <i data-lucide="archive" class="w-4 h-4"></i>
+              <span>打包下載 ZIP</span>
+            </button>
+
+            <button id="btn-download-sequential" class="py-2.5 rounded-xl border border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/40 text-brand-600 dark:text-brand-300 font-semibold text-xs transition flex items-center justify-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>逐頁直接下載</span>
+            </button>
+          </div>
+
+          <p class="text-[10px] text-center text-slate-400 dark:text-slate-500">
+            全頁面於本機高解析離線渲染 · 零伺服器傳輸
+          </p>
         </div>
-
-        <p class="text-[10px] text-center text-slate-400 dark:text-slate-500">
-          全程於本機記憶體完成 · 檔案絕不經過任何伺服器
-        </p>
       </div>
 
     </aside>
@@ -510,18 +754,33 @@
           </div>
         </section>
 
-        <!-- 四步操作流程 -->
-        <section class="space-y-2.5">
+        <!-- 雙軌操作流程 -->
+        <section class="space-y-3">
           <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
-            <span>四步標準操作流程 (SOP)</span>
+            <span>功能指南與標準作業程序 (SOP)</span>
           </h4>
-          <ol class="space-y-2 list-decimal list-inside text-[11px] leading-relaxed">
-            <li><strong class="text-slate-800 dark:text-slate-200">載入相片</strong>：點擊「選取本機相片」、直接拖曳檔案至框內，或截圖後按 <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Ctrl+V</kbd> 貼上。</li>
-            <li><strong class="text-slate-800 dark:text-slate-200">調整順序與方向</strong>：長按相片卡片拖曳重排順序；滑鼠懸浮點擊旋轉按鈕調整橫直向。</li>
-            <li><strong class="text-slate-800 dark:text-slate-200">設定排版參數</strong>：選擇紙張（A4、自適應）、邊距、每頁拼貼格數（1、2、4 張）、頁碼與防偽浮水印。</li>
-            <li><strong class="text-slate-800 dark:text-slate-200">預覽與匯出</strong>：點擊「分頁模擬」檢視排版分頁，或點擊「匯出前預覽」彈出 PDF 閱讀器，審核無誤點擊下載即可完成。</li>
-          </ol>
+          <div class="space-y-3 text-[11px] leading-relaxed">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+              <strong class="text-brand-600 dark:text-brand-400 block mb-1">【相片轉 PDF】模式：</strong>
+              <ol class="space-y-1 list-decimal list-inside text-slate-600 dark:text-slate-300">
+                <li><strong class="text-slate-800 dark:text-slate-200">載入相片</strong>：點擊「選取本機相片」、拖曳檔案至框內，或直接按 <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Ctrl+V</kbd> 貼上。</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">排序與方向</strong>：長按相片卡片拖曳重排順序；懸浮旋轉按鈕調整橫直向。</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">排版與浮水印</strong>：選擇紙張規格、邊距、單頁拼貼格數（1/2/4 張）、頁碼與防偽浮水印。</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">預覽與匯出</strong>：可點擊「分頁模擬」或「匯出前預覽」，審核無誤點擊下載 PDF。</li>
+              </ol>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+              <strong class="text-indigo-600 dark:text-indigo-400 block mb-1">【PDF 轉圖片】模式：</strong>
+              <ol class="space-y-1 list-decimal list-inside text-slate-600 dark:text-slate-300">
+                <li><strong class="text-slate-800 dark:text-slate-200">載入 PDF</strong>：點擊「選取本機 PDF」或將 PDF 拖入畫布（支援密碼保護 PDF 解析）。</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">勾選與微調</strong>：勾選欲匯出的頁面（支援全選、奇數頁、偶數頁或自訂頁碼範圍）；可個別旋轉頁面或放大預覽。</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">格式與 DPI 設定</strong>：選擇輸出格式（PNG/JPEG/WebP）與解析度倍率（推薦 2.0x 兼顧高清與速度）。</li>
+                <li><strong class="text-slate-800 dark:text-slate-200">批次下載</strong>：點擊「打包下載 ZIP」一次封裝所有選取頁面，或點擊「逐頁直接下載」。</li>
+              </ol>
+            </div>
+          </div>
         </section>
 
         <!-- 常見問題 -->
@@ -553,6 +812,8 @@
     // ==========================================
     // 狀態管理 State
     // ==========================================
+    let activeMode = 'photo2pdf'; // 'photo2pdf' 或 'pdf2img'
+
     const state = {
       images: [], // 陣列物件: { id, file, name, size, width, height, rotation (0, 90, 180, 270), thumbUrl }
       activeView: 'gallery', // 'gallery' (縮圖管理) 或 'pages' (分頁排版模擬)
@@ -568,6 +829,26 @@
       isExporting: false
     };
 
+    const pdfState = {
+      file: null,
+      name: '',
+      size: 0,
+      doc: null,
+      totalPages: 0,
+      pages: [], // { pageNum, width, height, rotation, selected, thumbUrl }
+      exportFormat: 'png', // 'png', 'jpeg', 'webp'
+      scale: 2.0, // 1.0, 1.5, 2.0, 3.0
+      quality: 0.9,
+      rangeMode: 'all', // 'all', 'selected', 'custom'
+      customRange: '',
+      isExporting: false
+    };
+
+    // 初始化 pdf.js worker
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
     // 標準紙張規格定義 (單位: pt, 1 pt = 1/72 inch, 1 mm 約等於 2.83465 pt)
     const PAGE_SIZES = {
       a4: [595.28, 841.89],
@@ -576,7 +857,16 @@
       legal: [612.0, 1008.0]
     };
 
-    // DOM 元素引用
+    // DOM 元素引用：模式切換與主容器
+    const modeTabPhoto2Pdf = document.getElementById('mode-tab-photo2pdf');
+    const modeTabPdf2Img = document.getElementById('mode-tab-pdf2img');
+    const workspacePhoto = document.getElementById('workspace-photo');
+    const workspacePdf = document.getElementById('workspace-pdf');
+    const panelPhotoParams = document.getElementById('panel-photo-params');
+    const panelPdfParams = document.getElementById('panel-pdf-params');
+    const asideTitle = document.getElementById('aside-title');
+
+    // DOM 元素引用：相片轉 PDF
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('file-input');
     const imageGallery = document.getElementById('image-gallery');
@@ -594,13 +884,48 @@
     const statCount = document.getElementById('stat-count');
     const statSize = document.getElementById('stat-size');
 
-    // 匯出與預覽按鈕
+    // 匯出與預覽按鈕 (相片轉 PDF)
     const btnPreviewPdf = document.getElementById('btn-preview-pdf');
     const btnExportPdf = document.getElementById('btn-export-pdf');
     const exportProgressWrap = document.getElementById('export-progress-wrap');
     const exportProgressBar = document.getElementById('export-progress-bar');
     const exportStatusText = document.getElementById('export-status-text');
     const exportPercent = document.getElementById('export-percent');
+
+    // DOM 元素引用：PDF 轉圖片
+    const pdfDocName = document.getElementById('pdf-doc-name');
+    const pdfStatPages = document.getElementById('pdf-stat-pages');
+    const pdfStatSelected = document.getElementById('pdf-stat-selected');
+    const pdfStatSize = document.getElementById('pdf-stat-size');
+    const btnPdfToggleSelect = document.getElementById('btn-pdf-toggle-select');
+    const btnPdfSelectLabel = document.getElementById('btn-pdf-select-label');
+    const btnPdfSelectOdd = document.getElementById('btn-pdf-select-odd');
+    const btnPdfSelectEven = document.getElementById('btn-pdf-select-even');
+    const btnPdfBatchRotate = document.getElementById('btn-pdf-batch-rotate');
+    const pdfCanvasContainer = document.getElementById('pdf-canvas-container');
+    const pdfDropzone = document.getElementById('pdf-dropzone');
+    const pdfFileInput = document.getElementById('pdf-file-input');
+    const pdfGallery = document.getElementById('pdf-gallery');
+    const pdfFooterActions = document.getElementById('pdf-footer-actions');
+    const btnSelectPdf = document.getElementById('btn-select-pdf');
+    const btnLoadDemoPdf = document.getElementById('btn-load-demo-pdf');
+    const btnChangePdf = document.getElementById('btn-change-pdf');
+
+    // PDF 參數面板元素
+    const pdfScaleLabel = document.getElementById('pdf-scale-label');
+    const pdfQualityWrap = document.getElementById('pdf-quality-wrap');
+    const pdfQualitySlider = document.getElementById('pdf-quality-slider');
+    const pdfQualityVal = document.getElementById('pdf-quality-val');
+    const pdfCustomRangeWrap = document.getElementById('pdf-custom-range-wrap');
+    const pdfCustomRangeInput = document.getElementById('pdf-custom-range-input');
+    const pdfExportFilename = document.getElementById('pdf-export-filename');
+    const pdfFilenameExt = document.getElementById('pdf-filename-ext');
+    const pdfExportProgressWrap = document.getElementById('pdf-export-progress-wrap');
+    const pdfExportProgressBar = document.getElementById('pdf-export-progress-bar');
+    const pdfExportStatusText = document.getElementById('pdf-export-status-text');
+    const pdfExportPercent = document.getElementById('pdf-export-percent');
+    const btnDownloadZip = document.getElementById('btn-download-zip');
+    const btnDownloadSequential = document.getElementById('btn-download-sequential');
 
     // PDF 預覽視窗 Modal
     const pdfPreviewModal = document.getElementById('pdf-preview-modal');
@@ -661,6 +986,36 @@
     });
 
     // ==========================================
+    // 雙向主模式切換 (Photo to PDF vs PDF to Image)
+    // ==========================================
+    function switchMode(newMode) {
+      activeMode = newMode;
+      if (newMode === 'photo2pdf') {
+        modeTabPhoto2Pdf.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-sm';
+        modeTabPdf2Img.className = 'px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        workspacePhoto.classList.remove('hidden');
+        workspacePdf.classList.add('hidden');
+        panelPhotoParams.classList.remove('hidden');
+        panelPdfParams.classList.add('hidden');
+        asideTitle.textContent = 'PDF 版面與輸出參數';
+        btnClearAll.disabled = state.images.length === 0;
+      } else {
+        modeTabPdf2Img.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-300 shadow-sm';
+        modeTabPhoto2Pdf.className = 'px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        workspacePhoto.classList.add('hidden');
+        workspacePdf.classList.remove('hidden');
+        panelPhotoParams.classList.add('hidden');
+        panelPdfParams.classList.remove('hidden');
+        asideTitle.textContent = '圖片輸出與解析度參數';
+        btnClearAll.disabled = !pdfState.doc;
+      }
+      lucide.createIcons();
+    }
+
+    modeTabPhoto2Pdf.addEventListener('click', () => switchMode('photo2pdf'));
+    modeTabPdf2Img.addEventListener('click', () => switchMode('pdf2img'));
+
+    // ==========================================
     // SortableJS 拖曳排序初始化
     // ==========================================
     const sortable = new Sortable(imageGallery, {
@@ -714,24 +1069,40 @@
     window.addEventListener('drop', (e) => {
       const dt = e.dataTransfer;
       if (dt && dt.files && dt.files.length > 0) {
-        handleFiles(Array.from(dt.files));
+        const files = Array.from(dt.files);
+        const pdfFile = files.find(f => f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf');
+        if (pdfFile) {
+          switchMode('pdf2img');
+          handlePdfFile(pdfFile);
+        } else {
+          switchMode('photo2pdf');
+          handleFiles(files);
+        }
       }
     });
 
     // 剪貼簿貼上處理 (Ctrl+V)
     window.addEventListener('paste', (e) => {
       const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-      const files = [];
+      const imageFiles = [];
       for (let item of items) {
         if (item.type.indexOf('image') !== -1) {
           const blob = item.getAsFile();
           if (blob) {
-            files.push(new File([blob], `Pasted-Image-${Date.now()}.png`, { type: blob.type }));
+            imageFiles.push(new File([blob], `Pasted-Image-${Date.now()}.png`, { type: blob.type }));
+          }
+        } else if (item.type === 'application/pdf') {
+          const blob = item.getAsFile();
+          if (blob) {
+            switchMode('pdf2img');
+            handlePdfFile(new File([blob], `Pasted-Doc-${Date.now()}.pdf`, { type: 'application/pdf' }));
+            return;
           }
         }
       }
-      if (files.length > 0) {
-        handleFiles(files);
+      if (imageFiles.length > 0) {
+        switchMode('photo2pdf');
+        handleFiles(imageFiles);
       }
     });
 
@@ -1105,12 +1476,20 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     }
 
-    // 清空全部
+    // 清空全部 (依據當前模式)
     btnClearAll.addEventListener('click', () => {
-      if (confirm('確定要清空所有已載入的相片嗎？')) {
-        state.images = [];
-        renderGallery();
-        updateStats();
+      if (activeMode === 'photo2pdf') {
+        if (state.images.length === 0) return;
+        if (confirm('確定要清空所有已載入的相片嗎？')) {
+          state.images = [];
+          renderGallery();
+          updateStats();
+        }
+      } else {
+        if (!pdfState.doc) return;
+        if (confirm('確定要關閉當前 PDF 檔案並重置嗎？')) {
+          resetPdfState();
+        }
       }
     });
 
@@ -1704,6 +2083,748 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 2000);
+    }
+
+    // =========================================================================
+    // PDF 轉圖片核心引擎模組 (PDF to Image Engine)
+    // =========================================================================
+
+    // PDF 檔案選取與拖曳事件綁定
+    btnSelectPdf.addEventListener('click', () => pdfFileInput.click());
+    btnChangePdf.addEventListener('click', () => pdfFileInput.click());
+    pdfDropzone.addEventListener('click', (e) => {
+      if (e.target !== btnLoadDemoPdf && !btnLoadDemoPdf.contains(e.target)) {
+        pdfFileInput.click();
+      }
+    });
+
+    pdfFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handlePdfFile(e.target.files[0]);
+        pdfFileInput.value = '';
+      }
+    });
+
+    // 處理與解析 PDF 檔案
+    async function handlePdfFile(file) {
+      if (!window.pdfjsLib) {
+        alert('PDF 解析引擎載入中或受網路連線限制，請確認連網或重新整理頁面');
+        return;
+      }
+
+      const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+      if (!isPdf) {
+        alert('請選取有效的 PDF 文件檔案');
+        return;
+      }
+
+      // 重置並記錄狀態
+      pdfState.file = file;
+      pdfState.name = file.name;
+      pdfState.size = file.size;
+      const baseName = file.name.replace(/\.[^/.]+$/, '');
+      pdfExportFilename.value = baseName || 'Document-Page';
+
+      // 載入動畫提示
+      btnSelectPdf.disabled = true;
+      btnLoadDemoPdf.disabled = true;
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({
+          data: arrayBuffer,
+          cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+          cMapPacked: true
+        });
+
+        // 支援密碼保護 PDF 解析
+        loadingTask.onPassword = (callback, reason) => {
+          const pwd = prompt(reason === 1 ? '此 PDF 設有密碼保護，請輸入開啟密碼：' : '密碼不正確，請重新輸入：');
+          if (pwd !== null) {
+            callback(pwd);
+          } else {
+            throw new Error('使用者取消密碼輸入');
+          }
+        };
+
+        const pdfDoc = await loadingTask.promise;
+        pdfState.doc = pdfDoc;
+        pdfState.totalPages = pdfDoc.numPages;
+        pdfState.pages = [];
+
+        // 逐頁建立元資料與低解析預覽縮圖 (Scale 0.45 以節約記憶體)
+        for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+          const page = await pdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 0.45 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+
+          await page.render({
+            canvasContext: ctx,
+            viewport: viewport
+          }).promise;
+
+          const thumbUrl = canvas.toDataURL('image/jpeg', 0.8);
+          const origW = Math.round(page.view[2] - page.view[0]);
+          const origH = Math.round(page.view[3] - page.view[1]);
+
+          pdfState.pages.push({
+            pageNum: pageNum,
+            origWidth: origW,
+            origHeight: origH,
+            rotation: 0,
+            selected: true,
+            thumbUrl: thumbUrl
+          });
+        }
+
+        renderPdfGallery();
+        updatePdfStats();
+        syncRangeInputs();
+
+      } catch (err) {
+        console.error('PDF 解析失敗:', err);
+        alert('解析 PDF 時發生錯誤：' + (err.message || err));
+        resetPdfState();
+      } finally {
+        btnSelectPdf.disabled = false;
+        btnLoadDemoPdf.disabled = false;
+      }
+    }
+
+    // 渲染 PDF 頁面縮圖 Grid
+    function renderPdfGallery() {
+      if (!pdfState.doc || pdfState.pages.length === 0) {
+        pdfDropzone.classList.remove('hidden');
+        pdfGallery.classList.add('hidden');
+        pdfFooterActions.classList.add('hidden');
+        btnPdfToggleSelect.disabled = true;
+        btnPdfSelectOdd.disabled = true;
+        btnPdfSelectEven.disabled = true;
+        btnPdfBatchRotate.disabled = true;
+        btnDownloadZip.disabled = true;
+        btnDownloadSequential.disabled = true;
+        btnClearAll.disabled = true;
+        pdfGallery.innerHTML = '';
+        return;
+      }
+
+      pdfDropzone.classList.add('hidden');
+      pdfGallery.classList.remove('hidden');
+      pdfFooterActions.classList.remove('hidden');
+      btnPdfToggleSelect.disabled = false;
+      btnPdfSelectOdd.disabled = false;
+      btnPdfSelectEven.disabled = false;
+      btnPdfBatchRotate.disabled = false;
+      btnClearAll.disabled = false;
+
+      const hasSelected = pdfState.pages.some(p => p.selected);
+      btnDownloadZip.disabled = !hasSelected;
+      btnDownloadSequential.disabled = !hasSelected;
+
+      pdfGallery.innerHTML = pdfState.pages.map(item => {
+        // 計算當前倍率下的預估像素
+        let estW = Math.round(item.origWidth * (pdfState.scale / 1.0));
+        let estH = Math.round(item.origHeight * (pdfState.scale / 1.0));
+        if (item.rotation === 90 || item.rotation === 270) {
+          [estW, estH] = [estH, estW];
+        }
+
+        return `
+          <div class="group relative bg-white dark:bg-slate-800 rounded-xl border ${item.selected ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-slate-200 dark:border-slate-700 opacity-70'} shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden" data-pdf-page="${item.pageNum}">
+            
+            <!-- 頂部頁籤與動作 -->
+            <div class="h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+              <label class="flex items-center space-x-1.5 cursor-pointer">
+                <input type="checkbox" class="pdf-page-checkbox rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-600" data-page="${item.pageNum}" ${item.selected ? 'checked' : ''}>
+                <span class="text-[10px] font-mono font-semibold text-slate-700 dark:text-slate-300">#${item.pageNum}</span>
+              </label>
+
+              <div class="flex items-center space-x-0.5">
+                <button class="btn-pdf-rotate-page text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition p-1" data-page="${item.pageNum}" title="順轉 90 度">
+                  <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                </button>
+                <button class="btn-pdf-download-single text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition p-1" data-page="${item.pageNum}" title="下載此頁圖片">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 縮圖主體 -->
+            <div class="relative aspect-[3/4] bg-slate-100 dark:bg-slate-900 flex items-center justify-center overflow-hidden cursor-pointer pdf-preview-trigger" data-page="${item.pageNum}">
+              <img src="${item.thumbUrl}" alt="Page ${item.pageNum}" 
+                   class="max-h-full max-w-full object-contain transition-transform duration-200" 
+                   style="transform: rotate(${item.rotation}deg);">
+              
+              <!-- 懸浮放大鏡按鈕 -->
+              <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2 pointer-events-none">
+                <div class="p-2 rounded-full bg-white/90 text-slate-800 shadow">
+                  <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- 底部尺寸與解析度資訊 -->
+            <div class="p-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700/40 bg-white dark:bg-slate-800">
+              <div class="flex justify-between items-center font-mono text-[9px] text-slate-400">
+                <span>${item.origWidth} × ${item.origHeight} pt</span>
+                <span class="font-semibold text-brand-600 dark:text-brand-400">${estW} × ${estH} px</span>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+      attachPdfCardEvents();
+    }
+
+    // 綁定 PDF 卡片互動事件
+    function attachPdfCardEvents() {
+      // 頁面勾選 Checkbox
+      pdfGallery.querySelectorAll('.pdf-page-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const pageNum = parseInt(cb.getAttribute('data-page'));
+          const target = pdfState.pages.find(p => p.pageNum === pageNum);
+          if (target) {
+            target.selected = cb.checked;
+            const card = pdfGallery.querySelector(`[data-pdf-page="${pageNum}"]`);
+            if (card) {
+              if (cb.checked) {
+                card.classList.add('border-brand-500', 'ring-2', 'ring-brand-500/20');
+                card.classList.remove('border-slate-200', 'dark:border-slate-700', 'opacity-70');
+              } else {
+                card.classList.remove('border-brand-500', 'ring-2', 'ring-brand-500/20');
+                card.classList.add('border-slate-200', 'dark:border-slate-700', 'opacity-70');
+              }
+            }
+            updatePdfStats();
+          }
+        });
+      });
+
+      // 單頁旋轉 90 度
+      pdfGallery.querySelectorAll('.btn-pdf-rotate-page').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pageNum = parseInt(btn.getAttribute('data-page'));
+          const target = pdfState.pages.find(p => p.pageNum === pageNum);
+          if (target) {
+            target.rotation = (target.rotation + 90) % 360;
+            const img = pdfGallery.querySelector(`[data-pdf-page="${pageNum}"] img`);
+            if (img) {
+              img.style.transform = `rotate(${target.rotation}deg)`;
+            }
+          }
+        });
+      });
+
+      // 單頁直接下載圖片
+      pdfGallery.querySelectorAll('.btn-pdf-download-single').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const pageNum = parseInt(btn.getAttribute('data-page'));
+          await exportSinglePdfPage(pageNum);
+        });
+      });
+
+      // 點擊縮圖彈出 Lightbox 預覽
+      pdfGallery.querySelectorAll('.pdf-preview-trigger').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const pageNum = parseInt(el.getAttribute('data-page'));
+          const target = pdfState.pages.find(p => p.pageNum === pageNum);
+          if (target) {
+            modalTitle.textContent = `${pdfState.name} - 第 ${target.pageNum} 頁 (${target.origWidth} × ${target.origHeight} pt)`;
+            modalImg.src = target.thumbUrl;
+            modalImg.style.transform = `rotate(${target.rotation}deg)`;
+            previewModal.classList.remove('hidden');
+          }
+        });
+      });
+    }
+
+    // 更新 PDF 狀態統計資訊
+    function updatePdfStats() {
+      if (!pdfState.doc) {
+        pdfDocName.textContent = '尚未載入 PDF';
+        pdfStatPages.textContent = '0';
+        pdfStatSelected.textContent = '0';
+        pdfStatSize.textContent = '0 KB';
+        btnDownloadZip.disabled = true;
+        btnDownloadSequential.disabled = true;
+        return;
+      }
+
+      pdfDocName.textContent = pdfState.name;
+      pdfStatPages.textContent = pdfState.totalPages;
+      const selectedCount = pdfState.pages.filter(p => p.selected).length;
+      pdfStatSelected.textContent = selectedCount;
+      pdfStatSize.textContent = formatBytes(pdfState.size);
+
+      // 全選按鈕狀態文字
+      if (selectedCount === pdfState.totalPages) {
+        btnPdfSelectLabel.textContent = '全取消';
+      } else {
+        btnPdfSelectLabel.textContent = '全選';
+      }
+
+      btnDownloadZip.disabled = selectedCount === 0;
+      btnDownloadSequential.disabled = selectedCount === 0;
+    }
+
+    // 全選 / 全取消切換
+    btnPdfToggleSelect.addEventListener('click', () => {
+      const allSelected = pdfState.pages.every(p => p.selected);
+      pdfState.pages.forEach(p => p.selected = !allSelected);
+      renderPdfGallery();
+      updatePdfStats();
+    });
+
+    // 奇數頁勾選
+    btnPdfSelectOdd.addEventListener('click', () => {
+      pdfState.pages.forEach(p => p.selected = (p.pageNum % 2 === 1));
+      renderPdfGallery();
+      updatePdfStats();
+    });
+
+    // 偶數頁勾選
+    btnPdfSelectEven.addEventListener('click', () => {
+      pdfState.pages.forEach(p => p.selected = (p.pageNum % 2 === 0));
+      renderPdfGallery();
+      updatePdfStats();
+    });
+
+    // 批次旋轉全部 PDF 頁面 90 度
+    btnPdfBatchRotate.addEventListener('click', () => {
+      pdfState.pages.forEach(p => {
+        p.rotation = (p.rotation + 90) % 360;
+      });
+      renderPdfGallery();
+    });
+
+    // 重置 PDF 狀態
+    function resetPdfState() {
+      pdfState.file = null;
+      pdfState.name = '';
+      pdfState.size = 0;
+      pdfState.doc = null;
+      pdfState.totalPages = 0;
+      pdfState.pages = [];
+      pdfExportProgressWrap.classList.add('hidden');
+      renderPdfGallery();
+      updatePdfStats();
+    }
+
+    // 動態建立離線示範 PDF (使用 pdf-lib)
+    btnLoadDemoPdf.addEventListener('click', async () => {
+      const pdfLibInstance = window.PDFLib;
+      if (!pdfLibInstance) {
+        alert('PDF 核心模組載入中，請稍候重試');
+        return;
+      }
+
+      btnLoadDemoPdf.disabled = true;
+      try {
+        const { PDFDocument, rgb, StandardFonts } = pdfLibInstance;
+        const pdfDoc = await PDFDocument.create();
+        const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        // 第 1 頁：專業合約樣張 (A4 直向)
+        const page1 = pdfDoc.addPage([595.28, 841.89]);
+        page1.drawRectangle({
+          x: 30, y: 30, width: 535.28, height: 781.89,
+          borderColor: rgb(0.12, 0.23, 0.37), borderWidth: 2,
+          color: rgb(0.98, 0.99, 1.0)
+        });
+        page1.drawText('CONFIDENTIAL AGREEMENT SPECIMEN', {
+          x: 50, y: 780, size: 16, font: font, color: rgb(0.12, 0.23, 0.37)
+        });
+        page1.drawText('Sample Document for PDF to Image High-Resolution Extraction', {
+          x: 50, y: 760, size: 10, font: fontRegular, color: rgb(0.4, 0.45, 0.5)
+        });
+        for (let y = 720; y > 150; y -= 24) {
+          page1.drawRectangle({
+            x: 50, y: y, width: 495, height: 10,
+            color: rgb(0.85, 0.88, 0.92)
+          });
+        }
+        page1.drawCircle({
+          x: 480, y: 120, size: 45,
+          borderColor: rgb(0.85, 0.15, 0.15), borderWidth: 2,
+          color: rgb(0.98, 0.9, 0.9)
+        });
+        page1.drawText('VERIFIED', {
+          x: 455, y: 116, size: 11, font: font, color: rgb(0.85, 0.15, 0.15)
+        });
+
+        // 第 2 頁：證件審核樣張 (橫向)
+        const page2 = pdfDoc.addPage([841.89, 595.28]);
+        page2.drawRectangle({
+          x: 40, y: 40, width: 761.89, height: 515.28,
+          borderColor: rgb(0.02, 0.47, 0.34), borderWidth: 2,
+          color: rgb(0.96, 0.99, 0.97)
+        });
+        page2.drawText('IDENTITY & CREDENTIAL VERIFICATION SHEET', {
+          x: 60, y: 530, size: 18, font: font, color: rgb(0.02, 0.47, 0.34)
+        });
+        page2.drawRectangle({
+          x: 60, y: 220, width: 340, height: 260,
+          borderColor: rgb(0.6, 0.7, 0.65), borderWidth: 1,
+          color: rgb(0.9, 0.95, 0.92)
+        });
+        page2.drawRectangle({
+          x: 430, y: 220, width: 350, height: 260,
+          borderColor: rgb(0.6, 0.7, 0.65), borderWidth: 1,
+          color: rgb(0.9, 0.95, 0.92)
+        });
+        page2.drawText('FRONT SIDE SAMPLE', { x: 160, y: 340, size: 12, font: font, color: rgb(0.4, 0.5, 0.45) });
+        page2.drawText('BACK SIDE SAMPLE', { x: 540, y: 340, size: 12, font: font, color: rgb(0.4, 0.5, 0.45) });
+
+        // 第 3 頁：工程藍圖試算明細
+        const page3 = pdfDoc.addPage([595.28, 841.89]);
+        page3.drawRectangle({
+          x: 30, y: 30, width: 535.28, height: 781.89,
+          borderColor: rgb(0.7, 0.35, 0.05), borderWidth: 2,
+          color: rgb(1.0, 0.99, 0.96)
+        });
+        page3.drawText('ENGINEERING QUANTITATIVE SUMMARY', {
+          x: 50, y: 780, size: 16, font: font, color: rgb(0.7, 0.35, 0.05)
+        });
+        for (let row = 0; row < 12; row++) {
+          const rowY = 730 - (row * 35);
+          page3.drawRectangle({
+            x: 50, y: rowY, width: 495, height: 25,
+            borderColor: rgb(0.85, 0.8, 0.75), borderWidth: 1,
+            color: (row % 2 === 0) ? rgb(0.96, 0.94, 0.9) : rgb(1.0, 1.0, 1.0)
+          });
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        const demoFile = new File([pdfBytes], '光印轉換所-示範文件.pdf', { type: 'application/pdf' });
+        await handlePdfFile(demoFile);
+
+      } catch (err) {
+        console.error('建立示範 PDF 失敗:', err);
+        alert('建立示範 PDF 失敗：' + err.message);
+      } finally {
+        btnLoadDemoPdf.disabled = false;
+      }
+    });
+
+    // ==========================================
+    // PDF 參數控制項監聽
+    // ==========================================
+    // 輸出格式切換 (PNG, JPEG, WebP)
+    document.querySelectorAll('.btn-pdf-format').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-pdf-format').forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300', 'font-semibold');
+          b.classList.add('border-slate-200', 'dark:border-slate-700', 'bg-slate-50', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'font-medium');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300', 'font-semibold');
+        btn.classList.remove('border-slate-200', 'dark:border-slate-700', 'bg-slate-50', 'dark:bg-slate-800');
+
+        const fmt = btn.getAttribute('data-format');
+        pdfState.exportFormat = fmt;
+
+        // 若為 JPEG 或 WebP 則展開品質滑桿
+        if (fmt === 'jpeg' || fmt === 'webp') {
+          pdfQualityWrap.classList.remove('hidden');
+        } else {
+          pdfQualityWrap.classList.add('hidden');
+        }
+
+        const ext = fmt === 'jpeg' ? 'jpg' : fmt;
+        pdfFilenameExt.textContent = `_001.${ext}`;
+      });
+    });
+
+    // 解析度放大倍率切換
+    document.querySelectorAll('.btn-pdf-scale').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-pdf-scale').forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300', 'font-semibold');
+          b.classList.add('border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950/50', 'text-brand-600', 'dark:text-brand-300', 'font-semibold');
+        btn.classList.remove('border-slate-200', 'dark:border-slate-700', 'bg-white');
+
+        const sc = parseFloat(btn.getAttribute('data-scale'));
+        pdfState.scale = sc;
+
+        if (sc === 1.0) pdfScaleLabel.textContent = '1.0x (72 DPI 輕巧)';
+        if (sc === 1.5) pdfScaleLabel.textContent = '1.5x (108 DPI 標準)';
+        if (sc === 2.0) pdfScaleLabel.textContent = '2.0x (144 DPI 高清)';
+        if (sc === 3.0) pdfScaleLabel.textContent = '3.0x (216 DPI 印刷)';
+
+        renderPdfGallery();
+      });
+    });
+
+    // 壓縮品質滑桿
+    pdfQualitySlider.addEventListener('input', (e) => {
+      const q = parseInt(e.target.value);
+      pdfState.quality = q / 100;
+      pdfQualityVal.textContent = `${q}%`;
+    });
+
+    // 匯出範圍選項
+    document.querySelectorAll('input[name="pdf-range"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = e.target.value;
+        pdfState.rangeMode = val;
+        if (val === 'custom') {
+          pdfCustomRangeWrap.classList.remove('hidden');
+          applyCustomRange(pdfCustomRangeInput.value);
+        } else {
+          pdfCustomRangeWrap.classList.add('hidden');
+          if (val === 'all') {
+            pdfState.pages.forEach(p => p.selected = true);
+          }
+          renderPdfGallery();
+          updatePdfStats();
+        }
+      });
+    });
+
+    // 自訂頁碼範圍輸入監聽 (如 1-3, 5, 8-10)
+    pdfCustomRangeInput.addEventListener('input', (e) => {
+      applyCustomRange(e.target.value);
+    });
+
+    function applyCustomRange(inputStr) {
+      if (!pdfState.doc) return;
+      const str = inputStr.trim();
+      if (!str) return;
+
+      const pageSet = new Set();
+      const parts = str.split(/[,，\s]+/);
+
+      for (let part of parts) {
+        if (!part) continue;
+        if (part.includes('-')) {
+          const [startStr, endStr] = part.split('-');
+          const start = parseInt(startStr);
+          const end = parseInt(endStr);
+          if (!isNaN(start) && !isNaN(end)) {
+            const minP = Math.max(1, Math.min(start, end));
+            const maxP = Math.min(pdfState.totalPages, Math.max(start, end));
+            for (let p = minP; p <= maxP; p++) pageSet.add(p);
+          }
+        } else {
+          const singleP = parseInt(part);
+          if (!isNaN(singleP) && singleP >= 1 && singleP <= pdfState.totalPages) {
+            pageSet.add(singleP);
+          }
+        }
+      }
+
+      pdfState.pages.forEach(p => {
+        p.selected = pageSet.has(p.pageNum);
+      });
+      renderPdfGallery();
+      updatePdfStats();
+    }
+
+    function syncRangeInputs() {
+      const allSelected = pdfState.pages.every(p => p.selected);
+      const radioAll = document.querySelector('input[name="pdf-range"][value="all"]');
+      if (radioAll && allSelected) radioAll.checked = true;
+    }
+
+    // ==========================================
+    // 高解析 Canvas 渲染核心與匯出
+    // ==========================================
+    async function renderPageHighRes(pageNum, scale, rotationDeg, format, quality) {
+      const page = await pdfState.doc.getPage(pageNum);
+      const totalRotation = (page.rotate + rotationDeg) % 360;
+      const viewport = page.getViewport({ scale: scale, rotation: totalRotation });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(viewport.width);
+      canvas.height = Math.round(viewport.height);
+      const ctx = canvas.getContext('2d');
+
+      // 背景預設填入純白底色 (防止透明底在 JPEG 下變黑)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      await page.render({
+        canvasContext: ctx,
+        viewport: viewport
+      }).promise;
+
+      const mimeType = format === 'jpeg' ? 'image/jpeg' : (format === 'webp' ? 'image/webp' : 'image/png');
+      const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
+
+      return { blob, width: canvas.width, height: canvas.height };
+    }
+
+    // 單頁單獨快速匯出
+    async function exportSinglePdfPage(pageNum) {
+      if (!pdfState.doc) return;
+      const pageItem = pdfState.pages.find(p => p.pageNum === pageNum);
+      if (!pageItem) return;
+
+      try {
+        const { blob } = await renderPageHighRes(
+          pageNum,
+          pdfState.scale,
+          pageItem.rotation,
+          pdfState.exportFormat,
+          pdfState.quality
+        );
+        const prefix = (pdfExportFilename.value.trim() || 'Document-Page');
+        const ext = pdfState.exportFormat === 'jpeg' ? 'jpg' : pdfState.exportFormat;
+        const filename = `${prefix}_page_${String(pageNum).padStart(3, '0')}.${ext}`;
+        downloadBlob(blob, filename);
+      } catch (err) {
+        console.error('單頁匯出失敗:', err);
+        alert(`匯出第 ${pageNum} 頁時發生錯誤：${err.message}`);
+      }
+    }
+
+    // 打包下載全部選取頁面為 ZIP 壓縮檔
+    btnDownloadZip.addEventListener('click', async () => {
+      if (!pdfState.doc || pdfState.isExporting) return;
+      const selectedPages = pdfState.pages.filter(p => p.selected);
+      if (selectedPages.length === 0) {
+        alert('請至少勾選一頁進行匯出');
+        return;
+      }
+
+      const JSZipLib = window.JSZip;
+      if (!JSZipLib) {
+        alert('ZIP 壓縮打包庫 (JSZip) 載入中，若連網受限將切換為逐頁直接下載');
+        downloadSequentially();
+        return;
+      }
+
+      pdfState.isExporting = true;
+      btnDownloadZip.disabled = true;
+      btnDownloadSequential.disabled = true;
+      pdfExportProgressWrap.classList.remove('hidden');
+      pdfExportProgressBar.style.width = '0%';
+      pdfExportPercent.textContent = '0%';
+
+      try {
+        const zip = new JSZipLib();
+        const prefix = (pdfExportFilename.value.trim() || 'Document-Page');
+        const ext = pdfState.exportFormat === 'jpeg' ? 'jpg' : pdfState.exportFormat;
+
+        for (let i = 0; i < selectedPages.length; i++) {
+          const item = selectedPages[i];
+          const pct = Math.round((i / selectedPages.length) * 80);
+          pdfExportStatusText.textContent = `正在以高解析渲染第 ${item.pageNum} 頁 (${i + 1}/${selectedPages.length})...`;
+          pdfExportProgressBar.style.width = `${pct}%`;
+          pdfExportPercent.textContent = `${pct}%`;
+
+          const { blob } = await renderPageHighRes(
+            item.pageNum,
+            pdfState.scale,
+            item.rotation,
+            pdfState.exportFormat,
+            pdfState.quality
+          );
+
+          const fileName = `${prefix}_page_${String(item.pageNum).padStart(3, '0')}.${ext}`;
+          zip.file(fileName, blob);
+        }
+
+        pdfExportStatusText.textContent = '正在壓縮打包 ZIP 封裝檔...';
+        pdfExportProgressBar.style.width = '85%';
+        pdfExportPercent.textContent = '85%';
+
+        const zipBlob = await zip.generateAsync({
+          type: 'blob',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 6 }
+        }, (metadata) => {
+          const currentPct = Math.round(85 + (metadata.percent * 0.15));
+          pdfExportProgressBar.style.width = `${currentPct}%`;
+          pdfExportPercent.textContent = `${currentPct}%`;
+        });
+
+        downloadBlob(zipBlob, `${prefix}-Images.zip`);
+        pdfExportStatusText.textContent = `打包完成！總體積：${formatBytes(zipBlob.size)}`;
+
+        setTimeout(() => {
+          pdfExportProgressWrap.classList.add('hidden');
+        }, 4000);
+
+      } catch (err) {
+        console.error('ZIP 打包匯出失敗:', err);
+        alert('打包匯出時發生錯誤：' + err.message);
+        pdfExportStatusText.textContent = '匯出失敗';
+      } finally {
+        pdfState.isExporting = false;
+        btnDownloadZip.disabled = false;
+        btnDownloadSequential.disabled = false;
+      }
+    });
+
+    // 逐頁連續下載 (直接存為圖片)
+    btnDownloadSequential.addEventListener('click', downloadSequentially);
+
+    async function downloadSequentially() {
+      if (!pdfState.doc || pdfState.isExporting) return;
+      const selectedPages = pdfState.pages.filter(p => p.selected);
+      if (selectedPages.length === 0) {
+        alert('請至少勾選一頁進行匯出');
+        return;
+      }
+
+      pdfState.isExporting = true;
+      btnDownloadZip.disabled = true;
+      btnDownloadSequential.disabled = true;
+      pdfExportProgressWrap.classList.remove('hidden');
+      pdfExportProgressBar.style.width = '0%';
+      pdfExportPercent.textContent = '0%';
+
+      try {
+        const prefix = (pdfExportFilename.value.trim() || 'Document-Page');
+        const ext = pdfState.exportFormat === 'jpeg' ? 'jpg' : pdfState.exportFormat;
+
+        for (let i = 0; i < selectedPages.length; i++) {
+          const item = selectedPages[i];
+          const pct = Math.round(((i + 1) / selectedPages.length) * 100);
+          pdfExportStatusText.textContent = `正在下載第 ${item.pageNum} 頁 (${i + 1}/${selectedPages.length})...`;
+          pdfExportProgressBar.style.width = `${pct}%`;
+          pdfExportPercent.textContent = `${pct}%`;
+
+          const { blob } = await renderPageHighRes(
+            item.pageNum,
+            pdfState.scale,
+            item.rotation,
+            pdfState.exportFormat,
+            pdfState.quality
+          );
+
+          const fileName = `${prefix}_page_${String(item.pageNum).padStart(3, '0')}.${ext}`;
+          downloadBlob(blob, fileName);
+
+          // 延遲以防瀏覽器批次下載被阻擋
+          await new Promise(r => setTimeout(r, 220));
+        }
+
+        pdfExportStatusText.textContent = `共 ${selectedPages.length} 頁下載完成！`;
+        setTimeout(() => {
+          pdfExportProgressWrap.classList.add('hidden');
+        }, 3500);
+
+      } catch (err) {
+        console.error('逐頁下載失敗:', err);
+        alert('逐頁下載時發生錯誤：' + err.message);
+        pdfExportStatusText.textContent = '下載失敗';
+      } finally {
+        pdfState.isExporting = false;
+        btnDownloadZip.disabled = false;
+        btnDownloadSequential.disabled = false;
+      }
     }
   </script>
 </body>
