@@ -24,6 +24,7 @@
   * **印務室 Folio Press**：[https://web-apps-hub.cv1706yang.workers.dev/folio-press/](https://web-apps-hub.cv1706yang.workers.dev/folio-press/)
   * **光印轉換所 Photo to PDF**：[https://web-apps-hub.cv1706yang.workers.dev/photo-to-pdf/](https://web-apps-hub.cv1706yang.workers.dev/photo-to-pdf/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
+  * **工業運轉參數智能檢驗工具**：[https://web-apps-hub.cv1706yang.workers.dev/operation-log-analyzer/](https://web-apps-hub.cv1706yang.workers.dev/operation-log-analyzer/)
 
 * **GitHub Pages 靜態站點**：
   * **入口總覽**：[https://cv1706.github.io/web-apps-hub/](https://cv1706.github.io/web-apps-hub/)
@@ -43,6 +44,7 @@
   * **印務室 Folio Press**：[https://cv1706.github.io/web-apps-hub/folio-press/](https://cv1706.github.io/web-apps-hub/folio-press/)
   * **光印轉換所 Photo to PDF**：[https://cv1706.github.io/web-apps-hub/photo-to-pdf/](https://cv1706.github.io/web-apps-hub/photo-to-pdf/)
   * **Open Live Map 即時地圖**：[https://gslai.win/](https://gslai.win/)
+  * **工業運轉參數智能檢驗工具**：[https://cv1706.github.io/web-apps-hub/operation-log-analyzer/](https://cv1706.github.io/web-apps-hub/operation-log-analyzer/)
 
 ---
 
@@ -178,3 +180,13 @@
 2. **GitHub Pages 發布**：
    * 推送至 `main` 分支由 GitHub Pages / Actions 自動部署生效。
 
+
+### 16. ⚙️ 工業運轉參數智能檢驗工具 (Industrial Operation Log Inspector)
+* **路徑**：`/operation-log-analyzer/`
+* **系統定位**：專為工業運轉紀錄（SCADA / DCS / 記錄器 CSV 匯出檔）設計的純前端、免伺服器、全離線時間序列參數分析與異常檢驗工具。
+* **核心功能與操作流程（SOP）**：
+  1. **多機型動態自適應（Zero Hardcoding）**：自動嗅探分號（`;`）與逗號（`,`）分隔符號，正則拆解機型、位號與工程單位（如 `Deg_C`、`ppm`、`Nm3/h`、`mbar`、`bar`、`%`、`min`）。
+  2. **物理量智能分組與多圖時間同步**：自動劃分為「溫度」、「高壓」、「微壓與差壓」、「流量與純度」、「控制與閥位開度」、「計時週期」等獨立看板，多圖表共用時間軸聯動縮放（DataZoom）。
+  3. **偏差閾值監控與異常事件清單**：支援位號 HH/H/L/LL 門檻與每分鐘最大變化率（RoC）監控，提供 3-Sigma 智能生成上下限。
+  4. **事件聚焦與報告匯出**：點擊右側異常清單立即縮放聚焦至該時間點前後 30 分鐘，支援匯出異常清單（CSV）與列印標準檢驗報告。
+  5. **100% 離線運算與資安合規**：數據完全保留在瀏覽器本地記憶體，不經由任何外部伺服器。
