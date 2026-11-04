@@ -543,7 +543,7 @@
         </div>
         <div class="snapshot-item">
             <span class="label">現價：</span>
-            <span class="val" style="color: #4ade80;" id="snapPrice">43,779 點</span>
+            <span class="val" style="color: #4ade80;" id="snapPrice">43,326 點</span>
         </div>
         <div class="snapshot-item">
             <span class="label">仲裁：</span>
@@ -551,7 +551,7 @@
         </div>
         <div class="snapshot-item">
             <span class="label">更新：</span>
-            <span class="val" id="snapTime" style="color: var(--text-muted);">2026-11-04 07:27:38</span>
+            <span class="val" id="snapTime" style="color: var(--text-muted);">2026-11-04 15:20:27</span>
         </div>
     </div>
 
@@ -574,7 +574,7 @@
                 <div class="form-group">
                     <label>當前標的指數 (Spot Price)</label>
                     <div class="input-wrapper">
-                        <input type="number" id="spotPrice" class="form-control" value="43779" step="50" oninput="onSpotPriceChange()">
+                        <input type="number" id="spotPrice" class="form-control" value="43326" step="50" oninput="onSpotPriceChange()">
                         <span class="input-suffix">點</span>
                     </div>
                 </div>
@@ -752,50 +752,50 @@ let activeLegs = [];
 let currentSafetyBuffer = '+446 點 (0.9%)';
 
 let liveSnapshotData = {
-    "spot_price": 43779,
+    "spot_price": 43326,
     "symbol": "TXFK6",
     "futures_name": "臺股期貨11",
-    "change_pct": "+0.98%",
-    "change": 426.0,
-    "session": "昨日夜盤結算",
+    "change_pct": "+0.28%",
+    "change": 123.0,
+    "session": "夜盤即時",
     "ta_action": "【偏空操作 (Bearish / 反彈偏空)】 (33.2%)",
-    "source": "永豐 Shioaji API (Tier 1 - 昨日夜盤結算)",
-    "updated_at": "2026-11-04 07:27:38",
+    "source": "永豐 Shioaji API (Tier 1 - 夜盤即時)",
+    "updated_at": "2026-11-04 15:20:27",
     "commands": {
         "options_calc": {
             "title": "/options_calc (週三一般結算)",
-            "contract": "202611W1",
+            "contract": "202611W2",
             "dte": 3,
             "top3": [
                 {
                     "category": "保守穩健型 買權空頭價差 (CCS / 極度防守)",
-                    "name": "買權空頭價差 CCS 保守防禦 (賣 44200C / 買 44400C)",
+                    "name": "買權空頭價差 CCS 保守防禦 (賣 44500C / 買 44700C)",
                     "type": "CCS",
-                    "short_strike": 44200,
-                    "long_strike": 44400,
-                    "net_premium": 19.5,
-                    "net_premium_ntd": 975.0,
+                    "short_strike": 44500,
+                    "long_strike": 44700,
+                    "net_premium": 30.0,
+                    "net_premium_ntd": 1500.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 9.75,
-                    "bep": 44219.5,
-                    "win_rate": 67.1,
-                    "safety_buffer": 421.0,
-                    "sell_leg_price": 39.5,
-                    "buy_leg_price": 20.0,
+                    "roi_pct": 15.0,
+                    "bep": 44530.0,
+                    "win_rate": 88.8,
+                    "safety_buffer": 1174.0,
+                    "sell_leg_price": 290.0,
+                    "buy_leg_price": 260.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44200,
-                            "premium": 39.5,
+                            "strike": 44500,
+                            "premium": 290.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44400,
-                            "premium": 20.0,
+                            "strike": 44700,
+                            "premium": 260.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -807,21 +807,21 @@ let liveSnapshotData = {
                     "type": "CCS",
                     "short_strike": 44100,
                     "long_strike": 44300,
-                    "net_premium": 24.0,
-                    "net_premium_ntd": 1200.0,
+                    "net_premium": 33.0,
+                    "net_premium_ntd": 1650.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 12.0,
-                    "bep": 44124.0,
-                    "win_rate": 63.3,
-                    "safety_buffer": 321.0,
-                    "sell_leg_price": 51.0,
-                    "buy_leg_price": 27.0,
+                    "roi_pct": 16.5,
+                    "bep": 44133.0,
+                    "win_rate": 79.1,
+                    "safety_buffer": 774.0,
+                    "sell_leg_price": 394.0,
+                    "buy_leg_price": 361.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
                             "strike": 44100,
-                            "premium": 51.0,
+                            "premium": 394.0,
                             "qty": 1,
                             "iv": 16.5
                         },
@@ -829,7 +829,7 @@ let liveSnapshotData = {
                             "side": "BUY",
                             "type": "CALL",
                             "strike": 44300,
-                            "premium": 27.0,
+                            "premium": 361.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -837,33 +837,33 @@ let liveSnapshotData = {
                 },
                 {
                     "category": "高資金效率 買權空頭價差 (CCS / 窄價差)",
-                    "name": "買權空頭價差 CCS 窄價差 (賣 44000C / 買 44100C)",
+                    "name": "買權空頭價差 CCS 窄價差 (賣 43900C / 買 44000C)",
                     "type": "CCS",
-                    "short_strike": 44000,
-                    "long_strike": 44100,
-                    "net_premium": 21.0,
-                    "net_premium_ntd": 1050.0,
+                    "short_strike": 43900,
+                    "long_strike": 44000,
+                    "net_premium": 15.0,
+                    "net_premium_ntd": 750.0,
                     "margin_ntd": 5000.0,
-                    "roi_pct": 21.0,
-                    "bep": 44021.0,
-                    "win_rate": 59.4,
-                    "safety_buffer": 221.0,
-                    "sell_leg_price": 72.0,
-                    "buy_leg_price": 51.0,
+                    "roi_pct": 15.0,
+                    "bep": 43915.0,
+                    "win_rate": 72.7,
+                    "safety_buffer": 574.0,
+                    "sell_leg_price": 469.0,
+                    "buy_leg_price": 454.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44000,
-                            "premium": 72.0,
+                            "strike": 43900,
+                            "premium": 469.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44100,
-                            "premium": 51.0,
+                            "strike": 44000,
+                            "premium": 454.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -878,33 +878,33 @@ let liveSnapshotData = {
             "top3": [
                 {
                     "category": "保守穩健型 買權空頭價差 (CCS / 極度防守)",
-                    "name": "週五極度防禦 (賣 45100C / 買 45300C 買權空頭價差)",
+                    "name": "週五極度防禦 (賣 44600C / 買 44800C 買權空頭價差)",
                     "type": "CCS",
-                    "short_strike": 45100,
-                    "long_strike": 45300,
-                    "net_premium": 50.0,
-                    "net_premium_ntd": 2500.0,
+                    "short_strike": 44600,
+                    "long_strike": 44800,
+                    "net_premium": 24.0,
+                    "net_premium_ntd": 1200.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 25.0,
-                    "bep": 45150.0,
+                    "roi_pct": 12.0,
+                    "bep": 44624.0,
                     "win_rate": 99.9,
-                    "safety_buffer": 1321.0,
-                    "sell_leg_price": 118.0,
-                    "buy_leg_price": 68.0,
+                    "safety_buffer": 1274.0,
+                    "sell_leg_price": 101.0,
+                    "buy_leg_price": 77.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 45100,
-                            "premium": 118.0,
+                            "strike": 44600,
+                            "premium": 101.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 45300,
-                            "premium": 68.0,
+                            "strike": 44800,
+                            "premium": 77.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -912,33 +912,33 @@ let liveSnapshotData = {
                 },
                 {
                     "category": "平衡收益型 買權空頭價差 (CCS / 波段推薦)",
-                    "name": "週五平衡收租 (賣 44400C / 買 44600C 買權空頭價差)",
+                    "name": "週五平衡收租 (賣 43800C / 買 44000C 買權空頭價差)",
                     "type": "CCS",
-                    "short_strike": 44400,
-                    "long_strike": 44600,
-                    "net_premium": 60.0,
-                    "net_premium_ntd": 3000.0,
+                    "short_strike": 43800,
+                    "long_strike": 44000,
+                    "net_premium": 54.0,
+                    "net_premium_ntd": 2700.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 30.0,
-                    "bep": 44460.0,
-                    "win_rate": 97.6,
-                    "safety_buffer": 621.0,
-                    "sell_leg_price": 265.0,
-                    "buy_leg_price": 205.0,
+                    "roi_pct": 27.0,
+                    "bep": 43854.0,
+                    "win_rate": 93.6,
+                    "safety_buffer": 474.0,
+                    "sell_leg_price": 277.0,
+                    "buy_leg_price": 223.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44400,
-                            "premium": 265.0,
+                            "strike": 43800,
+                            "premium": 277.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44600,
-                            "premium": 205.0,
+                            "strike": 44000,
+                            "premium": 223.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -946,33 +946,33 @@ let liveSnapshotData = {
                 },
                 {
                     "category": "高資金效率 買權空頭價差 (CCS / 窄價差)",
-                    "name": "週五高週轉首選 (賣 44400C / 買 44500C 買權空頭價差)",
+                    "name": "週五高週轉首選 (賣 43800C / 買 43900C 買權空頭價差)",
                     "type": "CCS",
-                    "short_strike": 44400,
-                    "long_strike": 44500,
+                    "short_strike": 43800,
+                    "long_strike": 43900,
                     "net_premium": 24.0,
                     "net_premium_ntd": 1200.0,
                     "margin_ntd": 5000.0,
                     "roi_pct": 24.0,
-                    "bep": 44424.0,
-                    "win_rate": 97.6,
-                    "safety_buffer": 621.0,
-                    "sell_leg_price": 265.0,
-                    "buy_leg_price": 241.0,
+                    "bep": 43824.0,
+                    "win_rate": 93.6,
+                    "safety_buffer": 474.0,
+                    "sell_leg_price": 277.0,
+                    "buy_leg_price": 253.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44400,
-                            "premium": 265.0,
+                            "strike": 43800,
+                            "premium": 277.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44500,
-                            "premium": 241.0,
+                            "strike": 43900,
+                            "premium": 253.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -987,33 +987,33 @@ let liveSnapshotData = {
             "top3": [
                 {
                     "category": "保守穩健型 買權空頭價差 (CCS / 極度防守)",
-                    "name": "買權空頭價差 CCS 保守防禦 (賣 44700C / 買 44900C)",
+                    "name": "買權空頭價差 CCS 保守防禦 (賣 44300C / 買 44500C)",
                     "type": "CCS",
-                    "short_strike": 44700,
-                    "long_strike": 44900,
-                    "net_premium": 52.0,
-                    "net_premium_ntd": 2600.0,
+                    "short_strike": 44300,
+                    "long_strike": 44500,
+                    "net_premium": 34.0,
+                    "net_premium_ntd": 1700.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 26.0,
-                    "bep": 44752.0,
-                    "win_rate": 86.9,
-                    "safety_buffer": 921.0,
-                    "sell_leg_price": 432.0,
-                    "buy_leg_price": 380.0,
+                    "roi_pct": 17.0,
+                    "bep": 44334.0,
+                    "win_rate": 88.4,
+                    "safety_buffer": 974.0,
+                    "sell_leg_price": 340.0,
+                    "buy_leg_price": 306.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44700,
-                            "premium": 432.0,
+                            "strike": 44300,
+                            "premium": 340.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44900,
-                            "premium": 380.0,
+                            "strike": 44500,
+                            "premium": 306.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -1021,33 +1021,33 @@ let liveSnapshotData = {
                 },
                 {
                     "category": "平衡收益型 買權空頭價差 (CCS / 波段推薦)",
-                    "name": "買權空頭價差 CCS 平衡收租 (賣 44500C / 買 44700C)",
+                    "name": "買權空頭價差 CCS 平衡收租 (賣 44000C / 買 44200C)",
                     "type": "CCS",
-                    "short_strike": 44500,
-                    "long_strike": 44700,
-                    "net_premium": 32.3,
-                    "net_premium_ntd": 1615.0,
+                    "short_strike": 44000,
+                    "long_strike": 44200,
+                    "net_premium": 33.0,
+                    "net_premium_ntd": 1650.0,
                     "margin_ntd": 10000.0,
-                    "roi_pct": 16.15,
-                    "bep": 44532.3,
-                    "win_rate": 81.1,
-                    "safety_buffer": 721.0,
-                    "sell_leg_price": 89.1,
-                    "buy_leg_price": 56.8,
+                    "roi_pct": 16.5,
+                    "bep": 44033.0,
+                    "win_rate": 79.8,
+                    "safety_buffer": 674.0,
+                    "sell_leg_price": 428.0,
+                    "buy_leg_price": 395.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44500,
-                            "premium": 89.1,
+                            "strike": 44000,
+                            "premium": 428.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44700,
-                            "premium": 56.8,
+                            "strike": 44200,
+                            "premium": 395.0,
                             "qty": 1,
                             "iv": 17.5
                         }
@@ -1055,33 +1055,33 @@ let liveSnapshotData = {
                 },
                 {
                     "category": "高資金效率 買權空頭價差 (CCS / 窄價差)",
-                    "name": "買權空頭價差 CCS 窄價差 (賣 44300C / 買 44400C)",
+                    "name": "買權空頭價差 CCS 窄價差 (賣 43900C / 買 44000C)",
                     "type": "CCS",
-                    "short_strike": 44300,
-                    "long_strike": 44400,
-                    "net_premium": 24.5,
-                    "net_premium_ntd": 1225.0,
+                    "short_strike": 43900,
+                    "long_strike": 44000,
+                    "net_premium": 15.0,
+                    "net_premium_ntd": 750.0,
                     "margin_ntd": 5000.0,
-                    "roi_pct": 24.5,
-                    "bep": 44324.5,
-                    "win_rate": 73.9,
-                    "safety_buffer": 521.0,
-                    "sell_leg_price": 134.4,
-                    "buy_leg_price": 109.9,
+                    "roi_pct": 15.0,
+                    "bep": 43915.0,
+                    "win_rate": 76.2,
+                    "safety_buffer": 574.0,
+                    "sell_leg_price": 469.0,
+                    "buy_leg_price": 454.0,
                     "legs": [
                         {
                             "side": "SELL",
                             "type": "CALL",
-                            "strike": 44300,
-                            "premium": 134.4,
+                            "strike": 43900,
+                            "premium": 469.0,
                             "qty": 1,
                             "iv": 16.5
                         },
                         {
                             "side": "BUY",
                             "type": "CALL",
-                            "strike": 44400,
-                            "premium": 109.9,
+                            "strike": 44000,
+                            "premium": 454.0,
                             "qty": 1,
                             "iv": 17.5
                         }
