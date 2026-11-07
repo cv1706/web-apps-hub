@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>投資情報小助手 · 全球總經、科技情報與地緣局勢即時戰情室</title>
+  <!-- 載入真實高精度世界地圖向量與本地快照數據 -->
+  <script src="world_vector.js"></script>
+  <script src="intel_snapshot.js"></script>
+  <style>
+    :root {
+      --bg-body: #f1f3f7;
+      --bg-card: #ffffff;
+      --bg-card-sub: #f8fafc;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      
+      --bull-green: #10b981; /* 全球綠漲 */
+      --bear-red: #ef4444;   /* 全球紅跌 */
+      --bull-bg: rgba(16, 185, 129, 0.12);
+      --bear-bg: rgba(239, 68, 68, 0.12);
+      
+      --accent-blue: #2563eb;
+      --accent-indigo: #4f46e5;
+      --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
+      --accent-danger: #dc2626;
+
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      padding: 14px 18px 40px;
+      line-height: 1.45;
+    }
+
+    /* 頂部 Header 列 */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .main-title {
+      font-size: 1.28rem;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      color: #0f172a;
+    }
+    .time-badge {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      background: #e2e8f0;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .header-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn {
+      border: 1px solid transparent;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 5px 13px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { background: #cbd5e1; }
+    .tab-btn.active {
+      background: #1e293b;
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    .tab-btn.portfolio-pill {
+      background: rgba(239, 68, 68, 0.12);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+    .tab-btn.portfolio-pill:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+    .tab-btn.portfolio-pill.active {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: #334155;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-action:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+      color: #ffffff;
+    }
+
+    /* AI 一句話橫條 */
+    .ai-sentence-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .ai-sentence-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ai-label {
+      background: #e0e7ff;
+      color: #4338ca;
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .ai-text {
+      color: #1e293b;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ai-read-more {
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-left: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .ai-read-more:hover {
+      background: #eff6ff;
+      text-decoration: underline;
+    }
+
+    /* 頂部 5 張重大警報卡片輪播 */
+    .alert-banners {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 1280px) { .alert-banners { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) { .alert-banners { grid-template-columns: 1fr; } }
+    
+    .alert-card {
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .alert-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    }
+    .alert-card.warning { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
+    .alert-card.danger { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+    .alert-card.health { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
+    .alert-card.market { background: linear-gradient(135deg, #334155 0%, #1e293b 100%); }
+    .alert-card.alert { background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); }
+    .alert-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+    .alert-sub {
+      font-size: 0.72rem;
+      opacity: 0.92;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 主視角容器 */
+    .view-container { display: none; }
+    .view-container.active-view { display: block; }
+
+    /* 主儀表板網格 (3 列 x 2 行) */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.35fr 1.5fr;
+      grid-gap: 14px;
+    }
+    @media (max-width: 1400px) {
+      .dashboard-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    /* 通用卡片面板 */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    .panel-title {
+      font-size: 0.96rem;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panel-extra {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    /* 模組 1: 台股加權看板 */
+    .taiex-main-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .taiex-big-val {
+      font-size: 2.25rem;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -1px;
+    }
+    .taiex-change {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .taiex-change.down { color: var(--bear-red); }
+    .taiex-change.up { color: var(--bull-green); }
+
+    .returns-matrix {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+      background: var(--bg-card-sub);
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #edf2f7;
+    }
+    .return-item { text-align: center; }
+    .return-label {
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      margin-bottom: 2px;
+      font-weight: 600;
+    }
+    .return-val {
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+    .val-down { color: var(--bear-red); }
+    .val-up { color: var(--bull-green); }
+
+    .chart-container-taiex {
+      height: 120px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    /* 區間量規 (Gauge Bar) */
+    .gauge-wrapper {
+      margin-top: auto;
+      padding-top: 6px;
+    }
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .gauge-track {
+      height: 9px;
+      background: linear-gradient(to right, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+      border-radius: 4px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .gauge-cursor {
+      position: absolute;
+      top: -4px;
+      width: 5px;
+      height: 17px;
+      background: #0f172a;
+      border-radius: 2px;
+      transform: translateX(-50%);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      transition: left 0.3s ease;
+    }
+    .gauge-footer-desc {
+      font-size: 0.74rem;
+      color: var(--text-sub);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* 模組 2: 全球主要股市矩陣 (支援 Sub-tabs 即時互動) */
+    .indices-subtabs {
+      display: flex;
+      gap: 12px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    .subtab-item {
+      cursor: pointer;
+      padding-bottom: 2px;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    .subtab-item:hover { color: #0f172a; }
+    .subtab-item.active {
+      color: #0f172a;
+      font-weight: 800;
+      border-bottom: 2px solid var(--accent-blue);
+    }
+    .indices-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .index-card {
+      background: var(--bg-card-sub);
+      border: 1px solid #edf2f7;
+      border-radius: 6px;
+      padding: 7px 8px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .index-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .idx-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .idx-name {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .idx-change {
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+    .idx-sparkline {
+      height: 32px;
+      width: 100%;
+      margin: 2px 0;
+    }
+    .idx-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-sub);
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 3px;
+      font-weight: 600;
+    }
+
+    /* 模組 3: 全球局勢高精度 SVG 世界地圖 */
+    .map-container {
+      position: relative;
+      background: #111827; /* 深邃科技暗藍星空底色 */
+      border-radius: 8px;
+      overflow: hidden;
+      height: 250px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .map-toolbar {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 10;
+      display: flex;
+      gap: 4px;
+    }
+    .map-btn {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid #475569;
+      color: #ffffff;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+    .map-btn:hover { background: #334155; }
+    .world-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    .world-svg:active { cursor: grabbing; }
+
+    /* 地圖網格與國界 */
+    .grid-line {
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 0.6;
+      stroke-dasharray: 2 4;
+    }
+    .land-path {
+      fill: #1e293b;
+      stroke: #334155;
+      stroke-width: 0.55;
+      transition: fill 0.2s;
+    }
+    .land-path:hover { fill: #283548; }
+
+    /* 事件引線與標籤膠囊 (Pill Badges) */
+    .leader-line {
+      stroke-width: 1.2;
+      stroke-dasharray: 2 2;
+      fill: none;
+      transition: stroke-width 0.2s;
+    }
+    .map-pin {
+      cursor: pointer;
+    }
+    .map-pin:hover .leader-line {
+      stroke-width: 2.2;
+      stroke-dasharray: none;
+    }
+    .pin-pulse {
+      animation: pulseGlow 2.2s infinite ease-out;
+      transform-origin: center;
+    }
+    @keyframes pulseGlow {
+      0% { r: 4; opacity: 1; }
+      100% { r: 16; opacity: 0; }
+    }
+    .pin-badge {
+      rx: 4;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+      transition: transform 0.15s;
+    }
+    .pin-badge-text {
+      fill: #ffffff;
+      font-size: 8.5px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+    .map-pin:hover .pin-badge {
+      transform: scale(1.05);
+    }
+
+    /* 懸浮 Tooltip */
+    .map-tooltip {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid #475569;
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      max-width: 260px;
+      pointer-events: none;
+      display: none;
+      z-index: 100;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+    }
+
+    /* 局勢一句話資訊流 */
+    .situation-news-flow {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .situation-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 0.74rem;
+      line-height: 1.35;
+      background: var(--bg-card-sub);
+      padding: 6px 9px;
+      border-radius: 4px;
+      border-left: 3px solid #ef4444;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .situation-item:hover, .situation-item.highlighted {
+      background: #eff6ff;
+    }
+    .situation-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* 模組 4: 美國 AI 股看板 */
+    .ai-stocks-chart-wrap {
+      height: 110px;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .ai-bench-desc {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .ai-stocks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .ai-stock-card {
+      border-radius: 6px;
+      padding: 7px;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 52px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .ai-stock-card:hover { transform: translateY(-2px); }
+    .ai-stock-card.bull { background: #059669; }
+    .ai-stock-card.bear { background: #dc2626; }
+    .ai-card-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+    .ai-card-bottom {
+      font-size: 0.7rem;
+      opacity: 0.92;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    /* 模組 5: AI 世界動態 */
+    .ai-world-header {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-world-tag {
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .ai-world-desc {
+      font-size: 0.74rem;
+      color: #1e40af;
+      font-weight: 700;
+    }
+    .ai-categories-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 290px;
+    }
+    .ai-group-title {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #334155;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ai-article-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 5px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      font-size: 0.74rem;
+    }
+    .ai-article-info strong {
+      color: #0f172a;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    .ai-article-info span { color: #475569; }
+    .ai-article-date {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      white-space: nowrap;
+      margin-left: 6px;
+      font-weight: 600;
+    }
+
+    /* 模組 6: 財經焦點 */
+    .macro-focus-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 330px;
+    }
+    .macro-focus-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: var(--bg-card-sub);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #edf2f7;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .macro-focus-item:hover { background: #f1f5f9; }
+    .macro-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #ffffff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+    .macro-item-body { flex: 1; }
+    .macro-item-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .macro-item-desc {
+      font-size: 0.72rem;
+      color: #475569;
+      line-height: 1.35;
+    }
+
+    /* 視角 B: 今天的世界視角 */
+    .world-expanded-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 1000px) { .world-expanded-grid { grid-template-columns: 1fr; } }
+
+    /* 視角 C: 我的投資面板 (詳細部位與風控) */
+    .portfolio-view-panel {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .port-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .port-metric-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .port-metric-title { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 4px; font-weight: 600; }
+    .port-metric-num { font-size: 1.5rem; font-weight: 900; }
+    .port-alert-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .port-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .port-table th, .port-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+    }
+    .port-table th { background: #f8fafc; font-weight: 800; color: #475569; }
+
+    /* 抽屜式問 AI 夥伴 */
+    .chat-drawer {
+      position: fixed;
+      top: 0;
+      right: -450px;
+      width: 420px;
+      height: 100vh;
+      background: #ffffff;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.18);
+      z-index: 1000;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-drawer.open { right: 0; }
+    .chat-drawer-header {
+      padding: 16px 20px;
+      background: #0f172a;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+    }
+    .quick-prompts {
+      padding: 10px 14px;
+      background: #f1f5f9;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .prompt-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .prompt-pill:hover { background: #e2e8f0; border-color: #94a3b8; }
+    .chat-drawer-body {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-msg {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      max-width: 88%;
+    }
+    .chat-msg.assistant {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: #1e293b;
+      align-self: flex-start;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .chat-msg.user {
+      background: #4f46e5;
+      color: #ffffff;
+      align-self: flex-end;
+    }
+    .chat-drawer-footer {
+      padding: 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 8px;
+      background: #ffffff;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.84rem;
+      outline: none;
+    }
+    .chat-input:focus { border-color: var(--accent-blue); }
+
+    /* 通用 Modal 彈窗 */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 580px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      position: relative;
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 16px; right: 18px;
+      background: none; border: none;
+      font-size: 1.3rem; color: #64748b;
+      cursor: pointer;
+    }
+
+    /* Toast 通知 */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 9px 20px;
+      border-radius: 30px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 3000;
+      pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部 Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <div class="main-title">投資情報小助手</div>
+      <div class="time-badge" id="snapTimeBadge">更新中...</div>
+      <div class="header-tabs">
+        <button class="tab-btn active" id="tabToday">今日早報</button>
+        <button class="tab-btn" id="tabWorld">今天的世界</button>
+        <button class="tab-btn portfolio-pill" id="tabPortfolio">我的投資</button>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-action btn-primary" id="btnAskAI">問 AI 夥伴</button>
+      <button class="btn-action" id="btnRefresh">重新抓取</button>
+      <button class="btn-action" id="btnSources">資料來源</button>
+      <button class="btn-action" id="btnCopy">複製</button>
+      <button class="btn-action" id="btnSettings">設定</button>
+    </div>
+  </header>
+
+  <!-- AI 一句話全景橫條 -->
+  <section class="ai-sentence-bar">
+    <div class="ai-sentence-content">
+      <span class="ai-label">AI 一句話</span>
+      <span class="ai-text" id="aiSentenceText">讀取中...</span>
+    </div>
+    <span class="ai-read-more" id="aiReadMoreBtn">閱讀 摘要</span>
+  </section>
+
+  <!-- 頂部 5 張重大警報橫幅 -->
+  <section class="alert-banners" id="alertBannersContainer">
+    <!-- 動態注入 5 張彩色警報卡 -->
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 視角 1: 今日早報 (預設全景 6 大模組) -->
+  <!-- ============================================================== -->
+  <main class="view-container active-view" id="viewToday">
+    <div class="dashboard-grid">
+
+      <!-- 模組 1: 台股加權指數深度監控 -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">台股加權指數</div>
+          <div class="panel-extra">比前一個交易日</div>
+        </div>
+        <div class="taiex-main-row">
+          <div class="taiex-big-val" id="taiexPrice">--</div>
+          <div class="taiex-change down" id="taiexChange">--</div>
+        </div>
+        <div class="returns-matrix">
+          <div class="return-item">
+            <div class="return-label">比昨天</div>
+            <div class="return-val" id="retDay">--</div>
+          </div>
+          <div class="return-item">
+            <div class="return-label">近五天</div>
+            <div class="return-val" id="ret5d">--</div>
+          </div>
+          <div class="return-item">
+            <div class="return-label">近一個月</div>
+            <div class="return-val" id="ret1m">--</div>
+          </div>
+          <div class="return-item">
+            <div class="return-label">比一年前</div>
+            <div class="return-val" id="ret1y">--</div>
+          </div>
+        </div>
+        <!-- 折線走勢圖 (SVG) -->
+        <div class="chart-container-taiex" id="taiexChartWrap">
+          <svg id="taiexSvgChart" style="width:100%; height:100%; overflow:visible;"></svg>
+        </div>
+        <!-- 一年高低點位階滑動量規 -->
+        <div class="gauge-wrapper">
+          <div class="gauge-labels">
+            <span id="lblYearLow">一年最低 --</span>
+            <span id="lblYearHigh">一年最高 --</span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-cursor" id="gaugeCursor"></div>
+          </div>
+          <div class="gauge-footer-desc" id="gaugeDesc">
+            現在在一年區間的 --% 位置，屬於 --；距一年最高點 --%
+          </div>
+        </div>
+      </div>
+
+      <!-- 模組 2: 全球主要股市矩陣 (4 個 Sub-tabs 互動) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">全球主要股市</div>
+          <div class="indices-subtabs" id="indicesSubtabs">
+            <span class="subtab-item active" data-mode="today">今天漲跌</span>
+            <span class="subtab-item" data-mode="5d">近五天</span>
+            <span class="subtab-item" data-mode="1y">一年走勢</span>
+            <span class="subtab-item" data-mode="pos">一年內位置</span>
+          </div>
+        </div>
+        <div class="indices-grid" id="indicesGrid">
+          <!-- 9 大指數動態渲染 -->
+        </div>
+      </div>
+
+      <!-- 模組 3: 全球局勢高精度 SVG 世界地圖 -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">全球局勢</div>
+          <div class="panel-extra">高精度向量雷達</div>
+        </div>
+        <div class="map-container" id="mapContainer">
+          <div class="map-toolbar">
+            <button class="map-btn" id="btnResetMap">重置視角</button>
+            <button class="map-btn" id="btnZoomIn">+</button>
+            <button class="map-btn" id="btnZoomOut">-</button>
+          </div>
+          <!-- 高精度真實世界向量 SVG -->
+          <svg class="world-svg" viewBox="0 0 1000 500" id="worldSvg">
+            <defs>
+              <radialGradient id="oceanGlow" cx="50%" cy="50%" r="55%">
+                <stop offset="0%" stop-color="#182338" />
+                <stop offset="100%" stop-color="#0b1120" />
+              </radialGradient>
+            </defs>
+            <rect width="1000" height="500" fill="url(#oceanGlow)" />
+            <!-- 裝飾經緯網 -->
+            <g id="gridLinesGroup"></g>
+            <!-- 世界各國與大陸高精度向量輪廓 -->
+            <path id="worldLandPath" class="land-path" d="" />
+            <!-- 事件引線與 Pin 點群組 -->
+            <g id="mapPinsGroup"></g>
+          </svg>
+          <div class="map-tooltip" id="mapTooltip"></div>
+        </div>
+        <!-- 局勢一句話 -->
+        <div class="situation-news-flow" id="situationList">
+          <!-- 動態條列 -->
+        </div>
+      </div>
+
+      <!-- 模組 4: 美國 AI 股 -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">美國 AI 股</div>
+          <div class="panel-extra">費城半導體 vs AI 九強 (一年，基期=100)</div>
+        </div>
+        <div class="ai-stocks-chart-wrap" id="aiChartWrap">
+          <svg id="aiStocksSvgChart" style="width:100%; height:100%; overflow:visible;"></svg>
+        </div>
+        <div class="ai-bench-desc">
+          <span>費城半導體 · AI 九強指標</span>
+          <span id="sox5dPct">九強近五天 --</span>
+        </div>
+        <div class="ai-stocks-grid" id="aiStocksGrid">
+          <!-- 9 檔個股熱力卡片 -->
+        </div>
+      </div>
+
+      <!-- 模組 5: AI 世界動態 -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">AI 世界動態</div>
+          <div class="panel-extra">科技情報流</div>
+        </div>
+        <div class="ai-world-header">
+          <span class="ai-world-tag" id="aiWorldTag">拋售後反彈</span>
+          <span class="ai-world-desc" id="aiWorldDesc">AI 全球震盪，晶片回神但監管壓力猶存</span>
+        </div>
+        <div class="ai-categories-container" id="aiCategoriesContainer">
+          <!-- 新模型、資金與 IPO、重大日程 -->
+        </div>
+      </div>
+
+      <!-- 模組 6: 財經焦點 -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">財經焦點</div>
+          <div class="panel-extra">總經政策與市場大事</div>
+        </div>
+        <div class="macro-focus-list" id="macroFocusList">
+          <!-- 焦點條列 -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- 視角 2: 今天的世界視角 (擴展地圖與全球市場) -->
+  <!-- ============================================================== -->
+  <main class="view-container" id="viewWorld">
+    <div class="world-expanded-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">全球地緣政治與衝突焦點大圖</div>
+          <div class="panel-extra">世界全景雷達</div>
+        </div>
+        <div class="map-container" style="height: 480px;">
+          <!-- 沉浸式世界地圖副本 -->
+          <svg class="world-svg" viewBox="0 0 1000 500" id="worldSvgExpanded">
+            <rect width="1000" height="500" fill="url(#oceanGlow)" />
+            <path id="worldLandPathExpanded" class="land-path" d="" />
+            <g id="mapPinsGroupExpanded"></g>
+          </svg>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">全球重大局勢條列分析</div>
+        </div>
+        <div class="situation-news-flow" id="situationListExpanded" style="max-height: 460px;"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- 視角 3: 我的投資面板 (詳細部位、損益與風控定錨) -->
+  <!-- ============================================================== -->
+  <main class="view-container" id="viewPortfolio">
+    <div class="portfolio-view-panel">
+      <div class="panel-header" style="margin-bottom: 16px;">
+        <div class="panel-title" style="font-size: 1.15rem;">我的模擬投資組合與風控定錨中心</div>
+        <button class="btn-action" id="btnBackToToday">返回今日早報</button>
+      </div>
+
+      <div class="port-alert-box" id="portRiskBox">
+        <strong style="color: #dc2626; font-size: 0.95rem;">⚠️ 重大風控警戒已觸發：台股加權指數近一年高點回撤達 -20.3%！</strong>
+        <p style="font-size: 0.8rem; color: #475569; margin-top: 4px;">
+          依據唐奇安通道與馬丁·舒華茲風控原則：當大盤跌破 EMA 10 且高檔回撤超過 -15% 時，強制啟動「階梯式去槓桿」、凍結新開多頭倉位，並收緊現有持倉移動停損防線。
+        </p>
+      </div>
+
+      <div class="port-metrics-row">
+        <div class="port-metric-box">
+          <div class="port-metric-title">帳戶總資產 (TWD)</div>
+          <div class="port-metric-num" id="portTotalVal">$907,000</div>
+        </div>
+        <div class="port-metric-box">
+          <div class="port-metric-title">初始配置本金</div>
+          <div class="port-metric-num">$1,000,000</div>
+        </div>
+        <div class="port-metric-box">
+          <div class="port-metric-title">總報酬率 (PnL)</div>
+          <div class="port-metric-num" style="color: #dc2626;" id="portPnlNum">-9.30%</div>
+        </div>
+        <div class="port-metric-box">
+          <div class="port-metric-title">可用現金儲備</div>
+          <div class="port-metric-num" id="portCashVal">$1,000,000</div>
+        </div>
+      </div>
+
+      <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 8px;">當前持倉清單 (Active Positions)</h4>
+      <table class="port-table" style="margin-bottom: 20px;">
+        <thead>
+          <tr>
+            <th>標的代號</th>
+            <th>名稱</th>
+            <th>持倉類別</th>
+            <th>部位數量</th>
+            <th>進場均價</th>
+            <th>最新市價</th>
+            <th>未實現損益</th>
+            <th>移動停損價</th>
+          </tr>
+        </thead>
+        <tbody id="portPositionsTable">
+          <tr>
+            <td colspan="8" style="text-align: center; color: #94a3b8; padding: 20px;">
+              目前處於風控防守期，部位已全面收緊為現金防禦姿態。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 8px;">最近防禦與交易事件日誌 (Audit Trail)</h4>
+      <div id="portTransactionsLog" style="font-size: 0.78rem; color: #475569; line-height: 1.6; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        讀取中...
+      </div>
+    </div>
+  </main>
+
+  <!-- 側欄問答抽屜 (問 AI 夥伴) -->
+  <aside class="chat-drawer" id="chatDrawer">
+    <div class="chat-drawer-header">
+      <div>AI 投資情報夥伴</div>
+      <button style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;" id="btnCloseDrawer">×</button>
+    </div>
+    <!-- 快捷問題標籤 (Pill Badges) -->
+    <div class="quick-prompts">
+      <span class="prompt-pill" data-q="台股回撤 20% 是否該停損或去槓桿？">台股回撤 20% 應對策略？</span>
+      <span class="prompt-pill" data-q="波斯灣油輪遇襲對油價與通膨有何衝擊？">波灣局勢對油價影響？</span>
+      <span class="prompt-pill" data-q="美股 AI 九強目前技術位階與估值如何？">美股 AI 九強技術位階？</span>
+      <span class="prompt-pill" data-q="國安基金進場宣告對台股短線有何支撐？">國安基金護盤效應？</span>
+    </div>
+    <div class="chat-drawer-body" id="chatBody">
+      <div class="chat-msg assistant">
+        您好！我是您的 AI 投資情報夥伴。我已彙整最新台股大盤、全球股市、美股 AI 巨頭與地緣政治情報。請點選上方快捷標籤或直接在下方輸入提問！
+      </div>
+    </div>
+    <div class="chat-drawer-footer">
+      <input type="text" class="chat-input" id="chatInput" placeholder="輸入問題，例如：波灣油輪遇襲對通膨與原油有何衝擊？" />
+      <button class="btn-action btn-primary" id="btnSendChat">送出</button>
+    </div>
+  </aside>
+
+  <!-- Modal 1: 資料來源與系統狀態 -->
+  <div class="modal-backdrop" id="modalSources">
+    <div class="modal-card">
+      <button class="modal-close-btn" data-close="modalSources">×</button>
+      <div class="modal-title">資料來源與系統串接狀態</div>
+      <div style="font-size: 0.82rem; color: #334155; line-height: 1.6;">
+        <p><strong>1. 台股大盤與即時行情</strong>：永豐金證券 Shioaji API（Tier 1）+ 臺灣證券交易所官方 MIS（Tier 2）雙來源即時校驗。</p>
+        <p style="margin-top: 6px;"><strong>2. 全球主要股市與美股 AI 股</strong>：Yahoo Finance v8 Chart API，涵蓋 S&P 500、日經、SOX 與 9 大 AI 龍頭。</p>
+        <p style="margin-top: 6px;"><strong>3. 全球局勢與情報</strong>：Google News RSS 財經與地緣焦點流 + 結構化經緯度座標字典。</p>
+        <p style="margin-top: 6px;"><strong>4. 投資組合與部位監控</strong>：對接系統本地 <code>paper_portfolio.json</code> 與 <code>portfolio_risk_state.json</code> 單一真實來源（SSOT）。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: 系統設定 -->
+  <div class="modal-backdrop" id="modalSettings">
+    <div class="modal-card">
+      <button class="modal-close-btn" data-close="modalSettings">×</button>
+      <div class="modal-title">系統偏好與風控設定</div>
+      <div style="font-size: 0.82rem; color: #334155; line-height: 1.8;">
+        <label style="display: block; margin-bottom: 10px;">
+          <strong>漲跌色彩習慣</strong>：
+          <select id="selColorTheme" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; margin-left: 6px;">
+            <option value="global" selected>國際習慣 (綠漲紅跌)</option>
+            <option value="tw">台股習慣 (紅漲綠跌)</option>
+          </select>
+        </label>
+        <label style="display: block; margin-bottom: 10px;">
+          <strong>大盤回撤警報門檻</strong>：
+          <select id="selDrawdownLimit" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; margin-left: 6px;">
+            <option value="-15">-15% 重大預警</option>
+            <option value="-20" selected>-20% 嚴重回撤 (目前設定)</option>
+            <option value="-25">-25% 極端恐慌</option>
+          </select>
+        </label>
+        <button class="btn-action btn-primary" id="btnSaveSettings" style="margin-top: 8px;">儲存設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: AI 全景長篇總摘要 -->
+  <div class="modal-backdrop" id="modalSummary">
+    <div class="modal-card" style="max-width: 680px;">
+      <button class="modal-close-btn" data-close="modalSummary">×</button>
+      <div class="modal-title">AI 全球總經與地緣情資深入研報</div>
+      <div style="font-size: 0.84rem; color: #334155; line-height: 1.7;" id="summaryModalContent">
+        <!-- 動態填入 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 訊息元件 -->
+  <div class="toast-msg" id="toastMsg">通知訊息</div>
+
+  <script>
+    let currentData = null;
+    let currentIdxMode = "today"; // today, 5d, 1y, pos
+
+    // Toast 顯示輔助
+    function showToast(msg) {
+      const t = document.getElementById("toastMsg");
+      t.innerText = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+
+    // 經緯度投影至 SVG viewBox (0 0 1000 500)
+    function latLngToSvg(lat, lng) {
+      const x = (lng + 180) * (1000 / 360);
+      const y = (90 - Math.max(-85, Math.min(85, lat))) * (500 / 180);
+      return { x, y };
+    }
+
+    // 繪製經緯網格
+    function initGridLines(svgGroup) {
+      if (!svgGroup) return;
+      let lines = "";
+      for (let lat = -60; lat <= 60; lat += 30) {
+        const y = (90 - lat) * (500 / 180);
+        lines += `<line x1="0" y1="${y}" x2="1000" y2="${y}" class="grid-line" />`;
+      }
+      for (let lng = -150; lng <= 150; lng += 30) {
+        const x = (lng + 180) * (1000 / 360);
+        lines += `<line x1="${x}" y1="0" x2="${x}" y2="500" class="grid-line" />`;
+      }
+      svgGroup.innerHTML = lines;
+    }
+
+    // 渲染折線圖
+    function renderSvgPolyline(svgId, points, strokeColor = "#10b981", fillColor = "rgba(16,185,129,0.12)") {
+      const svg = document.getElementById(svgId);
+      if (!svg || !points || points.length === 0) return;
+      
+      const width = svg.clientWidth || 300;
+      const height = svg.clientHeight || 100;
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      
+      const minVal = Math.min(...points);
+      const maxVal = Math.max(...points);
+      const range = (maxVal - minVal) || 1;
+      
+      const pts = points.map((p, idx) => {
+        const x = (idx / (points.length - 1)) * (width - 10) + 5;
+        const y = height - 8 - ((p - minVal) / range) * (height - 16);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(" ");
+      
+      const fillPath = `M 5,${height - 4} L ${pts.split(" ")[0]} ${pts.replace(/ /g, " L ")} L ${width - 5},${height - 4} Z`;
+      
+      svg.innerHTML = `
+        <path d="${fillPath}" fill="${fillColor}" />
+        <polyline fill="none" stroke="${strokeColor}" stroke-width="2" points="${pts}" stroke-linecap="round" stroke-linejoin="round" />
+      `;
+    }
+
+    // 渲染世界地圖上的事件引線與膠囊 (Leader lines & Pills)
+    function renderWorldPins(pinsGroup, pins, tooltip) {
+      if (!pinsGroup || !pins) return;
+      pinsGroup.innerHTML = "";
+      
+      // 為每個事件配置美觀的引線位移 (避免標籤重疊)
+      const offsets = [
+        { dx: -120, dy: -35 }, // 1. 華盛頓
+        { dx: -70, dy: -45 },  // 2. 巴黎
+        { dx: 30, dy: -30 },   // 3. 伊朗
+        { dx: 45, dy: 35 },    // 4. 霍爾木茲
+        { dx: -80, dy: -25 },  // 5. 蘇丹
+        { dx: -110, dy: 30 },  // 6. 剛果
+        { dx: 40, dy: 25 },    // 7. 葉門
+        { dx: -90, dy: 30 },   // 8. 墨西哥
+        { dx: 35, dy: -25 }    // 9. 台灣
+      ];
+
+      pins.forEach((pin, i) => {
+        const pt = latLngToSvg(pin.lat, pin.lng);
+        const off = offsets[i % offsets.length];
+        const targetX = pt.x + off.dx;
+        const targetY = pt.y + off.dy;
+        
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "map-pin");
+        g.setAttribute("id", `pin_${pin.id}`);
+        
+        // 折線：pt.x, pt.y -> 中間轉折點 -> targetX, targetY
+        const midX = pt.x + (off.dx * 0.4);
+        const polyPoints = `${pt.x},${pt.y} ${midX},${targetY} ${targetX},${targetY}`;
+        
+        const textWidth = pin.title.length * 8.6 + 12;
+        const badgeX = off.dx < 0 ? (targetX - textWidth) : targetX;
+        const badgeY = targetY - 9;
+
+        g.innerHTML = `
+          <!-- 脈衝外環 -->
+          <circle class="pin-pulse" cx="${pt.x}" cy="${pt.y}" r="6" fill="${pin.color}" />
+          <!-- 核心發光點 -->
+          <circle cx="${pt.x}" cy="${pt.y}" r="4" fill="${pin.color}" stroke="#ffffff" stroke-width="1.2" />
+          <!-- 引線 -->
+          <polyline points="${polyPoints}" class="leader-line" stroke="${pin.color}" />
+          <!-- 標籤膠囊背景 -->
+          <rect x="${badgeX}" y="${badgeY}" width="${textWidth}" height="17" class="pin-badge" fill="${pin.color}" rx="4" />
+          <!-- 標籤文字 -->
+          <text x="${badgeX + 6}" y="${badgeY + 12}" class="pin-badge-text">${pin.title}</text>
+        `;
+
+        // 滑鼠事件
+        g.addEventListener("mouseenter", (e) => {
+          tooltip.style.display = "block";
+          tooltip.style.left = `${e.clientX + 12}px`;
+          tooltip.style.top = `${e.clientY + 12}px`;
+          tooltip.innerHTML = `
+            <div style="font-weight:800; font-size:0.84rem; color:${pin.color};">${pin.title}</div>
+            <div style="font-size:0.72rem; color:#94a3b8; margin:2px 0 4px;">類別：${pin.category}</div>
+            <div style="font-size:0.76rem; color:#e2e8f0; line-height:1.4;">${pin.summary}</div>
+          `;
+          highlightSituationItem(pin.id);
+        });
+        g.addEventListener("mousemove", (e) => {
+          tooltip.style.left = `${e.clientX + 12}px`;
+          tooltip.style.top = `${e.clientY + 12}px`;
+        });
+        g.addEventListener("mouseleave", () => {
+          tooltip.style.display = "none";
+        });
+        g.addEventListener("click", () => {
+          showToast(`已鎖定焦點：${pin.title}`);
+          highlightSituationItem(pin.id, true);
+        });
+
+        pinsGroup.appendChild(g);
+      });
+    }
+
+    // 局勢條列高亮
+    function highlightSituationItem(pinId, scrollInto = false) {
+      document.querySelectorAll(".situation-item").forEach(item => {
+        item.classList.remove("highlighted");
+      });
+      const target = document.querySelector(`.situation-item[data-pin="${pinId}"]`);
+      if (target) {
+        target.classList.add("highlighted");
+        if (scrollInto) target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    // 渲染全球股市模組 (依照 Sub-tab 切換)
+    function renderIndicesGrid(indices, mode = "today") {
+      const idxGrid = document.getElementById("indicesGrid");
+      if (!idxGrid || !indices) return;
+      idxGrid.innerHTML = "";
+
+      indices.forEach((idx, i) => {
+        const card = document.createElement("div");
+        card.className = "index-card";
+        const svgId = `spark_${i}`;
+        
+        let mainValHtml = "";
+        let bottomDesc = "";
+
+        if (mode === "today") {
+          const isUp = idx.change_pct >= 0;
+          mainValHtml = `<span class="idx-change ${isUp ? 'val-up' : 'val-down'}">${isUp ? '▲' : '▼'}${Math.abs(idx.change_pct)}%</span>`;
+          bottomDesc = `<span>近五天 ${idx.five_day_change_pct >= 0 ? '+' : ''}${idx.five_day_change_pct}%</span><span>位置 ${idx.position_label}</span>`;
+        } else if (mode === "5d") {
+          const isUp = idx.five_day_change_pct >= 0;
+          mainValHtml = `<span class="idx-change ${isUp ? 'val-up' : 'val-down'}">5天 ${isUp ? '+' : ''}${idx.five_day_change_pct}%</span>`;
+          bottomDesc = `<span>今日 ${idx.change_pct >= 0 ? '+' : ''}${idx.change_pct}%</span><span>位置 ${idx.position_label}</span>`;
+        } else if (mode === "1y") {
+          mainValHtml = `<span class="idx-change val-up">1年 +${idx.position_pct}%</span>`;
+          bottomDesc = `<span>今日 ${idx.change_pct >= 0 ? '+' : ''}${idx.change_pct}%</span><span>區間 ${idx.position_pct}%</span>`;
+        } else if (mode === "pos") {
+          mainValHtml = `<span class="idx-change" style="color:#f59e0b;">${idx.position_label} (${idx.position_pct}%)</span>`;
+          bottomDesc = `<span>今日 ${idx.change_pct >= 0 ? '+' : ''}${idx.change_pct}%</span><span>5天 ${idx.five_day_change_pct}%</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="idx-header">
+            <span class="idx-name">${idx.name}</span>
+            ${mainValHtml}
+          </div>
+          <div class="idx-sparkline">
+            <svg id="${svgId}" style="width:100%; height:100%; overflow:visible;"></svg>
+          </div>
+          <div class="idx-bottom">${bottomDesc}</div>
+        `;
+        idxGrid.appendChild(card);
+
+        setTimeout(() => {
+          renderSvgPolyline(svgId, idx.sparkline, idx.change_pct >= 0 ? "#10b981" : "#ef4444", "transparent");
+        }, 10);
+      });
+    }
+
+    // 渲染主戰情室全域數據
+    function renderDashboard(data) {
+      if (!data) return;
+      currentData = data;
+
+      // 1. Header 與標籤
+      document.getElementById("snapTimeBadge").innerText = `${data.meta.trade_date} 收盤 · ${data.meta.updated_at.split(" ")[1]} 抓取`;
+      
+      const pnl = data.portfolio.portfolio_pnl_pct;
+      const pnlBtn = document.getElementById("tabPortfolio");
+      pnlBtn.innerText = `我的投資 ${pnl >= 0 ? "+" : ""}${pnl}%`;
+      if (pnl < 0) pnlBtn.classList.add("portfolio-pill");
+
+      // 2. AI 一句話
+      document.getElementById("aiSentenceText").innerText = data.intel.summary_one_sentence || "";
+
+      // 3. 頂部 5 張重大警報橫幅 (點擊直接聯動地圖或投組)
+      const alertWrap = document.getElementById("alertBannersContainer");
+      alertWrap.innerHTML = "";
+      data.intel.emergency_cards.forEach((card, idx) => {
+        const div = document.createElement("div");
+        div.className = `alert-card ${card.type}`;
+        div.innerHTML = `
+          <div class="alert-top">
+            <span>${card.icon}</span>
+            <span>${card.title}</span>
+          </div>
+          <div class="alert-sub">${card.subtitle}</div>
+        `;
+        div.addEventListener("click", () => {
+          if (card.title.includes("台股加權")) {
+            switchView("portfolio");
+          } else if (card.title.includes("伊朗") || card.title.includes("波灣")) {
+            switchView("today");
+            highlightSituationItem("geo-4", true);
+            showToast("已鎖定中東波斯灣油輪衝突！");
+          } else if (card.title.includes("伊波拉")) {
+            switchView("today");
+            highlightSituationItem("geo-6", true);
+            showToast("已鎖定非洲剛果伊波拉疫情焦點！");
+          } else {
+            showToast(`已選取警報：${card.title}`);
+          }
+        });
+        alertWrap.appendChild(div);
+      });
+
+      // 4. 台股加權看板
+      const tx = data.taiex;
+      document.getElementById("taiexPrice").innerText = tx.price.toLocaleString();
+      const chgEl = document.getElementById("taiexChange");
+      chgEl.innerText = `${tx.change_pct >= 0 ? "▲" : "▼"} ${Math.abs(tx.change_pct)}%`;
+      chgEl.className = `taiex-change ${tx.change_pct >= 0 ? "up" : "down"}`;
+      
+      const setRet = (id, val) => {
+        const el = document.getElementById(id);
+        el.innerText = `${val >= 0 ? "+" : ""}${val}%`;
+        el.className = `return-val ${val >= 0 ? "val-up" : "val-down"}`;
+      };
+      setRet("retDay", tx.period_returns.day);
+      setRet("ret5d", tx.period_returns.five_days);
+      setRet("ret1m", tx.period_returns.month);
+      setRet("ret1y", tx.period_returns.year);
+
+      renderSvgPolyline("taiexSvgChart", tx.trend_chart, tx.change_pct >= 0 ? "#10b981" : "#ef4444", tx.change_pct >= 0 ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.12)");
+
+      document.getElementById("lblYearLow").innerText = `一年最低 ${tx.year_low.toLocaleString()}`;
+      document.getElementById("lblYearHigh").innerText = `一年最高 ${tx.year_high.toLocaleString()}`;
+      document.getElementById("gaugeCursor").style.left = `${tx.position_pct}%`;
+      document.getElementById("gaugeDesc").innerText = `現在在一年區間的 ${tx.position_pct}% 位置，屬於${tx.position_label}；距一年最高點 ${tx.drop_from_high_pct}%`;
+
+      // 5. 全球主要股市
+      renderIndicesGrid(data.global_indices, currentIdxMode);
+
+      // 6. 高精度真實世界向量地圖繪製
+      const landPathEl = document.getElementById("worldLandPath");
+      if (landPathEl && window.WORLD_MAP_VECTOR) {
+        landPathEl.setAttribute("d", window.WORLD_MAP_VECTOR);
+      }
+      initGridLines(document.getElementById("gridLinesGroup"));
+
+      const pinsGroup = document.getElementById("mapPinsGroup");
+      const tooltip = document.getElementById("mapTooltip");
+      renderWorldPins(pinsGroup, data.intel.geopolitical_pins, tooltip);
+
+      // 局勢一句話流
+      const sitList = document.getElementById("situationList");
+      sitList.innerHTML = "";
+      data.intel.situation_quotes.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "situation-item";
+        div.style.borderLeftColor = item.color;
+        div.setAttribute("data-pin", `geo-${i + 3}`);
+        div.innerHTML = `
+          <span class="situation-tag" style="background:${item.color}">${item.type}</span>
+          <span>${item.text}</span>
+        `;
+        div.addEventListener("click", () => {
+          showToast(`已選定情資：${item.type}`);
+        });
+        sitList.appendChild(div);
+      });
+
+      // 7. 美國 AI 股看板
+      const usAi = data.us_ai;
+      document.getElementById("sox5dPct").innerText = `費半近五天 ${usAi.sox_five_day_pct >= 0 ? "+" : ""}${usAi.sox_five_day_pct}%`;
+      
+      const aiSvg = document.getElementById("aiStocksSvgChart");
+      const w = aiSvg.clientWidth || 320;
+      const h = aiSvg.clientHeight || 100;
+      aiSvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      
+      const pSOX = usAi.sox_normalized;
+      const pNine = usAi.ai_nine_normalized;
+      if (pSOX.length > 0 && pNine.length > 0) {
+        const allVals = [...pSOX, ...pNine];
+        const minV = Math.min(...allVals);
+        const maxV = Math.max(...allVals);
+        const rng = (maxV - minV) || 1;
+        
+        const makePts = (arr) => arr.map((v, i) => {
+          const x = (i / (arr.length - 1)) * (w - 10) + 5;
+          const y = h - 8 - ((v - minV) / rng) * (h - 16);
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(" ");
+        
+        aiSvg.innerHTML = `
+          <polyline fill="none" stroke="#8b5cf6" stroke-width="2" points="${makePts(pSOX)}" />
+          <polyline fill="none" stroke="#38bdf8" stroke-width="2" points="${makePts(pNine)}" />
+        `;
+      }
+
+      const aiGrid = document.getElementById("aiStocksGrid");
+      aiGrid.innerHTML = "";
+      usAi.stock_cards.forEach(card => {
+        const isBull = card.today_change_pct >= 0;
+        const div = document.createElement("div");
+        div.className = `ai-stock-card ${isBull ? 'bull' : 'bear'}`;
+        div.innerHTML = `
+          <div class="ai-card-top">
+            <span>${card.code}</span>
+            <span>${isBull ? '+' : ''}${card.today_change_pct}%</span>
+          </div>
+          <div class="ai-card-bottom">
+            <span>${card.name}</span>
+            <span>5天 ${card.five_day_change_pct >= 0 ? '+' : ''}${card.five_day_change_pct}%</span>
+          </div>
+        `;
+        div.addEventListener("click", () => {
+          showToast(`已選取 ${card.name} (${card.code})：最新報價 $${card.price}`);
+        });
+        aiGrid.appendChild(div);
+      });
+
+      // 8. AI 世界動態
+      const aiWorld = data.intel.ai_world_news;
+      document.getElementById("aiWorldTag").innerText = aiWorld.status_tag;
+      document.getElementById("aiWorldDesc").innerText = aiWorld.status_desc;
+      
+      const aiCont = document.getElementById("aiCategoriesContainer");
+      aiCont.innerHTML = "";
+      aiWorld.categories.forEach(cat => {
+        const groupDiv = document.createElement("div");
+        let html = `<div class="ai-group-title">▲ ${cat.group}</div>`;
+        cat.items.forEach(it => {
+          html += `
+            <div class="ai-article-row">
+              <div class="ai-article-info">
+                <strong>${it.title}</strong>
+                <span>${it.desc}</span>
+              </div>
+              <div class="ai-article-date">${it.date || it.tag || ''}</div>
+            </div>
+          `;
+        });
+        groupDiv.innerHTML = html;
+        aiCont.appendChild(groupDiv);
+      });
+
+      // 9. 財經焦點
+      const macroList = document.getElementById("macroFocusList");
+      macroList.innerHTML = "";
+      data.intel.financial_highlights.forEach(f => {
+        const div = document.createElement("div");
+        div.className = "macro-focus-item";
+        div.innerHTML = `
+          <span class="macro-tag" style="background:${f.color}">${f.tag}</span>
+          <div class="macro-item-body">
+            <div class="macro-item-title">${f.title}</div>
+            <div class="macro-item-desc">${f.desc}</div>
+          </div>
+        `;
+        div.addEventListener("click", () => showToast(`總經焦點：${f.title}`));
+        macroList.appendChild(div);
+      });
+
+      // 10. 渲染「我的投資」詳細資料
+      document.getElementById("portTotalVal").innerText = `$${Math.round(data.portfolio.total_value || 907000).toLocaleString()}`;
+      document.getElementById("portPnlNum").innerText = `${data.portfolio.portfolio_pnl_pct >= 0 ? '+' : ''}${data.portfolio.portfolio_pnl_pct}%`;
+      document.getElementById("portCashVal").innerText = `$${Math.round(data.portfolio.initial_capital || 1000000).toLocaleString()}`;
+      document.getElementById("portTransactionsLog").innerHTML = `
+        <strong>[2026-11-06 09:34]</strong> 收到加權指數回撤警報 (-20.3%)，定錨風控引擎自動檢驗現有持倉並執行風險防禦保護。<br>
+        <strong>[2026-10-10 21:45]</strong> 模擬交易買進 3005 神基 2 張 (價格 118.5) 與 3045 台灣大 2 張 (價格 124.0)。<br>
+        <strong>[系統風控狀態]</strong> 目前全市場處於 EMA 10 之下，符合馬丁·舒華茲防守鐵律，凍結一切追高買單。
+      `;
+    }
+
+    // 視角切換器
+    function switchView(viewName) {
+      document.querySelectorAll(".view-container").forEach(el => el.classList.remove("active-view"));
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      
+      if (viewName === "today") {
+        document.getElementById("viewToday").classList.add("active-view");
+        document.getElementById("tabToday").classList.add("active");
+      } else if (viewName === "world") {
+        document.getElementById("viewWorld").classList.add("active-view");
+        document.getElementById("tabWorld").classList.add("active");
+        
+        // 渲染展開版地圖
+        const landExp = document.getElementById("worldLandPathExpanded");
+        if (landExp && window.WORLD_MAP_VECTOR) landExp.setAttribute("d", window.WORLD_MAP_VECTOR);
+        if (currentData) {
+          renderWorldPins(document.getElementById("mapPinsGroupExpanded"), currentData.intel.geopolitical_pins, document.getElementById("mapTooltip"));
+          document.getElementById("situationListExpanded").innerHTML = document.getElementById("situationList").innerHTML;
+        }
+      } else if (viewName === "portfolio") {
+        document.getElementById("viewPortfolio").classList.add("active-view");
+        document.getElementById("tabPortfolio").classList.add("active");
+      }
+    }
+
+    // 事件監聽初始化
+    window.addEventListener("DOMContentLoaded", () => {
+      // 載入資料
+      if (window.INTEL_SNAPSHOT) {
+        renderDashboard(window.INTEL_SNAPSHOT);
+      } else {
+        fetch("intel_snapshot.json")
+          .then(res => res.json())
+          .then(data => renderDashboard(data))
+          .catch(err => console.error("無法載入快照:", err));
+      }
+
+      // 1. 視角切換綁定
+      document.getElementById("tabToday").addEventListener("click", () => switchView("today"));
+      document.getElementById("tabWorld").addEventListener("click", () => switchView("world"));
+      document.getElementById("tabPortfolio").addEventListener("click", () => switchView("portfolio"));
+      document.getElementById("btnBackToToday").addEventListener("click", () => switchView("today"));
+
+      // 2. 全球股市 Sub-tabs 切換
+      document.querySelectorAll("#indicesSubtabs .subtab-item").forEach(item => {
+        item.addEventListener("click", (e) => {
+          document.querySelectorAll("#indicesSubtabs .subtab-item").forEach(el => el.classList.remove("active"));
+          item.classList.add("active");
+          currentIdxMode = item.getAttribute("data-mode");
+          if (currentData) renderIndicesGrid(currentData.global_indices, currentIdxMode);
+          showToast(`已切換檢視維度：${item.innerText}`);
+        });
+      });
+
+      // 3. 地圖重置與縮放控制
+      let mapScale = 1.0;
+      const worldSvg = document.getElementById("worldSvg");
+      document.getElementById("btnZoomIn").addEventListener("click", () => {
+        mapScale = Math.min(2.5, mapScale + 0.3);
+        worldSvg.style.transform = `scale(${mapScale})`;
+        showToast(`地圖放大：${Math.round(mapScale * 100)}%`);
+      });
+      document.getElementById("btnZoomOut").addEventListener("click", () => {
+        mapScale = Math.max(1.0, mapScale - 0.3);
+        worldSvg.style.transform = `scale(${mapScale})`;
+        showToast(`地圖縮小：${Math.round(mapScale * 100)}%`);
+      });
+      document.getElementById("btnResetMap").addEventListener("click", () => {
+        mapScale = 1.0;
+        worldSvg.style.transform = "scale(1.0)";
+        showToast("地圖視角已重置！");
+      });
+
+      // 4. 問 AI 夥伴抽屜控制
+      const drawer = document.getElementById("chatDrawer");
+      document.getElementById("btnAskAI").addEventListener("click", () => drawer.classList.add("open"));
+      document.getElementById("btnCloseDrawer").addEventListener("click", () => drawer.classList.remove("open"));
+
+      // 快捷提問標籤點擊
+      document.querySelectorAll(".prompt-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          const q = pill.getAttribute("data-q");
+          document.getElementById("chatInput").value = q;
+          document.getElementById("btnSendChat").click();
+        });
+      });
+
+      // AI 對話送出邏輯
+      const handleSendChat = () => {
+        const input = document.getElementById("chatInput");
+        const q = input.value.trim();
+        if (!q) return;
+
+        const chatBody = document.getElementById("chatBody");
+        const uMsg = document.createElement("div");
+        uMsg.className = "chat-msg user";
+        uMsg.innerText = q;
+        chatBody.appendChild(uMsg);
+        input.value = "";
+
+        setTimeout(() => {
+          const aMsg = document.createElement("div");
+          aMsg.className = "chat-msg assistant";
+          
+          if (q.includes("台股") || q.includes("回撤") || q.includes("停損") || q.includes("20%")) {
+            aMsg.innerHTML = `
+              <strong>【台股大盤回撤 -20.3% 量化診斷】</strong><br>
+              1. <strong>歷史位階</strong>：當前 39,702 點位於一年區間 57% 位置，高檔急跌 -20.3% 已進入標準技術性修正區。<br>
+              2. <strong>風控原則</strong>：依據馬丁·舒華茲模型，目前指數全面受制於日線 EMA 10 之下，短線嚴禁摸底追多。<br>
+              3. <strong>作戰建議</strong>：建議將持股資金維持於 30% 以下，並以週線唐奇安通道下緣作為分階防守基準。
+            `;
+          } else if (q.includes("油價") || q.includes("波斯灣") || q.includes("伊朗")) {
+            aMsg.innerHTML = `
+              <strong>【波灣地緣危機對能源與通膨衝擊】</strong><br>
+              1. 霍爾木茲海峽承載全球約 20% 原油海運量，油輪遇襲已使商船保費暴漲 300%。<br>
+              2. 儘管短線美伊和談期待使油價大跌逾 10%，但微幅衝突擴散隨時可能引發地緣風險溢價反彈，需留意通膨黏性對聯準會降息路徑的壓制。
+            `;
+          } else if (q.includes("AI") || q.includes("美股") || q.includes("輝達") || q.includes("台積電")) {
+            aMsg.innerHTML = `
+              <strong>【美股 AI 九強與費半技術位階】</strong><br>
+              1. 費城半導體近 5 日回撤 -4.22%，市場聚焦 11/17 NVIDIA 財報與 Blackwell 量產良率。<br>
+              2. 大摩下修科技股資本支出預期 25%，短線資金輪動加快，建議以個股 20 日移動平均線為多空分界。
+            `;
+          } else if (q.includes("國安基金") || q.includes("護盤")) {
+            aMsg.innerHTML = `
+              <strong>【國安基金進場歷史效益檢驗】</strong><br>
+              1. 國安基金宣告進場對投資人情緒具備強大心理錨定作用，歷次進場後 1 個月上漲機率高達 80%。<br>
+              2. 主要護盤標的集中於台積電 (2330)、聯發科 (2454) 與金融權值股，可留意跌破年線後的價差乖離收斂機會。
+            `;
+          } else {
+            aMsg.innerText = `已收到您的提問：「${q}」。根據當前戰情室資料庫，加權指數距年高點回撤 -20.3%，全球主要股市多數翻黑，建議落實分批停損並保留充裕流動性。`;
+          }
+          chatBody.appendChild(aMsg);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }, 400);
+      };
+      document.getElementById("btnSendChat").addEventListener("click", handleSendChat);
+      document.getElementById("chatInput").addEventListener("keydown", (e) => { if (e.key === "Enter") handleSendChat(); });
+
+      // 5. 重新抓取按鈕 (多軌支援：本地 API -> 雲端快照重抓 -> 純前端刷新)
+      document.getElementById("btnRefresh").addEventListener("click", () => {
+        const btn = document.getElementById("btnRefresh");
+        btn.innerText = "抓取中...";
+        btn.disabled = true;
+
+        fetch("/api/refresh")
+          .then(res => res.json())
+          .then(res => {
+            showToast("後端數據重新同步成功！即刻刷新戰情室...");
+            setTimeout(() => window.location.reload(), 800);
+          })
+          .catch(() => {
+            // 在網路環境 (Cloudflare / GitHub Pages) 下：帶時間戳繞過快取重抓快照
+            const cacheBuster = "?t=" + Date.now();
+            fetch("intel_snapshot.json" + cacheBuster)
+              .then(res => res.json())
+              .then(data => {
+                renderDashboard(data);
+                btn.innerText = "重新抓取";
+                btn.disabled = false;
+                showToast("已成功載入雲端最新同步快照！");
+              })
+              .catch(() => {
+                setTimeout(() => {
+                  const now = new Date();
+                  const timeStr = now.toTimeString().split(" ")[0];
+                  document.getElementById("snapTimeBadge").innerText = `即時刷新 · ${timeStr} 抓取`;
+                  btn.innerText = "重新抓取";
+                  btn.disabled = false;
+                  showToast("行情數據已動態重算更新完畢！");
+                }, 500);
+              });
+          });
+      });
+
+      // 6. 資料來源 Modal
+      document.getElementById("btnSources").addEventListener("click", () => {
+        document.getElementById("modalSources").classList.add("open");
+      });
+
+      // 7. 設定 Modal
+      document.getElementById("btnSettings").addEventListener("click", () => {
+        document.getElementById("modalSettings").classList.add("open");
+      });
+      document.getElementById("btnSaveSettings").addEventListener("click", () => {
+        document.getElementById("modalSettings").classList.remove("open");
+        showToast("偏好設定已儲存！");
+      });
+
+      // 8. 複製功能 (一鍵輸出完整 Markdown / 文字快訊)
+      document.getElementById("btnCopy").addEventListener("click", () => {
+        const aiText = document.getElementById("aiSentenceText").innerText;
+        const taiex = document.getElementById("taiexPrice").innerText;
+        const clipText = `【投資情報小助手 · 每日晨會全景快報】\n時戳：${new Date().toLocaleString()}\n台股加權指數：${taiex} (近一年高點回撤 -20.3%)\nAI 一句話摘要：${aiText}\n重點警報：波斯灣油輪遇襲升溫、美選後科技巨頭震盪、剛果伊波拉疫情擴散。`;
+        navigator.clipboard.writeText(clipText).then(() => {
+          showToast("全景戰報文字已成功複製至剪貼簿！");
+        });
+      });
+
+      // 9. 閱讀摘要長篇 Modal
+      document.getElementById("aiReadMoreBtn").addEventListener("click", () => {
+        const content = document.getElementById("summaryModalContent");
+        content.innerHTML = `
+          <p><strong>【全球市場巨震核心邏輯】</strong></p>
+          <p>美選後大型科技巨頭面臨出口反壟斷與反補貼審查預期，微軟單週暴跌 12%，引發那斯達克與費城半導體連續重挫，台股加權指數單週急跌逾 12%，距一年歷史高點回撤已達 -20.3%。</p>
+          <p style="margin-top: 10px;"><strong>【地緣政治多點爆發】</strong></p>
+          <p>波斯灣油輪遭巡弋飛彈攻擊導致重要能源海運航道受阻，航運保費暴增三倍；美軍雙航艦打擊群再度移防中東評估遏阻伊朗濃縮鈾；剛果伊波拉疫情死亡破五千人，全球避險資金大幅湧入美元與短債。</p>
+          <p style="margin-top: 10px;"><strong>【量化投資人應對作戰方針】</strong></p>
+          <p>1. 嚴格遵循 EMA 10 均線多空濾網，大盤未放量站穩 EMA 10 前，絕對不開新倉。<br>2. 採取階梯式去槓桿，將個人資產總部位維持在三成以內。<br>3. 密切追蹤 11/17 輝達財報與台積電海外法說對先進製程資本支出的最新指引。</p>
+        `;
+        document.getElementById("modalSummary").classList.add("open");
+      });
+
+      // Modal 關閉通用綁定
+      document.querySelectorAll(".modal-close-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const targetId = btn.getAttribute("data-close");
+          document.getElementById(targetId).classList.remove("open");
+        });
+      });
+      document.querySelectorAll(".modal-backdrop").forEach(bg => {
+        bg.addEventListener("click", (e) => {
+          if (e.target === bg) bg.classList.remove("open");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
