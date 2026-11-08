@@ -1835,23 +1835,39 @@
       document.getElementById("btnSendChat").addEventListener("click", handleSendChat);
       document.getElementById("chatInput").addEventListener("keydown", (e) => { if (e.key === "Enter") handleSendChat(); });
 
-      // 5. 重新抓取按鈕 (核心升級：Cloudflare 邊緣即時查價 API -> 本地 Python API -> 靜態快照)
-      document.getElementById("btnRefresh").addEventListener("click", () => {
-        const btn = document.getElementById("btnRefresh");
-        btn.innerText = "即時連網抓取中...";
-        btn.disabled = true;
+            // 智慧 API 端點解析 (支援 Workers 邊緣域、GitHub Pages 與本地環境)
+      const getIntelApiUrl = () => {
+        if (window.location.hostname.includes("workers.dev")) {
+          return "/api/refresh-intel";
+        }
+        return "https://web-apps-hub.cv1706yang.workers.dev/api/refresh-intel";
+      };
 
-        // 優先呼叫 Cloudflare 邊緣即時行情 API (真連網即時更新台股、全球股市與美股 AI)
-        fetch("/api/refresh-intel")
+      // 核心抓取更新函式 (支援手動點擊與頁面就緒自動連網更新)
+      const fetchLiveIntel = (isAuto = false) => {
+        const btn = document.getElementById("btnRefresh");
+        if (!isAuto && btn) {
+          btn.innerText = "即時連網抓取中...";
+          btn.disabled = true;
+        }
+
+        const apiUrl = getIntelApiUrl();
+        fetch(apiUrl)
           .then(res => {
-            if (!res.ok) throw new Error("Edge API status " + res.status);
+            if (!res.ok) throw new Error("Edge API HTTP " + res.status);
             return res.json();
           })
           .then(data => {
             renderDashboard(data);
-            btn.innerText = "重新抓取";
-            btn.disabled = false;
-            showToast("已連線雲端邊緣，成功即時更新全市場最新報價！");
+            if (btn) {
+              btn.innerText = "重新抓取";
+              btn.disabled = false;
+            }
+            if (!isAuto) {
+              showToast("已連線雲端邊緣，成功即時更新全市場報價與最新新聞！");
+            } else {
+              console.log("[戰情室] 自動連線邊緣端完成，已即時同步最新行情與即時動態");
+            }
           })
           .catch(edgeErr => {
             console.log("Edge API fallback:", edgeErr);
@@ -1859,7 +1875,7 @@
             fetch("/api/refresh")
               .then(res => res.json())
               .then(res => {
-                showToast("本地後端數據重新同步成功！即刻刷新戰情室...");
+                if (!isAuto) showToast("本地後端數據重新同步成功！即刻刷新戰情室...");
                 setTimeout(() => window.location.reload(), 800);
               })
               .catch(() => {
@@ -1869,23 +1885,29 @@
                   .then(res => res.json())
                   .then(data => {
                     renderDashboard(data);
-                    btn.innerText = "重新抓取";
-                    btn.disabled = false;
-                    showToast("已更新為雲端最新同步資料！");
+                    if (btn) {
+                      btn.innerText = "重新抓取";
+                      btn.disabled = false;
+                    }
+                    if (!isAuto) showToast("已更新為雲端最新同步資料！");
                   })
                   .catch(() => {
-                    // 降級 3: 純前端重整當前時間標籤
-                    const now = new Date();
-                    const pad = n => String(n).padStart(2, '0');
-                    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-                    document.getElementById("snapTimeBadge").innerText = `即時刷新 · ${timeStr} 抓取`;
-                    btn.innerText = "重新抓取";
-                    btn.disabled = false;
-                    showToast("行情數據已動態更新！");
+                    if (btn) {
+                      btn.innerText = "重新抓取";
+                      btn.disabled = false;
+                    }
                   });
               });
           });
-      });
+      };
+
+      // 5. 重新抓取按鈕綁定手動觸發
+      document.getElementById("btnRefresh").addEventListener("click", () => fetchLiveIntel(false));
+
+      // 關鍵特性：頁面開啟後 500 毫秒自動在背景連網抓取最新行情與新聞！
+      setTimeout(() => {
+        fetchLiveIntel(true);
+      }, 500);
 
       // 6. 資料來源 Modal
       document.getElementById("btnSources").addEventListener("click", () => {
